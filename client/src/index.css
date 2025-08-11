@@ -4,54 +4,66 @@
 @tailwind utilities;
 
 :root {
-  /* Lumon Theme Colors */
-  --lumon-dark: hsl(219, 41%, 7%);
-  --lumon-bg: hsl(218, 27%, 15%);
-  --lumon-border: hsl(215, 25%, 22%);
-  --cyan-bright: hsl(192, 100%, 50%);
-  --cyan-soft: hsl(178, 66%, 56%);
-  --neon-blue: hsl(195, 100%, 50%);
-  --text-cyan: hsl(180, 100%, 94%);
-  --text-soft: hsl(187, 100%, 85%);
-  --terminal-green: hsl(120, 100%, 63%);
-  --terminal-orange: hsl(30, 100%, 50%);
-  --terminal-red: hsl(356, 90%, 54%);
+  /* Alice Carbon Theme Colors */
+  --carbon-bg: #161616;
+  --carbon-surface: #1e1e1e;
+  --carbon-border: #262626;
+  --carbon-text: #f2f4f8;
+  --carbon-text-muted: #5c6370;
+  --carbon-comment: #5c6370;
   
-  /* Neon Theme Colors */
-  --neon-bg: hsl(300, 100%, 5%);
-  --neon-border: hsl(300, 50%, 20%);
-  --neon-pink: hsl(330, 100%, 60%);
-  --neon-purple: hsl(270, 100%, 60%);
-  --neon-cyan: hsl(180, 100%, 60%);
+  /* Alice Carbon Syntax Colors */
+  --syntax-purple: #c678dd;
+  --syntax-blue: #61afef;
+  --syntax-green: #98c379;
+  --syntax-red: #e06c75;
+  --syntax-orange: #d19a66;
+  --syntax-yellow: #e5c07b;
+  --syntax-cyan: #56b6c2;
+  --syntax-pink: #c678dd;
   
-  /* Mono Theme Colors */
-  --mono-bg: hsl(0, 0%, 0%);
-  --mono-border: hsl(120, 100%, 20%);
-  --mono-green: hsl(120, 100%, 50%);
-  --mono-text: hsl(120, 100%, 80%);
+  /* Enhanced Hacker CRT Colors */
+  --neon-glow-green: #41ff00;
+  --neon-glow-blue: #00d4ff;
+  --terminal-phosphor: #33ff33;
+  --matrix-green: #00ff41;
+  --scanline-color: rgba(65, 255, 0, 0.03);
   
-  /* Base tokens */
-  --background: var(--lumon-dark);
-  --foreground: var(--text-cyan);
-  --card: var(--lumon-bg);
-  --card-foreground: var(--text-cyan);
-  --popover: var(--lumon-bg);
-  --popover-foreground: var(--text-cyan);
-  --primary: var(--cyan-bright);
-  --primary-foreground: var(--lumon-dark);
-  --secondary: var(--lumon-border);
-  --secondary-foreground: var(--text-cyan);
-  --muted: var(--lumon-border);
-  --muted-foreground: var(--text-soft);
-  --accent: var(--cyan-soft);
-  --accent-foreground: var(--lumon-dark);
-  --destructive: var(--terminal-red);
-  --destructive-foreground: var(--text-cyan);
-  --border: var(--lumon-border);
-  --input: var(--lumon-bg);
-  --ring: var(--cyan-bright);
+  /* Base tokens mapped to Alice Carbon */
+  --background: var(--carbon-bg);
+  --foreground: var(--carbon-text);
+  --card: var(--carbon-surface);
+  --card-foreground: var(--carbon-text);
+  --popover: var(--carbon-surface);
+  --popover-foreground: var(--carbon-text);
+  --primary: var(--syntax-blue);
+  --primary-foreground: var(--carbon-bg);
+  --secondary: var(--carbon-border);
+  --secondary-foreground: var(--carbon-text);
+  --muted: var(--carbon-border);
+  --muted-foreground: var(--carbon-text-muted);
+  --accent: var(--syntax-purple);
+  --accent-foreground: var(--carbon-bg);
+  --destructive: var(--syntax-red);
+  --destructive-foreground: var(--carbon-text);
+  --border: var(--carbon-border);
+  --input: var(--carbon-surface);
+  --ring: var(--syntax-blue);
   --radius: 0.5rem;
   --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  
+  /* Compatibility mappings */
+  --lumon-dark: var(--carbon-bg);
+  --lumon-bg: var(--carbon-surface);
+  --lumon-border: var(--carbon-border);
+  --cyan-bright: var(--syntax-blue);
+  --cyan-soft: var(--syntax-cyan);
+  --neon-blue: var(--neon-glow-blue);
+  --text-cyan: var(--carbon-text);
+  --text-soft: var(--carbon-text-muted);
+  --terminal-green: var(--syntax-green);
+  --terminal-orange: var(--syntax-orange);
+  --terminal-red: var(--syntax-red);
 }
 
 .dark {
@@ -87,12 +99,14 @@
   }
 }
 
-/* CRT Screen Effects */
+/* Enhanced Hacker CRT Screen Effects */
 .crt-screen {
   position: relative;
-  background: linear-gradient(45deg, var(--lumon-dark) 0%, var(--lumon-bg) 50%, var(--lumon-dark) 100%);
+  background: linear-gradient(135deg, var(--carbon-bg) 0%, rgba(22, 22, 22, 0.95) 50%, var(--carbon-bg) 100%);
+  overflow: hidden;
 }
 
+/* Scanlines with matrix-style animation */
 .crt-screen::before {
   content: '';
   position: fixed;
@@ -104,14 +118,23 @@
   background: 
     repeating-linear-gradient(
       0deg,
-      rgba(0, 212, 255, 0.03) 0px,
-      rgba(0, 212, 255, 0.03) 2px,
+      var(--scanline-color) 0px,
+      rgba(65, 255, 0, 0.015) 1px,
+      transparent 2px,
+      transparent 3px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      rgba(0, 212, 255, 0.01) 1px,
       transparent 2px,
       transparent 4px
     );
   z-index: 10;
+  animation: scan 8s linear infinite;
 }
 
+/* Vignette and phosphor bloom */
 .crt-screen::after {
   content: '';
   position: fixed;
@@ -120,8 +143,25 @@
   right: 0;
   bottom: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 60%, rgba(10, 15, 28, 0.3) 100%);
+  background: 
+    radial-gradient(ellipse at center, transparent 40%, rgba(22, 22, 22, 0.4) 100%),
+    radial-gradient(circle at 20% 80%, rgba(97, 175, 239, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(152, 195, 121, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(198, 120, 221, 0.03) 0%, transparent 50%);
   z-index: 11;
+  mix-blend-mode: overlay;
+}
+
+/* Matrix rain effect (subtle) */
+@keyframes scan {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(10px); }
+}
+
+/* Flicker effect */
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  92.5% { opacity: 0.95; }
 }
 
 .phosphor-glow {
@@ -220,9 +260,190 @@
   box-shadow: 0 0 5px var(--cyan-soft);
 }
 
-/* Syntax highlighting */
-.syntax-keyword { color: hsl(198, 89%, 66%); }
-.syntax-string { color: hsl(55, 68%, 69%); }
-.syntax-comment { color: hsl(50, 11%, 46%); }
-.syntax-function { color: hsl(74, 74%, 67%); }
-.syntax-variable { color: hsl(0, 0%, 97%); }
+/* Alice Carbon Syntax Highlighting with Glow Effects */
+.syntax-keyword { 
+  color: var(--syntax-purple); 
+  font-weight: 600;
+  text-shadow: 0 0 5px rgba(198, 120, 221, 0.5);
+}
+.syntax-function { 
+  color: var(--syntax-blue);
+  text-shadow: 0 0 3px rgba(97, 175, 239, 0.4);
+}
+.syntax-string { 
+  color: var(--syntax-green);
+  text-shadow: 0 0 3px rgba(152, 195, 121, 0.4);
+}
+.syntax-variable { 
+  color: var(--syntax-red);
+  text-shadow: 0 0 3px rgba(224, 108, 117, 0.3);
+}
+.syntax-number { 
+  color: var(--syntax-orange);
+  text-shadow: 0 0 3px rgba(209, 154, 102, 0.3);
+}
+.syntax-type { 
+  color: var(--syntax-yellow);
+  font-weight: 500;
+  text-shadow: 0 0 3px rgba(229, 192, 123, 0.3);
+}
+.syntax-comment { 
+  color: var(--carbon-comment); 
+  font-style: italic;
+  opacity: 0.8;
+}
+.syntax-operator { 
+  color: var(--syntax-cyan);
+  text-shadow: 0 0 2px rgba(86, 182, 194, 0.5);
+}
+.syntax-property { 
+  color: var(--syntax-cyan);
+  text-shadow: 0 0 2px rgba(86, 182, 194, 0.4);
+}
+.syntax-class { 
+  color: var(--syntax-yellow); 
+  font-weight: 600;
+  text-shadow: 0 0 4px rgba(229, 192, 123, 0.5);
+}
+
+/* Enhanced terminal text with phosphor glow */
+.terminal-text {
+  color: var(--carbon-text);
+  text-shadow: 
+    0 0 2px rgba(242, 244, 248, 0.5),
+    0 0 8px rgba(97, 175, 239, 0.15);
+  position: relative;
+}
+
+/* Command prompt styling */
+.terminal-prompt {
+  color: var(--neon-glow-green);
+  text-shadow: 0 0 5px rgba(65, 255, 0, 0.6);
+  font-weight: 600;
+}
+
+/* Error text with pulse */
+.terminal-error {
+  color: var(--syntax-red);
+  text-shadow: 0 0 6px rgba(224, 108, 117, 0.8);
+  animation: error-pulse 2s ease-in-out infinite;
+}
+
+@keyframes error-pulse {
+  0%, 100% { opacity: 1; text-shadow: 0 0 6px rgba(224, 108, 117, 0.8); }
+  50% { opacity: 0.85; text-shadow: 0 0 12px rgba(224, 108, 117, 1); }
+}
+
+/* Success text glow */
+.terminal-success {
+  color: var(--syntax-green);
+  text-shadow: 0 0 8px rgba(152, 195, 121, 1);
+  font-weight: 500;
+}
+
+/* Matrix-style text animation */
+.matrix-text {
+  background: linear-gradient(180deg, var(--neon-glow-green) 0%, var(--matrix-green) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: matrix-flow 3s linear infinite;
+}
+
+@keyframes matrix-flow {
+  0% { filter: hue-rotate(0deg) brightness(1); }
+  50% { filter: hue-rotate(10deg) brightness(1.2); }
+  100% { filter: hue-rotate(0deg) brightness(1); }
+}
+
+/* RGB Shift effect for headers */
+.rgb-shift {
+  position: relative;
+  animation: screen-flicker 15s ease-in-out infinite;
+}
+
+.rgb-shift::before,
+.rgb-shift::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.rgb-shift::before {
+  animation: rgb-shift-r 8s ease-in-out infinite;
+  color: rgba(255, 0, 100, 0.3);
+  z-index: -1;
+}
+
+.rgb-shift::after {
+  animation: rgb-shift-b 8s ease-in-out infinite;
+  color: rgba(0, 100, 255, 0.3);
+  z-index: -1;
+}
+
+@keyframes rgb-shift-r {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(0.5px); }
+  75% { transform: translateX(-0.5px); }
+}
+
+@keyframes rgb-shift-b {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-0.5px); }
+  75% { transform: translateX(0.5px); }
+}
+
+/* Screen flicker effect */
+@keyframes screen-flicker {
+  0%, 100% { opacity: 1; filter: brightness(1) contrast(1); }
+  92.5% { opacity: 0.97; filter: brightness(0.98) contrast(1.01); }
+  95% { opacity: 1; filter: brightness(1.02) contrast(1.02); }
+}
+
+/* Glitch effect on hover */
+.glitch-hover:hover {
+  animation: glitch 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+}
+
+@keyframes glitch {
+  0%, 100% { 
+    text-shadow: 
+      0.05em 0 0 rgba(255, 0, 0, 0.75),
+      -0.025em -0.05em 0 rgba(0, 255, 0, 0.75),
+      0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  14% {
+    text-shadow: 
+      0.05em 0 0 rgba(255, 0, 0, 0.75),
+      -0.05em -0.025em 0 rgba(0, 255, 0, 0.75),
+      0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  15% {
+    text-shadow: 
+      -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
+      0.025em 0.025em 0 rgba(0, 255, 0, 0.75),
+      -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  49% {
+    text-shadow: 
+      -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
+      0.025em 0.025em 0 rgba(0, 255, 0, 0.75),
+      -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  50% {
+    text-shadow: 
+      0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
+      0.05em 0 0 rgba(0, 255, 0, 0.75),
+      0 -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  99% {
+    text-shadow: 
+      0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
+      0.05em 0 0 rgba(0, 255, 0, 0.75),
+      0 -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+}

@@ -40,122 +40,73 @@ export default function StatusPane() {
       </div>
 
       <div className="flex-1 p-3 bg-lumon-bg overflow-y-auto">
-        <div className="grid grid-cols-[auto_1fr] gap-4 text-xs">
-          {/* Apple Logo */}
-          <div className="text-text-soft leading-none font-mono whitespace-pre">
-            {appleAscii}
+        <div className="font-mono text-xs leading-tight">
+          <div className="flex">
+            {/* Apple Logo Column */}
+            <div className="text-text-soft whitespace-pre mr-4">
+{`                    'c.
+                 ,xNMM.
+               .OMMMMo
+               OMMM0,
+     .;loddo:' loolloddol;.
+   cKMMMMMMMMMMNWMMMMMMMMMM0:
+ .KMMMMMMMMMMMMMMMMMMMMMMMWd.
+ XMMMMMMMMMMMMMMMMMMMMMMMX.
+;MMMMMMMMMMMMMMMMMMMMMMMM:
+:MMMMMMMMMMMMMMMMMMMMMMMM:
+.MMMMMMMMMMMMMMMMMMMMMMMMX.
+ kMMMMMMMMMMMMMMMMMMMMMMMMWd.
+ .XMMMMMMMMMMMMMMMMMMMMMMMMMMk
+  .XMMMMMMMMMMMMMMMMMMMMMMMMK.
+    kMMMMMMMMMMMMMMMMMMMMMMd
+     ;KMMMMMMMWXXWMMMMMMMk.
+       .cooc,.    .,coo:.`}
+            </div>
+
+            {/* System Information Column */}
+            <div className="flex-1 space-y-0">
+              <div className="mb-1">
+                <span className="text-cyan-bright font-medium">tulio</span>
+                <span className="text-text-soft">@</span>
+                <span className="text-cyan-bright font-medium">MacBook-Pro</span>
+              </div>
+              
+              <div className="text-text-soft mb-1">-------------------------</div>
+
+              <div><span className="text-cyan-bright">OS:</span> <span className="text-text-soft">macOS Tahoe 26.0 arm64</span></div>
+              <div><span className="text-cyan-bright">Host:</span> <span className="text-text-soft">MacBook Pro (16-in)</span></div>
+              <div><span className="text-cyan-bright">Kernel:</span> <span className="text-text-soft">Darwin 25.0.0</span></div>
+              <div><span className="text-cyan-bright">Uptime:</span> <span className="text-text-soft">22 hours, 44 mins</span></div>
+              <div><span className="text-cyan-bright">Packages:</span> <span className="text-text-soft">197 (brew), 75 (mas)</span></div>
+              <div><span className="text-cyan-bright">Shell:</span> <span className="text-text-soft">fish 4.0.2</span></div>
+              <div><span className="text-cyan-bright">Display (Color LCD):</span> <span className="text-text-soft">3024x1964</span></div>
+              <div><span className="text-cyan-bright">DE:</span> <span className="text-text-soft">Liquid Glass</span></div>
+              <div><span className="text-cyan-bright">WM:</span> <span className="text-text-soft">Quartz Compositor 340</span></div>
+              <div><span className="text-cyan-bright">WM Theme:</span> <span className="text-text-soft">Multicolor (Dark)</span></div>
+              <div><span className="text-cyan-bright">Font:</span> <span className="text-text-soft">.AppleSystemUIFont</span></div>
+              <div><span className="text-cyan-bright">Cursor:</span> <span className="text-text-soft">Fill - Black, Outline</span></div>
+              <div><span className="text-cyan-bright">Terminal:</span> <span className="text-text-soft">preview</span></div>
+              <div><span className="text-cyan-bright">CPU:</span> <span className="text-text-soft">Apple M4 Max (16) @ 4.05GHz</span></div>
+              <div><span className="text-cyan-bright">GPU:</span> <span className="text-text-soft">Apple M4 Max (40) @ 1.40GHz</span></div>
+              <div><span className="text-cyan-bright">Memory:</span> <span className="text-text-soft">12.59 GiB / 128.0 GiB</span></div>
+              <div><span className="text-cyan-bright">Swap:</span> <span className="text-text-soft">4.13 GiB / 9.00 GiB</span></div>
+              <div><span className="text-cyan-bright">Disk (/):</span> <span className="text-text-soft">254.28 GiB / 4.0 TiB</span></div>
+              <div><span className="text-cyan-bright">Local IP (utun6):</span> <span className="text-text-soft">100.120.x.x</span></div>
+              <div><span className="text-cyan-bright">Battery (bq40z651):</span> <span className="text-text-soft">74% [AC]</span></div>
+              <div><span className="text-cyan-bright">Locale:</span> <span className="text-text-soft">C</span></div>
+            </div>
           </div>
 
-          {/* System Information */}
-          <div className="space-y-1 min-w-0">
-            <div className="flex">
-              <span className="text-cyan-bright font-medium w-16 flex-shrink-0">tulio</span>
-              <span className="text-text-soft">@</span>
-              <span className="text-cyan-bright font-medium">MacBook-Pro</span>
-            </div>
-            
-            <div className="border-t border-lumon-border my-1"></div>
-
-            <div className="space-y-1">
-              <div className="flex">
-                <span className="text-cyan-bright w-16 flex-shrink-0">OS</span>
-                <span className="text-text-soft">macOS Sequoia 15.1</span>
-              </div>
-              
-              <div className="flex">
-                <span className="text-cyan-bright w-16 flex-shrink-0">Host</span>
-                <span className="text-text-soft">MacBook Pro (16-in, 2023)</span>
-              </div>
-              
-              <div className="flex">
-                <span className="text-cyan-bright w-16 flex-shrink-0">Kernel</span>
-                <span className="text-text-soft">Darwin 24.1.0</span>
-              </div>
-              
-              <div className="flex">
-                <span className="text-cyan-bright w-16 flex-shrink-0">Uptime</span>
-                <span className="text-text-soft">3 days, 14 hours, 22 mins</span>
-              </div>
-              
-              <div className="flex">
-                <span className="text-cyan-bright w-16 flex-shrink-0">Packages</span>
-                <span className="text-text-soft">127 (brew), 0 (mas)</span>
-              </div>
-              
-              <div className="flex">
-                <span className="text-cyan-bright w-16 flex-shrink-0">Shell</span>
-                <span className="text-text-soft">zsh 5.9</span>
-              </div>
-              
-              <div className="flex">
-                <span className="text-cyan-bright w-16 flex-shrink-0">Resolution</span>
-                <span className="text-text-soft">3456x2234 @ 120Hz</span>
-              </div>
-              
-              <div className="flex">
-                <span className="text-cyan-bright w-16 flex-shrink-0">DE</span>
-                <span className="text-text-soft">Aqua</span>
-              </div>
-              
-              <div className="flex">
-                <span className="text-cyan-bright w-16 flex-shrink-0">WM</span>
-                <span className="text-text-soft">Quartz Compositor</span>
-              </div>
-              
-              <div className="flex">
-                <span className="text-cyan-bright w-16 flex-shrink-0">Terminal</span>
-                <span className="text-text-soft">WarpTerminal</span>
-              </div>
-              
-              <div className="flex">
-                <span className="text-cyan-bright w-16 flex-shrink-0">CPU</span>
-                <span className="text-text-soft">Apple M4 Max (16) @ 4.05GHz</span>
-              </div>
-              
-              <div className="flex">
-                <span className="text-cyan-bright w-16 flex-shrink-0">GPU</span>
-                <span className="text-text-soft">Apple M4 Max</span>
-              </div>
-              
-              <div className="flex">
-                <span className="text-cyan-bright w-16 flex-shrink-0">Memory</span>
-                <span className="text-text-soft">12.59 GiB / 128.0 GiB</span>
-              </div>
-              
-              <div className="flex">
-                <span className="text-cyan-bright w-16 flex-shrink-0">Swap</span>
-                <span className="text-text-soft">4.13 GiB / 9.00 GiB</span>
-              </div>
-              
-              <div className="flex">
-                <span className="text-cyan-bright w-16 flex-shrink-0">Disk (/)</span>
-                <span className="text-text-soft">254.28 GiB / 4.0 TiB</span>
-              </div>
-              
-              <div className="flex">
-                <span className="text-cyan-bright w-16 flex-shrink-0">Battery</span>
-                <span className="text-text-soft">100% [AC]</span>
-              </div>
-              
-              <div className="flex">
-                <span className="text-cyan-bright w-16 flex-shrink-0">Locale</span>
-                <span className="text-text-soft">en_US.UTF-8</span>
-              </div>
-            </div>
-
-            {/* Color Palette */}
-            <div className="mt-2 pt-2 border-t border-lumon-border">
-              <div className="flex gap-1">
-                <div className="w-3 h-3 bg-black"></div>
-                <div className="w-3 h-3 bg-red-500"></div>
-                <div className="w-3 h-3 bg-green-500"></div>
-                <div className="w-3 h-3 bg-yellow-500"></div>
-                <div className="w-3 h-3 bg-blue-500"></div>
-                <div className="w-3 h-3 bg-purple-500"></div>
-                <div className="w-3 h-3 bg-cyan-500"></div>
-                <div className="w-3 h-3 bg-white"></div>
-              </div>
-            </div>
+          {/* Color Palette */}
+          <div className="mt-3 flex gap-1">
+            <div className="w-3 h-3 bg-black"></div>
+            <div className="w-3 h-3 bg-red-500"></div>
+            <div className="w-3 h-3 bg-green-500"></div>
+            <div className="w-3 h-3 bg-yellow-500"></div>
+            <div className="w-3 h-3 bg-blue-500"></div>
+            <div className="w-3 h-3 bg-purple-500"></div>
+            <div className="w-3 h-3 bg-cyan-500"></div>
+            <div className="w-3 h-3 bg-white"></div>
           </div>
         </div>
       </div>

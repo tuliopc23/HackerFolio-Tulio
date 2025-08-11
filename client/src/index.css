@@ -1,0 +1,228 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Lumon Theme Colors */
+  --lumon-dark: hsl(219, 41%, 7%);
+  --lumon-bg: hsl(218, 27%, 15%);
+  --lumon-border: hsl(215, 25%, 22%);
+  --cyan-bright: hsl(192, 100%, 50%);
+  --cyan-soft: hsl(178, 66%, 56%);
+  --neon-blue: hsl(195, 100%, 50%);
+  --text-cyan: hsl(180, 100%, 94%);
+  --text-soft: hsl(187, 100%, 85%);
+  --terminal-green: hsl(120, 100%, 63%);
+  --terminal-orange: hsl(30, 100%, 50%);
+  --terminal-red: hsl(356, 90%, 54%);
+  
+  /* Neon Theme Colors */
+  --neon-bg: hsl(300, 100%, 5%);
+  --neon-border: hsl(300, 50%, 20%);
+  --neon-pink: hsl(330, 100%, 60%);
+  --neon-purple: hsl(270, 100%, 60%);
+  --neon-cyan: hsl(180, 100%, 60%);
+  
+  /* Mono Theme Colors */
+  --mono-bg: hsl(0, 0%, 0%);
+  --mono-border: hsl(120, 100%, 20%);
+  --mono-green: hsl(120, 100%, 50%);
+  --mono-text: hsl(120, 100%, 80%);
+  
+  /* Base tokens */
+  --background: var(--lumon-dark);
+  --foreground: var(--text-cyan);
+  --card: var(--lumon-bg);
+  --card-foreground: var(--text-cyan);
+  --popover: var(--lumon-bg);
+  --popover-foreground: var(--text-cyan);
+  --primary: var(--cyan-bright);
+  --primary-foreground: var(--lumon-dark);
+  --secondary: var(--lumon-border);
+  --secondary-foreground: var(--text-cyan);
+  --muted: var(--lumon-border);
+  --muted-foreground: var(--text-soft);
+  --accent: var(--cyan-soft);
+  --accent-foreground: var(--lumon-dark);
+  --destructive: var(--terminal-red);
+  --destructive-foreground: var(--text-cyan);
+  --border: var(--lumon-border);
+  --input: var(--lumon-bg);
+  --ring: var(--cyan-bright);
+  --radius: 0.5rem;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+.dark {
+  --background: var(--lumon-dark);
+  --foreground: var(--text-cyan);
+}
+
+/* Theme variants */
+.theme-neon {
+  --background: var(--neon-bg);
+  --card: var(--neon-bg);
+  --border: var(--neon-border);
+  --primary: var(--neon-pink);
+  --accent: var(--neon-purple);
+}
+
+.theme-mono {
+  --background: var(--mono-bg);
+  --foreground: var(--mono-text);
+  --card: var(--mono-bg);
+  --border: var(--mono-border);
+  --primary: var(--mono-green);
+  --accent: var(--mono-green);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-mono antialiased bg-background text-foreground overflow-hidden;
+  }
+}
+
+/* CRT Screen Effects */
+.crt-screen {
+  position: relative;
+  background: linear-gradient(45deg, var(--lumon-dark) 0%, var(--lumon-bg) 50%, var(--lumon-dark) 100%);
+}
+
+.crt-screen::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 212, 255, 0.03) 0px,
+      rgba(0, 212, 255, 0.03) 2px,
+      transparent 2px,
+      transparent 4px
+    );
+  z-index: 10;
+}
+
+.crt-screen::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(10, 15, 28, 0.3) 100%);
+  z-index: 11;
+}
+
+.phosphor-glow {
+  text-shadow: 
+    0 0 5px currentColor,
+    0 0 10px currentColor,
+    0 0 15px currentColor;
+}
+
+.terminal-output {
+  text-shadow: 0 0 3px currentColor;
+}
+
+.pane-border {
+  border: 1px solid var(--cyan-soft);
+  box-shadow: 
+    0 0 10px rgba(79, 209, 199, 0.3),
+    inset 0 0 10px rgba(79, 209, 199, 0.1);
+}
+
+.pane-focus {
+  border-color: var(--cyan-bright);
+  box-shadow: 
+    0 0 15px rgba(0, 212, 255, 0.5),
+    inset 0 0 15px rgba(0, 212, 255, 0.2);
+}
+
+.cursor-block {
+  display: inline-block;
+  width: 10px;
+  height: 20px;
+  background-color: var(--cyan-bright);
+  animation: cursor-blink 1s infinite;
+  margin-left: 2px;
+}
+
+@keyframes cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+@keyframes scanlines {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes phosphor-glow {
+  0% { text-shadow: 0 0 5px currentColor, 0 0 10px currentColor; }
+  100% { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor; }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--lumon-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--cyan-soft);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--cyan-bright);
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .crt-screen::before {
+    background: none;
+  }
+  .cursor-block {
+    animation: none;
+    opacity: 1;
+  }
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.resize-handle {
+  width: 4px;
+  background: var(--cyan-soft);
+  cursor: col-resize;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.resize-handle:hover {
+  opacity: 1;
+  box-shadow: 0 0 5px var(--cyan-soft);
+}
+
+/* Syntax highlighting */
+.syntax-keyword { color: hsl(198, 89%, 66%); }
+.syntax-string { color: hsl(55, 68%, 69%); }
+.syntax-comment { color: hsl(50, 11%, 46%); }
+.syntax-function { color: hsl(74, 74%, 67%); }
+.syntax-variable { color: hsl(0, 0%, 97%); }

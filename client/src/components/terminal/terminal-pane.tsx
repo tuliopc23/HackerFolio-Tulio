@@ -107,11 +107,9 @@ export default function TerminalPane() {
 
   const formatOutput = (output: string) => {
     return output.split('\n').map((line, i) => (
-      <div 
-        key={i} 
-        className="whitespace-pre-wrap terminal-text"
-        dangerouslySetInnerHTML={{ __html: line || '&nbsp;' }}
-      />
+      <div key={i} className="whitespace-pre-wrap">
+        {line}
+      </div>
     ));
   };
 
@@ -148,12 +146,7 @@ export default function TerminalPane() {
 
         {/* Welcome Message */}
         <div className="terminal-output mb-6">
-          <div className="text-neon-blue phosphor-glow mb-2 text-sm font-mono rgb-shift" data-text={`████████╗██╗   ██╗██╗     ██╗ ██████╗ 
-╚══██╔══╝██║   ██║██║     ██║██╔═══██╗
-   ██║   ██║   ██║██║     ██║██║   ██║
-   ██║   ██║   ██║██║     ██║██║   ██║
-   ██║   ╚██████╔╝███████╗██║╚██████╔╝
-   ╚═╝    ╚═════╝ ╚══════╝╚═╝ ╚═════╝`}>
+          <div className="text-neon-blue phosphor-glow mb-2 text-sm font-mono">
             <pre>{`████████╗██╗   ██╗██╗     ██╗ ██████╗ 
 ╚══██╔══╝██║   ██║██║     ██║██╔═══██╗
    ██║   ██║   ██║██║     ██║██║   ██║
@@ -161,8 +154,8 @@ export default function TerminalPane() {
    ██║   ╚██████╔╝███████╗██║╚██████╔╝
    ╚═╝    ╚═════╝ ╚══════╝╚═╝ ╚═════╝`}</pre>
           </div>
-          <div className="text-text-soft mb-4 glitch-hover">Full-stack Developer | Terminal Interface</div>
-          <div className="text-cyan-soft terminal-prompt">Type 'help' to see available commands</div>
+          <div className="text-text-soft mb-4">Full-stack Developer | Terminal Interface</div>
+          <div className="text-cyan-soft">Type 'help' to see available commands</div>
         </div>
 
         {/* Command History */}

@@ -6,11 +6,6 @@ export interface CommandResult {
   navigate?: string;
 }
 
-// Helper function to apply syntax highlighting
-function h(text: string, type: 'keyword' | 'function' | 'string' | 'variable' | 'number' | 'type' | 'comment' | 'operator' | 'property' | 'class'): string {
-  return `<span class="syntax-${type}">${text}</span>`;
-}
-
 export class CommandProcessor {
   private history: string[] = [];
   private historyIndex: number = -1;
@@ -109,47 +104,47 @@ export class CommandProcessor {
 
   private help(): CommandResult {
     return {
-      output: `${h('Available Commands:', 'type')}
+      output: `Available Commands:
 
-${h('help', 'function')}                 ${h('-', 'operator')} Show this help message
-${h('whoami', 'function')}              ${h('-', 'operator')} Display user information  
-${h('grep', 'function')} ${h('stack', 'string')}          ${h('-', 'operator')} Show technology stack
-${h('projects', 'function')} ${h('[filter]', 'comment')}   ${h('-', 'operator')} List projects with optional filter
-${h('printd', 'function')} ${h('contact', 'string')}      ${h('-', 'operator')} Display contact information
-${h('open', 'function')} ${h('<route|url>', 'variable')}    ${h('-', 'operator')} Navigate to route or external URL
-${h('theme', 'function')} ${h('<name>', 'variable')}        ${h('-', 'operator')} Switch theme ${h('(lumon|neon|mono)', 'comment')}
-${h('clear', 'function')}               ${h('-', 'operator')} Clear terminal output
-${h('ls', 'function')}                  ${h('-', 'operator')} List available content
-${h('cat', 'function')} ${h('<file>', 'variable')}          ${h('-', 'operator')} Display file content
-${h('time', 'function')}                ${h('-', 'operator')} Show current time
+help                 - Show this help message
+whoami              - Display user information  
+grep stack          - Show technology stack
+projects [filter]   - List projects with optional filter
+printd contact      - Display contact information
+open <route|url>    - Navigate to route or external URL
+theme <name>        - Switch theme (lumon|neon|mono)
+clear               - Clear terminal output
+ls                  - List available content
+cat <file>          - Display file content
+time                - Show current time
 
-${h('Navigation:', 'type')}
-${h('/projects', 'string')}           ${h('-', 'operator')} Portfolio projects
-${h('/about', 'string')}              ${h('-', 'operator')} About me  
-${h('/contact', 'string')}            ${h('-', 'operator')} Contact information
-${h('/resume', 'string')}             ${h('-', 'operator')} Resume/CV
+Navigation:
+/projects           - Portfolio projects
+/about              - About me  
+/contact            - Contact information
+/resume             - Resume/CV
 
-${h('Keyboard Shortcuts:', 'type')}
-${h('Tab', 'keyword')}                 ${h('-', 'operator')} Autocomplete command
-${h('↑↓', 'keyword')}                  ${h('-', 'operator')} Command history
-${h('Ctrl+C', 'keyword')}              ${h('-', 'operator')} Clear current input`
+Keyboard Shortcuts:
+Tab                 - Autocomplete command
+↑↓                  - Command history
+Ctrl+C              - Clear current input`
     };
   }
 
   private whoami(): CommandResult {
     return {
-      output: `${h('Name:', 'property')} ${h(profileData.name, 'string')}
-${h('Role:', 'property')} ${h(profileData.title, 'type')}
-${h('Location:', 'property')} ${h(profileData.location, 'string')}
-${h('Status:', 'property')} ${h(profileData.status, 'keyword')}`
+      output: `Name: ${profileData.name}
+Role: ${profileData.title}
+Location: ${profileData.location}
+Status: ${profileData.status}`
     };
   }
 
   private grepStack(): CommandResult {
     return {
-      output: `${h('Languages:', 'type')} ${profileData.stack.languages.map(l => h(l, 'function')).join(', ')}
-${h('Web (Full-stack):', 'type')} ${profileData.stack.web.map(w => h(w, 'keyword')).join(', ')}
-${h('Cloud/Infra:', 'type')} ${profileData.stack.cloud.map(c => h(c, 'variable')).join(', ')}`
+      output: `Languages: ${profileData.stack.languages.join(', ')}
+Web (Full-stack): ${profileData.stack.web.join(', ')}
+Cloud/Infra: ${profileData.stack.cloud.join(', ')}`
     };
   }
 
@@ -165,15 +160,15 @@ ${h('Cloud/Infra:', 'type')} ${profileData.stack.cloud.map(c => h(c, 'variable')
     }
 
     if (projects.length === 0) {
-      return { output: `<span class="terminal-error">No projects found matching '${filter}'</span>` };
+      return { output: `No projects found matching '${filter}'` };
     }
 
     const output = projects.map(project => 
-      `${project.featured ? h('★', 'keyword') : ''}${h(project.name, 'class')}
-  ${h('Role:', 'property')} ${h(project.role, 'type')}
-  ${h('Stack:', 'property')} ${project.stack.map(tech => h(tech, 'function')).join(', ')}
-  ${h(project.description, 'comment')}
-  ${Object.entries(project.links || {}).map(([key, url]) => `${h(key + ':', 'property')} ${h(url, 'string')}`).join('\n  ')}`
+      `${project.featured ? '★ ' : ''}${project.name}
+  Role: ${project.role}
+  Stack: ${project.stack.join(', ')}
+  ${project.description}
+  ${Object.entries(project.links || {}).map(([key, url]) => `${key}: ${url}`).join('\n  ')}`
     ).join('\n\n');
 
     return { output };
@@ -181,14 +176,14 @@ ${h('Cloud/Infra:', 'type')} ${profileData.stack.cloud.map(c => h(c, 'variable')
 
   private printdContact(): CommandResult {
     return {
-      output: `${h('Contact Information:', 'type')}
+      output: `Contact Information:
 
-${h('Email:', 'property')} ${h(profileData.contact.email, 'string')}
-${h('GitHub:', 'property')} ${h(profileData.contact.github, 'string')}
-${h('Twitter:', 'property')} ${h(profileData.contact.twitter, 'string')}
-${h('LinkedIn:', 'property')} ${h(profileData.contact.linkedin, 'string')}
+Email: ${profileData.contact.email}
+GitHub: ${profileData.contact.github}
+Twitter: ${profileData.contact.twitter}
+LinkedIn: ${profileData.contact.linkedin}
 
-${h('Available for full-time positions, contract work, and consulting projects.', 'comment')}`
+Available for full-time positions, contract work, and consulting projects.`
     };
   }
 

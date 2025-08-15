@@ -4,11 +4,13 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "NODE_ENV=development tsx server/index.ts",
-    "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
-    "start": "NODE_ENV=production node dist/index.js",
-    "check": "tsc",
-    "db:push": "drizzle-kit push"
+    "dev": "NODE_ENV=development bun --watch server/index.ts",
+    "build:client": "bunx vite build",
+    "build:server": "bun build server/index.ts --target bun --format esm --outfile dist/index.js",
+    "build": "bun run build:client && bun run build:server",
+    "start": "NODE_ENV=production bun dist/index.js",
+    "check": "bunx tsc --noEmit",
+    "db:push": "bunx drizzle-kit push"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

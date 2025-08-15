@@ -4,31 +4,35 @@
 @tailwind utilities;
 
 :root {
-  /* Lumon Theme Colors */
-  --lumon-dark: #000000;
-  --lumon-bg: #1d2b53;
-  --lumon-border: #7e2553;
-  --cyan-bright: #29adff;
-  --cyan-soft: #83769c;
-  --neon-blue: #29adff;
-  --text-cyan: #fff1e8;
-  --text-soft: #c2c3c7;
-  --terminal-green: #00e756;
-  --terminal-orange: #ffa300;
-  --terminal-red: #ff004d;
+  /* PICO-8 Theme Colors (Primary) */
+  --lumon-dark: #000000;        /* PICO black */
+  --lumon-bg: #1d2b53;          /* PICO dark blue */
+  --lumon-border: #7e2553;      /* PICO dark purple */
+  --cyan-bright: #29adff;       /* PICO blue */
+  --cyan-soft: #83769c;         /* PICO indigo */
+  --neon-blue: #29adff;         /* PICO blue */
+  --text-cyan: #fff1e8;         /* PICO white */
+  --text-soft: #c2c3c7;         /* PICO light grey */
+  --terminal-green: #00e756;    /* PICO green */
+  --terminal-orange: #ffa300;   /* PICO orange */
+  --terminal-red: #ff004d;      /* PICO red */
+  --terminal-yellow: #fff024;   /* PICO yellow */
+  --terminal-pink: #ff77a8;     /* PICO pink */
+  --terminal-brown: #ab5236;    /* PICO brown */
+  --terminal-dark-green: #008751; /* PICO dark green */
   
-  /* Neon Theme Colors */
-  --neon-bg: #000000;
-  --neon-border: #7e2553;
-  --neon-pink: #ff77a8;
-  --neon-purple: #83769c;
-  --neon-cyan: #29adff;
+  /* Neon Theme Colors (PICO-8 Pink/Purple variant) */
+  --neon-bg: #000000;           /* PICO black */
+  --neon-border: #7e2553;       /* PICO dark purple */
+  --neon-pink: #ff77a8;         /* PICO pink */
+  --neon-purple: #83769c;       /* PICO indigo */
+  --neon-cyan: #29adff;         /* PICO blue */
   
-  /* Mono Theme Colors */
-  --mono-bg: #000000;
-  --mono-border: #008751;
-  --mono-green: #00e756;
-  --mono-text: #c2c3c7;
+  /* Mono Theme Colors (PICO-8 Green variant) */
+  --mono-bg: #000000;           /* PICO black */
+  --mono-border: #008751;       /* PICO dark green */
+  --mono-green: #00e756;        /* PICO green */
+  --mono-text: #c2c3c7;         /* PICO light grey */
   
   /* PICO-8 Base16 Colors */
   --pico-base00: #000000; /* Default Background */
@@ -84,8 +88,11 @@
   --border: var(--neon-border);
   --primary: var(--neon-pink);
   --accent: var(--neon-purple);
-  --text-cyan: var(--pico-base0E);
-  --cyan-bright: var(--pico-base0E);
+  --text-cyan: var(--terminal-pink);
+  --cyan-bright: var(--terminal-pink);
+  --terminal-green: var(--neon-cyan);
+  --lumon-bg: var(--neon-border);
+  --lumon-border: var(--neon-pink);
 }
 
 .theme-mono {
@@ -97,6 +104,9 @@
   --accent: var(--mono-green);
   --text-cyan: var(--mono-text);
   --cyan-bright: var(--mono-green);
+  --terminal-green: var(--mono-green);
+  --lumon-bg: var(--mono-border);
+  --lumon-border: var(--mono-green);
 }
 
 .theme-pico {
@@ -146,8 +156,8 @@
   background: 
     repeating-linear-gradient(
       0deg,
-      rgba(0, 212, 255, 0.03) 0px,
-      rgba(0, 212, 255, 0.03) 2px,
+      rgba(41, 173, 255, 0.03) 0px,
+      rgba(41, 173, 255, 0.03) 2px,
       transparent 2px,
       transparent 4px
     );
@@ -180,15 +190,40 @@
 .pane-border {
   border: 1px solid var(--cyan-soft);
   box-shadow: 
-    0 0 10px rgba(79, 209, 199, 0.3),
-    inset 0 0 10px rgba(79, 209, 199, 0.1);
+    0 0 10px rgba(41, 173, 255, 0.3),
+    inset 0 0 10px rgba(41, 173, 255, 0.1);
 }
 
 .pane-focus {
   border-color: var(--cyan-bright);
   box-shadow: 
-    0 0 15px rgba(0, 212, 255, 0.5),
-    inset 0 0 15px rgba(0, 212, 255, 0.2);
+    0 0 15px rgba(41, 173, 255, 0.5),
+    inset 0 0 15px rgba(41, 173, 255, 0.2);
+}
+
+/* PICO-8 specific CRT effects */
+.theme-neon .pane-border {
+  box-shadow: 
+    0 0 10px rgba(255, 119, 168, 0.3),
+    inset 0 0 10px rgba(255, 119, 168, 0.1);
+}
+
+.theme-neon .pane-focus {
+  box-shadow: 
+    0 0 15px rgba(255, 119, 168, 0.5),
+    inset 0 0 15px rgba(255, 119, 168, 0.2);
+}
+
+.theme-mono .pane-border {
+  box-shadow: 
+    0 0 10px rgba(0, 231, 86, 0.3),
+    inset 0 0 10px rgba(0, 231, 86, 0.1);
+}
+
+.theme-mono .pane-focus {
+  box-shadow: 
+    0 0 15px rgba(0, 231, 86, 0.5),
+    inset 0 0 15px rgba(0, 231, 86, 0.2);
 }
 
 .cursor-block {
@@ -262,9 +297,58 @@
   box-shadow: 0 0 5px var(--cyan-soft);
 }
 
-/* Syntax highlighting */
-.syntax-keyword { color: hsl(198, 89%, 66%); }
-.syntax-string { color: hsl(55, 68%, 69%); }
-.syntax-comment { color: hsl(50, 11%, 46%); }
-.syntax-function { color: hsl(74, 74%, 67%); }
-.syntax-variable { color: hsl(0, 0%, 97%); }
+/* PICO-8 Syntax highlighting */
+.syntax-keyword { color: var(--terminal-pink); }
+.syntax-string { color: var(--terminal-green); }
+.syntax-comment { color: var(--terminal-dark-green); }
+.syntax-function { color: var(--cyan-bright); }
+.syntax-variable { color: var(--text-cyan); }
+.syntax-number { color: var(--terminal-orange); }
+.syntax-type { color: var(--terminal-yellow); }
+
+/* PICO-8 Color Utility Classes */
+.text-pico-black { color: var(--lumon-dark); }
+.text-pico-dark-blue { color: var(--lumon-bg); }
+.text-pico-dark-purple { color: var(--lumon-border); }
+.text-pico-dark-green { color: var(--terminal-dark-green); }
+.text-pico-brown { color: var(--terminal-brown); }
+.text-pico-grey { color: var(--text-soft); }
+.text-pico-white { color: var(--text-cyan); }
+.text-pico-red { color: var(--terminal-red); }
+.text-pico-orange { color: var(--terminal-orange); }
+.text-pico-yellow { color: var(--terminal-yellow); }
+.text-pico-green { color: var(--terminal-green); }
+.text-pico-blue { color: var(--cyan-bright); }
+.text-pico-indigo { color: var(--cyan-soft); }
+.text-pico-pink { color: var(--terminal-pink); }
+
+.bg-pico-black { background-color: var(--lumon-dark); }
+.bg-pico-dark-blue { background-color: var(--lumon-bg); }
+.bg-pico-dark-purple { background-color: var(--lumon-border); }
+.bg-pico-dark-green { background-color: var(--terminal-dark-green); }
+.bg-pico-brown { background-color: var(--terminal-brown); }
+.bg-pico-grey { background-color: var(--text-soft); }
+.bg-pico-white { background-color: var(--text-cyan); }
+.bg-pico-red { background-color: var(--terminal-red); }
+.bg-pico-orange { background-color: var(--terminal-orange); }
+.bg-pico-yellow { background-color: var(--terminal-yellow); }
+.bg-pico-green { background-color: var(--terminal-green); }
+.bg-pico-blue { background-color: var(--cyan-bright); }
+.bg-pico-indigo { background-color: var(--cyan-soft); }
+.bg-pico-pink { background-color: var(--terminal-pink); }
+
+/* Enhanced CRT effects with PICO-8 colors */
+.pico-glow {
+  text-shadow: 
+    0 0 5px currentColor,
+    0 0 10px currentColor,
+    0 0 15px currentColor;
+}
+
+.pico-pixel-border {
+  border: 2px solid;
+  border-color: var(--text-cyan) var(--lumon-border) var(--lumon-border) var(--text-cyan);
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}

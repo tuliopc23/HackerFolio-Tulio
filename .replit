@@ -1,6 +1,6 @@
 run = "python3 main.py"
 entrypoint = "main.py"
-modules = ["nodejs-20"]
+modules = ["nodejs-20", "python-3.11"]
 
 [[ports]]
 localPort = 5000

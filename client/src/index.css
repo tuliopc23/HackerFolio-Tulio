@@ -5,30 +5,48 @@
 
 :root {
   /* Lumon Theme Colors */
-  --lumon-dark: hsl(219, 41%, 7%);
-  --lumon-bg: hsl(218, 27%, 15%);
-  --lumon-border: hsl(215, 25%, 22%);
-  --cyan-bright: hsl(192, 100%, 50%);
-  --cyan-soft: hsl(178, 66%, 56%);
-  --neon-blue: hsl(195, 100%, 50%);
-  --text-cyan: hsl(180, 100%, 94%);
-  --text-soft: hsl(187, 100%, 85%);
-  --terminal-green: hsl(120, 100%, 63%);
-  --terminal-orange: hsl(30, 100%, 50%);
-  --terminal-red: hsl(356, 90%, 54%);
+  --lumon-dark: #000000;
+  --lumon-bg: #1d2b53;
+  --lumon-border: #7e2553;
+  --cyan-bright: #29adff;
+  --cyan-soft: #83769c;
+  --neon-blue: #29adff;
+  --text-cyan: #fff1e8;
+  --text-soft: #c2c3c7;
+  --terminal-green: #00e756;
+  --terminal-orange: #ffa300;
+  --terminal-red: #ff004d;
   
   /* Neon Theme Colors */
-  --neon-bg: hsl(300, 100%, 5%);
-  --neon-border: hsl(300, 50%, 20%);
-  --neon-pink: hsl(330, 100%, 60%);
-  --neon-purple: hsl(270, 100%, 60%);
-  --neon-cyan: hsl(180, 100%, 60%);
+  --neon-bg: #000000;
+  --neon-border: #7e2553;
+  --neon-pink: #ff77a8;
+  --neon-purple: #83769c;
+  --neon-cyan: #29adff;
   
   /* Mono Theme Colors */
-  --mono-bg: hsl(0, 0%, 0%);
-  --mono-border: hsl(120, 100%, 20%);
-  --mono-green: hsl(120, 100%, 50%);
-  --mono-text: hsl(120, 100%, 80%);
+  --mono-bg: #000000;
+  --mono-border: #008751;
+  --mono-green: #00e756;
+  --mono-text: #c2c3c7;
+  
+  /* PICO-8 Base16 Colors */
+  --pico-base00: #000000; /* Default Background */
+  --pico-base01: #1d2b53; /* Lighter Background */
+  --pico-base02: #7e2553; /* Selection Background */
+  --pico-base03: #008751; /* Comments, Line Highlighting */
+  --pico-base04: #ab5236; /* Dark Foreground */
+  --pico-base05: #5f574f; /* Default Foreground */
+  --pico-base06: #c2c3c7; /* Light Foreground */
+  --pico-base07: #fff1e8; /* Light Background */
+  --pico-base08: #ff004d; /* Variables, Tags, Deleted */
+  --pico-base09: #ffa300; /* Numbers, Constants */
+  --pico-base0A: #fff024; /* Classes, Types */
+  --pico-base0B: #00e756; /* Strings, Inserted */
+  --pico-base0C: #29adff; /* Support, Cyan */
+  --pico-base0D: #83769c; /* Functions, Methods */
+  --pico-base0E: #ff77a8; /* Keywords, Pink */
+  --pico-base0F: #ab5236; /* Deprecated */
   
   /* Base tokens */
   --background: var(--lumon-dark);
@@ -66,6 +84,8 @@
   --border: var(--neon-border);
   --primary: var(--neon-pink);
   --accent: var(--neon-purple);
+  --text-cyan: var(--pico-base0E);
+  --cyan-bright: var(--pico-base0E);
 }
 
 .theme-mono {
@@ -75,6 +95,28 @@
   --border: var(--mono-border);
   --primary: var(--mono-green);
   --accent: var(--mono-green);
+  --text-cyan: var(--mono-text);
+  --cyan-bright: var(--mono-green);
+}
+
+.theme-pico {
+  --background: var(--pico-base00);
+  --foreground: var(--pico-base07);
+  --card: var(--pico-base01);
+  --border: var(--pico-base02);
+  --primary: var(--pico-base0C);
+  --accent: var(--pico-base0A);
+  --lumon-dark: var(--pico-base00);
+  --lumon-bg: var(--pico-base01);
+  --lumon-border: var(--pico-base02);
+  --text-cyan: var(--pico-base07);
+  --text-soft: var(--pico-base06);
+  --cyan-bright: var(--pico-base0C);
+  --cyan-soft: var(--pico-base0D);
+  --neon-blue: var(--pico-base0C);
+  --terminal-green: var(--pico-base0B);
+  --terminal-orange: var(--pico-base09);
+  --terminal-red: var(--pico-base08);
 }
 
 @layer base {

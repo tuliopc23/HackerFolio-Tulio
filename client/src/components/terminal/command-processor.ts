@@ -112,7 +112,7 @@ grep stack          - Show technology stack
 projects [filter]   - List projects with optional filter
 printd contact      - Display contact information
 open <route|url>    - Navigate to route or external URL
-theme <name>        - Switch theme (lumon|neon|mono)
+theme <name>        - Switch theme (lumon|neon|mono|pico)
 clear               - Clear terminal output
 ls                  - List available content
 cat <file>          - Display file content
@@ -216,7 +216,7 @@ Available for full-time positions, contract work, and consulting projects.`
   }
 
   private theme(themeName: string): CommandResult {
-    const validThemes = ['lumon', 'neon', 'mono'];
+    const validThemes = ['lumon', 'neon', 'mono', 'pico'];
     if (!validThemes.includes(themeName)) {
       return { 
         output: `Invalid theme '${themeName}'\nAvailable themes: ${validThemes.join(', ')}`, 
@@ -285,7 +285,7 @@ projects/
     }
     
     if (input.startsWith('theme ')) {
-      const partial = input.substring(6);
+      const themes = ['lumon', 'neon', 'mono', 'pico'];
       return themes.filter(theme => theme.startsWith(partial)).map(theme => `theme ${theme}`);
     }
     

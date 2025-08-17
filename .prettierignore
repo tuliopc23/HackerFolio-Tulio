@@ -1,0 +1,9 @@
+dist
+build
+node_modules
+bun.lockb
+*.min.js
+*.min.css
+api/
+go.mod
+go.sum

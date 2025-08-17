@@ -200,7 +200,8 @@ export function CRTShader({ children, className = '' }: CRTShaderProps) {
       {/* CSS Fallback with Enhanced Glow */}
       {!isWebGPUSupported && (
         <div className="absolute inset-0 pointer-events-none z-20">
-          <div className="crt-screen crt-glow" />
+          {/* Ensure the CRT layer fills the container */}
+          <div className="absolute inset-0 crt-screen crt-glow" />
           <div className="absolute inset-0 phosphor-glow-enhanced opacity-30" />
         </div>
       )}

@@ -23,9 +23,7 @@ export default function TerminalPane() {
 
   useEffect(() => {
     // Auto-focus input
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
+    inputRef.current?.focus();
   }, []);
 
   useEffect(() => {
@@ -122,7 +120,10 @@ export default function TerminalPane() {
   };
 
   return (
-    <div className="pane-border pane-focus flex h-full flex-col overflow-hidden rounded-lg">
+    <div
+      className="pane-border pane-focus flex h-full flex-col overflow-hidden rounded-lg"
+      onClick={() => inputRef.current?.focus()}
+    >
       {/* Pane Header */}
       <div className="bg-lumon-border border-cyan-soft flex items-center justify-between border-b px-4 py-2">
         <div className="flex items-center gap-2">
@@ -194,6 +195,7 @@ export default function TerminalPane() {
             placeholder="Type a command..."
             ref={inputRef}
             type="text"
+            autoFocus
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}

@@ -50,7 +50,37 @@
   --pico-base0E: #ff77a8; /* Keywords, Pink */
   --pico-base0F: #ab5236; /* Deprecated */
 
-  /* Base tokens - Back to Lumon as default */
+  /* Base tokens - Neon as default */
+  --background: var(--neon-bg);
+  --foreground: var(--neon-foreground);
+  --card: var(--neon-bg);
+  --card-foreground: var(--neon-foreground);
+  --popover: var(--neon-bg);
+  --popover-foreground: var(--neon-foreground);
+  --primary: var(--neon-pink);
+  --primary-foreground: var(--neon-bg);
+  --secondary: var(--neon-selection-bg);
+  --secondary-foreground: var(--neon-foreground);
+  --muted: var(--neon-accent);
+  --muted-foreground: var(--neon-foreground);
+  --accent: var(--neon-purple);
+  --accent-foreground: var(--neon-bg);
+  --destructive: var(--terminal-red);
+  --destructive-foreground: var(--neon-foreground);
+  --border: var(--neon-selection-bg);
+  --input: var(--neon-bg);
+  --ring: var(--neon-pink);
+  --radius: 0.5rem;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+.dark {
+  --background: var(--lumon-dark);
+  --foreground: var(--text-cyan);
+}
+
+/* Theme variants */
+.theme-lumon {
   --background: var(--lumon-dark);
   --foreground: var(--text-cyan);
   --card: var(--lumon-bg);
@@ -70,16 +100,8 @@
   --border: var(--lumon-border);
   --input: var(--lumon-bg);
   --ring: var(--cyan-bright);
-  --radius: 0.5rem;
-  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
 }
 
-.dark {
-  --background: var(--lumon-dark);
-  --foreground: var(--text-cyan);
-}
-
-/* Theme variants */
 .theme-neon {
   --background: var(--neon-bg);
   --foreground: var(--neon-foreground);

@@ -2,30 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { ThemeContext, type Theme } from '@/contexts/theme-context';
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('lumon');
+  const [theme, setTheme] = useState<Theme>('neon');
 
   useEffect(() => {
-    // Force lumon as default - clear any saved neon preference
+    // Check for saved theme preference, default to neon
     const savedTheme = localStorage.getItem('terminal-theme') as Theme;
     
-    // Always start with lumon, ignore saved theme for now
-    setTheme('lumon');
-    localStorage.setItem('terminal-theme', 'lumon');
-    
-    // Uncomment this later if you want to restore saved theme behavior:
-    // if (savedTheme && ['lumon', 'neon', 'pico'].includes(savedTheme)) {
-    //   setTheme(savedTheme);
-    // } else {
-    //   setTheme('lumon');
-    // }
+    if (savedTheme && ['lumon', 'neon', 'pico'].includes(savedTheme)) {
+      setTheme(savedTheme);
+    } else {
+      setTheme('neon');
+      localStorage.setItem('terminal-theme', 'neon');
+    }
   }, []);
 
   useEffect(() => {
     // Remove previous theme classes
     document.body.classList.remove('theme-lumon', 'theme-neon', 'theme-pico');
 
-    // Add current theme class (lumon is default, so only add class for other themes)
-    if (theme !== 'lumon') {
+    // Add theme class only for non-default themes (neon is now default)
+    if (theme !== 'neon') {
       document.body.classList.add(`theme-${theme}`);
     }
 

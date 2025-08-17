@@ -3,6 +3,7 @@
 This file provides guidance to WARP (warp.dev) when working with code in this repository.
 
 Repository overview
+
 - Monorepo-style layout (single package):
   - server/: Express HTTP server with Vite integration for dev and static serving for prod
   - client/: React + Vite SPA (wouter for routing) with a terminal-style UI
@@ -10,6 +11,7 @@ Repository overview
 - Package manager: no lockfile found; default to npm unless the user specifies otherwise
 
 Common commands (fish-safe via npm scripts)
+
 - Install deps: npm install
 - Start dev server (Express + Vite HMR on the same process): npm run dev
   - Script sets NODE_ENV=development internally; running through npm avoids fish env syntax issues
@@ -22,10 +24,12 @@ Common commands (fish-safe via npm scripts)
   - Uses drizzle-kit push; requires proper drizzle config and DATABASE_URL
 
 What’s not configured (as of now)
+
 - Linting: no ESLint config or npm script present
 - Testing: no test framework or scripts present (e.g., Vitest/Jest). Running a single test is not applicable yet
 
 Architecture and flow
+
 - Server (Express)
   - Entry: server/index.ts
   - Middleware: JSON/urlencoded; request logger for /api routes with compact log lines
@@ -36,7 +40,7 @@ Architecture and flow
     - POST /api/terminal/log: optional analytics hook
   - Dev vs Prod integration (server/vite.ts)
     - Development: setupVite attaches Vite as middleware (middlewareMode) and wires HMR to the same HTTP server
-    - Production: serveStatic() serves dist/public via express.static; "*" falls back to index.html (SPA routing)
+    - Production: serveStatic() serves dist/public via express.static; "\*" falls back to index.html (SPA routing)
   - Port: process.env.PORT or 5000 by default; listens on 0.0.0.0
 
 - Client (React + Vite)
@@ -48,7 +52,7 @@ Architecture and flow
   - Data fetching: client/src/lib/queryClient.ts
     - queryClient with custom getQueryFn that fetches using queryKey.join("/") and returns JSON
     - credentials: "include"; default behavior: no retries, staleTime Infinity, no window refetch
-  - Terminal UI: client/src/components/terminal/*
+  - Terminal UI: client/src/components/terminal/\*
     - terminal-pane.tsx: interactive command input, history, autocomplete, navigation (wouter) and theme changes
 
 - Shared types and DB schemas (shared/schema.ts)
@@ -57,6 +61,7 @@ Architecture and flow
   - Not yet wired to persistent storage in routes; server/storage.ts provides an in-memory storage example
 
 Configuration and conventions
+
 - Path aliases (vite.config.ts and tsconfig.json)
   - @ -> client/src
   - @shared -> shared
@@ -70,14 +75,17 @@ Configuration and conventions
   - No .env file present in repo; add one if needed and avoid inlining secrets in commands
 
 How to develop efficiently
+
 - Single-process dev: npm run dev starts Express and attaches Vite middleware (no need to run Vite separately)
 - API prefix: /api (keep client-side fetches relative to the same origin to avoid CORS in dev)
 - SPA routing: fallback to index.html in prod; client-side navigation is handled by wouter
 
 Important notes from repo meta files
+
 - README.md, CLAUDE/Cursor/Copilot rules: none found in this repository at time of writing
 
 Potential improvements (non-breaking, opt-in)
+
 - Linting: add ESLint + @typescript-eslint and a lint script (npm run lint); use latest stable packages
 - Testing: add Vitest + React Testing Library with scripts:
   - test: "vitest"
@@ -87,7 +95,7 @@ Potential improvements (non-breaking, opt-in)
 - Pre-commit: add lint-staged + simple pre-commit hooks once lint/test are in place
 
 Open questions for maintainers
+
 - Preferred package manager (npm assumed due to no lockfile)
 - Should I scaffold ESLint/Prettier/Vitest with latest stable versions?
 - Do you want drizzle configured now (drizzle.config.ts + migrations strategy)?
-

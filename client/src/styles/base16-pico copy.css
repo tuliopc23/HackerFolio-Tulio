@@ -64,14 +64,25 @@ body {
 }
 
 /* Typography */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--base0A);
   font-weight: bold;
 }
 
-h1 { font-size: 2rem; }
-h2 { font-size: 1.75rem; }
-h3 { font-size: 1.5rem; }
+h1 {
+  font-size: 2rem;
+}
+h2 {
+  font-size: 1.75rem;
+}
+h3 {
+  font-size: 1.5rem;
+}
 
 p {
   color: var(--text-primary);
@@ -132,7 +143,9 @@ a:hover {
 }
 
 /* Forms */
-input, textarea, select {
+input,
+textarea,
+select {
   background-color: var(--bg-secondary);
   border: 2px solid var(--base02);
   color: var(--text-primary);
@@ -140,14 +153,17 @@ input, textarea, select {
   font-family: inherit;
 }
 
-input:focus, textarea:focus, select:focus {
+input:focus,
+textarea:focus,
+select:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--base02);
 }
 
 /* Code Blocks */
-pre, code {
+pre,
+code {
   background-color: var(--bg-secondary);
   border: 1px solid var(--base02);
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
@@ -172,15 +188,35 @@ pre code {
 }
 
 /* Syntax Highlighting */
-.syntax-keyword { color: var(--base0E); font-weight: bold; }
-.syntax-string { color: var(--base0B); }
-.syntax-number { color: var(--base09); }
-.syntax-comment { color: var(--base03); font-style: italic; }
-.syntax-function { color: var(--base0D); }
-.syntax-variable { color: var(--base08); }
-.syntax-type { color: var(--base0A); }
-.syntax-operator { color: var(--text-primary); }
-.syntax-punctuation { color: var(--text-primary); }
+.syntax-keyword {
+  color: var(--base0E);
+  font-weight: bold;
+}
+.syntax-string {
+  color: var(--base0B);
+}
+.syntax-number {
+  color: var(--base09);
+}
+.syntax-comment {
+  color: var(--base03);
+  font-style: italic;
+}
+.syntax-function {
+  color: var(--base0D);
+}
+.syntax-variable {
+  color: var(--base08);
+}
+.syntax-type {
+  color: var(--base0A);
+}
+.syntax-operator {
+  color: var(--text-primary);
+}
+.syntax-punctuation {
+  color: var(--text-primary);
+}
 
 /* Tables */
 table {
@@ -189,7 +225,8 @@ table {
   background-color: var(--bg-secondary);
 }
 
-th, td {
+th,
+td {
   border: 1px solid var(--base02);
   padding: 0.75rem;
   text-align: left;
@@ -267,7 +304,8 @@ nav a {
   font-weight: bold;
 }
 
-nav a:hover, nav a.active {
+nav a:hover,
+nav a.active {
   color: var(--accent);
 }
 
@@ -296,17 +334,37 @@ nav a:hover, nav a.active {
 }
 
 /* Utility Classes */
-.text-accent { color: var(--accent); }
-.text-success { color: var(--success); }
-.text-warning { color: var(--warning); }
-.text-danger { color: var(--danger); }
-.text-info { color: var(--info); }
-.text-muted { color: var(--text-muted); }
-.text-bright { color: var(--text-bright); }
+.text-accent {
+  color: var(--accent);
+}
+.text-success {
+  color: var(--success);
+}
+.text-warning {
+  color: var(--warning);
+}
+.text-danger {
+  color: var(--danger);
+}
+.text-info {
+  color: var(--info);
+}
+.text-muted {
+  color: var(--text-muted);
+}
+.text-bright {
+  color: var(--text-bright);
+}
 
-.bg-primary { background-color: var(--bg-primary); }
-.bg-secondary { background-color: var(--bg-secondary); }
-.bg-accent { background-color: var(--bg-accent); }
+.bg-primary {
+  background-color: var(--bg-primary);
+}
+.bg-secondary {
+  background-color: var(--bg-secondary);
+}
+.bg-accent {
+  background-color: var(--bg-accent);
+}
 
 /* PICO-8 Specific Classes */
 .pico-pixel {

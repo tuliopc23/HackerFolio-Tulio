@@ -1,73 +1,75 @@
 export const profileData = {
-  name: "Tulio Cunha",
-  title: "Full-stack Developer",
-  location: "Remote",
-  status: "Available for projects",
+  name: 'Tulio Cunha',
+  title: 'Full-stack Developer',
+  location: 'Remote',
+  status: 'Available for projects',
   stack: {
-    languages: ["Swift", "Rust", "Go", "TypeScript"],
-    web: ["Svelte/SvelteKit", "React", "Next.js", "Vite", "Tailwind"],
-    cloud: ["AWS/GCP/Azure", "Docker", "CI/CD"]
+    languages: ['Swift', 'Rust', 'Go', 'TypeScript'],
+    web: ['Svelte/SvelteKit', 'React', 'Next.js', 'Vite', 'Tailwind'],
+    cloud: ['AWS/GCP/Azure', 'Docker', 'CI/CD'],
   },
   contact: {
-    email: "contact@tuliocunha.dev",
-    github: "https://github.com/tuliocunha",
-    twitter: "https://twitter.com/tuliocunha",
-    linkedin: "https://linkedin.com/in/tuliocunha"
-  }
+    email: 'contact@tuliocunha.dev',
+    github: 'https://github.com/tuliocunha',
+    twitter: 'https://twitter.com/tuliocunha',
+    linkedin: 'https://linkedin.com/in/tuliocunha',
+  },
 };
 
 export const projectsData = [
   {
-    id: "1",
-    name: "Terminal Portfolio",
-    description: "A vintage CRT-inspired portfolio website with interactive terminal interface and tmux-style pane management.",
-    role: "Solo Developer",
-    stack: ["React", "TypeScript", "Tailwind"],
+    id: '1',
+    name: 'Terminal Portfolio',
+    description:
+      'A vintage CRT-inspired portfolio website with interactive terminal interface and tmux-style pane management.',
+    role: 'Solo Developer',
+    stack: ['React', 'TypeScript', 'Tailwind'],
     links: {
-      demo: "https://portfolio.tuliocunha.dev",
-      github: "https://github.com/tuliocunha/terminal-portfolio"
+      demo: 'https://portfolio.tuliocunha.dev',
+      github: 'https://github.com/tuliocunha/terminal-portfolio',
     },
     featured: true,
-    image: "https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=400&h=200&fit=crop",
+    image: 'https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=400&h=200&fit=crop',
     stats: {
-      performance: "98%",
-      accessibility: "AAA"
-    }
+      performance: '98%',
+      accessibility: 'AAA',
+    },
   },
   {
-    id: "2",
-    name: "E-Commerce Platform",
-    description: "Modern commerce solution with real-time inventory management and secure payment processing.",
-    role: "Lead Developer",
-    stack: ["Next.js", "Stripe", "PostgreSQL"],
+    id: '2',
+    name: 'E-Commerce Platform',
+    description:
+      'Modern commerce solution with real-time inventory management and secure payment processing.',
+    role: 'Lead Developer',
+    stack: ['Next.js', 'Stripe', 'PostgreSQL'],
     links: {
-      demo: "https://ecommerce.example.com",
-      github: "https://github.com/tuliocunha/ecommerce-platform"
+      demo: 'https://ecommerce.example.com',
+      github: 'https://github.com/tuliocunha/ecommerce-platform',
     },
-    featured: false
+    featured: false,
   },
   {
-    id: "3",
-    name: "Rust CLI Tool",
-    description: "High-performance system monitoring utility built with modern Rust practices.",
-    role: "Creator",
-    stack: ["Rust", "Clap", "Tokio"],
+    id: '3',
+    name: 'Rust CLI Tool',
+    description: 'High-performance system monitoring utility built with modern Rust practices.',
+    role: 'Creator',
+    stack: ['Rust', 'Clap', 'Tokio'],
     links: {
-      github: "https://github.com/tuliocunha/rust-monitor"
+      github: 'https://github.com/tuliocunha/rust-monitor',
     },
-    featured: false
+    featured: false,
   },
   {
-    id: "4",
-    name: "Mobile Trading App",
-    description: "Real-time trading interface with advanced charts and portfolio management.",
-    role: "iOS Developer",
-    stack: ["Swift", "SwiftUI", "Combine"],
+    id: '4',
+    name: 'Mobile Trading App',
+    description: 'Real-time trading interface with advanced charts and portfolio management.',
+    role: 'iOS Developer',
+    stack: ['Swift', 'SwiftUI', 'Combine'],
     links: {
-      appstore: "https://apps.apple.com/app/trading-app"
+      appstore: 'https://apps.apple.com/app/trading-app',
     },
-    featured: false
-  }
+    featured: false,
+  },
 ];
 
 export const aboutContent = `

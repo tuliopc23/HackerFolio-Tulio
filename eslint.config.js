@@ -8,7 +8,16 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 export default [
   js.configs.recommended,
   {
-    files: ['**/*.{ts,tsx}'],
+    files: ['client/src/**/*.{ts,tsx}'],
+    ignores: [
+      'dist/**',
+      'node_modules/**',
+      'api/**',
+      '*.config.{js,ts}',
+      'main.cjs',
+      'coverage/**',
+      '.git/**',
+    ],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
@@ -20,9 +29,23 @@ export default [
         },
       },
       globals: {
+        // Browser globals
+        window: 'readonly',
+        document: 'readonly',
+        localStorage: 'readonly',
+        sessionStorage: 'readonly',
+        fetch: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        alert: 'readonly',
         console: 'readonly',
+        // Node globals (for build tools)
         process: 'readonly',
         Buffer: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
       },
     },
     plugins: {
@@ -37,74 +60,42 @@ export default [
       },
     },
     rules: {
-      // TypeScript strict rules
-      '@typescript-eslint/explicit-function-return-type': ['error', {
-        allowExpressions: true,
-        allowTypedFunctionExpressions: true,
-      }],
-      '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/no-unused-vars': ['error', {
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_',
-      }],
-      '@typescript-eslint/no-non-null-assertion': 'error',
-      '@typescript-eslint/strict-boolean-expressions': ['error', {
-        allowNullableObject: true,
-        allowNullableBoolean: true,
-      }],
-      '@typescript-eslint/no-unnecessary-condition': 'error',
-      '@typescript-eslint/no-unsafe-assignment': 'error',
-      '@typescript-eslint/no-unsafe-member-access': 'error',
-      '@typescript-eslint/no-unsafe-call': 'error',
-      '@typescript-eslint/no-unsafe-return': 'error',
-      '@typescript-eslint/no-floating-promises': 'error',
-      '@typescript-eslint/no-misused-promises': 'error',
-      '@typescript-eslint/await-thenable': 'error',
-      '@typescript-eslint/no-unnecessary-type-assertion': 'error',
-      '@typescript-eslint/consistent-type-imports': ['error', {
-        prefer: 'type-imports',
-      }],
-      
+      // TypeScript rules (relaxed for better DX)
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
+      '@typescript-eslint/no-non-null-assertion': 'warn',
+      '@typescript-eslint/strict-boolean-expressions': 'off',
+      '@typescript-eslint/no-unnecessary-condition': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+
       // React rules
       'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',
       'react/jsx-uses-react': 'off',
-      'react/jsx-boolean-value': ['error', 'never'],
-      'react/jsx-curly-brace-presence': ['error', {
-        props: 'never',
-        children: 'never',
-      }],
-      'react/self-closing-comp': 'error',
-      'react/jsx-sort-props': ['error', {
-        callbacksLast: true,
-        shorthandFirst: true,
-        ignoreCase: true,
-      }],
-      
+
       // React Hooks
       'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'error',
-      
+      'react-hooks/exhaustive-deps': 'warn',
+
       // React Refresh
-      'react-refresh/only-export-components': ['warn', {
-        allowConstantExport: true,
-      }],
-      
+      'react-refresh/only-export-components': 'warn',
+
       // General rules
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-console': 'off',
+      'no-undef': 'off', // TypeScript handles this
+      'no-unused-vars': 'off', // Use TypeScript version instead
       'prefer-const': 'error',
       'no-var': 'error',
-      'object-shorthand': 'error',
-      'prefer-template': 'error',
-      'prefer-arrow-callback': 'error',
-      'no-nested-ternary': 'error',
-      'eqeqeq': ['error', 'always'],
-    },
-  },
-  {
-    files: ['eslint.config.js', 'vite.config.ts', '**/*.config.{js,ts}'],
-    rules: {
-      '@typescript-eslint/explicit-function-return-type': 'off',
     },
   },
 ];

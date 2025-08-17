@@ -1,7 +1,9 @@
-import { useState, useEffect, useRef, KeyboardEvent } from 'react';
+import type { KeyboardEvent } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
-import { CommandProcessor, CommandResult } from './command-processor';
-import { useTheme } from './theme-context';
+import type { CommandResult } from './command-processor';
+import { CommandProcessor } from './command-processor';
+import { useTheme } from "@/hooks/use-theme";
 
 interface TerminalHistory {
   command: string;
@@ -73,7 +75,7 @@ export default function TerminalPane() {
     // Handle navigation
     if (result.navigate) {
       if (result.navigate.startsWith('theme:')) {
-        const themeName = result.navigate.substring(6) as 'lumon' | 'neon' | 'mono';
+        const themeName = result.navigate.substring(6) as 'lumon' | 'neon' | 'pico';
         setTheme(themeName);
       } else {
         setLocation(result.navigate);
@@ -81,12 +83,15 @@ export default function TerminalPane() {
     }
 
     // Add to history
-    setHistory(prev => [...prev, {
-      command,
-      output: result.output,
-      timestamp: new Date(),
-      error: result.error
-    }]);
+    setHistory((prev) => [
+      ...prev,
+      {
+        command,
+        output: result.output,
+        timestamp: new Date(),
+        error: result.error,
+      },
+    ]);
 
     setInput('');
   };
@@ -94,59 +99,62 @@ export default function TerminalPane() {
   const handleAutocomplete = () => {
     const suggestions = processor.getAutocomplete(input);
     if (suggestions.length === 1) {
-      setInput(suggestions[0]);
+      setInput(suggestions[0] || '');
     } else if (suggestions.length > 1) {
       // Show suggestions in output
-      setHistory(prev => [...prev, {
-        command: input,
-        output: suggestions.join('  '),
-        timestamp: new Date()
-      }]);
+      setHistory((prev) => [
+        ...prev,
+        {
+          command: input,
+          output: suggestions.join('  '),
+          timestamp: new Date(),
+        },
+      ]);
     }
   };
 
   const formatOutput = (output: string) => {
     return output.split('\n').map((line, i) => (
-      <div key={i} className="whitespace-pre-wrap">
+      <div className="whitespace-pre-wrap" key={i}>
         {line}
       </div>
     ));
   };
 
   return (
-    <div className="pane-border pane-focus rounded-lg overflow-hidden flex flex-col h-full">
+    <div className="pane-border pane-focus flex h-full flex-col overflow-hidden rounded-lg">
       {/* Pane Header */}
-      <div className="bg-lumon-border px-4 py-2 border-b border-cyan-soft flex items-center justify-between">
+      <div className="bg-lumon-border border-cyan-soft flex items-center justify-between border-b px-4 py-2">
         <div className="flex items-center gap-2">
           <span className="text-cyan-bright font-medium">[pane-01]</span>
           <span className="text-text-soft">terminal</span>
         </div>
         <div className="flex gap-2">
-          <div className="w-3 h-3 rounded-full bg-terminal-red"></div>
-          <div className="w-3 h-3 rounded-full bg-terminal-orange"></div>
-          <div className="w-3 h-3 rounded-full bg-terminal-green"></div>
+          <div className="bg-terminal-red h-3 w-3 rounded-full" />
+          <div className="bg-terminal-orange h-3 w-3 rounded-full" />
+          <div className="bg-terminal-green h-3 w-3 rounded-full" />
         </div>
       </div>
 
       {/* Terminal Content */}
-      <div 
-        ref={outputRef}
-        className="flex-1 p-4 bg-lumon-bg overflow-y-auto"
-        id="terminal-content"
-        role="log"
-        aria-live="polite"
+      <div
         aria-label="Terminal output"
+        aria-live="polite"
+        className="bg-lumon-bg flex-1 overflow-y-auto p-4"
+        id="terminal-content"
+        ref={outputRef}
+        role="log"
       >
         {/* Boot Sequence */}
         <div className="terminal-output mb-4">
           <div className="text-cyan-bright mb-2">LUMON TERMINAL v2.1.7</div>
-          <div className="text-text-soft text-sm mb-1">Initializing secure connection...</div>
-          <div className="text-terminal-green text-sm mb-4">✓ Connection established</div>
+          <div className="text-text-soft mb-1 text-sm">Initializing secure connection...</div>
+          <div className="text-terminal-green mb-4 text-sm">✓ Connection established</div>
         </div>
 
         {/* Welcome Message */}
         <div className="terminal-output mb-6">
-          <div className="text-neon-blue phosphor-glow mb-2 text-sm font-mono">
+          <div className="text-neon-blue phosphor-glow-enhanced mb-2 font-mono text-sm crt-glow">
             <pre>{`████████╗██╗   ██╗██╗     ██╗ ██████╗ 
 ╚══██╔══╝██║   ██║██║     ██║██╔═══██╗
    ██║   ██║   ██║██║     ██║██║   ██║
@@ -163,11 +171,13 @@ export default function TerminalPane() {
           {history.map((entry, index) => (
             <div key={index}>
               <div className="flex">
-                <span className="text-terminal-green">user@portfolio:~$</span>
-                <span className="ml-2 text-text-cyan">{entry.command}</span>
+                <span className="text-terminal-green phosphor-glow">user@portfolio:~$</span>
+                <span className="text-text-cyan ml-2 phosphor-glow-enhanced">{entry.command}</span>
               </div>
               {entry.output && (
-                <div className={`ml-4 mb-2 ${entry.error ? 'text-terminal-red' : 'text-text-soft'}`}>
+                <div
+                  className={`mb-2 ml-4 ${entry.error ? 'text-terminal-red phosphor-glow' : 'text-text-soft'}`}
+                >
                   {formatOutput(entry.output)}
                 </div>
               )}
@@ -176,29 +186,37 @@ export default function TerminalPane() {
         </div>
 
         {/* Current Command Line */}
-        <div className="flex items-center">
-          <span className="text-terminal-green">user@portfolio:~$</span>
+        <div className="flex items-center crt-glow">
+          <span className="text-terminal-green phosphor-glow">user@portfolio:~$</span>
           <input
+            aria-label="Terminal command input"
+            className="text-text-cyan phosphor-glow-enhanced ml-2 flex-1 border-none bg-transparent outline-none"
+            placeholder="Type a command..."
             ref={inputRef}
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="ml-2 bg-transparent border-none outline-none text-text-cyan flex-1"
-            placeholder="Type a command..."
-            aria-label="Terminal command input"
           />
-          <span className="cursor-block"></span>
+          <span className="cursor-block" />
         </div>
       </div>
 
       {/* Command Help Footer */}
-      <div className="bg-lumon-border px-4 py-2 border-t border-cyan-soft text-xs text-text-soft">
+      <div className="bg-lumon-border border-cyan-soft text-text-soft border-t px-4 py-2 text-xs">
         <div className="flex flex-wrap gap-4">
-          <span><kbd className="bg-lumon-dark px-1 rounded">Tab</kbd> autocomplete</span>
-          <span><kbd className="bg-lumon-dark px-1 rounded">↑↓</kbd> history</span>
-          <span><kbd className="bg-lumon-dark px-1 rounded">Ctrl+C</kbd> clear</span>
-          <span><kbd className="bg-lumon-dark px-1 rounded">Ctrl+L</kbd> clear screen</span>
+          <span>
+            <kbd className="bg-lumon-dark rounded px-1">Tab</kbd> autocomplete
+          </span>
+          <span>
+            <kbd className="bg-lumon-dark rounded px-1">↑↓</kbd> history
+          </span>
+          <span>
+            <kbd className="bg-lumon-dark rounded px-1">Ctrl+C</kbd> clear
+          </span>
+          <span>
+            <kbd className="bg-lumon-dark rounded px-1">Ctrl+L</kbd> clear screen
+          </span>
         </div>
       </div>
     </div>

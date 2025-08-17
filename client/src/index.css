@@ -4,35 +4,34 @@
 
 :root {
   /* PICO-8 Theme Colors (Primary) */
-  --lumon-dark: #000000;        /* PICO black */
-  --lumon-bg: #1d2b53;          /* PICO dark blue */
-  --lumon-border: #7e2553;      /* PICO dark purple */
-  --cyan-bright: #29adff;       /* PICO blue */
-  --cyan-soft: #83769c;         /* PICO indigo */
-  --neon-blue: #29adff;         /* PICO blue */
-  --text-cyan: #fff1e8;         /* PICO white */
-  --text-soft: #c2c3c7;         /* PICO light grey */
-  --terminal-green: #00e756;    /* PICO green */
-  --terminal-orange: #ffa300;   /* PICO orange */
-  --terminal-red: #ff004d;      /* PICO red */
-  --terminal-yellow: #fff024;   /* PICO yellow */
-  --terminal-pink: #ff77a8;     /* PICO pink */
-  --terminal-brown: #ab5236;    /* PICO brown */
+  --lumon-dark: #000000; /* PICO black */
+  --lumon-bg: #1d2b53; /* PICO dark blue */
+  --lumon-border: #7e2553; /* PICO dark purple */
+  --cyan-bright: #29adff; /* PICO blue */
+  --cyan-soft: #83769c; /* PICO indigo */
+  --neon-blue: #29adff; /* PICO blue */
+  --text-cyan: #fff1e8; /* PICO white */
+  --text-soft: #c2c3c7; /* PICO light grey */
+  --terminal-green: #00e756; /* PICO green */
+  --terminal-orange: #ffa300; /* PICO orange */
+  --terminal-red: #ff004d; /* PICO red */
+  --terminal-yellow: #fff024; /* PICO yellow */
+  --terminal-pink: #ff77a8; /* PICO pink */
+  --terminal-brown: #ab5236; /* PICO brown */
   --terminal-dark-green: #008751; /* PICO dark green */
-  
-  /* Neon Theme Colors (PICO-8 Pink/Purple variant) */
-  --neon-bg: #000000;           /* PICO black */
-  --neon-border: #7e2553;       /* PICO dark purple */
-  --neon-pink: #ff77a8;         /* PICO pink */
-  --neon-purple: #83769c;       /* PICO indigo */
-  --neon-cyan: #29adff;         /* PICO blue */
-  
-  /* Mono Theme Colors (PICO-8 Green variant) */
-  --mono-bg: #000000;           /* PICO black */
-  --mono-border: #008751;       /* PICO dark green */
-  --mono-green: #00e756;        /* PICO green */
-  --mono-text: #c2c3c7;         /* PICO light grey */
-  
+
+  /* Neon Theme Colors (Pastel Pink-Lilac) */
+  --neon-bg: #111010; /* very dark grey */
+  --neon-foreground: #FE9AE2; /* bright pastel pink */
+  --neon-selection-bg: #6668CE; /* purple-blue */
+  --neon-cursor: #FF401D; /* bright orange-red */
+  --neon-pink: #CC66C2; /* palette pink */
+  --neon-purple: #8B97EB; /* palette purple-blue */
+  --neon-accent: #A04ED5; /* palette accent */
+  --neon-blue: #5B5BD3; /* palette blue */
+  --neon-green: #54B554; /* palette green */
+
+
   /* PICO-8 Base16 Colors */
   --pico-base00: #000000; /* Default Background */
   --pico-base01: #1d2b53; /* Lighter Background */
@@ -50,8 +49,8 @@
   --pico-base0D: #83769c; /* Functions, Methods */
   --pico-base0E: #ff77a8; /* Keywords, Pink */
   --pico-base0F: #ab5236; /* Deprecated */
-  
-  /* Base tokens */
+
+  /* Base tokens - Back to Lumon as default */
   --background: var(--lumon-dark);
   --foreground: var(--text-cyan);
   --card: var(--lumon-bg);
@@ -83,30 +82,19 @@
 /* Theme variants */
 .theme-neon {
   --background: var(--neon-bg);
+  --foreground: var(--neon-foreground);
   --card: var(--neon-bg);
-  --border: var(--neon-border);
+  --border: var(--neon-selection-bg);
   --primary: var(--neon-pink);
   --accent: var(--neon-purple);
-  --text-cyan: var(--terminal-pink);
-  --cyan-bright: var(--terminal-pink);
-  --terminal-green: var(--neon-cyan);
-  --lumon-bg: var(--neon-border);
-  --lumon-border: var(--neon-pink);
+  --text-cyan: var(--neon-foreground);
+  --cyan-bright: var(--neon-pink);
+  --terminal-green: var(--neon-green);
+  --lumon-bg: var(--neon-selection-bg);
+  --lumon-border: var(--neon-accent);
 }
 
-.theme-mono {
-  --background: var(--mono-bg);
-  --foreground: var(--mono-text);
-  --card: var(--mono-bg);
-  --border: var(--mono-border);
-  --primary: var(--mono-green);
-  --accent: var(--mono-green);
-  --text-cyan: var(--mono-text);
-  --cyan-bright: var(--mono-green);
-  --terminal-green: var(--mono-green);
-  --lumon-bg: var(--mono-border);
-  --lumon-border: var(--mono-green);
-}
+
 
 .theme-pico {
   --background: var(--pico-base00);
@@ -134,7 +122,7 @@
   }
 
   body {
-    font-family: var(--font-mono), "JetBrains Mono", "Courier New", monospace;
+    font-family: var(--font-mono), 'JetBrains Mono', 'Courier New', monospace;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-color: var(--background);
@@ -146,7 +134,12 @@
 /* CRT Screen Effects */
 .crt-screen {
   position: relative;
-  background: linear-gradient(45deg, var(--lumon-dark) 0%, var(--lumon-bg) 50%, var(--lumon-dark) 100%);
+  background: linear-gradient(
+    45deg,
+    var(--lumon-dark) 0%,
+    var(--lumon-bg) 50%,
+    var(--lumon-dark) 100%
+  );
 }
 
 .crt-screen::before {
@@ -157,14 +150,13 @@
   right: 0;
   bottom: 0;
   pointer-events: none;
-  background: 
-    repeating-linear-gradient(
-      0deg,
-      rgba(41, 173, 255, 0.03) 0px,
-      rgba(41, 173, 255, 0.03) 2px,
-      transparent 2px,
-      transparent 4px
-    );
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(41, 173, 255, 0.03) 0px,
+    rgba(41, 173, 255, 0.03) 2px,
+    transparent 2px,
+    transparent 4px
+  );
   z-index: 10;
 }
 
@@ -181,7 +173,7 @@
 }
 
 .phosphor-glow {
-  text-shadow: 
+  text-shadow:
     0 0 5px currentColor,
     0 0 10px currentColor,
     0 0 15px currentColor;
@@ -193,39 +185,318 @@
 
 .pane-border {
   border: 1px solid var(--cyan-soft);
-  box-shadow: 
+  box-shadow:
     0 0 10px rgba(41, 173, 255, 0.3),
     inset 0 0 10px rgba(41, 173, 255, 0.1);
 }
 
 .pane-focus {
   border-color: var(--cyan-bright);
-  box-shadow: 
+  box-shadow:
     0 0 15px rgba(41, 173, 255, 0.5),
     inset 0 0 15px rgba(41, 173, 255, 0.2);
 }
 
-/* PICO-8 specific CRT effects */
+/* Enhanced Glow Effects for CRT */
+.crt-glow {
+  position: relative;
+}
+
+.crt-glow::before {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  background: inherit;
+  filter: blur(8px) brightness(1.5);
+  opacity: 0.6;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.crt-glow::after {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  background: inherit;
+  filter: blur(20px) brightness(1.2);
+  opacity: 0.3;
+  z-index: -2;
+  pointer-events: none;
+}
+
+/* Neon-specific enhanced glow */
+.theme-neon .crt-glow::before {
+  filter: blur(8px) brightness(1.8) saturate(1.5);
+  opacity: 0.8;
+}
+
+.theme-neon .crt-glow::after {
+  filter: blur(25px) brightness(1.5) saturate(1.3);
+  opacity: 0.4;
+}
+
+/* Phosphor glow for text */
+.phosphor-glow-enhanced {
+  text-shadow:
+    0 0 3px currentColor,
+    0 0 8px currentColor,
+    0 0 15px currentColor,
+    0 0 25px rgba(254, 154, 226, 0.8),
+    0 0 35px rgba(204, 102, 194, 0.6);
+  animation: phosphor-pulse 3s ease-in-out infinite;
+}
+
+@keyframes phosphor-pulse {
+  0%, 100% { 
+    text-shadow:
+      0 0 3px currentColor,
+      0 0 8px currentColor,
+      0 0 15px currentColor,
+      0 0 25px rgba(254, 154, 226, 0.8),
+      0 0 35px rgba(204, 102, 194, 0.6);
+  }
+  50% { 
+    text-shadow:
+      0 0 5px currentColor,
+      0 0 12px currentColor,
+      0 0 20px currentColor,
+      0 0 35px rgba(254, 154, 226, 1.0),
+      0 0 50px rgba(204, 102, 194, 0.8),
+      0 0 70px rgba(160, 78, 213, 0.4);
+  }
+}
+.theme-neon .crt-screen::before {
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(254, 154, 226, 0.05) 0px,
+    rgba(254, 154, 226, 0.05) 2px,
+    transparent 2px,
+    transparent 4px
+  );
+  animation: neon-scanlines 2s linear infinite;
+}
+
+.theme-neon .crt-screen::after {
+  background: radial-gradient(
+    ellipse at center, 
+    transparent 50%, 
+    rgba(17, 16, 16, 0.4) 100%
+  );
+}
+
+@keyframes neon-scanlines {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes neon-pulse {
+  0%, 100% { 
+    text-shadow:
+      0 0 5px currentColor,
+      0 0 10px currentColor,
+      0 0 15px rgba(254, 154, 226, 0.8);
+  }
+  50% { 
+    text-shadow:
+      0 0 10px currentColor,
+      0 0 20px currentColor,
+      0 0 30px rgba(254, 154, 226, 1),
+      0 0 40px rgba(204, 102, 194, 0.8);
+  }
+}
+
+.theme-neon .terminal-output {
+  text-shadow: 
+    0 0 3px currentColor,
+    0 0 8px rgba(254, 154, 226, 0.6);
+  animation: neon-pulse 3s ease-in-out infinite;
+}
+
+/* LUMON theme CRT effects */
+.theme-lumon .crt-screen::before {
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(41, 173, 255, 0.04) 0px,
+    rgba(41, 173, 255, 0.04) 2px,
+    transparent 2px,
+    transparent 4px
+  );
+  animation: lumon-scanlines 2.5s linear infinite;
+}
+
+.theme-lumon .crt-glow::before {
+  filter: blur(8px) brightness(1.4) saturate(1.2);
+  opacity: 0.6;
+}
+
+.theme-lumon .crt-glow::after {
+  filter: blur(20px) brightness(1.1) saturate(1.1);
+  opacity: 0.3;
+}
+
+.theme-lumon .phosphor-glow-enhanced {
+  text-shadow:
+    0 0 3px currentColor,
+    0 0 8px currentColor,
+    0 0 15px currentColor,
+    0 0 25px rgba(41, 173, 255, 0.6),
+    0 0 35px rgba(131, 118, 156, 0.4);
+  animation: lumon-pulse 4s ease-in-out infinite;
+}
+
+@keyframes lumon-scanlines {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes lumon-pulse {
+  0%, 100% { 
+    text-shadow:
+      0 0 3px currentColor,
+      0 0 8px currentColor,
+      0 0 15px currentColor,
+      0 0 25px rgba(41, 173, 255, 0.6),
+      0 0 35px rgba(131, 118, 156, 0.4);
+  }
+  50% { 
+    text-shadow:
+      0 0 5px currentColor,
+      0 0 12px currentColor,
+      0 0 20px currentColor,
+      0 0 35px rgba(41, 173, 255, 0.8),
+      0 0 50px rgba(131, 118, 156, 0.6);
+  }
+}
+
+/* PICO theme CRT effects */
+.theme-pico .crt-screen::before {
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 240, 36, 0.03) 0px,
+    rgba(255, 240, 36, 0.03) 2px,
+    transparent 2px,
+    transparent 4px
+  );
+  animation: pico-scanlines 3s linear infinite;
+}
+
+.theme-pico .crt-glow::before {
+  filter: blur(8px) brightness(1.6) saturate(1.4);
+  opacity: 0.7;
+}
+
+.theme-pico .crt-glow::after {
+  filter: blur(22px) brightness(1.3) saturate(1.2);
+  opacity: 0.35;
+}
+
+.theme-pico .phosphor-glow-enhanced {
+  text-shadow:
+    0 0 3px currentColor,
+    0 0 8px currentColor,
+    0 0 15px currentColor,
+    0 0 25px rgba(255, 240, 36, 0.5),
+    0 0 35px rgba(0, 231, 86, 0.3);
+  animation: pico-pulse 3.5s ease-in-out infinite;
+}
+
+@keyframes pico-scanlines {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes pico-pulse {
+  0%, 100% { 
+    text-shadow:
+      0 0 3px currentColor,
+      0 0 8px currentColor,
+      0 0 15px currentColor,
+      0 0 25px rgba(255, 240, 36, 0.5),
+      0 0 35px rgba(0, 231, 86, 0.3);
+  }
+  50% { 
+    text-shadow:
+      0 0 5px currentColor,
+      0 0 12px currentColor,
+      0 0 20px currentColor,
+      0 0 35px rgba(255, 240, 36, 0.7),
+      0 0 50px rgba(0, 231, 86, 0.5),
+      0 0 70px rgba(255, 0, 77, 0.2);
+  }
+}
+/* Neon Border Animations */
 .theme-neon .pane-border {
-  box-shadow: 
-    0 0 10px rgba(255, 119, 168, 0.3),
-    inset 0 0 10px rgba(255, 119, 168, 0.1);
+  box-shadow:
+    0 0 10px rgba(254, 154, 226, 0.4),
+    inset 0 0 10px rgba(254, 154, 226, 0.2),
+    0 0 20px rgba(204, 102, 194, 0.3);
+  animation: neon-border-glow 4s ease-in-out infinite alternate;
 }
 
 .theme-neon .pane-focus {
-  box-shadow: 
-    0 0 15px rgba(255, 119, 168, 0.5),
-    inset 0 0 15px rgba(255, 119, 168, 0.2);
+  box-shadow:
+    0 0 15px rgba(254, 154, 226, 0.6),
+    inset 0 0 15px rgba(254, 154, 226, 0.3),
+    0 0 30px rgba(204, 102, 194, 0.4),
+    0 0 40px rgba(160, 78, 213, 0.2);
+  animation: neon-focus-pulse 2s ease-in-out infinite;
+}
+
+@keyframes neon-border-glow {
+  0% {
+    box-shadow:
+      0 0 10px rgba(254, 154, 226, 0.4),
+      inset 0 0 10px rgba(254, 154, 226, 0.2),
+      0 0 20px rgba(204, 102, 194, 0.3);
+  }
+  100% {
+    box-shadow:
+      0 0 15px rgba(254, 154, 226, 0.6),
+      inset 0 0 15px rgba(254, 154, 226, 0.3),
+      0 0 25px rgba(204, 102, 194, 0.5);
+  }
+}
+
+@keyframes neon-focus-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 15px rgba(254, 154, 226, 0.6),
+      inset 0 0 15px rgba(254, 154, 226, 0.3),
+      0 0 30px rgba(204, 102, 194, 0.4),
+      0 0 40px rgba(160, 78, 213, 0.2);
+  }
+  50% {
+    box-shadow:
+      0 0 20px rgba(254, 154, 226, 0.8),
+      inset 0 0 20px rgba(254, 154, 226, 0.4),
+      0 0 40px rgba(204, 102, 194, 0.6),
+      0 0 60px rgba(160, 78, 213, 0.4);
+  }
+}
+
+.theme-neon .phosphor-glow {
+  text-shadow:
+    0 0 5px currentColor,
+    0 0 10px currentColor,
+    0 0 15px rgba(254, 154, 226, 0.8),
+    0 0 20px rgba(204, 102, 194, 0.6);
+}
+
+.theme-neon .cursor-block {
+  background-color: var(--neon-cursor);
+  box-shadow:
+    0 0 10px var(--neon-cursor),
+    0 0 20px rgba(255, 64, 29, 0.6);
 }
 
 .theme-mono .pane-border {
-  box-shadow: 
+  box-shadow:
     0 0 10px rgba(0, 231, 86, 0.3),
     inset 0 0 10px rgba(0, 231, 86, 0.1);
 }
 
 .theme-mono .pane-focus {
-  box-shadow: 
+  box-shadow:
     0 0 15px rgba(0, 231, 86, 0.5),
     inset 0 0 15px rgba(0, 231, 86, 0.2);
 }
@@ -240,18 +511,37 @@
 }
 
 @keyframes cursor-blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes scanlines {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100vh); }
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
 }
 
 @keyframes phosphor-glow {
-  0% { text-shadow: 0 0 5px currentColor, 0 0 10px currentColor; }
-  100% { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor; }
+  0% {
+    text-shadow:
+      0 0 5px currentColor,
+      0 0 10px currentColor;
+  }
+  100% {
+    text-shadow:
+      0 0 10px currentColor,
+      0 0 20px currentColor,
+      0 0 30px currentColor;
+  }
 }
 
 /* Scrollbar styling */
@@ -302,48 +592,118 @@
 }
 
 /* PICO-8 Syntax highlighting */
-.syntax-keyword { color: var(--terminal-pink); }
-.syntax-string { color: var(--terminal-green); }
-.syntax-comment { color: var(--terminal-dark-green); }
-.syntax-function { color: var(--cyan-bright); }
-.syntax-variable { color: var(--text-cyan); }
-.syntax-number { color: var(--terminal-orange); }
-.syntax-type { color: var(--terminal-yellow); }
+.syntax-keyword {
+  color: var(--terminal-pink);
+}
+.syntax-string {
+  color: var(--terminal-green);
+}
+.syntax-comment {
+  color: var(--terminal-dark-green);
+}
+.syntax-function {
+  color: var(--cyan-bright);
+}
+.syntax-variable {
+  color: var(--text-cyan);
+}
+.syntax-number {
+  color: var(--terminal-orange);
+}
+.syntax-type {
+  color: var(--terminal-yellow);
+}
 
 /* PICO-8 Color Utility Classes */
-.text-pico-black { color: var(--lumon-dark); }
-.text-pico-dark-blue { color: var(--lumon-bg); }
-.text-pico-dark-purple { color: var(--lumon-border); }
-.text-pico-dark-green { color: var(--terminal-dark-green); }
-.text-pico-brown { color: var(--terminal-brown); }
-.text-pico-grey { color: var(--text-soft); }
-.text-pico-white { color: var(--text-cyan); }
-.text-pico-red { color: var(--terminal-red); }
-.text-pico-orange { color: var(--terminal-orange); }
-.text-pico-yellow { color: var(--terminal-yellow); }
-.text-pico-green { color: var(--terminal-green); }
-.text-pico-blue { color: var(--cyan-bright); }
-.text-pico-indigo { color: var(--cyan-soft); }
-.text-pico-pink { color: var(--terminal-pink); }
+.text-pico-black {
+  color: var(--lumon-dark);
+}
+.text-pico-dark-blue {
+  color: var(--lumon-bg);
+}
+.text-pico-dark-purple {
+  color: var(--lumon-border);
+}
+.text-pico-dark-green {
+  color: var(--terminal-dark-green);
+}
+.text-pico-brown {
+  color: var(--terminal-brown);
+}
+.text-pico-grey {
+  color: var(--text-soft);
+}
+.text-pico-white {
+  color: var(--text-cyan);
+}
+.text-pico-red {
+  color: var(--terminal-red);
+}
+.text-pico-orange {
+  color: var(--terminal-orange);
+}
+.text-pico-yellow {
+  color: var(--terminal-yellow);
+}
+.text-pico-green {
+  color: var(--terminal-green);
+}
+.text-pico-blue {
+  color: var(--cyan-bright);
+}
+.text-pico-indigo {
+  color: var(--cyan-soft);
+}
+.text-pico-pink {
+  color: var(--terminal-pink);
+}
 
-.bg-pico-black { background-color: var(--lumon-dark); }
-.bg-pico-dark-blue { background-color: var(--lumon-bg); }
-.bg-pico-dark-purple { background-color: var(--lumon-border); }
-.bg-pico-dark-green { background-color: var(--terminal-dark-green); }
-.bg-pico-brown { background-color: var(--terminal-brown); }
-.bg-pico-grey { background-color: var(--text-soft); }
-.bg-pico-white { background-color: var(--text-cyan); }
-.bg-pico-red { background-color: var(--terminal-red); }
-.bg-pico-orange { background-color: var(--terminal-orange); }
-.bg-pico-yellow { background-color: var(--terminal-yellow); }
-.bg-pico-green { background-color: var(--terminal-green); }
-.bg-pico-blue { background-color: var(--cyan-bright); }
-.bg-pico-indigo { background-color: var(--cyan-soft); }
-.bg-pico-pink { background-color: var(--terminal-pink); }
+.bg-pico-black {
+  background-color: var(--lumon-dark);
+}
+.bg-pico-dark-blue {
+  background-color: var(--lumon-bg);
+}
+.bg-pico-dark-purple {
+  background-color: var(--lumon-border);
+}
+.bg-pico-dark-green {
+  background-color: var(--terminal-dark-green);
+}
+.bg-pico-brown {
+  background-color: var(--terminal-brown);
+}
+.bg-pico-grey {
+  background-color: var(--text-soft);
+}
+.bg-pico-white {
+  background-color: var(--text-cyan);
+}
+.bg-pico-red {
+  background-color: var(--terminal-red);
+}
+.bg-pico-orange {
+  background-color: var(--terminal-orange);
+}
+.bg-pico-yellow {
+  background-color: var(--terminal-yellow);
+}
+.bg-pico-green {
+  background-color: var(--terminal-green);
+}
+.bg-pico-blue {
+  background-color: var(--cyan-bright);
+}
+.bg-pico-indigo {
+  background-color: var(--cyan-soft);
+}
+.bg-pico-pink {
+  background-color: var(--terminal-pink);
+}
 
 /* Enhanced CRT effects with PICO-8 colors */
 .pico-glow {
-  text-shadow: 
+  text-shadow:
     0 0 5px currentColor,
     0 0 10px currentColor,
     0 0 15px currentColor;

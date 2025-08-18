@@ -3,56 +3,75 @@
 @tailwind utilities;
 
 :root {
-  /* PICO-8 Theme Colors (Primary) */
-  --lumon-dark: #000000; /* PICO black */
-  --lumon-bg: #1d2b53; /* PICO dark blue */
-  --lumon-border: #7e2553; /* PICO dark purple */
-  --cyan-bright: #29adff; /* PICO blue */
-  --cyan-soft: #83769c; /* PICO indigo */
-  --neon-blue: #29adff; /* PICO blue */
-  --text-cyan: #fff1e8; /* PICO white */
-  --text-soft: #c2c3c7; /* PICO light grey */
-  --terminal-green: #00e756; /* PICO green */
-  --terminal-orange: #ffa300; /* PICO orange */
-  --terminal-red: #ff004d; /* PICO red */
-  --terminal-yellow: #fff024; /* PICO yellow */
-  --terminal-pink: #ff77a8; /* PICO pink */
-  --terminal-brown: #ab5236; /* PICO brown */
-  --terminal-dark-green: #008751; /* PICO dark green */
+  /* Vintage Terminal Deep Blue Theme */
+  --crt-black: #000811; /* Deep space black */
+  --crt-blue-dark: #001a2e; /* Deep navy blue */
+  --crt-blue-medium: #003366; /* Medium blue */
+  --crt-blue-bright: #0066cc; /* Bright blue */
+  --crt-cyan: #00ccff; /* Electric cyan */
+  --crt-cyan-bright: #33ddff; /* Bright cyan */
+  --crt-white: #e6f3ff; /* Blue-tinted white */
+  --crt-amber: #ffcc00; /* Classic amber */
+  --crt-green: #00ff41; /* Terminal green */
+  --crt-red: #ff3333; /* Error red */
+  --crt-orange: #ff9900; /* Warning orange */
+  --crt-purple: #9966ff; /* System purple */
+  
+  /* Primary Colors */
+  --lumon-dark: var(--crt-black);
+  --lumon-bg: var(--crt-blue-dark);
+  --lumon-border: var(--crt-blue-medium);
+  --cyan-bright: var(--crt-cyan-bright);
+  --cyan-soft: var(--crt-blue-bright);
+  --neon-blue: var(--crt-cyan);
+  --text-cyan: var(--crt-white);
+  --text-soft: var(--crt-blue-bright);
+  --terminal-green: var(--crt-green);
+  --terminal-orange: var(--crt-orange);
+  --terminal-red: var(--crt-red);
+  --terminal-yellow: var(--crt-amber);
+  --terminal-pink: var(--crt-purple);
+  --terminal-brown: #cc6600;
+  --terminal-dark-green: #00cc33;
 
-  /* Neon Theme Colors (Pastel Pink-Lilac) */
-  --neon-bg: #111010; /* very dark grey */
-  --neon-foreground: #FE9AE2; /* bright pastel pink */
-  --neon-selection-bg: #6668CE; /* purple-blue */
-  --neon-cursor: #FF401D; /* bright orange-red */
-  --neon-pink: #CC66C2; /* palette pink */
-  --neon-purple: #8B97EB; /* palette purple-blue */
-  --neon-accent: #A04ED5; /* palette accent */
-  --neon-blue: #5B5BD3; /* palette blue */
-  --neon-green: #54B554; /* palette green */
+  /* Neon Theme Colors (Legacy support) */
+  --neon-bg: var(--crt-black);
+  --neon-foreground: var(--crt-cyan);
+  --neon-selection-bg: var(--crt-blue-medium);
+  --neon-cursor: var(--crt-cyan-bright);
+  --neon-pink: var(--crt-purple);
+  --neon-purple: var(--crt-purple);
+  --neon-accent: var(--crt-cyan);
+  --neon-blue: var(--crt-blue-bright);
+  --neon-green: var(--crt-green);
 
-
-  /* PICO-8 Base16 Colors */
-  --pico-base00: #000000; /* Default Background */
-  --pico-base01: #1d2b53; /* Lighter Background */
-  --pico-base02: #7e2553; /* Selection Background */
-  --pico-base03: #008751; /* Comments, Line Highlighting */
-  --pico-base04: #ab5236; /* Dark Foreground */
-  --pico-base05: #5f574f; /* Default Foreground */
-  --pico-base06: #c2c3c7; /* Light Foreground */
-  --pico-base07: #fff1e8; /* Light Background */
-  --pico-base08: #ff004d; /* Variables, Tags, Deleted */
-  --pico-base09: #ffa300; /* Numbers, Constants */
-  --pico-base0A: #fff024; /* Classes, Types */
-  --pico-base0B: #00e756; /* Strings, Inserted */
-  --pico-base0C: #29adff; /* Support, Cyan */
-  --pico-base0D: #83769c; /* Functions, Methods */
-  --pico-base0E: #ff77a8; /* Keywords, Pink */
-  --pico-base0F: #ab5236; /* Deprecated */
+  /* PICO-8 Base16 Colors (Updated) */
+  --pico-base00: var(--crt-black);
+  --pico-base01: var(--crt-blue-dark);
+  --pico-base02: var(--crt-blue-medium);
+  --pico-base03: var(--terminal-dark-green);
+  --pico-base04: var(--terminal-brown);
+  --pico-base05: var(--text-soft);
+  --pico-base06: var(--text-cyan);
+  --pico-base07: var(--crt-white);
+  --pico-base08: var(--terminal-red);
+  --pico-base09: var(--terminal-orange);
+  --pico-base0A: var(--terminal-yellow);
+  --pico-base0B: var(--terminal-green);
+  --pico-base0C: var(--cyan-bright);
+  --pico-base0D: var(--cyan-soft);
+  --pico-base0E: var(--terminal-pink);
+  --pico-base0F: var(--terminal-brown);
 
   /* Base framework variables */
-  --radius: 0.5rem;
-  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  --radius: 0.25rem;
+  --font-mono: 'JetBrains Mono', 'Monaco', 'Menlo', 'Consolas', monospace;
+  
+  /* CRT Effects Variables */
+  --scan-line-opacity: 0.04;
+  --flicker-intensity: 0.02;
+  --glow-intensity: 0.8;
+  --chromatic-aberration: 0.5px;
 }
 
 @layer base {
@@ -70,17 +89,22 @@
   }
 }
 
-/* CRT Screen Effects */
+/* Vintage CRT Screen Effects */
 .crt-screen {
   position: relative;
-  background: linear-gradient(
-    45deg,
-    var(--lumon-dark) 0%,
-    var(--lumon-bg) 50%,
-    var(--lumon-dark) 100%
-  );
+  background: 
+    radial-gradient(ellipse at center, var(--crt-blue-dark) 0%, var(--crt-black) 70%),
+    linear-gradient(90deg, transparent 0%, rgba(0, 204, 255, 0.03) 50%, transparent 100%);
+  overflow: hidden;
+  
+  /* CRT Curvature Effect */
+  filter: contrast(1.1) brightness(1.05);
+  
+  /* Subtle flicker animation */
+  animation: crt-flicker 0.15s linear infinite alternate;
 }
 
+/* Scan Lines */
 .crt-screen::before {
   content: '';
   position: fixed;
@@ -91,14 +115,16 @@
   pointer-events: none;
   background: repeating-linear-gradient(
     0deg,
-    rgba(41, 173, 255, 0.03) 0px,
-    rgba(41, 173, 255, 0.03) 2px,
+    transparent 0px,
     transparent 2px,
-    transparent 4px
+    rgba(0, 204, 255, var(--scan-line-opacity)) 2px,
+    rgba(0, 204, 255, var(--scan-line-opacity)) 4px
   );
-  z-index: 10;
+  z-index: 15;
+  animation: scan-lines 0.1s linear infinite;
 }
 
+/* Vignette and Screen Glow */
 .crt-screen::after {
   content: '';
   position: fixed;
@@ -107,33 +133,75 @@
   right: 0;
   bottom: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 60%, rgba(10, 15, 28, 0.3) 100%);
-  z-index: 11;
+  background: 
+    radial-gradient(ellipse at center, transparent 40%, rgba(0, 8, 17, 0.4) 80%, rgba(0, 8, 17, 0.8) 100%),
+    linear-gradient(45deg, transparent 0%, rgba(0, 204, 255, 0.02) 100%);
+  z-index: 16;
+  
+  /* Chromatic aberration simulation */
+  box-shadow: 
+    inset 0 0 50px rgba(0, 204, 255, 0.1),
+    inset 0 0 100px rgba(0, 204, 255, 0.05);
 }
 
+/* Enhanced Vintage Terminal Glow Effects */
 .phosphor-glow {
   text-shadow:
-    0 0 5px currentColor,
-    0 0 10px currentColor,
-    0 0 15px currentColor;
+    0 0 2px currentColor,
+    0 0 4px currentColor,
+    0 0 8px currentColor,
+    0 0 12px rgba(0, 204, 255, 0.5);
+  animation: text-glow 2s ease-in-out infinite alternate;
 }
 
 .terminal-output {
-  text-shadow: 0 0 3px currentColor;
+  text-shadow: 
+    0 0 1px currentColor,
+    0 0 3px currentColor,
+    0 0 6px rgba(0, 204, 255, 0.3);
+  filter: contrast(1.1);
 }
 
+/* Vintage Terminal Pane Styling */
 .pane-border {
-  border: 1px solid var(--cyan-soft);
+  border: 2px solid var(--cyan-soft);
+  border-radius: var(--radius);
+  background: 
+    linear-gradient(135deg, var(--crt-blue-dark) 0%, var(--crt-black) 100%),
+    radial-gradient(ellipse at top left, rgba(0, 204, 255, 0.05) 0%, transparent 50%);
   box-shadow:
-    0 0 10px rgba(41, 173, 255, 0.3),
-    inset 0 0 10px rgba(41, 173, 255, 0.1);
+    0 0 20px rgba(0, 204, 255, 0.2),
+    inset 0 0 20px rgba(0, 204, 255, 0.05),
+    inset 1px 1px 0 rgba(0, 204, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.pane-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent 0px,
+    transparent 1px,
+    rgba(0, 204, 255, 0.02) 1px,
+    rgba(0, 204, 255, 0.02) 2px
+  );
+  pointer-events: none;
+  z-index: 1;
 }
 
 .pane-focus {
   border-color: var(--cyan-bright);
   box-shadow:
-    0 0 15px rgba(41, 173, 255, 0.5),
-    inset 0 0 15px rgba(41, 173, 255, 0.2);
+    0 0 30px rgba(51, 221, 255, 0.4),
+    inset 0 0 30px rgba(51, 221, 255, 0.1),
+    inset 2px 2px 0 rgba(51, 221, 255, 0.2);
+  animation: pane-pulse 2s ease-in-out infinite alternate;
 }
 
 /* Enhanced Glow Effects for CRT */

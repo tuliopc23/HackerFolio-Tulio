@@ -5,7 +5,7 @@ interface ResizeHandleProps {
   className?: string;
 }
 
-export default function ResizeHandle({ onResize, className = '' }: ResizeHandleProps): React.ReactElement {
+export default function ResizeHandle({ onResize, className = '' }: ResizeHandleProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
 
@@ -15,16 +15,13 @@ export default function ResizeHandle({ onResize, className = '' }: ResizeHandleP
     e.preventDefault();
   }, []);
 
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (!isDragging) return;
-
-      const delta = e.clientX - startX;
-      onResize(delta);
-      setStartX(e.clientX);
-    },
-    [isDragging, startX, onResize],
-  );
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isDragging) return;
+    
+    const delta = e.clientX - startX;
+    onResize(delta);
+    setStartX(e.clientX);
+  }, [isDragging, startX, onResize]);
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
@@ -40,17 +37,16 @@ export default function ResizeHandle({ onResize, className = '' }: ResizeHandleP
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-    return undefined;
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
   return (
     <div
-      aria-label="Resize panes"
-      aria-orientation="vertical"
       className={`resize-handle ${className} ${isDragging ? 'opacity-100' : ''}`}
-      role="separator"
-      style={{ cursor: 'col-resize' }}
       onMouseDown={handleMouseDown}
+      role="separator"
+      aria-orientation="vertical"
+      aria-label="Resize panes"
+      style={{ cursor: 'col-resize' }}
     />
   );
 }

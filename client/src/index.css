@@ -1,119 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* Vintage Terminal Deep Blue Theme */
-  --crt-black: #000811; /* Deep space black */
-  --crt-blue-dark: #001a2e; /* Deep navy blue */
-  --crt-blue-medium: #003366; /* Medium blue */
-  --crt-blue-bright: #0066cc; /* Bright blue */
-  --crt-cyan: #00ccff; /* Electric cyan */
-  --crt-cyan-bright: #33ddff; /* Bright cyan */
-  --crt-white: #e6f3ff; /* Blue-tinted white */
-  --crt-amber: #ffcc00; /* Classic amber */
-  --crt-green: #00ff41; /* Terminal green */
-  --crt-red: #ff3333; /* Error red */
-  --crt-orange: #ff9900; /* Warning orange */
-  --crt-purple: #9966ff; /* System purple */
+  /* Lumon Theme Colors */
+  --lumon-dark: hsl(219, 41%, 7%);
+  --lumon-bg: hsl(218, 27%, 15%);
+  --lumon-border: hsl(215, 25%, 22%);
+  --cyan-bright: hsl(192, 100%, 50%);
+  --cyan-soft: hsl(178, 66%, 56%);
+  --neon-blue: hsl(195, 100%, 50%);
+  --text-cyan: hsl(180, 100%, 94%);
+  --text-soft: hsl(187, 100%, 85%);
+  --terminal-green: hsl(120, 100%, 63%);
+  --terminal-orange: hsl(30, 100%, 50%);
+  --terminal-red: hsl(356, 90%, 54%);
   
-  /* Primary Colors */
-  --lumon-dark: var(--crt-black);
-  --lumon-bg: var(--crt-blue-dark);
-  --lumon-border: var(--crt-blue-medium);
-  --cyan-bright: var(--crt-cyan-bright);
-  --cyan-soft: var(--crt-blue-bright);
-  --neon-blue: var(--crt-cyan);
-  --text-cyan: var(--crt-white);
-  --text-soft: var(--crt-blue-bright);
-  --terminal-green: var(--crt-green);
-  --terminal-orange: var(--crt-orange);
-  --terminal-red: var(--crt-red);
-  --terminal-yellow: var(--crt-amber);
-  --terminal-pink: var(--crt-purple);
-  --terminal-brown: #cc6600;
-  --terminal-dark-green: #00cc33;
-
-  /* Neon Theme Colors (Legacy support) */
-  --neon-bg: var(--crt-black);
-  --neon-foreground: var(--crt-cyan);
-  --neon-selection-bg: var(--crt-blue-medium);
-  --neon-cursor: var(--crt-cyan-bright);
-  --neon-pink: var(--crt-purple);
-  --neon-purple: var(--crt-purple);
-  --neon-accent: var(--crt-cyan);
-  --neon-blue: var(--crt-blue-bright);
-  --neon-green: var(--crt-green);
-
-  /* PICO-8 Base16 Colors (Updated) */
-  --pico-base00: var(--crt-black);
-  --pico-base01: var(--crt-blue-dark);
-  --pico-base02: var(--crt-blue-medium);
-  --pico-base03: var(--terminal-dark-green);
-  --pico-base04: var(--terminal-brown);
-  --pico-base05: var(--text-soft);
-  --pico-base06: var(--text-cyan);
-  --pico-base07: var(--crt-white);
-  --pico-base08: var(--terminal-red);
-  --pico-base09: var(--terminal-orange);
-  --pico-base0A: var(--terminal-yellow);
-  --pico-base0B: var(--terminal-green);
-  --pico-base0C: var(--cyan-bright);
-  --pico-base0D: var(--cyan-soft);
-  --pico-base0E: var(--terminal-pink);
-  --pico-base0F: var(--terminal-brown);
-
-  /* Base framework variables */
-  --radius: 0.25rem;
-  --font-mono: 'JetBrains Mono', 'Monaco', 'Menlo', 'Consolas', monospace;
+  /* Neon Theme Colors */
+  --neon-bg: hsl(300, 100%, 5%);
+  --neon-border: hsl(300, 50%, 20%);
+  --neon-pink: hsl(330, 100%, 60%);
+  --neon-purple: hsl(270, 100%, 60%);
+  --neon-cyan: hsl(180, 100%, 60%);
   
-  /* CRT Effects Variables */
-  --scan-line-opacity: 0.04;
-  --flicker-intensity: 0.02;
-  --glow-intensity: 0.8;
-  --chromatic-aberration: 0.5px;
+  /* Mono Theme Colors */
+  --mono-bg: hsl(0, 0%, 0%);
+  --mono-border: hsl(120, 100%, 20%);
+  --mono-green: hsl(120, 100%, 50%);
+  --mono-text: hsl(120, 100%, 80%);
   
-  /* Vintage Mac Screen Frame Variables */
-  --frame-color-outer: #2a2a2a;
-  --frame-color-inner: #404040;
-  --frame-color-highlight: #606060;
-  --frame-color-shadow: #1a1a1a;
-  --frame-thickness: 24px;
-  --frame-radius: 12px;
-  --screen-bezel: 8px;
+  /* Base tokens */
+  --background: var(--lumon-dark);
+  --foreground: var(--text-cyan);
+  --card: var(--lumon-bg);
+  --card-foreground: var(--text-cyan);
+  --popover: var(--lumon-bg);
+  --popover-foreground: var(--text-cyan);
+  --primary: var(--cyan-bright);
+  --primary-foreground: var(--lumon-dark);
+  --secondary: var(--lumon-border);
+  --secondary-foreground: var(--text-cyan);
+  --muted: var(--lumon-border);
+  --muted-foreground: var(--text-soft);
+  --accent: var(--cyan-soft);
+  --accent-foreground: var(--lumon-dark);
+  --destructive: var(--terminal-red);
+  --destructive-foreground: var(--text-cyan);
+  --border: var(--lumon-border);
+  --input: var(--lumon-bg);
+  --ring: var(--cyan-bright);
+  --radius: 0.5rem;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+.dark {
+  --background: var(--lumon-dark);
+  --foreground: var(--text-cyan);
+}
+
+/* Theme variants */
+.theme-neon {
+  --background: var(--neon-bg);
+  --card: var(--neon-bg);
+  --border: var(--neon-border);
+  --primary: var(--neon-pink);
+  --accent: var(--neon-purple);
+}
+
+.theme-mono {
+  --background: var(--mono-bg);
+  --foreground: var(--mono-text);
+  --card: var(--mono-bg);
+  --border: var(--mono-border);
+  --primary: var(--mono-green);
+  --accent: var(--mono-green);
 }
 
 @layer base {
   * {
-    border-color: var(--border);
+    @apply border-border;
   }
 
   body {
-    font-family: var(--font-mono), 'JetBrains Mono', 'Courier New', monospace;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    background-color: var(--background);
-    color: var(--foreground);
-    overflow: hidden;
+    @apply font-mono antialiased bg-background text-foreground overflow-hidden;
   }
 }
 
-/* Vintage CRT Screen Effects */
+/* CRT Screen Effects */
 .crt-screen {
   position: relative;
-  background: 
-    radial-gradient(ellipse at center, var(--crt-blue-dark) 0%, var(--crt-black) 70%),
-    linear-gradient(90deg, transparent 0%, rgba(0, 204, 255, 0.03) 50%, transparent 100%);
-  overflow: hidden;
-  
-  /* CRT Curvature Effect */
-  filter: contrast(1.1) brightness(1.05);
-  
-  /* Subtle flicker animation */
-  animation: crt-flicker 0.15s linear infinite alternate;
+  background: linear-gradient(45deg, var(--lumon-dark) 0%, var(--lumon-bg) 50%, var(--lumon-dark) 100%);
 }
 
-/* Scan Lines */
 .crt-screen::before {
   content: '';
   position: fixed;
@@ -122,18 +101,17 @@
   right: 0;
   bottom: 0;
   pointer-events: none;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent 0px,
-    transparent 2px,
-    rgba(0, 204, 255, var(--scan-line-opacity)) 2px,
-    rgba(0, 204, 255, var(--scan-line-opacity)) 4px
-  );
-  z-index: 15;
-  animation: scan-lines 0.1s linear infinite;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 212, 255, 0.03) 0px,
+      rgba(0, 212, 255, 0.03) 2px,
+      transparent 2px,
+      transparent 4px
+    );
+  z-index: 10;
 }
 
-/* Vignette and Screen Glow */
 .crt-screen::after {
   content: '';
   position: fixed;
@@ -142,113 +120,33 @@
   right: 0;
   bottom: 0;
   pointer-events: none;
-  background: 
-    radial-gradient(ellipse at center, transparent 40%, rgba(0, 8, 17, 0.4) 80%, rgba(0, 8, 17, 0.8) 100%),
-    linear-gradient(45deg, transparent 0%, rgba(0, 204, 255, 0.02) 100%);
-  z-index: 16;
-  
-  /* Chromatic aberration simulation */
-  box-shadow: 
-    inset 0 0 50px rgba(0, 204, 255, 0.1),
-    inset 0 0 100px rgba(0, 204, 255, 0.05);
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(10, 15, 28, 0.3) 100%);
+  z-index: 11;
 }
 
-/* Enhanced Vintage Terminal Glow Effects */
 .phosphor-glow {
-  text-shadow:
-    0 0 2px currentColor,
-    0 0 4px currentColor,
-    0 0 8px currentColor,
-    0 0 12px rgba(0, 204, 255, 0.5);
-  animation: text-glow 2s ease-in-out infinite alternate;
+  text-shadow: 
+    0 0 5px currentColor,
+    0 0 10px currentColor,
+    0 0 15px currentColor;
 }
 
 .terminal-output {
-  text-shadow: 
-    0 0 1px currentColor,
-    0 0 3px currentColor,
-    0 0 6px rgba(0, 204, 255, 0.3);
-  filter: contrast(1.1);
+  text-shadow: 0 0 3px currentColor;
 }
 
-/* Vintage Terminal Pane Styling */
 .pane-border {
-  border: 2px solid var(--cyan-soft);
-  border-radius: var(--radius);
-  background: 
-    linear-gradient(135deg, var(--crt-blue-dark) 0%, var(--crt-black) 100%),
-    radial-gradient(ellipse at top left, rgba(0, 204, 255, 0.05) 0%, transparent 50%);
-  box-shadow:
-    0 0 20px rgba(0, 204, 255, 0.2),
-    inset 0 0 20px rgba(0, 204, 255, 0.05),
-    inset 1px 1px 0 rgba(0, 204, 255, 0.1);
-  position: relative;
-  overflow: hidden;
-}
-
-.pane-border::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: repeating-linear-gradient(
-    45deg,
-    transparent 0px,
-    transparent 1px,
-    rgba(0, 204, 255, 0.02) 1px,
-    rgba(0, 204, 255, 0.02) 2px
-  );
-  pointer-events: none;
-  z-index: 1;
+  border: 1px solid var(--cyan-soft);
+  box-shadow: 
+    0 0 10px rgba(79, 209, 199, 0.3),
+    inset 0 0 10px rgba(79, 209, 199, 0.1);
 }
 
 .pane-focus {
   border-color: var(--cyan-bright);
-  box-shadow:
-    0 0 30px rgba(51, 221, 255, 0.4),
-    inset 0 0 30px rgba(51, 221, 255, 0.1),
-    inset 2px 2px 0 rgba(51, 221, 255, 0.2);
-  animation: pane-pulse 2s ease-in-out infinite alternate;
-}
-
-/* Enhanced CRT Glow Effects - Keep Original Intensity */
-.crt-glow {
-  position: relative;
-}
-
-.crt-glow::before {
-  content: '';
-  position: absolute;
-  inset: -15px;
-  background: inherit;
-  filter: blur(12px) brightness(1.8);
-  opacity: 0.8;
-  z-index: -1;
-  pointer-events: none;
-}
-
-.crt-glow::after {
-  content: '';
-  position: absolute;
-  inset: -30px;
-  background: inherit;
-  filter: blur(25px) brightness(1.5);
-  opacity: 0.4;
-  z-index: -2;
-  pointer-events: none;
-}
-
-/* Enhanced Phosphor Glow for Text - Maintain Strong Glow */
-.phosphor-glow-enhanced {
-  text-shadow:
-    0 0 3px currentColor,
-    0 0 8px currentColor,
-    0 0 15px currentColor,
-    0 0 20px rgba(0, 204, 255, 0.6),
-    0 0 35px rgba(0, 204, 255, 0.4);
-  animation: enhanced-glow 3s ease-in-out infinite alternate;
+  box-shadow: 
+    0 0 15px rgba(0, 212, 255, 0.5),
+    inset 0 0 15px rgba(0, 212, 255, 0.2);
 }
 
 .cursor-block {
@@ -260,110 +158,19 @@
   margin-left: 2px;
 }
 
-/* Vintage CRT Animations */
 @keyframes cursor-blink {
   0%, 50% { opacity: 1; }
   51%, 100% { opacity: 0; }
 }
 
-@keyframes crt-flicker {
-  0% { 
-    filter: contrast(1.1) brightness(1.05) saturate(1.2);
-    opacity: 1;
-  }
-  98% { 
-    filter: contrast(1.1) brightness(1.05) saturate(1.2);
-    opacity: 1;
-  }
-  99% { 
-    filter: contrast(1.3) brightness(1.1) saturate(1.5);
-    opacity: 0.98;
-  }
-  100% { 
-    filter: contrast(1.1) brightness(1.05) saturate(1.2);
-    opacity: 1;
-  }
-}
-
-@keyframes scan-lines {
-  0% { transform: translateY(-100vh); }
+@keyframes scanlines {
+  0% { transform: translateY(-100%); }
   100% { transform: translateY(100vh); }
 }
 
-@keyframes text-glow {
-  0% {
-    text-shadow:
-      0 0 2px currentColor,
-      0 0 4px currentColor,
-      0 0 8px currentColor;
-  }
-  100% {
-    text-shadow:
-      0 0 3px currentColor,
-      0 0 6px currentColor,
-      0 0 12px currentColor,
-      0 0 18px rgba(0, 204, 255, 0.7);
-  }
-}
-
-@keyframes enhanced-glow {
-  0% {
-    text-shadow:
-      0 0 3px currentColor,
-      0 0 8px currentColor,
-      0 0 15px currentColor,
-      0 0 20px rgba(0, 204, 255, 0.6);
-  }
-  100% {
-    text-shadow:
-      0 0 4px currentColor,
-      0 0 10px currentColor,
-      0 0 18px currentColor,
-      0 0 25px rgba(0, 204, 255, 0.8),
-      0 0 40px rgba(0, 204, 255, 0.5);
-  }
-}
-
-@keyframes pane-pulse {
-  0% {
-    box-shadow:
-      0 0 20px rgba(51, 221, 255, 0.3),
-      inset 0 0 20px rgba(51, 221, 255, 0.08);
-  }
-  100% {
-    box-shadow:
-      0 0 35px rgba(51, 221, 255, 0.5),
-      inset 0 0 35px rgba(51, 221, 255, 0.15);
-  }
-}
-
-@keyframes typing {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
-@keyframes type-cursor {
-  0%, 50% { border-color: transparent; }
-  51%, 100% { border-color: var(--cyan-bright); }
-}
-
-/* Chromatic Aberration Effect */
-@keyframes chromatic-aberration {
-  0% {
-    filter: 
-      drop-shadow(0.5px 0 0 rgba(255, 0, 0, 0.3))
-      drop-shadow(-0.5px 0 0 rgba(0, 255, 0, 0.3));
-  }
-  50% {
-    filter: 
-      drop-shadow(1px 0 0 rgba(255, 0, 0, 0.4))
-      drop-shadow(-1px 0 0 rgba(0, 255, 0, 0.4));
-  }
-  100% {
-    filter: 
-      drop-shadow(0.5px 0 0 rgba(255, 0, 0, 0.3))
-      drop-shadow(-0.5px 0 0 rgba(0, 255, 0, 0.3));
-  }
+@keyframes phosphor-glow {
+  0% { text-shadow: 0 0 5px currentColor, 0 0 10px currentColor; }
+  100% { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor; }
 }
 
 /* Scrollbar styling */
@@ -413,408 +220,9 @@
   box-shadow: 0 0 5px var(--cyan-soft);
 }
 
-/* PICO-8 Syntax highlighting */
-.syntax-keyword {
-  color: var(--terminal-pink);
-}
-.syntax-string {
-  color: var(--terminal-green);
-}
-.syntax-comment {
-  color: var(--terminal-dark-green);
-}
-.syntax-function {
-  color: var(--cyan-bright);
-}
-.syntax-variable {
-  color: var(--text-cyan);
-}
-.syntax-number {
-  color: var(--terminal-orange);
-}
-.syntax-type {
-  color: var(--terminal-yellow);
-}
-
-/* PICO-8 Color Utility Classes */
-.text-pico-black {
-  color: var(--lumon-dark);
-}
-.text-pico-dark-blue {
-  color: var(--lumon-bg);
-}
-.text-pico-dark-purple {
-  color: var(--lumon-border);
-}
-.text-pico-dark-green {
-  color: var(--terminal-dark-green);
-}
-.text-pico-brown {
-  color: var(--terminal-brown);
-}
-.text-pico-grey {
-  color: var(--text-soft);
-}
-.text-pico-white {
-  color: var(--text-cyan);
-}
-.text-pico-red {
-  color: var(--terminal-red);
-}
-.text-pico-orange {
-  color: var(--terminal-orange);
-}
-.text-pico-yellow {
-  color: var(--terminal-yellow);
-}
-.text-pico-green {
-  color: var(--terminal-green);
-}
-.text-pico-blue {
-  color: var(--cyan-bright);
-}
-.text-pico-indigo {
-  color: var(--cyan-soft);
-}
-.text-pico-pink {
-  color: var(--terminal-pink);
-}
-
-.bg-pico-black {
-  background-color: var(--lumon-dark);
-}
-.bg-pico-dark-blue {
-  background-color: var(--lumon-bg);
-}
-.bg-pico-dark-purple {
-  background-color: var(--lumon-border);
-}
-.bg-pico-dark-green {
-  background-color: var(--terminal-dark-green);
-}
-.bg-pico-brown {
-  background-color: var(--terminal-brown);
-}
-.bg-pico-grey {
-  background-color: var(--text-soft);
-}
-.bg-pico-white {
-  background-color: var(--text-cyan);
-}
-.bg-pico-red {
-  background-color: var(--terminal-red);
-}
-.bg-pico-orange {
-  background-color: var(--terminal-orange);
-}
-.bg-pico-yellow {
-  background-color: var(--terminal-yellow);
-}
-.bg-pico-green {
-  background-color: var(--terminal-green);
-}
-.bg-pico-blue {
-  background-color: var(--cyan-bright);
-}
-.bg-pico-indigo {
-  background-color: var(--cyan-soft);
-}
-.bg-pico-pink {
-  background-color: var(--terminal-pink);
-}
-
-/* Enhanced CRT effects with deep blue colors */
-.pico-glow {
-  text-shadow:
-    0 0 5px currentColor,
-    0 0 10px currentColor,
-    0 0 15px currentColor,
-    0 0 20px rgba(0, 204, 255, 0.6);
-}
-
-.pico-pixel-border {
-  border: 2px solid;
-  border-color: var(--text-cyan) var(--lumon-border) var(--lumon-border) var(--text-cyan);
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
-}
-
-/* Typing Animation Classes */
-.typing-text {
-  overflow: hidden;
-  border-right: 2px solid var(--cyan-bright);
-  white-space: nowrap;
-  animation: typing 2s steps(30) forwards, type-cursor 1s infinite;
-}
-
-.typing-text.fast {
-  animation: typing 1s steps(30) forwards, type-cursor 1s infinite;
-}
-
-.typing-text.slow {
-  animation: typing 4s steps(30) forwards, type-cursor 1s infinite;
-}
-
-.typewriter-line {
-  display: block;
-  overflow: hidden;
-  white-space: nowrap;
-  border-right: 2px solid var(--cyan-bright);
-  animation: typing 2s steps(50) forwards;
-}
-
-.typewriter-line:last-child {
-  animation: typing 2s steps(50) forwards, type-cursor 1s infinite;
-}
-
-/* Enhanced Button Styling with Rounded Corners */
-.terminal-button {
-  background: linear-gradient(135deg, var(--crt-blue-medium) 0%, var(--crt-blue-dark) 100%);
-  border: 2px solid var(--cyan-soft);
-  border-radius: 8px;
-  color: var(--text-cyan);
-  padding: 8px 16px;
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  text-shadow: 0 0 3px currentColor;
-  box-shadow: 
-    0 0 10px rgba(0, 204, 255, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-.terminal-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transition: left 0.5s ease;
-}
-
-.terminal-button:hover {
-  border-color: var(--cyan-bright);
-  box-shadow: 
-    0 0 20px rgba(51, 221, 255, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  text-shadow: 
-    0 0 3px currentColor,
-    0 0 8px rgba(0, 204, 255, 0.6);
-  transform: translateY(-1px);
-}
-
-.terminal-button:hover::before {
-  left: 100%;
-}
-
-.terminal-button:active {
-  transform: translateY(0);
-  box-shadow: 
-    0 0 15px rgba(51, 221, 255, 0.3),
-    inset 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* ASCII Art Styling */
-.ascii-art {
-  font-family: var(--font-mono);
-  white-space: pre;
-  line-height: 1;
-  color: var(--cyan-bright);
-  text-shadow: 0 0 3px currentColor;
-  animation: text-glow 3s ease-in-out infinite alternate;
-}
-
-/* Mac System Info Display */
-.system-info {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--text-cyan);
-  background: rgba(0, 26, 46, 0.8);
-  border: 1px solid var(--cyan-soft);
-  border-radius: 6px;
-  padding: 12px;
-  margin: 8px 0;
-  backdrop-filter: blur(2px);
-  box-shadow: 
-    0 0 10px rgba(0, 204, 255, 0.2),
-    inset 0 0 10px rgba(0, 204, 255, 0.05);
-}
-
-.system-info .info-label {
-  color: var(--cyan-soft);
-  display: inline-block;
-  min-width: 120px;
-}
-
-.system-info .info-value {
-  color: var(--text-cyan);
-  text-shadow: 0 0 2px currentColor;
-}
-
-.system-info-grid {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 4px 12px;
-  align-items: center;
-}
-
-/* Vintage Macintosh Screen Frame */
-.mac-screen-frame {
-  position: relative;
-  padding: var(--frame-thickness);
-  background: 
-    linear-gradient(135deg, var(--frame-color-highlight) 0%, var(--frame-color-outer) 25%, var(--frame-color-inner) 50%, var(--frame-color-outer) 75%, var(--frame-color-shadow) 100%),
-    radial-gradient(ellipse at top, var(--frame-color-highlight) 0%, var(--frame-color-outer) 100%);
-  border-radius: var(--frame-radius);
-  box-shadow:
-    /* Outer frame shadow - enhanced for depth */
-    0 16px 64px rgba(0, 0, 0, 0.8),
-    0 8px 32px rgba(0, 0, 0, 0.6),
-    0 4px 16px rgba(0, 0, 0, 0.4),
-    /* Inner frame highlight */
-    inset 0 2px 4px rgba(255, 255, 255, 0.15),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.4),
-    /* Side bevels - enhanced */
-    inset 3px 0 6px rgba(255, 255, 255, 0.08),
-    inset -3px 0 6px rgba(0, 0, 0, 0.3),
-    /* Top and bottom bevels */
-    inset 0 3px 6px rgba(255, 255, 255, 0.06),
-    inset 0 -3px 6px rgba(0, 0, 0, 0.25);
-  
-  /* Subtle texture */
-  background-image: 
-    repeating-linear-gradient(
-      45deg,
-      transparent 0px,
-      transparent 1px,
-      rgba(255, 255, 255, 0.03) 1px,
-      rgba(255, 255, 255, 0.03) 2px
-    ),
-    /* Additional fine grain texture */
-    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.01) 0%, transparent 50%);
-}
-
-.mac-screen-frame::before {
-  content: '';
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  right: 4px;
-  bottom: 4px;
-  border-radius: calc(var(--frame-radius) - 4px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  pointer-events: none;
-}
-
-.mac-screen-frame::after {
-  content: '';
-  position: absolute;
-  top: var(--screen-bezel);
-  left: var(--screen-bezel);
-  right: var(--screen-bezel);
-  bottom: var(--screen-bezel);
-  border-radius: calc(var(--frame-radius) - var(--screen-bezel));
-  border: 2px solid rgba(0, 0, 0, 0.4);
-  box-shadow: 
-    inset 0 0 10px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(255, 255, 255, 0.05);
-  pointer-events: none;
-}
-
-.screen-content {
-  position: relative;
-  border-radius: calc(var(--frame-radius) - var(--screen-bezel));
-  overflow: hidden;
-  background: var(--crt-black);
-  box-shadow: 
-    inset 0 0 20px rgba(0, 0, 0, 0.8),
-    inset 0 0 40px rgba(0, 8, 17, 0.6);
-}
-
-/* Mac-style ventilation grilles (optional subtle detail) */
-.mac-screen-frame .ventilation {
-  position: absolute;
-  bottom: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 120px;
-  height: 4px;
-  background: repeating-linear-gradient(
-    90deg,
-    var(--frame-color-shadow) 0px,
-    var(--frame-color-shadow) 2px,
-    transparent 2px,
-    transparent 4px
-  );
-  border-radius: 2px;
-  opacity: 0.6;
-}
-
-/* Power indicator LED (subtle) */
-.mac-screen-frame .power-led {
-  position: absolute;
-  bottom: 12px;
-  right: 20px;
-  width: 6px;
-  height: 6px;
-  background: var(--terminal-green);
-  border-radius: 50%;
-  box-shadow: 
-    0 0 8px var(--terminal-green),
-    inset 0 0 3px rgba(255, 255, 255, 0.3);
-  animation: power-pulse 3s ease-in-out infinite alternate;
-}
-
-@keyframes power-pulse {
-  0% { opacity: 0.8; }
-  100% { opacity: 1; }
-}
-
-/* Subtle Apple logo for authenticity */
-.mac-screen-frame .apple-logo {
-  position: absolute;
-  top: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 12px;
-  height: 14px;
-  opacity: 0.4;
-  background: linear-gradient(145deg, var(--frame-color-highlight) 0%, var(--frame-color-shadow) 100%);
-  clip-path: path('M8 0c2 0 3 1 3 3 0 1-1 2-2 2h1c1 0 2 1 2 2v2c0 2-1 3-3 3s-3-1-3-3v-1H4v1c0 2-1 3-3 3s-3-1-3-3V7c0-1 1-2 2-2h1c-1 0-2-1-2-2 0-2 1-3 3-3h6z');
-  border-radius: 2px;
-}
-
-/* Responsive adjustments for smaller screens */
-@media (max-width: 1200px) {
-  .mac-screen-frame {
-    --frame-thickness: 20px;
-    --screen-bezel: 6px;
-  }
-}
-
-@media (max-width: 768px) {
-  .mac-screen-frame {
-    --frame-thickness: 16px;
-    --screen-bezel: 4px;
-    --frame-radius: 8px;
-  }
-  
-  .mac-screen-frame .ventilation {
-    width: 80px;
-    height: 3px;
-  }
-  
-  .mac-screen-frame .power-led {
-    width: 5px;
-    height: 5px;
-    bottom: 8px;
-    right: 12px;
-  }
-}
+/* Syntax highlighting */
+.syntax-keyword { color: hsl(198, 89%, 66%); }
+.syntax-string { color: hsl(55, 68%, 69%); }
+.syntax-comment { color: hsl(50, 11%, 46%); }
+.syntax-function { color: hsl(74, 74%, 67%); }
+.syntax-variable { color: hsl(0, 0%, 97%); }

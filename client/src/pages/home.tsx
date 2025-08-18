@@ -16,21 +16,23 @@ export default function Home() {
     setLeftPaneWidth(newWidth);
   };
 
+  const handleVerticalResize = (delta: number) => {
+    const containerHeight = window.innerHeight - 32; // Account for padding
+    const deltaPercent = (delta / containerHeight) * 100;
+    const newHeight = Math.max(30, Math.min(70, topRightHeight + deltaPercent));
+    setTopRightHeight(newHeight);
+  };
+
   return (
-    <div className="h-screen overflow-hidden flex items-center justify-center" style={{ background: 'linear-gradient(45deg, #1a1a1a 0%, #0f0f0f 100%)' }}>
-      <div className="mac-screen-frame h-[95vh] w-[98vw] max-w-7xl">
-        <div className="apple-logo"></div>
-        <div className="ventilation"></div>
-        <div className="power-led"></div>
-        <div className="screen-content h-full w-full">
-          <div
-            className="grid h-full gap-0 p-4"
-            style={{
-              gridTemplateColumns: `${leftPaneWidth}% 4px ${100 - leftPaneWidth - 0.4}%`,
-            }}
-          >
+    <div className="h-screen overflow-hidden" style={{ background: 'var(--lumon-dark)' }}>
+      <div 
+        className="h-full grid gap-0 p-4"
+        style={{
+          gridTemplateColumns: `${leftPaneWidth}% 4px ${100 - leftPaneWidth - 0.4}%`
+        }}
+      >
         {/* Terminal Pane */}
-        <div aria-label="Interactive Terminal" className="min-w-0" id="main-terminal" role="main">
+        <div className="min-w-0" id="main-terminal" role="main" aria-label="Interactive Terminal">
           <TerminalPane />
         </div>
 
@@ -38,10 +40,7 @@ export default function Home() {
         <ResizeHandle onResize={handleHorizontalResize} />
 
         {/* Right Side - 2x2 Grid */}
-        <div
-          className="grid min-w-0 gap-4"
-          style={{ gridTemplateRows: `${topRightHeight}% 4px ${100 - topRightHeight - 0.8}%` }}
-        >
+        <div className="min-w-0 grid gap-4" style={{ gridTemplateRows: `${topRightHeight}% 4px ${100 - topRightHeight - 0.8}%` }}>
           {/* Top Right Row - 2 panes side by side */}
           <div className="grid grid-cols-2 gap-4">
             <StatusPane />
@@ -49,13 +48,12 @@ export default function Home() {
           </div>
 
           {/* Vertical Resize Handle for right column */}
-          <div
-            className="resize-handle h-1 w-full cursor-row-resize opacity-50 transition-opacity hover:opacity-100"
-            style={{ background: 'var(--cyan-soft)' }}
+          <div 
+            className="resize-handle w-full h-1 cursor-row-resize opacity-50 hover:opacity-100 transition-opacity"
             onMouseDown={(e) => {
               const startY = e.clientY;
               const startHeight = topRightHeight;
-
+              
               const handleMouseMove = (e: MouseEvent) => {
                 const deltaY = e.clientY - startY;
                 const containerHeight = window.innerHeight - 32;
@@ -63,22 +61,21 @@ export default function Home() {
                 const newHeight = Math.max(30, Math.min(70, startHeight + deltaPercent));
                 setTopRightHeight(newHeight);
               };
-
+              
               const handleMouseUp = () => {
                 document.removeEventListener('mousemove', handleMouseMove);
                 document.removeEventListener('mouseup', handleMouseUp);
               };
-
+              
               document.addEventListener('mousemove', handleMouseMove);
               document.addEventListener('mouseup', handleMouseUp);
             }}
+            style={{ background: 'var(--cyan-soft)' }}
           />
 
           {/* Bottom Right Row - Blog pane spanning full width */}
           <div className="min-w-0">
             <BlogPane />
-          </div>
-        </div>
           </div>
         </div>
       </div>

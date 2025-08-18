@@ -5,6 +5,7 @@ This is a terminal-inspired portfolio website for Tulio Cunha, a full-stack deve
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
+Design preferences: Vintage terminal aesthetics with deep blue CRT effects, scan lines, chromatic aberrations, and glow effects on text. Rounded corners on buttons. Fast ASCII graphics with system information display.
 
 # System Architecture
 
@@ -82,3 +83,41 @@ Preferred communication style: Simple, everyday language.
 - **Production Build**: Optimized Vite build with ESBuild for server bundling
 - **Environment**: Configured for both development (with HMR) and production deployment
 - **Static Assets**: Proper asset handling and optimization through Vite
+
+# Recent Changes (August 18, 2025)
+
+## Vintage Terminal Aesthetic Implementation
+
+✓ **Complete CSS Overhaul**: Reimplemented entire CSS system with vintage terminal aesthetics
+✓ **Deep Blue CRT Theme**: Updated color scheme to deep blue vintage CRT colors
+  - Primary: Deep space black (#000811) and navy blue (#001a2e, #003366)
+  - Accents: Electric cyan (#00ccff, #33ddff) and blue-tinted white (#e6f3ff)
+  - Status colors: Terminal green, amber, red, orange, purple
+✓ **Enhanced CRT Effects**: 
+  - Scan lines with customizable opacity
+  - CRT flicker animations with contrast/brightness adjustments
+  - Vignette effects and screen glow
+  - Chromatic aberration simulation
+✓ **Improved Glow Effects**: Enhanced phosphor glow with multiple shadow layers and pulsing animations
+✓ **Typing Animations**: Added typewriter effects for progressive text rendering
+  - .typing-text class with customizable speeds (fast, normal, slow)
+  - .typewriter-line for line-by-line ASCII art rendering
+✓ **Button Enhancement**: Redesigned all buttons with rounded corners and vintage styling
+  - .terminal-button class with gradient backgrounds and hover effects
+  - Animated shine effects and enhanced glow on interaction
+✓ **System Information Display**: Created new SystemInfoPane component
+  - Fast-rendering ASCII art with Mac system information
+  - Real-time system stats and uptime display
+  - Grid-based layout with vintage terminal styling
+✓ **Enhanced Pane Styling**: Updated all panes with improved borders, backgrounds, and effects
+  - Better contrast and readability
+  - Consistent rounded corners throughout
+  - Enhanced visual hierarchy
+
+## Technical Improvements
+
+✓ **Animation System**: Comprehensive keyframe animations for all CRT effects
+✓ **CSS Variables**: Organized color system with semantic naming
+✓ **Component Updates**: Enhanced StatusPane, FeaturedPane, BlogPane, and TerminalPane
+✓ **Accessibility**: Maintained all accessibility features while enhancing visual appeal
+✓ **Performance**: Optimized animations with proper GPU acceleration

@@ -122,8 +122,9 @@ export default function BlogPane() {
 
             {/* View All Posts Button */}
             <button
-              className="border-cyan-soft text-cyan-soft hover:bg-cyan-soft hover:text-lumon-dark w-full rounded border p-2 text-sm transition-colors"
+              className="terminal-button w-full text-sm"
               onClick={() => window.open('https://blog.tuliocunha.dev', '_blank')}
+              data-testid="button-view-all-posts"
             >
               View All Posts →
             </button>
@@ -137,15 +138,14 @@ export default function BlogPane() {
               <div className="space-y-2">
                 {quickLinks.map((link) => (
                   <button
-                    className="border-lumon-border hover:border-cyan-soft hover:bg-lumon-border group flex w-full items-center gap-2 rounded border p-2 text-sm transition-colors"
+                    className="terminal-button flex w-full items-center gap-2 text-sm"
                     key={link.label}
                     onClick={() => handleQuickLink(link.url)}
+                    data-testid={`button-quick-link-${link.label.toLowerCase().replace(' ', '-')}`}
                   >
-                    <link.icon className="text-cyan-bright group-hover:text-neon-blue h-4 w-4 transition-colors" />
-                    <span className="text-text-soft group-hover:text-cyan-bright transition-colors">
-                      {link.label}
-                    </span>
-                    <ExternalLink className="text-text-soft group-hover:text-cyan-bright ml-auto h-3 w-3 transition-colors" />
+                    <link.icon className="h-4 w-4" />
+                    <span className="flex-1 text-left">{link.label}</span>
+                    <ExternalLink className="h-3 w-3" />
                   </button>
                 ))}
               </div>

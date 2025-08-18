@@ -155,16 +155,16 @@ export default function TerminalPane() {
 
         {/* Welcome Message */}
         <div className="terminal-output mb-6">
-          <div className="text-neon-blue phosphor-glow-enhanced mb-2 font-mono text-sm crt-glow">
-            <pre>{`████████╗██╗   ██╗██╗     ██╗ ██████╗ 
-╚══██╔══╝██║   ██║██║     ██║██╔═══██╗
-   ██║   ██║   ██║██║     ██║██║   ██║
-   ██║   ██║   ██║██║     ██║██║   ██║
-   ██║   ╚██████╔╝███████╗██║╚██████╔╝
-   ╚═╝    ╚═════╝ ╚══════╝╚═╝ ╚═════╝`}</pre>
+          <div className="ascii-art text-cyan-bright phosphor-glow-enhanced mb-2 font-mono text-sm">
+            <div className="typewriter-line">{`████████╗██╗   ██╗██╗     ██╗ ██████╗ `}</div>
+            <div className="typewriter-line">{`╚══██╔══╝██║   ██║██║     ██║██╔═══██╗`}</div>
+            <div className="typewriter-line">{`   ██║   ██║   ██║██║     ██║██║   ██║`}</div>
+            <div className="typewriter-line">{`   ██║   ██║   ██║██║     ██║██║   ██║`}</div>
+            <div className="typewriter-line">{`   ██║   ╚██████╔╝███████╗██║╚██████╔╝`}</div>
+            <div className="typewriter-line">{`   ╚═╝    ╚═════╝ ╚══════╝╚═╝ ╚═════╝`}</div>
           </div>
-          <div className="text-text-soft mb-4">Full-stack Developer | Terminal Interface</div>
-          <div className="text-cyan-soft">Type 'help' to see available commands</div>
+          <div className="text-text-soft mb-4 typing-text">Full-stack Developer | Terminal Interface</div>
+          <div className="text-cyan-soft typing-text slow">Type 'help' to see available commands</div>
         </div>
 
         {/* Command History */}

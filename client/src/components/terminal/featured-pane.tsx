@@ -91,8 +91,9 @@ export default function FeaturedPane() {
             {featuredProject.links?.demo && (
               <button
                 aria-label={`View ${featuredProject.name} project`}
-                className="bg-neon-blue text-lumon-dark hover:bg-cyan-bright flex flex-1 items-center justify-center gap-1 rounded px-3 py-2 transition-colors"
+                className="terminal-button flex flex-1 items-center justify-center gap-1"
                 onClick={handleViewProject}
+                data-testid="button-view-project"
               >
                 <ExternalLink className="h-3 w-3" />
                 View Project
@@ -101,8 +102,9 @@ export default function FeaturedPane() {
             {featuredProject.links?.github && (
               <button
                 aria-label={`View ${featuredProject.name} source code`}
-                className="border-cyan-soft text-cyan-soft hover:bg-cyan-soft hover:text-lumon-dark rounded border px-3 py-2 transition-colors"
+                className="terminal-button flex items-center justify-center"
                 onClick={handleViewCode}
+                data-testid="button-view-code"
               >
                 <Github className="h-4 w-4" />
               </button>

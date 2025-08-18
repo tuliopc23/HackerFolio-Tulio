@@ -31,7 +31,7 @@ function App() {
       <ThemeProvider>
         <TooltipProvider>
           <CRTShader className="w-screen h-screen">
-            <div className="crt-screen">
+            <div className="crt-screen h-full w-full">
               <Toaster />
               <Router />
             </div>

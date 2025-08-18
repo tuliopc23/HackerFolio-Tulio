@@ -17,13 +17,18 @@ export default function Home() {
   };
 
   return (
-    <div className="h-screen overflow-hidden" style={{ background: 'var(--lumon-dark)' }}>
-      <div
-        className="grid h-full gap-0 p-4"
-        style={{
-          gridTemplateColumns: `${leftPaneWidth}% 4px ${100 - leftPaneWidth - 0.4}%`,
-        }}
-      >
+    <div className="h-screen overflow-hidden flex items-center justify-center" style={{ background: 'linear-gradient(45deg, #1a1a1a 0%, #0f0f0f 100%)' }}>
+      <div className="mac-screen-frame h-[95vh] w-[98vw] max-w-7xl">
+        <div className="apple-logo"></div>
+        <div className="ventilation"></div>
+        <div className="power-led"></div>
+        <div className="screen-content h-full w-full">
+          <div
+            className="grid h-full gap-0 p-4"
+            style={{
+              gridTemplateColumns: `${leftPaneWidth}% 4px ${100 - leftPaneWidth - 0.4}%`,
+            }}
+          >
         {/* Terminal Pane */}
         <div aria-label="Interactive Terminal" className="min-w-0" id="main-terminal" role="main">
           <TerminalPane />
@@ -72,6 +77,8 @@ export default function Home() {
           {/* Bottom Right Row - Blog pane spanning full width */}
           <div className="min-w-0">
             <BlogPane />
+          </div>
+        </div>
           </div>
         </div>
       </div>

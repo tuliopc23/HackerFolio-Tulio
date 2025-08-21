@@ -172,14 +172,17 @@ const app = new Elysia()
           case 'projects': {
             // Parse flags and free-text filter
             let filter = ''
-            let limit: number | null = null
+            let per: number | null = null
+            let page: number | null = null
             let status: string | null = null
             let stackFilter: string | null = null
             const tokens = Array.isArray(args) ? [...args] : []
             for (let i = 0; i < tokens.length; i++) {
               const t = tokens[i]
-              if (t === '--limit' && tokens[i + 1]) { limit = Number(tokens[++i]) || null; continue }
-              if (t.startsWith('--limit=')) { limit = Number(t.split('=')[1]) || null; continue }
+              if (t === '--per' && tokens[i + 1]) { per = Number(tokens[++i]) || null; continue }
+              if (t.startsWith('--per=')) { per = Number(t.split('=')[1]) || null; continue }
+              if (t === '--page' && tokens[i + 1]) { page = Number(tokens[++i]) || null; continue }
+              if (t.startsWith('--page=')) { page = Number(t.split('=')[1]) || null; continue }
               if (t === '--status' && tokens[i + 1]) { status = String(tokens[++i]).toLowerCase(); continue }
               if (t.startsWith('--status=')) { status = String(t.split('=')[1]).toLowerCase(); continue }
               if (t === '--stack' && tokens[i + 1]) { stackFilter = String(tokens[++i]).toLowerCase(); continue }
@@ -230,7 +233,18 @@ const app = new Elysia()
               ].filter(Boolean)
               return parts!.join('\n')
             }).join('\n\n')
-            return { output: text }
+            const baseFlags = [
+              filter ? filter : '',
+              status ? `--status ${status}` : '',
+              stackFilter ? `--stack ${stackFilter}` : '',
+              `--per ${effPer}`,
+            ].filter(Boolean).join(' ')
+            const header = `${ansi.dim(`Page ${effPage}/${totalPages} • Showing ${start + 1}-${end} of ${total}`)}`
+            const hints: string[] = []
+            if (effPage > 1) hints.push(`${ansi.magenta('Prev')}: ${ansi.cyan(`projects ${baseFlags} --page ${effPage - 1}`)}`)
+            if (effPage < totalPages) hints.push(`${ansi.magenta('Next')}: ${ansi.cyan(`projects ${baseFlags} --page ${effPage + 1}`)}`)
+            const footer = hints.length ? `\n\n${hints.join('\n')}` : ''
+            return { output: `${header}\n\n${text}${footer}` }
           }
           case 'about': {
             const row = (await orm.select({ content: tContent.content }).from(tContent).where(eq(tContent.section, 'about')).limit(1)).at(0) as any

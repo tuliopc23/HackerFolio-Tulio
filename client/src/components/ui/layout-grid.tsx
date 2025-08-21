@@ -42,7 +42,7 @@ export const LayoutGrid = ({ cards }: { cards: Card[] }) => {
                   ? 'z-40 bg-white rounded-xl h-full w-full'
                   : 'bg-white rounded-xl h-full w-full'
             )}
-            layoutId={`card-${card.id}`}
+            layoutId={`card-${String(card.id)}`}
           >
             {selected?.id === card.id && <SelectedCard selected={selected} />}
             <ImageComponent card={card} />
@@ -64,7 +64,7 @@ export const LayoutGrid = ({ cards }: { cards: Card[] }) => {
 const ImageComponent = ({ card }: { card: Card }) => {
   return (
     <motion.img
-      layoutId={`image-${card.id}-image`}
+      layoutId={`image-${String(card.id)}-image`}
       src={card.thumbnail}
       height='500'
       width='500'
@@ -89,7 +89,7 @@ const SelectedCard = ({ selected }: { selected: Card | null }) => {
         className='absolute inset-0 h-full w-full bg-black opacity-60 z-10'
       />
       <motion.div
-        layoutId={`content-${selected?.id}`}
+        layoutId={`content-${String(selected?.id ?? '')}`}
         initial={{
           opacity: 0,
           y: 100,

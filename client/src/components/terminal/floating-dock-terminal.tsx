@@ -4,6 +4,11 @@ import { useState } from 'react'
 
 import { useTheme } from './theme-context'
 
+// Terminal icon component - moved outside render to avoid recreation
+const TerminalIcon = () => (
+  <div className='w-4 h-4 border border-current rounded bg-current bg-opacity-20' />
+)
+
 interface FloatingDockTerminalProps {
   onRestoreTerminal?: () => void
 }
@@ -23,9 +28,7 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
   const systemItems = [
     {
       id: 'terminal',
-      icon: () => (
-        <div className='w-4 h-4 border border-current rounded bg-current bg-opacity-20' />
-      ),
+      icon: TerminalIcon,
       label: 'Terminal',
       action: () => {
         if (onRestoreTerminal) onRestoreTerminal()
@@ -99,7 +102,7 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
             {navigationItems.map(item => (
               <button
                 key={item.id}
-                onClick={() => navigate({ to: item.path })}
+                onClick={() => void navigate({ to: item.path })}
                 className='w-full flex items-center gap-2 px-3 py-2 rounded text-sm text-cyan-bright hover:bg-magenta-soft hover:bg-opacity-20 transition-colors group focus:outline-none focus:ring-2 focus:ring-magenta-bright focus:ring-opacity-50'
                 title={item.label}
                 aria-label={`Navigate to ${item.label}`}

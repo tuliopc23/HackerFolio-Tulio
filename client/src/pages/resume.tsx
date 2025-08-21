@@ -66,7 +66,9 @@ export default function Resume() {
 
   const handleDownload = () => {
     // In a real application, this would download a PDF version
-    alert('PDF download functionality would be implemented here')
+    if (import.meta.env.DEV) {
+      console.log('PDF download functionality would be implemented here')
+    }
   }
 
   return (

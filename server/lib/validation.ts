@@ -2,7 +2,7 @@ import type { Context } from 'elysia'
 import { z } from 'zod'
 
 // Generic validation helper
-export function validateData<T>(schema: z.ZodSchema<T>, data: unknown): T {
+export function validateData<T>(schema: z.ZodType<T>, data: unknown): T {
   const result = schema.safeParse(data)
   if (!result.success) {
     throw new Error(`Validation failed: ${result.error.message}`)
@@ -11,15 +11,15 @@ export function validateData<T>(schema: z.ZodSchema<T>, data: unknown): T {
 }
 
 // Elysia context validation helper
-export function validateQuery<T>(schema: z.ZodSchema<T>, context: Context): T {
+export function validateQuery<T>(schema: z.ZodType<T>, context: Context): T {
   return validateData(schema, context.query)
 }
 
-export function validateBody<T>(schema: z.ZodSchema<T>, context: Context): T {
+export function validateBody<T>(schema: z.ZodType<T>, context: Context): T {
   return validateData(schema, context.body)
 }
 
-export function validateParams<T>(schema: z.ZodSchema<T>, context: Context): T {
+export function validateParams<T>(schema: z.ZodType<T>, context: Context): T {
   return validateData(schema, context.params)
 }
 

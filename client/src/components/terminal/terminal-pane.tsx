@@ -52,7 +52,9 @@ export default function TerminalPane() {
       try {
         const cmds = await fetchCommands()
         processor.setServerCommands?.(cmds.map(c => c.command))
-      } catch {}
+      } catch {
+        /* intentional noop - server commands are optional */
+      }
     })()
   }, [processor])
 
@@ -108,7 +110,7 @@ export default function TerminalPane() {
           setTheme(themeName)
         }
       } else {
-        navigate({ to: result.navigate })
+        void navigate({ to: result.navigate })
       }
     }
 
@@ -194,11 +196,11 @@ export default function TerminalPane() {
     // Hard cap to avoid rendering extremely large outputs accidentally
     const MAX_CHARS = 50_000
     if (output.length > MAX_CHARS) {
-      output = output.slice(0, MAX_CHARS) + '\n' + '\x1b[33m[truncated]\x1b[39m'
+      output = output.slice(0, MAX_CHARS) + '\n\x1b[33m[truncated]\x1b[39m'
     }
     // ANSI parser for SGR codes (very small subset)
     const urlRegex = /(https?:\/\/[^\s]+)/g
-    const ANSI_PATTERN = /\x1b\[([0-9;]+)m/g // e.g., \x1b[31m or \x1b[1;32m
+    const ANSI_PATTERN = new RegExp('\\x1b\\[([0-9;]+)m', 'g') // e.g., \x1b[31m or \x1b[1;32m
 
     interface StyleState {
       bold?: boolean

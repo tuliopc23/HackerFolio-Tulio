@@ -1,4 +1,3 @@
-import { X, Minus, Square } from 'lucide-react'
 import React, { useState, useRef } from 'react'
 
 interface TerminalWindowProps {
@@ -36,33 +35,36 @@ export default function TerminalWindow({
     }
   }
 
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!isDragging || isMaximized) return
+  const handleMouseMove = React.useCallback(
+    (e: MouseEvent) => {
+      if (!isDragging || isMaximized) return
 
-    const deltaX = e.clientX - dragStartRef.current.x
-    const deltaY = e.clientY - dragStartRef.current.y
+      const deltaX = e.clientX - dragStartRef.current.x
+      const deltaY = e.clientY - dragStartRef.current.y
 
-    setPosition({
-      x: Math.max(
-        0,
-        Math.min(
-          (typeof window !== 'undefined' ? window.innerWidth : 1200) - 800,
-          dragStartRef.current.windowX + deltaX
-        )
-      ),
-      y: Math.max(
-        0,
-        Math.min(
-          (typeof window !== 'undefined' ? window.innerHeight : 800) - 600,
-          dragStartRef.current.windowY + deltaY
-        )
-      ),
-    })
-  }
+      setPosition({
+        x: Math.max(
+          0,
+          Math.min(
+            (typeof window !== 'undefined' ? window.innerWidth : 1200) - 800,
+            dragStartRef.current.windowX + deltaX
+          )
+        ),
+        y: Math.max(
+          0,
+          Math.min(
+            (typeof window !== 'undefined' ? window.innerHeight : 800) - 600,
+            dragStartRef.current.windowY + deltaY
+          )
+        ),
+      })
+    },
+    [isDragging, isMaximized]
+  )
 
-  const handleMouseUp = () => {
+  const handleMouseUp = React.useCallback(() => {
     setIsDragging(false)
-  }
+  }, [])
 
   // Attach global mouse events for dragging
   React.useEffect(() => {
@@ -74,8 +76,10 @@ export default function TerminalWindow({
         document.removeEventListener('mouseup', handleMouseUp)
       }
     }
-    return () => {}
-  }, [isDragging])
+    return () => {
+      /* intentional noop - cleanup not needed */
+    }
+  }, [isDragging, handleMouseMove, handleMouseUp])
 
   const handleMaximize = () => {
     setIsMaximized(!isMaximized)
@@ -85,8 +89,8 @@ export default function TerminalWindow({
   const windowStyle = isMaximized
     ? { top: 0, left: 0, width: '100vw', height: '100vh' }
     : {
-        top: `${position.y}px`,
-        left: `${position.x}px`,
+        top: `${String(position.y)}px`,
+        left: `${String(position.x)}px`,
         width: '90vw',
         maxWidth: '1400px',
         height: '80vh',
@@ -132,30 +136,8 @@ export default function TerminalWindow({
           <span className='text-magenta-bright font-medium text-sm'>{title}</span>
         </div>
 
-        {/* Window Controls (right side) */}
-        <div className='flex items-center gap-1 opacity-60'>
-          <button
-            onClick={onMinimize}
-            className='p-1 hover:bg-magenta-soft hover:bg-opacity-20 rounded transition-colors'
-            aria-label='Minimize'
-          >
-            <Minus className='w-3 h-3 text-text-soft' />
-          </button>
-          <button
-            onClick={handleMaximize}
-            className='p-1 hover:bg-magenta-soft hover:bg-opacity-20 rounded transition-colors'
-            aria-label={isMaximized ? 'Restore' : 'Maximize'}
-          >
-            <Square className='w-3 h-3 text-text-soft' />
-          </button>
-          <button
-            onClick={onClose}
-            className='p-1 hover:bg-terminal-red hover:bg-opacity-20 rounded transition-colors'
-            aria-label='Close'
-          >
-            <X className='w-3 h-3 text-text-soft' />
-          </button>
-        </div>
+        {/* Empty space for balance */}
+        <div className='w-16'></div>
       </div>
 
       {/* Window Content */}

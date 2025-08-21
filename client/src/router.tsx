@@ -1,9 +1,11 @@
+import { createHashHistory } from '@tanstack/history'
 import {
   createRootRoute,
   createRoute,
   createRouter,
   RouterProvider,
   Outlet,
+  type RouterHistory,
 } from '@tanstack/react-router'
 import React from 'react'
 
@@ -132,10 +134,16 @@ const routeTree = rootRoute.addChildren([
   notFoundRoute,
 ])
 
-export function createAppRouter(opts?: { history?: unknown }) {
+interface RouterOpts {
+  history?: RouterHistory
+}
+
+export function createAppRouter(opts?: RouterOpts) {
+  const history: RouterHistory = opts?.history ?? createHashHistory()
+
   return createRouter({
     routeTree,
-    history: opts?.history,
+    history,
   })
 }
 

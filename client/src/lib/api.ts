@@ -24,10 +24,12 @@ function getBaseUrl(): string {
 }
 
 // Validation helper
-function validateResponse<T>(schema: z.ZodSchema<T>, data: unknown): T {
+function validateResponse<T>(schema: z.ZodType<T>, data: unknown): T {
   const result = schema.safeParse(data)
   if (!result.success) {
-    console.error('API response validation failed:', result.error)
+    if (import.meta.env.DEV) {
+      console.error('API response validation failed:', result.error)
+    }
     throw new Error(`Invalid API response: ${result.error.message}`)
   }
   return result.data

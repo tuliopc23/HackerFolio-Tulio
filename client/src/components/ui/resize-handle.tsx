@@ -32,7 +32,11 @@ export default function ResizeHandle({ onResize, className = '' }: ResizeHandleP
 
   // Add global mouse move and up listeners when dragging
   useEffect(() => {
-    if (!isDragging) return () => {}
+    if (!isDragging) {
+      return () => {
+        /* intentional noop - no cleanup needed when not dragging */
+      }
+    }
     document.addEventListener('mousemove', handleMouseMove)
     document.addEventListener('mouseup', handleMouseUp)
     return () => {
@@ -42,13 +46,23 @@ export default function ResizeHandle({ onResize, className = '' }: ResizeHandleP
   }, [isDragging, handleMouseMove, handleMouseUp])
 
   return (
-    <div
+    <button
       className={`resize-handle ${className} ${isDragging ? 'opacity-100' : ''}`}
       onMouseDown={handleMouseDown}
-      role='separator'
-      aria-orientation='vertical'
+      type='button'
       aria-label='Resize panes'
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          // Could implement keyboard resize here
+        }
+      }}
       style={{ cursor: 'col-resize' }}
-    />
+    >
+      {/* Visual indicator for resize handle */}
+      <div className='w-full h-full flex items-center justify-center'>
+        <div className='w-1 h-8 bg-current opacity-30'></div>
+      </div>
+    </button>
   )
 }

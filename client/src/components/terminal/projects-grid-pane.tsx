@@ -53,7 +53,7 @@ export default function ProjectsGridPane() {
 
         {/* Tech Stack */}
         <div className='flex flex-wrap gap-1 mb-3'>
-          {(project.tech_stack || []).slice(0, 3).map(tech => (
+          {(project.tech_stack ?? []).slice(0, 3).map(tech => (
             <span
               key={tech}
               className='px-2 py-1 bg-magenta-soft bg-opacity-20 border border-magenta-soft rounded text-xs text-magenta-bright'
@@ -106,7 +106,7 @@ export default function ProjectsGridPane() {
     ),
     className: index === 0 ? 'md:col-span-2' : '',
     thumbnail:
-      project.image ||
+      project.image ??
       'https://images.unsplash.com/photo-1518709268805-4e9042af2176?q=80&w=500&auto=format&fit=crop',
   }))
 

@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "composite": false,
+    "skipLibCheck": true,
+    "types": ["node", "vite/client", "bun", "@total-typescript/ts-reset"]
+  },
+  "include": [
+    "client/src/**/*",
+    "server/**/*.ts",
+    "components/**/*.tsx",
+    "components/**/*.ts", 
+    "shared/**/*.ts",
+    "reset.d.ts",
+    "*.ts",
+    "*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "drizzle"
+  ]
+}

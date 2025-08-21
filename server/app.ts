@@ -27,6 +27,16 @@ import {
 
 const { PORT } = env
 
+// Safe JSON parsing helper
+function parseStringArray(json: string): string[] {
+  try {
+    const parsed = JSON.parse(json)
+    return Array.isArray(parsed) && parsed.every(x => typeof x === 'string') ? parsed : []
+  } catch {
+    return []
+  }
+}
+
 // Minimal request logging for /api routes
 const logApi = (
   method: string,
@@ -50,7 +60,7 @@ const logApi = (
 }
 
 // Apply migrations and seed initial data
-await migrate(orm, { migrationsFolder: 'drizzle' })
+migrate(orm, { migrationsFolder: 'drizzle' })
 
 // ANSI color helpers
 const ansi = {
@@ -148,7 +158,7 @@ const app = new Elysia()
               .orderBy(tCommands.command)
 
             const argsArr = Array.isArray(args) ? args : []
-            const target = (argsArr[0] || '').toLowerCase()
+            const target = (argsArr[0] ?? '').toLowerCase()
 
             // Detailed help per command
             if (target) {
@@ -203,7 +213,7 @@ const app = new Elysia()
             }
             const sections: string[] = []
             const wrap = (txt: string, width: number, indent: string) => {
-              const words = String(txt ?? '').split(/\s+/)
+              const words = (txt ?? '').split(/\s+/)
               const lines: string[] = []
               let line = ''
               for (const word of words) {
@@ -226,13 +236,13 @@ const app = new Elysia()
                 ansi.cyan('COMMAND'.padEnd(col)) +
                 '  ' +
                 ansi.cyan('DESCRIPTION')
-              const line = '-'.repeat(('COMMAND'.padEnd(col) + '  ' + 'DESCRIPTION').length)
+              const line = '-'.repeat(('COMMAND'.padEnd(col) + '  DESCRIPTION').length)
               const body = rows
                 .map(r => {
                   const left = ansi.cyan(r.command.padEnd(col))
                   const right = wrap(r.description ?? '', 80, ' '.repeat(col + 2))
                   const [first, ...rest] = right.split('\n')
-                  return [left + '  ' + first, ...rest].join('\n')
+                  return [left + '  ' + (first ?? ''), ...rest].join('\n')
                 })
                 .join('\n')
               sections.push(`${header}\n${ansi.dim(line)}\n${body}`)
@@ -322,7 +332,10 @@ const app = new Elysia()
               list = projects.filter((p: ProjectRow) => {
                 const name = (p.name ?? '').toLowerCase()
                 const desc = (p.description ?? '').toLowerCase()
-                const stackArr: string[] = p.tech_stack ? JSON.parse(p.tech_stack) : []
+                const stackArr: string[] =
+                  typeof p.tech_stack === 'string' && p.tech_stack.trim()
+                    ? parseStringArray(p.tech_stack)
+                    : []
                 const stack = stackArr.join(' ').toLowerCase()
                 return name.includes(filter) || desc.includes(filter) || stack.includes(filter)
               })
@@ -332,7 +345,10 @@ const app = new Elysia()
             }
             if (stackFilter) {
               list = list.filter((p: ProjectRow) => {
-                const arr: string[] = p.tech_stack ? JSON.parse(p.tech_stack) : []
+                const arr: string[] =
+                  typeof p.tech_stack === 'string' && p.tech_stack.trim()
+                    ? parseStringArray(p.tech_stack)
+                    : []
                 return arr.some(x => String(x).toLowerCase().includes(stackFilter))
               })
             }
@@ -593,6 +609,9 @@ const app = new Elysia()
         }
       })
       .get('/content/:section', async ({ params }: Context) => {
+        if (!params.section) {
+          throw new Error('Missing "section" parameter')
+        }
         const row = (
           await orm
             .select({
@@ -612,8 +631,19 @@ const app = new Elysia()
         }
       })
       .put('/content/:section', async ({ params, body }: Context) => {
-        const payload = typeof body === 'string' ? JSON.parse(body) : body
-        const content = JSON.stringify(payload?.content ?? {})
+        if (!params.section) {
+          throw new Error('Missing "section" parameter')
+        }
+
+        interface UpsertContentBody {
+          content?: unknown | Record<string, unknown>
+        }
+
+        const payload = (typeof body === 'string' ? JSON.parse(body) : body) as UpsertContentBody
+        const content = JSON.stringify(
+          (payload && typeof payload === 'object' && 'content' in payload ? payload.content : {}) ??
+            {}
+        )
         // Upsert by section
         await orm.run(
           sql`INSERT INTO portfolio_content (section, content) VALUES (${params.section}, ${content}) ON CONFLICT(section) DO UPDATE SET content=excluded.content, updated_at=CURRENT_TIMESTAMP`
@@ -626,7 +656,7 @@ const app = new Elysia()
         return { logged: true }
       })
       // simple onAfterHandle logger for API
-      .onAfterHandle(({ request, set, response: _response }: Context) => {
+      .onAfterHandle(({ request, set }) => {
         const startHeader = request.headers.get('x-start-time')
         const started = startHeader ? Number(startHeader) : undefined
         const duration = started ? Date.now() - started : 0
@@ -635,11 +665,9 @@ const app = new Elysia()
           logApi(request.method, url.pathname, Number(set.status) ?? 200, duration)
         }
       })
-      .onBeforeHandle(({ request }: Context) => {
+      .onBeforeHandle(({ set }) => {
         // mark start time for simple duration measurement
-        const headers = new Headers(request.headers)
-        headers.set('x-start-time', String(Date.now()))
-        return new Request(request, { headers })
+        set.headers['x-start-time'] = String(Date.now())
       })
   )
 

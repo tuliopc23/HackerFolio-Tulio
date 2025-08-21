@@ -23,7 +23,7 @@ function useTypewriter({
 
   const updateText = useCallback(() => {
     if (currentIndex < memoizedText.length) {
-      setDisplayText(prev => prev + memoizedText[currentIndex])
+      setDisplayText(prev => prev + (memoizedText[currentIndex] ?? ''))
       setCurrentIndex(prev => prev + 1)
     } else {
       setIsComplete(true)
@@ -52,7 +52,7 @@ function useTypewriter({
       }
     }
     return undefined
-  }, [currentIndex, memoizedText, speed, delay, enabled, updateText])
+  }, [currentIndex, memoizedText, speed, delay, enabled, updateText, text])
 
   return { displayText, isComplete }
 }

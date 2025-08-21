@@ -1,7 +1,7 @@
+import { Database } from 'bun:sqlite'
 import { existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
 
-import { Database } from 'bun:sqlite'
 import { drizzle, type BunSQLiteDatabase } from 'drizzle-orm/bun-sqlite'
 
 import * as schema from './schema'

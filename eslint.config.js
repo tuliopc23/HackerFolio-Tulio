@@ -28,11 +28,13 @@ export default tseslint.config(
       react: {
         version: 'detect',
       },
+      'import/core-modules': ['bun:sqlite'],
       'import/resolver': {
         typescript: {
           alwaysTryTypes: true,
-          project: './tsconfig.json',
+          project: './tsconfig.eslint.json',
         },
+        node: {},
       },
     },
   },

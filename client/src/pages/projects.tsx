@@ -46,8 +46,9 @@ export default function Projects() {
           }))
         )
       })
-      .catch((e: Error) => {
-        setError(e?.message || 'Failed to load projects')
+      .catch((e: unknown) => {
+        const message = e instanceof Error ? e.message : 'Failed to load projects'
+        setError(message)
       })
       .finally(() => {
         setLoading(false)
@@ -127,13 +128,19 @@ export default function Projects() {
                 <div className='grid grid-cols-2 gap-2 mb-4'>
                   <div className='text-center p-2 bg-lumon-dark border border-cyan-soft rounded'>
                     <div className='text-neon-blue font-medium'>
-                      {String(project.stats.performance ?? '')}
+                      {typeof project.stats.performance === 'string' ||
+                      typeof project.stats.performance === 'number'
+                        ? String(project.stats.performance)
+                        : ''}
                     </div>
                     <div className='text-text-soft text-xs'>Performance</div>
                   </div>
                   <div className='text-center p-2 bg-lumon-dark border border-cyan-soft rounded'>
                     <div className='text-terminal-green font-medium'>
-                      {String(project.stats.accessibility ?? '')}
+                      {typeof project.stats.accessibility === 'string' ||
+                      typeof project.stats.accessibility === 'number'
+                        ? String(project.stats.accessibility)
+                        : ''}
                     </div>
                     <div className='text-text-soft text-xs'>Accessibility</div>
                   </div>

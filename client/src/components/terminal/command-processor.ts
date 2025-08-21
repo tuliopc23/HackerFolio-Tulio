@@ -145,9 +145,12 @@ Status: ${profileData.status}`,
     // Check if it's a project link
     const project = projectsData.find(p => p.name.toLowerCase().includes(target.toLowerCase()))
     if (project?.links) {
-      const firstLink = Object.values(project.links)[0]!
-      window.open(firstLink, '_blank')
-      return { output: `Opening ${project.name}...` }
+      const links = Object.values(project.links)
+      const firstLink = links[0]
+      if (firstLink) {
+        window.open(firstLink, '_blank')
+        return { output: `Opening ${project.name}...` }
+      }
     }
 
     return { output: `Cannot open '${target}' - not found`, error: true }

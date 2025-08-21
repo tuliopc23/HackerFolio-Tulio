@@ -54,7 +54,7 @@ export default function Home() {
           <div
             className='h-full grid gap-0 p-4'
             style={{
-              gridTemplateColumns: `${leftPaneWidth}% 4px ${100 - leftPaneWidth - 0.4}%`,
+              gridTemplateColumns: `${String(leftPaneWidth)}% 4px ${String(100 - leftPaneWidth - 0.4)}%`,
               height: 'calc(100vh - 40px)', // Account for title bar
             }}
           >

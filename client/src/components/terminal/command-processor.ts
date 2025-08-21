@@ -10,12 +10,13 @@ export interface CommandResult {
 export class CommandProcessor {
   private history: string[] = [];
   private historyIndex: number = -1;
+  private serverCommands: Set<string> = new Set();
 
   constructor() {
     // Load history from localStorage
     const savedHistory = localStorage.getItem('terminal-history');
     if (savedHistory) {
-      this.history = JSON.parse(savedHistory);
+      this.history = JSON.parse(savedHistory) as string[];
     }
   }
 
@@ -53,61 +54,23 @@ export class CommandProcessor {
     const arg = args.join(' ');
 
     switch (command.toLowerCase()) {
-      case 'help':
-        return this.help();
-      
-      case 'whoami':
-        return this.whoami();
-      
-      case 'grep':
-        if (arg === 'stack') {
-          return this.grepStack();
-        }
-        return { output: `grep: '${arg}' - try 'grep stack'`, error: true };
-      
-      case 'projects':
-        return this.projects(arg);
-      
-      case 'printd':
-        if (arg === 'contact') {
-          return this.printdContact();
-        }
-        return { output: `printd: '${arg}' - try 'printd contact'`, error: true };
-      
       case 'open':
         return this.open(arg);
-      
       case 'theme':
         return this.theme(arg);
-      
       case 'clear':
         return { output: 'CLEAR' };
-      
       case 'ls':
         return this.ls();
-      
       case 'cat':
         return this.cat(arg);
-      
-      case 'time':
-        return this.time();
-      
       case 'cams':
         return { output: 'ACCESS DENIED.', error: true };
-      
       default:
-        // Defer to server for unknown commands
-        try {
-          // Synchronously bridging async is not possible in this structure,
-          // so we fall back to local message and suggest help.
-          // Future: refactor to async and call executeCommand(command, args)
-          return { 
-            output: `Command not found: ${command}\nType 'help' for available commands.`, 
-            error: true 
-          };
-        } catch (e) {
-          return { output: `Error executing command '${command}'`, error: true };
-        }
+        return { 
+          output: `Command not found: ${command}\nType 'help' for available commands.`, 
+          error: true 
+        };
     }
   }
 
@@ -149,52 +112,7 @@ Status: ${profileData.status}`
     };
   }
 
-  private grepStack(): CommandResult {
-    return {
-      output: `Languages: ${profileData.stack.languages.join(', ')}
-Web (Full-stack): ${profileData.stack.web.join(', ')}
-Cloud/Infra: ${profileData.stack.cloud.join(', ')}`
-    };
-  }
-
-  private projects(filter?: string): CommandResult {
-    let projects = projectsData;
-    
-    if (filter) {
-      projects = projects.filter(p => 
-        p.name.toLowerCase().includes(filter.toLowerCase()) ||
-        p.description.toLowerCase().includes(filter.toLowerCase()) ||
-        p.stack.some(tech => tech.toLowerCase().includes(filter.toLowerCase()))
-      );
-    }
-
-    if (projects.length === 0) {
-      return { output: `No projects found matching '${filter}'` };
-    }
-
-    const output = projects.map(project => 
-      `${project.featured ? '★ ' : ''}${project.name}
-  Role: ${project.role}
-  Stack: ${project.stack.join(', ')}
-  ${project.description}
-  ${Object.entries(project.links || {}).map(([key, url]) => `${key}: ${url}`).join('\n  ')}`
-    ).join('\n\n');
-
-    return { output };
-  }
-
-  private printdContact(): CommandResult {
-    return {
-      output: `Contact Information:
-
-Email: ${profileData.contact.email}
-GitHub: ${profileData.contact.github}
-Twitter: ${profileData.contact.twitter}
-LinkedIn: ${profileData.contact.linkedin}
-
-Available for full-time positions, contract work, and consulting projects.`
-    };
-  }
+  
 
   private open(target: string): CommandResult {
     if (!target) {
@@ -263,27 +181,11 @@ projects/
     }
   }
 
-  private time(): CommandResult {
-    const now = new Date();
-    return {
-      output: `${now.toLocaleString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        timeZoneName: 'short'
-      })}`
-    };
-  }
+  
 
   getAutocomplete(input: string): string[] {
-    const commands = [
-      'help', 'whoami', 'grep stack', 'projects', 'printd contact', 
-      'open', 'theme', 'clear', 'ls', 'cat', 'time', 'cams'
-    ];
+    const commands = ['help', 'whoami', 'stack', 'projects', 'open', 'theme', 'clear', 'ls', 'cat', 'time', 'grep stack', 'contact', 'about', 'github', 'resume'];
+    const merged = Array.from(new Set([...commands, ...Array.from(this.serverCommands)]));
     
     const routes = ['/projects', '/about', '/contact', '/resume'];
     const themes = ['lumon', 'neon', 'mono'];
@@ -304,6 +206,23 @@ projects/
       return files.filter(file => file.startsWith(partial)).map(file => `cat ${file}`);
     }
     
-    return commands.filter(cmd => cmd.startsWith(input));
+    if (input.startsWith('projects ')) {
+      const opts = ['--limit ', '--status ', '--stack '];
+      const partial = input.substring('projects '.length);
+      return opts.filter(o => o.startsWith(partial)).map(o => `projects ${o}`);
+    }
+
+    if (input.startsWith('help ')) {
+      const partial = input.substring('help '.length).toLowerCase();
+      const names = Array.from(new Set([...Array.from(this.serverCommands), ...commands]));
+      return names
+        .filter(n => n && !n.includes(' ') && n.toLowerCase().startsWith(partial))
+        .map(n => `help ${n}`);
+    }
+
+    return merged.filter(cmd => cmd.startsWith(input));
+  }
+  setServerCommands = (cmds: string[]) => {
+    for (const c of cmds) this.serverCommands.add(c);
   }
 }

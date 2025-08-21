@@ -1,4 +1,16 @@
 // client/src/lib/api.ts
+
+export interface CommandAction {
+  type: 'open_url';
+  url: string;
+}
+
+export interface ServerCommandResult {
+  output: string;
+  error?: boolean;
+  action?: CommandAction;
+}
+
 export interface ApiProject {
   id: number;
   name: string;
@@ -31,17 +43,18 @@ export async function fetchProjects(): Promise<ApiProject[]> {
   const base = getBaseUrl()
   const res = await fetch(`${base}/api/projects`);
   if (!res.ok) throw new Error('Failed to fetch projects');
-  return res.json();
+  return res.json() as Promise<ApiProject[]>;
 }
 
 export async function fetchCommands(): Promise<Array<{ command: string; description?: string; category?: string }>> {
   const base = getBaseUrl()
   const res = await fetch(`${base}/api/commands`);
   if (!res.ok) throw new Error('Failed to fetch commands');
-  return res.json();
+  return res.json() as Promise<Array<{ command: string; description?: string; category?: string }>>;
 }
 
-export async function executeCommand(command: string, args: string[] = []): Promise<{ output: string; error?: boolean }>{
+
+export async function executeCommand(command: string, args: string[] = []): Promise<ServerCommandResult>{
   const base = getBaseUrl()
   const res = await fetch(`${base}/api/commands/execute`, {
     method: 'POST',
@@ -49,12 +62,12 @@ export async function executeCommand(command: string, args: string[] = []): Prom
     body: JSON.stringify({ command, args })
   });
   if (!res.ok) throw new Error('Command failed');
-  return res.json();
+  return res.json() as Promise<ServerCommandResult>;
 }
 
 export async function fetchContent(section: string): Promise<{ section: string; content: any }>{
   const base = getBaseUrl()
   const res = await fetch(`${base}/api/content/${encodeURIComponent(section)}`);
   if (!res.ok) throw new Error('Failed to fetch content');
-  return res.json();
+  return res.json() as Promise<{ section: string; content: any }>;
 }

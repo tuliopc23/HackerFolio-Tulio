@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, KeyboardEvent } from 'react';
-import { useLocation } from 'wouter';
+import { useNavigate } from '@tanstack/react-router';
 import { CommandProcessor, CommandResult } from './command-processor';
-import { executeCommand as executeServerCommand } from '@/lib/api';
+import { executeCommand as executeServerCommand, fetchCommands, type ServerCommandResult, type CommandAction } from '@/lib/api';
 import { useTheme } from './theme-context';
 import { EvervaultCard } from '@/components/ui/evervault-card';
 import { TypewriterText } from '@/hooks/use-typewriter';
@@ -14,21 +14,45 @@ interface TerminalHistory {
 }
 
 export default function TerminalPane() {
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
   const { setTheme } = useTheme();
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<TerminalHistory[]>([]);
   const [processor] = useState(() => new CommandProcessor());
   const inputRef = useRef<HTMLInputElement>(null);
   const outputRef = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia ? 
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches : false;
 
   useEffect(() => {
     // Auto-focus input
     if (inputRef.current) {
       inputRef.current.focus();
     }
+    // Add ANSI-colored boot messages into history for consistent styling
+    setHistory(prev => {
+      if (prev.length > 0) return prev;
+      const boot = `\x1b[36mInitializing secure connection...\x1b[39m\n\x1b[32m✓ Connection established\x1b[39m`;
+      const art = `\x1b[36m████████╗██╗   ██╗██╗     ██╗ ██████╗ \n╚══██╔══╝██║   ██║██║     ██║██╔═══██╗\n   ██║   ██║   ██║██║     ██║██║   ██║\n   ██║   ██║   ██║██║     ██║██║   ██║\n   ██║   ╚██████╔╝███████╗██║╚██████╔╝\n   ╚═╝    ╚═════╝ ╚══════╝╚═╝ ╚═════╝\x1b[39m`;
+      const tip = `\x1b[35mTip\x1b[39m: Type \x1b[36mhelp\x1b[39m or \x1b[36mhelp projects\x1b[39m for flags`;
+      return [
+        ...prev,
+        { command: '', output: boot, timestamp: new Date() },
+        { command: '', output: art, timestamp: new Date() },
+        { command: '', output: tip, timestamp: new Date() },
+      ];
+    });
   }, []);
+
+  useEffect(() => {
+    // Fetch server commands for autocomplete enrichment
+    void (async () => {
+      try {
+        const cmds = await fetchCommands();
+        processor.setServerCommands?.(cmds.map(c => c.command));
+      } catch {}
+    })();
+  }, [processor]);
 
   useEffect(() => {
     // Scroll to bottom when history updates
@@ -80,28 +104,41 @@ export default function TerminalPane() {
         const themeName = result.navigate.substring(6) as 'lumon' | 'neon' | 'mono';
         setTheme(themeName);
       } else {
-        setLocation(result.navigate);
+        navigate({ to: result.navigate });
       }
     }
 
     let finalOutput = result.output;
     let finalError = result.error;
+    let serverResult: ServerCommandResult | null = null;
 
     // Prefer server for dynamic commands
     const [rootCmd, ...rest] = command.split(' ');
-    const shouldAskServer = ['help', 'projects', 'about', 'skills', 'contact', 'github', 'resume', 'clear'].includes(rootCmd);
+    const shouldAskServer = ['help', 'projects', 'about', 'skills', 'contact', 'github', 'resume', 'clear', 'whoami', 'stack'].includes(rootCmd);
 
     // Fallback to server for unknown commands or specific dynamic ones
     if (shouldAskServer || (result.error && result.output.startsWith('Command not found'))) {
       try {
         const cmd = rootCmd;
         const args = rest;
-        const server = await executeServerCommand(cmd, args);
-        finalOutput = server.output;
-        finalError = server.error;
+        serverResult = await executeServerCommand(cmd, args);
+        finalOutput = serverResult.output;
+        finalError = serverResult.error;
       } catch (err) {
         finalOutput = 'Server error executing command';
         finalError = true;
+      }
+    }
+
+    // Execute action from server if provided
+    if (serverResult?.action?.type === 'open_url' && serverResult.action.url) {
+      const url = serverResult.action.url;
+      if (url.startsWith('http') && typeof window !== 'undefined') {
+        try {
+          window.open(url, '_blank');
+        } catch (error) {
+          console.warn('Failed to open URL:', url, error);
+        }
       }
     }
 
@@ -131,11 +168,94 @@ export default function TerminalPane() {
   };
 
   const formatOutput = (output: string) => {
-    return output.split('\n').map((line, i) => (
-      <div key={i} className="whitespace-pre-wrap">
-        {line}
-      </div>
-    ));
+    // ANSI parser for SGR codes (very small subset)
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const ANSI_PATTERN = /\x1b\[([0-9;]+)m/g; // e.g., \x1b[31m or \x1b[1;32m
+
+    type StyleState = { bold?: boolean; italic?: boolean; underline?: boolean; fg?: string | null; bg?: string | null };
+    const initState = (): StyleState => ({ bold: false, italic: false, underline: false, fg: null, bg: null });
+
+    const stateToClass = (s: StyleState) => {
+      const classes: string[] = [];
+      if (s.bold) classes.push('ansi-bold');
+      if (s.italic) classes.push('ansi-italic');
+      if (s.underline) classes.push('ansi-underline');
+      if (s.fg) classes.push(`ansi-fg-${s.fg}`);
+      if (s.bg) classes.push(`ansi-bg-${s.bg}`);
+      return classes.join(' ');
+    };
+
+    const applyCode = (s: StyleState, code: number) => {
+      if (code === 0) return initState(); // reset
+      if (code === 1) return { ...s, bold: true };
+      if (code === 3) return { ...s, italic: true };
+      if (code === 4) return { ...s, underline: true };
+      if (code === 22) return { ...s, bold: false };
+      if (code === 23) return { ...s, italic: false };
+      if (code === 24) return { ...s, underline: false };
+      if (code === 39) return { ...s, fg: null };
+      if (code === 49) return { ...s, bg: null };
+      const fgMap: Record<number, string> = { 30:'black',31:'red',32:'green',33:'yellow',34:'blue',35:'magenta',36:'cyan',37:'white',90:'bright-black',91:'bright-red',92:'bright-green',93:'bright-yellow',94:'bright-blue',95:'bright-magenta',96:'bright-cyan',97:'bright-white' };
+      const bgMap: Record<number, string> = { 40:'black',41:'red',42:'green',43:'yellow',44:'blue',45:'magenta',46:'cyan',47:'white',100:'bright-black',101:'bright-red',102:'bright-green',103:'bright-yellow',104:'bright-blue',105:'bright-magenta',106:'bright-cyan',107:'bright-white' };
+      if (fgMap[code]) return { ...s, fg: fgMap[code] };
+      if (bgMap[code]) return { ...s, bg: bgMap[code] };
+      return s;
+    };
+
+    const renderTextWithLinks = (text: string) => {
+      const parts: Array<string | { url: string }> = [];
+      let lastIndex = 0;
+      const matches = Array.from(text.matchAll(urlRegex));
+      for (const match of matches) {
+        const url = match[0];
+        const index = match.index ?? 0;
+        if (index > lastIndex) parts.push(text.slice(lastIndex, index));
+        parts.push({ url });
+        lastIndex = index + url.length;
+      }
+      if (lastIndex < text.length) parts.push(text.slice(lastIndex));
+      if (parts.length === 0) parts.push(text);
+      return parts.map((p, j) =>
+        typeof p === 'string' ? (
+          <span key={j}>{p}</span>
+        ) : (
+          <a key={j} href={p.url} target="_blank" rel="noopener noreferrer" className="underline text-cyan-bright">
+            {p.url}
+          </a>
+        )
+      );
+    };
+
+    const renderLine = (line: string, i: number) => {
+      const segments: Array<{ text: string; classes: string }> = [];
+      let lastIndex = 0;
+      let state = initState();
+      let match: RegExpExecArray | null;
+      while ((match = ANSI_PATTERN.exec(line)) !== null) {
+        const idx = match.index;
+        if (idx > lastIndex) {
+          segments.push({ text: line.slice(lastIndex, idx), classes: stateToClass(state) });
+        }
+        const codes = match[1].split(';').map((n) => Number(n || '0'));
+        for (const code of codes) state = applyCode(state, code);
+        lastIndex = ANSI_PATTERN.lastIndex;
+      }
+      if (lastIndex < line.length) {
+        segments.push({ text: line.slice(lastIndex), classes: stateToClass(state) });
+      }
+
+      return (
+        <div key={i} className="whitespace-pre-wrap">
+          {segments.map((seg, k) => (
+            <span key={k} className={seg.classes}>
+              {renderTextWithLinks(seg.text)}
+            </span>
+          ))}
+        </div>
+      );
+    };
+
+    return output.split('\n').map((line, i) => renderLine(line, i));
   };
 
   return (
@@ -162,58 +282,7 @@ export default function TerminalPane() {
         aria-live="polite"
         aria-label="Terminal output"
       >
-        {/* Boot Sequence */}
-        <div className="terminal-output mb-4">
-          <TypewriterText 
-            text="HACKERFOLIO TERMINAL v2.1.7"
-            speed={prefersReducedMotion ? 0 : 60}
-            enabled={!prefersReducedMotion}
-            className="text-magenta-bright mb-2 phosphor-glow"
-          />
-          <TypewriterText 
-            text="Initializing secure connection..."
-            speed={prefersReducedMotion ? 0 : 40}
-            delay={prefersReducedMotion ? 0 : 1500}
-            enabled={!prefersReducedMotion}
-            className="text-text-soft text-sm mb-1"
-          />
-          <TypewriterText 
-            text="✓ Connection established"
-            speed={prefersReducedMotion ? 0 : 30}
-            delay={prefersReducedMotion ? 0 : 3000}
-            enabled={!prefersReducedMotion}
-            className="text-terminal-green text-sm mb-4"
-          />
-        </div>
-
-        {/* Welcome Message with Matrix Effect */}
-        <div className="terminal-output mb-6">
-          <div className="flex items-center justify-center mb-4">
-            <div className="w-32 h-32">
-              <EvervaultCard text="TULIO" className="border-magenta-soft" />
-            </div>
-          </div>
-          <div className="text-center">
-            <TypewriterText 
-              text="Full-stack Developer | Terminal Interface"
-              speed={prefersReducedMotion ? 0 : 80}
-              enabled={!prefersReducedMotion}
-              className="text-magenta-bright mb-4 text-lg phosphor-glow"
-            />
-          </div>
-          <div className="text-center">
-            <TypewriterText 
-              text="Type 'help' to see available commands"
-              speed={prefersReducedMotion ? 0 : 60}
-              delay={prefersReducedMotion ? 0 : 2000}
-              enabled={!prefersReducedMotion}
-              className="text-cyan-soft"
-            />
-            <div id="terminal-help" className="sr-only">
-              Use Tab to navigate between interactive elements. Type commands and press Enter to execute.
-            </div>
-          </div>
-        </div>
+        
 
         {/* Command History */}
         <div className="terminal-output space-y-2">

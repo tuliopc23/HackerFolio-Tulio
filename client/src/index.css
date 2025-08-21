@@ -144,6 +144,12 @@
 
 .pane-border {
   border: 1px solid var(--magenta-soft);
+  -webkit-box-shadow: 
+    0 0 10px rgba(255, 0, 255, 0.3),
+    inset 0 0 10px rgba(255, 0, 255, 0.1);
+  -moz-box-shadow: 
+    0 0 10px rgba(255, 0, 255, 0.3),
+    inset 0 0 10px rgba(255, 0, 255, 0.1);
   box-shadow: 
     0 0 10px rgba(255, 0, 255, 0.3),
     inset 0 0 10px rgba(255, 0, 255, 0.1);
@@ -151,6 +157,12 @@
 
 .pane-focus {
   border-color: var(--cyan-bright);
+  -webkit-box-shadow: 
+    0 0 15px rgba(0, 212, 255, 0.5),
+    inset 0 0 15px rgba(0, 212, 255, 0.2);
+  -moz-box-shadow: 
+    0 0 15px rgba(0, 212, 255, 0.5),
+    inset 0 0 15px rgba(0, 212, 255, 0.2);
   box-shadow: 
     0 0 15px rgba(0, 212, 255, 0.5),
     inset 0 0 15px rgba(0, 212, 255, 0.2);
@@ -246,3 +258,68 @@
   white-space: nowrap;
   border: 0;
 }
+
+/* Desktop and Window Animations */
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+
+/* Window drag cursor */
+.cursor-move {
+  cursor: move;
+}
+
+/* Desktop icons hover effect */
+.desktop-icon:hover {
+  background: rgba(255, 0, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Radial gradient utilities */
+.bg-gradient-radial {
+  background-image: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
+/* ANSI styling support */
+.ansi-bold { font-weight: 700; }
+.ansi-italic { font-style: italic; }
+.ansi-underline { text-decoration: underline; }
+
+/* Foreground colors */
+.ansi-fg-black { color: #000; }
+.ansi-fg-red { color: var(--terminal-red); }
+.ansi-fg-green { color: var(--terminal-green); }
+.ansi-fg-yellow { color: var(--terminal-orange); }
+.ansi-fg-blue { color: var(--neon-blue); }
+.ansi-fg-magenta { color: var(--magenta-bright); }
+.ansi-fg-cyan { color: var(--cyan-bright); }
+.ansi-fg-white { color: #f5f5f5; }
+
+.ansi-fg-bright-black { color: #555; }
+.ansi-fg-bright-red { color: #ff6b6b; }
+.ansi-fg-bright-green { color: #7CFC00; }
+.ansi-fg-bright-yellow { color: #ffd166; }
+.ansi-fg-bright-blue { color: #7ccfff; }
+.ansi-fg-bright-magenta { color: #ff99ff; }
+.ansi-fg-bright-cyan { color: #a0ffff; }
+.ansi-fg-bright-white { color: #ffffff; }
+
+/* Background colors (kept subtle to fit theme) */
+.ansi-bg-black { background-color: rgba(0,0,0,0.3); }
+.ansi-bg-red { background-color: rgba(255,0,0,0.15); }
+.ansi-bg-green { background-color: rgba(0,255,0,0.12); }
+.ansi-bg-yellow { background-color: rgba(255,165,0,0.15); }
+.ansi-bg-blue { background-color: rgba(0,191,255,0.12); }
+.ansi-bg-magenta { background-color: rgba(255,0,255,0.12); }
+.ansi-bg-cyan { background-color: rgba(0,255,255,0.12); }
+.ansi-bg-white { background-color: rgba(255,255,255,0.12); }

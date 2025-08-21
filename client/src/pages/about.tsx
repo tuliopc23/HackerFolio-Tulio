@@ -1,4 +1,4 @@
-import { Link } from 'wouter';
+import { Link } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
 import { aboutContent as fallbackAbout } from '@/data/portfolio-data';
 

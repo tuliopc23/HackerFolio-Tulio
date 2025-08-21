@@ -58,9 +58,16 @@ export default function ProjectsGridPane() {
             <button 
               onClick={(e) => {
                 e.stopPropagation();
-                window.open(project.live_url, '_blank');
+                if (typeof window !== 'undefined') {
+                  try {
+                    window.open(project.live_url, '_blank');
+                  } catch (error) {
+                    console.warn('Failed to open live URL:', project.live_url, error);
+                  }
+                }
               }}
-              className="px-3 py-1 bg-cyan-bright text-lumon-dark rounded text-xs hover:bg-cyan-soft transition-colors"
+              className="px-3 py-1 bg-cyan-bright text-lumon-dark rounded text-xs hover:bg-cyan-soft transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-bright focus:ring-opacity-50"
+              aria-label={`View live demo of ${project.name}`}
             >
               Demo
             </button>
@@ -69,9 +76,16 @@ export default function ProjectsGridPane() {
             <button 
               onClick={(e) => {
                 e.stopPropagation();
-                window.open(project.github_url, '_blank');
+                if (typeof window !== 'undefined') {
+                  try {
+                    window.open(project.github_url, '_blank');
+                  } catch (error) {
+                    console.warn('Failed to open GitHub URL:', project.github_url, error);
+                  }
+                }
               }}
-              className="px-3 py-1 border border-magenta-soft text-magenta-soft rounded text-xs hover:bg-magenta-soft hover:text-lumon-dark transition-colors"
+              className="px-3 py-1 border border-magenta-soft text-magenta-soft rounded text-xs hover:bg-magenta-soft hover:text-lumon-dark transition-colors focus:outline-none focus:ring-2 focus:ring-magenta-soft focus:ring-opacity-50"
+              aria-label={`View source code of ${project.name} on GitHub`}
             >
               Code
             </button>
@@ -103,8 +117,13 @@ export default function ProjectsGridPane() {
           <div className="p-4 text-center">
             <div className="text-terminal-red text-sm mb-2">⚠️ {error}</div>
             <button 
-              onClick={() => window.location.reload()}
-              className="text-xs text-cyan-bright hover:text-cyan-soft underline"
+              onClick={() => {
+                if (typeof window !== 'undefined') {
+                  window.location.reload();
+                }
+              }}
+              className="text-xs text-cyan-bright hover:text-cyan-soft underline focus:outline-none focus:ring-2 focus:ring-cyan-bright focus:ring-opacity-50 px-2 py-1 rounded"
+              aria-label="Retry loading projects"
             >
               Retry
             </button>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocation } from 'wouter';
+import { useNavigate } from '@tanstack/react-router';
 import { useTheme } from './theme-context';
 import { 
   Home, 
@@ -12,8 +12,12 @@ import {
   X 
 } from 'lucide-react';
 
-export default function FloatingDockTerminal() {
-  const [, setLocation] = useLocation();
+interface FloatingDockTerminalProps {
+  onRestoreTerminal?: () => void;
+}
+
+export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDockTerminalProps) {
+  const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const [isMinimized, setIsMinimized] = useState(false);
 
@@ -25,6 +29,14 @@ export default function FloatingDockTerminal() {
   ];
 
   const systemItems = [
+    { 
+      id: 'terminal', 
+      icon: () => <div className="w-4 h-4 border border-current rounded bg-current bg-opacity-20" />, 
+      label: 'Terminal', 
+      action: () => {
+        if (onRestoreTerminal) onRestoreTerminal();
+      }
+    },
     { 
       id: 'theme', 
       icon: Palette, 
@@ -68,7 +80,7 @@ export default function FloatingDockTerminal() {
             {navigationItems.map((item) => (
               <button
                 key={item.id}
-                onClick={() => setLocation(item.path)}
+                onClick={() => navigate({ to: item.path })}
                 className="w-full flex items-center gap-2 px-3 py-2 rounded text-sm text-cyan-bright hover:bg-magenta-soft hover:bg-opacity-20 transition-colors group focus:outline-none focus:ring-2 focus:ring-magenta-bright focus:ring-opacity-50"
                 title={item.label}
                 aria-label={`Navigate to ${item.label}`}

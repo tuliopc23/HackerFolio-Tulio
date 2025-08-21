@@ -24,6 +24,19 @@ const logApi = (method: string, path: string, status: number, durationMs: number
 // Apply migrations and seed initial data
 await migrate(sqlite, { migrationsFolder: 'drizzle' })
 
+// ANSI color helpers
+const ansi = {
+  wrap: (s: string, ...codes: number[]) => `\x1b[${codes.join(';')}m${s}\x1b[0m`,
+  bold: (s: string) => `\x1b[1m${s}\x1b[22m`,
+  cyan: (s: string) => `\x1b[36m${s}\x1b[39m`,
+  magenta: (s: string) => `\x1b[35m${s}\x1b[39m`,
+  green: (s: string) => `\x1b[32m${s}\x1b[39m`,
+  yellow: (s: string) => `\x1b[33m${s}\x1b[39m`,
+  red: (s: string) => `\x1b[31m${s}\x1b[39m`,
+  underline: (s: string) => `\x1b[4m${s}\x1b[24m`,
+  dim: (s: string) => `\x1b[2m${s}\x1b[22m`,
+}
+
 const app = new Elysia()
   .use(cors())
   // API routes
@@ -67,16 +80,55 @@ const app = new Elysia()
         return rows
       })
       .post('/commands/execute', async ({ body }) => {
-        const { command, args } = body as { command?: string; args?: string[] }
+        const { command, args = [] } = body as { command?: string; args?: string[] }
         if (!command) return { error: 'command is required' }
 
         // Basic command lookup (allows toggling via is_active)
         const found = (await orm.select().from(tCommands).where(eq(tCommands.command, command)).limit(1)).at(0)
-        if (!found) return { output: `Command not found: ${command}`, error: true }
+        if (!found) return { output: ansi.red(`Command not found: ${command}`), error: true }
 
         switch (command) {
           case 'help': {
-            const cmds = await orm.select({ command: tCommands.command, description: tCommands.description, category: tCommands.category }).from(tCommands).where(eq(tCommands.isActive, true)).orderBy(tCommands.command)
+            const cmds = await orm
+              .select({ command: tCommands.command, description: tCommands.description, category: tCommands.category })
+              .from(tCommands)
+              .where(eq(tCommands.isActive, true))
+              .orderBy(tCommands.command)
+
+            const argsArr = Array.isArray(args) ? args : []
+            const target = (argsArr[0] || '').toLowerCase()
+
+            // Detailed help per command
+            if (target) {
+              const usage: Record<string, { desc: string; usage: string; examples?: string[] }> = {
+                help: { desc: 'Show general or command-specific help', usage: 'help [command]', examples: ['help', 'help projects'] },
+                projects: { desc: 'List projects with optional filter/flags', usage: 'projects [filter] [--limit N] [--status STATUS] [--stack TECH]', examples: ['projects', 'projects react --limit 5', 'projects --status active'] },
+                whoami: { desc: 'Display profile information', usage: 'whoami' },
+                stack: { desc: 'Display technical skills list', usage: 'stack' },
+                grep: { desc: 'Search helpers (stack supported)', usage: 'grep stack' },
+                about: { desc: 'Show about content', usage: 'about' },
+                skills: { desc: 'Show skills content', usage: 'skills' },
+                contact: { desc: 'Show contact information', usage: 'contact' },
+                github: { desc: 'Show GitHub profile link', usage: 'github' },
+                resume: { desc: 'Show resume URL', usage: 'resume' },
+                time: { desc: 'Show current time', usage: 'time' },
+                clear: { desc: 'Clear terminal', usage: 'clear' },
+              }
+              const u = usage[target]
+              if (!u) return { output: ansi.red(`No help for '${target}'`), error: true }
+              const lines = [
+                `${ansi.magenta(ansi.bold('Command'))}: ${ansi.cyan(target)}`,
+                `${ansi.magenta('Description')}: ${u.desc}`,
+                `${ansi.magenta('Usage')}: ${ansi.cyan(u.usage)}`,
+              ]
+              if (u.examples?.length) {
+                lines.push(ansi.magenta('Examples') + ':')
+                for (const ex of u.examples) lines.push('  ' + ansi.cyan(ex))
+              }
+              return { output: lines.join('\n') }
+            }
+
+            // General grouped help
             const byCat: Record<string, { command: string; description: string | null }[]> = {}
             for (const c of cmds) {
               const cat = c.category || 'misc'
@@ -84,16 +136,57 @@ const app = new Elysia()
               byCat[cat].push({ command: c.command!, description: c.description ?? null })
             }
             const sections: string[] = []
+            const wrap = (txt: string, width: number, indent: string) => {
+              const words = String(txt ?? '').split(/\s+/)
+              const lines: string[] = []
+              let line = ''
+              for (const word of words) {
+                const next = line ? line + ' ' + word : word
+                if (indent.length + next.length > width) {
+                  if (line) lines.push(line)
+                  line = word
+                } else {
+                  line = next
+                }
+              }
+              if (line) lines.push(line)
+              return lines.map((l, i) => (i === 0 ? l : indent + l)).join('\n')
+            }
             for (const [cat, rows] of Object.entries(byCat)) {
-              const maxLen = Math.max(12, ...rows.map(r => r.command.length))
-              const header = `${cat.toUpperCase()}\n` + `COMMAND`.padEnd(maxLen) + '  DESCRIPTION'
-              const line = '-'.repeat(header.split('\n').pop()!.length)
-              const body = rows.map(r => `${r.command.padEnd(maxLen)}  ${r.description ?? ''}`).join('\n')
-              sections.push(`${header}\n${line}\n${body}`)
+              const col = Math.max(12, Math.min(22, ...rows.map(r => r.command.length)))
+              const header = ansi.magenta(ansi.bold(cat.toUpperCase())) + '\n' + ansi.cyan('COMMAND'.padEnd(col)) + '  ' + ansi.cyan('DESCRIPTION')
+              const line = '-'.repeat(('COMMAND'.padEnd(col) + '  ' + 'DESCRIPTION').length)
+              const body = rows
+                .map(r => {
+                  const left = ansi.cyan(r.command.padEnd(col))
+                  const right = wrap(r.description ?? '', 80, ' '.repeat(col + 2))
+                  const [first, ...rest] = right.split('\n')
+                  return [left + '  ' + first, ...rest].join('\n')
+                })
+                .join('\n')
+              sections.push(`${header}\n${ansi.dim(line)}\n${body}`)
             }
             return { output: sections.join('\n\n') }
           }
+          
           case 'projects': {
+            // Parse flags and free-text filter
+            let filter = ''
+            let limit: number | null = null
+            let status: string | null = null
+            let stackFilter: string | null = null
+            const tokens = Array.isArray(args) ? [...args] : []
+            for (let i = 0; i < tokens.length; i++) {
+              const t = tokens[i]
+              if (t === '--limit' && tokens[i + 1]) { limit = Number(tokens[++i]) || null; continue }
+              if (t.startsWith('--limit=')) { limit = Number(t.split('=')[1]) || null; continue }
+              if (t === '--status' && tokens[i + 1]) { status = String(tokens[++i]).toLowerCase(); continue }
+              if (t.startsWith('--status=')) { status = String(t.split('=')[1]).toLowerCase(); continue }
+              if (t === '--stack' && tokens[i + 1]) { stackFilter = String(tokens[++i]).toLowerCase(); continue }
+              if (t.startsWith('--stack=')) { stackFilter = String(t.split('=')[1]).toLowerCase(); continue }
+              filter += (filter ? ' ' : '') + t
+            }
+            filter = filter.toLowerCase().trim()
             const projects = await orm.select({
               name: tProjects.name,
               description: tProjects.description,
@@ -102,16 +195,38 @@ const app = new Elysia()
               live_url: tProjects.liveUrl,
               status: tProjects.status,
             }).from(tProjects).orderBy(desc(tProjects.createdAt))
-            if (projects.length === 0) return { output: 'No projects found' }
-            const text = projects.map(p => {
+            let list = projects
+            if (filter) {
+              list = projects.filter(p => {
+                const name = (p.name ?? '').toLowerCase()
+                const desc = (p.description ?? '').toLowerCase()
+                const stackArr: string[] = ((p.tech_stack as any) ? JSON.parse(p.tech_stack as any) : [])
+                const stack = stackArr.join(' ').toLowerCase()
+                return name.includes(filter) || desc.includes(filter) || stack.includes(filter)
+              })
+            }
+            if (status) {
+              list = list.filter(p => String(p.status || '').toLowerCase() === status)
+            }
+            if (stackFilter) {
+              list = list.filter(p => {
+                const arr: string[] = ((p.tech_stack as any) ? JSON.parse(p.tech_stack as any) : [])
+                return arr.some(x => String(x).toLowerCase().includes(stackFilter!))
+              })
+            }
+            if (typeof limit === 'number' && limit > 0) {
+              list = list.slice(0, limit)
+            }
+            if (list.length === 0) return { output: filter ? ansi.yellow(`No projects found matching '${filter}'`) : ansi.yellow('No projects found') }
+            const text = list.map(p => {
               const stack = ((p.tech_stack as any) ? JSON.parse(p.tech_stack as any) : []) as string[]
               const parts = [
-                `• ${p.name}`,
+                `${ansi.magenta('•')} ${ansi.cyan(ansi.bold(String(p.name)))}`,
                 p.description ? `  ${p.description}` : undefined,
-                `  Stack: ${stack.length ? stack.join(', ') : '-'}`,
-                `  GitHub: ${p.github_url ?? '-'}`,
-                `  Live: ${p.live_url ?? '-'}`,
-                `  Status: ${p.status ?? '-'}`
+                `  ${ansi.magenta('Stack')}: ${stack.length ? ansi.cyan(stack.join(', ')) : '-'}`,
+                `  ${ansi.magenta('GitHub')}: ${p.github_url ? ansi.underline(ansi.cyan(p.github_url)) : '-'}`,
+                `  ${ansi.magenta('Live')}: ${p.live_url ? ansi.underline(ansi.cyan(p.live_url)) : '-'}`,
+                `  ${ansi.magenta('Status')}: ${ansi.cyan(p.status ?? '-')}`
               ].filter(Boolean)
               return parts!.join('\n')
             }).join('\n\n')
@@ -121,15 +236,15 @@ const app = new Elysia()
             const row = (await orm.select({ content: tContent.content }).from(tContent).where(eq(tContent.section, 'about')).limit(1)).at(0) as any
             const content = row?.content ? JSON.parse(row.content) : { markdown: '' }
             const md = content.markdown ?? 'About section not available.'
-            return { output: md }
+            return { output: ansi.cyan(md) }
           }
           case 'skills': {
             const row = (await orm.select({ content: tContent.content }).from(tContent).where(eq(tContent.section, 'skills')).limit(1)).at(0) as any
             const content = row?.content ? JSON.parse(row.content) : { list: [] }
             const list: string[] = Array.isArray(content.list) ? content.list : []
-            if (!list.length) return { output: 'No skills found' }
-            const items = list.map(s => `- ${s}`).join('\n')
-            return { output: `Skills\n------\n${items}` }
+            if (!list.length) return { output: ansi.yellow('No skills found') }
+            const items = list.map(s => `${ansi.magenta('-')} ${ansi.cyan(String(s))}`).join('\n')
+            return { output: `${ansi.magenta(ansi.bold('Skills'))}\n${ansi.dim('------')}\n${items}` }
           }
           case 'contact': {
             const row = (await orm.select({ content: tContent.content }).from(tContent).where(eq(tContent.section, 'contact')).limit(1)).at(0) as any
@@ -140,23 +255,58 @@ const app = new Elysia()
               c.linkedin ? `LinkedIn: ${c.linkedin}` : null,
               c.twitter ? `Twitter : ${c.twitter}` : null
             ].filter(Boolean)
-            if (!lines.length) return { output: 'No contact info available' }
+            if (!lines.length) return { output: ansi.yellow('No contact info available') }
             const sep = '-----------------------'
-            return { output: `Contact\n${sep}\n${lines.join('\n')}` }
+            return { output: `${ansi.magenta(ansi.bold('Contact'))}\n${ansi.dim(sep)}\n${lines.join('\n')}` }
           }
           case 'github': {
             const profile = (found as any).responseTemplate || process.env.GITHUB_PROFILE || 'https://github.com/tuliopc23'
-            return { output: `GitHub\n------\nProfile: ${profile}` }
+            return { output: `${ansi.magenta(ansi.bold('GitHub'))}\n${ansi.dim('------')}\n${ansi.magenta('Profile')}: ${ansi.underline(ansi.cyan(String(profile)))}` , action: { type: 'open_url', url: String(profile) } }
           }
           case 'resume': {
             const url = (found as any).responseTemplate || process.env.RESUME_URL || 'Resume not configured. Set RESUME_URL env var.'
-            return { output: typeof url === 'string' && url.startsWith('http') ? `Resume\n------\nURL: ${url}` : String(url) }
+            if (typeof url === 'string' && url.startsWith('http')) {
+              return { output: `${ansi.magenta(ansi.bold('Resume'))}\n${ansi.dim('------')}\n${ansi.magenta('URL')}: ${ansi.underline(ansi.cyan(url))}`, action: { type: 'open_url', url } }
+            }
+            return { output: ansi.yellow(String(url)) }
+          }
+          case 'time': {
+            const now = new Date()
+            return { output: now.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' }) }
+          }
+          case 'grep': {
+            const sub = (args?.[0] || '').toLowerCase()
+            if (sub === 'stack') {
+              const row = (await orm.select({ content: tContent.content }).from(tContent).where(eq(tContent.section, 'skills')).limit(1)).at(0) as any
+              const content = row?.content ? JSON.parse(row.content) : { list: [] }
+              const list: string[] = Array.isArray(content.list) ? content.list : []
+              const items = list.length ? list.map(s => `${ansi.magenta('-')} ${ansi.cyan(String(s))}`).join('\n') : ansi.yellow('-')
+              return { output: `${ansi.magenta(ansi.bold('Stack'))}\n${ansi.dim('-----')}\n${items}` }
+            }
+            return { output: ansi.red(`grep: '${args?.join(' ')}' - try 'grep stack'`), error: true }
+          }
+          case 'whoami': {
+            const profile = { name: 'Tulio Cunha', title: 'Full-stack Developer', location: 'Remote', status: 'Available for projects' }
+            const lines = [
+              `${ansi.magenta('Name')}    : ${ansi.cyan(profile.name)}`,
+              `${ansi.magenta('Role')}    : ${ansi.cyan(profile.title)}`,
+              `${ansi.magenta('Location')}: ${ansi.cyan(profile.location)}`,
+              `${ansi.magenta('Status')}  : ${ansi.cyan(profile.status)}`,
+            ]
+            return { output: `${ansi.magenta(ansi.bold('Profile'))}\n${ansi.dim('-------')}\n${lines.join('\n')}` }
+          }
+          case 'stack': {
+            const row = (await orm.select({ content: tContent.content }).from(tContent).where(eq(tContent.section, 'skills')).limit(1)).at(0) as any
+            const content = row?.content ? JSON.parse(row.content) : { list: [] }
+            const list: string[] = Array.isArray(content.list) ? content.list : []
+            const items = list.length ? list.map(s => `- ${s}`).join('\n') : '-'
+            return { output: `Stack\n-----\n${items}` }
           }
           case 'clear':
             // Frontend interprets CLEAR specially
             return { output: 'CLEAR' }
           default:
-            return { output: found.responseTemplate ?? `${command} executed` }
+            return { output: found.responseTemplate ? String(found.responseTemplate) : ansi.green(`${command} executed`) }
         }
       })
       .get('/github/:owner/:repo/commits', async ({ params, query }) => {

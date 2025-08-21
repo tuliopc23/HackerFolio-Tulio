@@ -4,38 +4,38 @@
     "": {
       "name": "hackerfolio-tulio",
       "dependencies": {
-        "@elysiajs/cors": "latest",
-        "@elysiajs/static": "latest",
-        "@tabler/icons-react": "latest",
-        "@tanstack/react-router": "latest",
-        "class-variance-authority": "latest",
-        "clsx": "latest",
-        "dotted-map": "latest",
-        "drizzle-orm": "latest",
-        "elysia": "latest",
-        "lucide-react": "latest",
-        "motion": "latest",
-        "react": "latest",
-        "react-dom": "latest",
-        "tailwind-merge": "latest",
+        "@elysiajs/cors": "^1.3.3",
+        "@elysiajs/static": "^1.3.0",
+        "@tabler/icons-react": "^3.34.1",
+        "@tanstack/react-router": "^1.131.27",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "dotted-map": "^2.2.3",
+        "drizzle-orm": "^0.44.4",
+        "elysia": "^1.3.15",
+        "lucide-react": "^0.540.0",
+        "motion": "^12.23.12",
+        "react": "^19.1.1",
+        "react-dom": "^19.1.1",
+        "tailwind-merge": "^3.3.1",
       },
       "devDependencies": {
-        "@replit/vite-plugin-cartographer": "latest",
-        "@replit/vite-plugin-runtime-error-modal": "latest",
-        "@tailwindcss/postcss": "latest",
-        "@tailwindcss/typography": "latest",
-        "@types/bun": "latest",
-        "@types/node": "latest",
-        "@types/react-dom": "latest",
-        "@vitejs/plugin-react": "latest",
-        "autoprefixer": "latest",
-        "concurrently": "latest",
-        "drizzle-kit": "latest",
-        "postcss": "latest",
-        "tailwindcss": "latest",
-        "tailwindcss-animate": "latest",
-        "typescript": "latest",
-        "vite": "latest",
+        "@tailwindcss/postcss": "^4.1.12",
+        "@tailwindcss/typography": "^0.5.16",
+        "@total-typescript/ts-reset": "^0.6.1",
+        "@types/bun": "^1.2.20",
+        "@types/node": "^24.3.0",
+        "@types/react": "~19.1.10",
+        "@types/react-dom": "^19.1.7",
+        "@vitejs/plugin-react": "^5.0.1",
+        "autoprefixer": "^10.4.21",
+        "concurrently": "^9.2.0",
+        "drizzle-kit": "^0.31.4",
+        "postcss": "^8.5.6",
+        "tailwindcss": "^4.1.12",
+        "tailwindcss-animate": "^1.0.7",
+        "typescript": "^5.9.2",
+        "vite": "^7.1.3",
       },
     },
   },
@@ -150,10 +150,6 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.30", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, ""],
 
-    "@replit/vite-plugin-cartographer": ["@replit/vite-plugin-cartographer@0.3.0", "", { "dependencies": { "@babel/parser": "^7.26.9", "@babel/traverse": "^7.26.9", "@babel/types": "^7.26.9", "magic-string": "^0.30.12", "modern-screenshot": "^4.6.0" } }, "sha512-sCeHU694gqRKtUHpLSNiRDpsOW6ppMvXjCgCDAHQicgdQjTr3TKZkZLZPtUZfR7iIThmFMf3T0O+wZE06rXfzQ=="],
-
-    "@replit/vite-plugin-runtime-error-modal": ["@replit/vite-plugin-runtime-error-modal@0.0.3", "", { "dependencies": { "@jridgewell/trace-mapping": "^0.3.25" } }, ""],
-
     "@rolldown/pluginutils": ["@rolldown/pluginutils@1.0.0-beta.32", "", {}, ""],
 
     "@rollup/rollup-darwin-arm64": ["@rollup/rollup-darwin-arm64@4.46.3", "", { "os": "darwin", "cpu": "arm64" }, ""],
@@ -187,6 +183,8 @@
     "@tokenizer/inflate": ["@tokenizer/inflate@0.2.7", "", { "dependencies": { "debug": "^4.4.0", "fflate": "^0.8.2", "token-types": "^6.0.0" } }, ""],
 
     "@tokenizer/token": ["@tokenizer/token@0.3.0", "", {}, ""],
+
+    "@total-typescript/ts-reset": ["@total-typescript/ts-reset@0.6.1", "", {}, "sha512-cka47fVSo6lfQDIATYqb/vO1nvFfbPw7uWLayIXIhGETj0wcOOlrlkobOMDNQOFr9QOafegUPq13V2+6vtD7yg=="],
 
     "@turf/boolean-point-in-polygon": ["@turf/boolean-point-in-polygon@6.5.0", "", { "dependencies": { "@turf/helpers": "^6.5.0", "@turf/invariant": "^6.5.0" } }, "sha512-DtSuVFB26SI+hj0SjrvXowGTUCHlgevPAIsukssW6BG5MlNSBQAo70wpICBNJL6RjukXg8d2eXaAWuD/CqL00A=="],
 
@@ -345,8 +343,6 @@
     "minizlib": ["minizlib@3.0.2", "", { "dependencies": { "minipass": "^7.1.2" } }, ""],
 
     "mkdirp": ["mkdirp@3.0.1", "", { "bin": "dist/cjs/src/bin.js" }, ""],
-
-    "modern-screenshot": ["modern-screenshot@4.6.6", "", {}, ""],
 
     "motion": ["motion@12.23.12", "", { "dependencies": { "framer-motion": "^12.23.12", "tslib": "^2.4.0" }, "peerDependencies": { "@emotion/is-prop-valid": "*", "react": "^18.0.0 || ^19.0.0", "react-dom": "^18.0.0 || ^19.0.0" }, "optionalPeers": ["@emotion/is-prop-valid"] }, "sha512-8jCD8uW5GD1csOoqh1WhH1A6j5APHVE15nuBkFeRiMzYBdRwyAHmSP/oXSuW0WJPZRXTFdBoG4hY9TFWNhhwng=="],
 

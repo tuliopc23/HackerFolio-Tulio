@@ -1,4 +1,4 @@
-import { Link } from 'wouter';
+import { Link } from '@tanstack/react-router';
 import { ArrowLeft, Github, ExternalLink, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { fetchProjects } from '@/lib/api';
@@ -39,7 +39,7 @@ export default function Projects() {
           }
         })));
       })
-      .catch((e) => setError(e.message))
+      .catch((e: Error) => setError(e?.message || 'Failed to load projects'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -48,7 +48,7 @@ export default function Projects() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-cyan-soft hover:text-cyan-bright transition-colors mb-4">
+          <Link to="/" className="inline-flex items-center gap-2 text-cyan-soft hover:text-cyan-bright transition-colors mb-4">
             <ArrowLeft className="w-4 h-4" />
             Back to Terminal
           </Link>

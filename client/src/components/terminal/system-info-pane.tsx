@@ -4,7 +4,8 @@ import { TypewriterText } from '@/hooks/use-typewriter';
 export default function SystemInfoPane() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showFastfetch, setShowFastfetch] = useState(false);
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia ? 
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches : false;
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -43,10 +44,15 @@ Disk (/): 215.8B GiB / 460.40 GiB (47%) - apfs [Read-only]
 Local IP (en0): 192.168.0.3/24`;
 
   const formatTime = (time: Date) => {
-    return time.toLocaleTimeString('en-US', { 
-      hour12: false,
-      timeZone: 'America/Sao_Paulo'
-    });
+    try {
+      return time.toLocaleTimeString('en-US', { 
+        hour12: false,
+        timeZone: 'America/Sao_Paulo'
+      });
+    } catch (error) {
+      console.warn('Failed to format time:', error);
+      return time.toTimeString().slice(0, 8); // Fallback to basic time format
+    }
   };
 
   return (

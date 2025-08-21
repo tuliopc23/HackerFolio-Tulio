@@ -3,10 +3,14 @@ import TerminalPane from '@/components/terminal/terminal-pane';
 import SystemInfoPane from '@/components/terminal/system-info-pane';
 import ProjectsGridPane from '@/components/terminal/projects-grid-pane';
 import FloatingDockTerminal from '@/components/terminal/floating-dock-terminal';
+import TerminalWindow from '@/components/terminal/terminal-window';
+import DesktopBackground from '@/components/desktop/desktop-background';
 import ResizeHandle from '@/components/ui/resize-handle';
 
 export default function Home() {
-  const [leftPaneWidth, setLeftPaneWidth] = useState(66.666667); // 2fr equivalent in percentage
+  const [leftPaneWidth, setLeftPaneWidth] = useState(66.666667);
+  const [terminalVisible, setTerminalVisible] = useState(true);
+  const [terminalMinimized, setTerminalMinimized] = useState(false);
 
   const handleResize = (delta: number) => {
     const windowWidth = window.innerWidth;
@@ -15,31 +19,71 @@ export default function Home() {
     setLeftPaneWidth(newWidth);
   };
 
+  const handleTerminalClose = () => {
+    setTerminalVisible(false);
+  };
+
+  const handleTerminalMinimize = () => {
+    setTerminalMinimized(!terminalMinimized);
+  };
+
+  const handleRestoreTerminal = () => {
+    setTerminalVisible(true);
+    setTerminalMinimized(false);
+  };
+
   return (
-    <div className="h-screen overflow-hidden" style={{ background: 'var(--lumon-dark)' }}>
-      {/* Floating Dock */}
-      <FloatingDockTerminal />
+    <div className="h-screen overflow-hidden">
+      {/* Desktop Background */}
+      <DesktopBackground />
       
-      <div 
-        className="h-full grid gap-0 p-4"
-        style={{
-          gridTemplateColumns: `${leftPaneWidth}% 4px ${100 - leftPaneWidth - 0.4}%`
-        }}
-      >
-        {/* Terminal Pane */}
-        <div className="min-w-0" id="main-terminal" role="main" aria-label="Interactive Terminal">
-          <TerminalPane />
-        </div>
+      {/* Floating Dock - Only show when terminal is minimized or closed */}
+      {(!terminalVisible || terminalMinimized) && (
+        <FloatingDockTerminal onRestoreTerminal={handleRestoreTerminal} />
+      )}
 
-        {/* Resize Handle */}
-        <ResizeHandle onResize={handleResize} />
+      {/* Terminal Window */}
+      {terminalVisible && !terminalMinimized && (
+        <TerminalWindow
+          title="HackerFolio Terminal v2.1.7"
+          onClose={handleTerminalClose}
+          onMinimize={handleTerminalMinimize}
+          className="animate-in fade-in duration-300"
+        >
+          <div 
+            className="h-full grid gap-0 p-4"
+            style={{
+              gridTemplateColumns: `${leftPaneWidth}% 4px ${100 - leftPaneWidth - 0.4}%`,
+              height: 'calc(100vh - 40px)' // Account for title bar
+            }}
+          >
+            {/* Terminal Pane */}
+            <div className="min-w-0" id="main-terminal" role="main" aria-label="Interactive Terminal">
+              <TerminalPane />
+            </div>
 
-        {/* Right Panes Container */}
-        <div className="grid grid-rows-2 gap-4 min-w-0">
-          <SystemInfoPane />
-          <ProjectsGridPane />
-        </div>
-      </div>
+            {/* Resize Handle */}
+            <ResizeHandle onResize={handleResize} />
+
+            {/* Right Panes Container */}
+            <div className="grid grid-rows-2 gap-4 min-w-0">
+              <SystemInfoPane />
+              <ProjectsGridPane />
+            </div>
+          </div>
+        </TerminalWindow>
+      )}
+
+      {/* Taskbar button to restore terminal */}
+      {!terminalVisible && (
+        <button
+          onClick={handleRestoreTerminal}
+          className="fixed bottom-4 left-4 px-4 py-2 bg-lumon-bg border border-magenta-soft rounded-lg text-magenta-bright hover:bg-magenta-soft hover:bg-opacity-20 transition-colors animate-in fade-in"
+          aria-label="Open Terminal"
+        >
+          Open Terminal
+        </button>
+      )}
     </div>
   );
 }

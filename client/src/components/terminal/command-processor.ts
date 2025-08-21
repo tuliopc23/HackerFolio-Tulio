@@ -1,4 +1,5 @@
 import { profileData, projectsData, aboutContent, contactContent, resumeContent } from '@/data/portfolio-data';
+import { executeCommand } from '@/lib/api';
 
 export interface CommandResult {
   output: string;
@@ -95,10 +96,18 @@ export class CommandProcessor {
         return { output: 'ACCESS DENIED.', error: true };
       
       default:
-        return { 
-          output: `Command not found: ${command}\nType 'help' for available commands.`, 
-          error: true 
-        };
+        // Defer to server for unknown commands
+        try {
+          // Synchronously bridging async is not possible in this structure,
+          // so we fall back to local message and suggest help.
+          // Future: refactor to async and call executeCommand(command, args)
+          return { 
+            output: `Command not found: ${command}\nType 'help' for available commands.`, 
+            error: true 
+          };
+        } catch (e) {
+          return { output: `Error executing command '${command}'`, error: true };
+        }
     }
   }
 

@@ -1,7 +1,10 @@
 import { useState, useEffect, useRef, KeyboardEvent } from 'react';
 import { useLocation } from 'wouter';
 import { CommandProcessor, CommandResult } from './command-processor';
+import { executeCommand as executeServerCommand } from '@/lib/api';
 import { useTheme } from './theme-context';
+import { EvervaultCard } from '@/components/ui/evervault-card';
+import { TypewriterText } from '@/hooks/use-typewriter';
 
 interface TerminalHistory {
   command: string;
@@ -18,6 +21,7 @@ export default function TerminalPane() {
   const [processor] = useState(() => new CommandProcessor());
   const inputRef = useRef<HTMLInputElement>(null);
   const outputRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   useEffect(() => {
     // Auto-focus input
@@ -36,7 +40,7 @@ export default function TerminalPane() {
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      executeCommand(input);
+      void runCommand(input);
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       const historyCommand = processor.getHistoryCommand('up');
@@ -57,7 +61,7 @@ export default function TerminalPane() {
     }
   };
 
-  const executeCommand = (command: string) => {
+  const runCommand = async (command: string) => {
     if (!command.trim()) return;
 
     processor.addToHistory(command);
@@ -80,12 +84,33 @@ export default function TerminalPane() {
       }
     }
 
-    // Add to history
+    let finalOutput = result.output;
+    let finalError = result.error;
+
+    // Prefer server for dynamic commands
+    const [rootCmd, ...rest] = command.split(' ');
+    const shouldAskServer = ['help', 'projects', 'about', 'skills', 'contact', 'github', 'resume', 'clear'].includes(rootCmd);
+
+    // Fallback to server for unknown commands or specific dynamic ones
+    if (shouldAskServer || (result.error && result.output.startsWith('Command not found'))) {
+      try {
+        const cmd = rootCmd;
+        const args = rest;
+        const server = await executeServerCommand(cmd, args);
+        finalOutput = server.output;
+        finalError = server.error;
+      } catch (err) {
+        finalOutput = 'Server error executing command';
+        finalError = true;
+      }
+    }
+
+    // Add to history with final output
     setHistory(prev => [...prev, {
       command,
-      output: result.output,
+      output: finalOutput,
       timestamp: new Date(),
-      error: result.error
+      error: finalError
     }]);
 
     setInput('');
@@ -139,23 +164,55 @@ export default function TerminalPane() {
       >
         {/* Boot Sequence */}
         <div className="terminal-output mb-4">
-          <div className="text-cyan-bright mb-2">LUMON TERMINAL v2.1.7</div>
-          <div className="text-text-soft text-sm mb-1">Initializing secure connection...</div>
-          <div className="text-terminal-green text-sm mb-4">✓ Connection established</div>
+          <TypewriterText 
+            text="HACKERFOLIO TERMINAL v2.1.7"
+            speed={prefersReducedMotion ? 0 : 60}
+            enabled={!prefersReducedMotion}
+            className="text-magenta-bright mb-2 phosphor-glow"
+          />
+          <TypewriterText 
+            text="Initializing secure connection..."
+            speed={prefersReducedMotion ? 0 : 40}
+            delay={prefersReducedMotion ? 0 : 1500}
+            enabled={!prefersReducedMotion}
+            className="text-text-soft text-sm mb-1"
+          />
+          <TypewriterText 
+            text="✓ Connection established"
+            speed={prefersReducedMotion ? 0 : 30}
+            delay={prefersReducedMotion ? 0 : 3000}
+            enabled={!prefersReducedMotion}
+            className="text-terminal-green text-sm mb-4"
+          />
         </div>
 
-        {/* Welcome Message */}
+        {/* Welcome Message with Matrix Effect */}
         <div className="terminal-output mb-6">
-          <div className="text-neon-blue phosphor-glow mb-2 text-sm font-mono">
-            <pre>{`████████╗██╗   ██╗██╗     ██╗ ██████╗ 
-╚══██╔══╝██║   ██║██║     ██║██╔═══██╗
-   ██║   ██║   ██║██║     ██║██║   ██║
-   ██║   ██║   ██║██║     ██║██║   ██║
-   ██║   ╚██████╔╝███████╗██║╚██████╔╝
-   ╚═╝    ╚═════╝ ╚══════╝╚═╝ ╚═════╝`}</pre>
+          <div className="flex items-center justify-center mb-4">
+            <div className="w-32 h-32">
+              <EvervaultCard text="TULIO" className="border-magenta-soft" />
+            </div>
           </div>
-          <div className="text-text-soft mb-4">Full-stack Developer | Terminal Interface</div>
-          <div className="text-cyan-soft">Type 'help' to see available commands</div>
+          <div className="text-center">
+            <TypewriterText 
+              text="Full-stack Developer | Terminal Interface"
+              speed={prefersReducedMotion ? 0 : 80}
+              enabled={!prefersReducedMotion}
+              className="text-magenta-bright mb-4 text-lg phosphor-glow"
+            />
+          </div>
+          <div className="text-center">
+            <TypewriterText 
+              text="Type 'help' to see available commands"
+              speed={prefersReducedMotion ? 0 : 60}
+              delay={prefersReducedMotion ? 0 : 2000}
+              enabled={!prefersReducedMotion}
+              className="text-cyan-soft"
+            />
+            <div id="terminal-help" className="sr-only">
+              Use Tab to navigate between interactive elements. Type commands and press Enter to execute.
+            </div>
+          </div>
         </div>
 
         {/* Command History */}
@@ -163,7 +220,7 @@ export default function TerminalPane() {
           {history.map((entry, index) => (
             <div key={index}>
               <div className="flex">
-                <span className="text-terminal-green">user@portfolio:~$</span>
+                <span className="text-magenta-bright">user@portfolio:~$</span>
                 <span className="ml-2 text-text-cyan">{entry.command}</span>
               </div>
               {entry.output && (
@@ -177,16 +234,19 @@ export default function TerminalPane() {
 
         {/* Current Command Line */}
         <div className="flex items-center">
-          <span className="text-terminal-green">user@portfolio:~$</span>
+          <span className="text-magenta-bright">user@portfolio:~$</span>
           <input
             ref={inputRef}
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="ml-2 bg-transparent border-none outline-none text-text-cyan flex-1"
-            placeholder="Type a command..."
+            className="ml-2 bg-transparent border-none outline-none text-text-cyan flex-1 focus:ring-2 focus:ring-magenta-bright focus:ring-opacity-30"
             aria-label="Terminal command input"
+            aria-describedby="terminal-help"
+            autoComplete="off"
+            spellCheck="false"
+            placeholder="Type a command..."
           />
           <span className="cursor-block"></span>
         </div>

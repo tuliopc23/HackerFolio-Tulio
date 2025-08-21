@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import TerminalPane from '@/components/terminal/terminal-pane';
-import StatusPane from '@/components/terminal/status-pane';
-import FeaturedPane from '@/components/terminal/featured-pane';
+import SystemInfoPane from '@/components/terminal/system-info-pane';
+import ProjectsGridPane from '@/components/terminal/projects-grid-pane';
+import FloatingDockTerminal from '@/components/terminal/floating-dock-terminal';
 import ResizeHandle from '@/components/ui/resize-handle';
 
 export default function Home() {
@@ -16,6 +17,9 @@ export default function Home() {
 
   return (
     <div className="h-screen overflow-hidden" style={{ background: 'var(--lumon-dark)' }}>
+      {/* Floating Dock */}
+      <FloatingDockTerminal />
+      
       <div 
         className="h-full grid gap-0 p-4"
         style={{
@@ -32,8 +36,8 @@ export default function Home() {
 
         {/* Right Panes Container */}
         <div className="grid grid-rows-2 gap-4 min-w-0">
-          <StatusPane />
-          <FeaturedPane />
+          <SystemInfoPane />
+          <ProjectsGridPane />
         </div>
       </div>
     </div>

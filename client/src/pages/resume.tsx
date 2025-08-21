@@ -1,8 +1,9 @@
 import { Link } from 'wouter';
 import { ArrowLeft, Download, Mail, Github, Linkedin } from 'lucide-react';
-import { resumeContent, profileData } from '@/data/portfolio-data';
+import { resumeContent as fallbackResume, profileData } from '@/data/portfolio-data';
 
 export default function Resume() {
+  const resumeContent = fallbackResume;
   const formatMarkdown = (content: string) => {
     return content.split('\n').map((line, index) => {
       if (line.startsWith('# ')) {
@@ -48,7 +49,7 @@ export default function Resume() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-cyan-soft hover:text-cyan-bright transition-colors mb-4">
+          <Link to="/" className="inline-flex items-center gap-2 text-cyan-soft hover:text-cyan-bright transition-colors mb-4">
             <ArrowLeft className="w-4 h-4" />
             Back to Terminal
           </Link>

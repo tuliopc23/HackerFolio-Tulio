@@ -1,8 +1,9 @@
 import { Link } from 'wouter';
 import { ArrowLeft, Mail, Github, Twitter, Linkedin } from 'lucide-react';
-import { contactContent, profileData } from '@/data/portfolio-data';
+import { contactContent as fallbackContact, profileData } from '@/data/portfolio-data';
 
 export default function Contact() {
+  const contactContent = fallbackContact;
   const formatMarkdown = (content: string) => {
     return content.split('\n').map((line, index) => {
       if (line.startsWith('# ')) {
@@ -23,7 +24,7 @@ export default function Contact() {
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-cyan-soft hover:text-cyan-bright transition-colors mb-4">
+          <Link to="/" className="inline-flex items-center gap-2 text-cyan-soft hover:text-cyan-bright transition-colors mb-4">
             <ArrowLeft className="w-4 h-4" />
             Back to Terminal
           </Link>

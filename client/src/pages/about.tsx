@@ -1,8 +1,9 @@
 import { Link } from 'wouter';
 import { ArrowLeft } from 'lucide-react';
-import { aboutContent } from '@/data/portfolio-data';
+import { aboutContent as fallbackAbout } from '@/data/portfolio-data';
 
 export default function About() {
+  const aboutContent = fallbackAbout;
   const formatMarkdown = (content: string) => {
     return content.split('\n').map((line, index) => {
       if (line.startsWith('# ')) {
@@ -40,7 +41,7 @@ export default function About() {
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-cyan-soft hover:text-cyan-bright transition-colors mb-4">
+          <Link to="/" className="inline-flex items-center gap-2 text-cyan-soft hover:text-cyan-bright transition-colors mb-4">
             <ArrowLeft className="w-4 h-4" />
             Back to Terminal
           </Link>
@@ -55,7 +56,7 @@ export default function About() {
 
         {/* Footer */}
         <div className="mt-8 text-center">
-          <Link href="/contact" className="inline-block px-6 py-2 bg-neon-blue text-lumon-dark rounded hover:bg-cyan-bright transition-colors font-medium">
+          <Link to="/contact" className="inline-block px-6 py-2 bg-neon-blue text-lumon-dark rounded hover:bg-cyan-bright transition-colors font-medium">
             Get In Touch
           </Link>
         </div>

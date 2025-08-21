@@ -4,18 +4,21 @@
 @tailwind utilities;
 
 :root {
-  /* Lumon Theme Colors */
-  --lumon-dark: hsl(219, 41%, 7%);
-  --lumon-bg: hsl(218, 27%, 15%);
-  --lumon-border: hsl(215, 25%, 22%);
-  --cyan-bright: hsl(192, 100%, 50%);
-  --cyan-soft: hsl(178, 66%, 56%);
-  --neon-blue: hsl(195, 100%, 50%);
-  --text-cyan: hsl(180, 100%, 94%);
-  --text-soft: hsl(187, 100%, 85%);
+  /* Cyberpunk Theme Colors */
+  --lumon-dark: hsl(0, 0%, 0%);
+  --lumon-bg: hsl(0, 0%, 3%);
+  --lumon-border: hsl(300, 30%, 15%);
+  --cyan-bright: hsl(180, 100%, 50%);
+  --cyan-soft: hsl(180, 80%, 60%);
+  --neon-blue: hsl(180, 100%, 50%);
+  --text-cyan: hsl(180, 100%, 90%);
+  --text-soft: hsl(180, 70%, 80%);
   --terminal-green: hsl(120, 100%, 63%);
   --terminal-orange: hsl(30, 100%, 50%);
   --terminal-red: hsl(356, 90%, 54%);
+  --magenta-bright: hsl(300, 100%, 60%);
+  --magenta-soft: hsl(310, 80%, 70%);
+  --magenta-glow: hsl(300, 100%, 80%);
   
   /* Neon Theme Colors */
   --neon-bg: hsl(300, 100%, 5%);
@@ -94,7 +97,7 @@
 /* CRT Screen Effects */
 .crt-screen {
   position: relative;
-  background: linear-gradient(45deg, var(--lumon-dark) 0%, var(--lumon-bg) 50%, var(--lumon-dark) 100%);
+  background: var(--lumon-dark);
 }
 
 .crt-screen::before {
@@ -108,8 +111,8 @@
   background: 
     repeating-linear-gradient(
       0deg,
-      rgba(0, 212, 255, 0.03) 0px,
-      rgba(0, 212, 255, 0.03) 2px,
+      rgba(255, 0, 255, 0.03) 0px,
+      rgba(255, 0, 255, 0.03) 2px,
       transparent 2px,
       transparent 4px
     );
@@ -140,10 +143,10 @@
 }
 
 .pane-border {
-  border: 1px solid var(--cyan-soft);
+  border: 1px solid var(--magenta-soft);
   box-shadow: 
-    0 0 10px rgba(79, 209, 199, 0.3),
-    inset 0 0 10px rgba(79, 209, 199, 0.1);
+    0 0 10px rgba(255, 0, 255, 0.3),
+    inset 0 0 10px rgba(255, 0, 255, 0.1);
 }
 
 .pane-focus {
@@ -157,7 +160,7 @@
   display: inline-block;
   width: 10px;
   height: 20px;
-  background-color: var(--cyan-bright);
+  background-color: var(--magenta-bright);
   animation: cursor-blink 1s infinite;
   margin-left: 2px;
 }
@@ -230,3 +233,16 @@
 .syntax-comment { color: hsl(50, 11%, 46%); }
 .syntax-function { color: hsl(74, 74%, 67%); }
 .syntax-variable { color: hsl(0, 0%, 97%); }
+
+/* Screen Reader Only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

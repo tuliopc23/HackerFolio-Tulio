@@ -24,6 +24,9 @@ export default {
         'terminal-green': "var(--terminal-green)",
         'terminal-orange': "var(--terminal-orange)",
         'terminal-red': "var(--terminal-red)",
+        'magenta-bright': "var(--magenta-bright)",
+        'magenta-soft': "var(--magenta-soft)",
+        'magenta-glow': "var(--magenta-glow)",
         card: {
           DEFAULT: "var(--card)",
           foreground: "var(--card-foreground)",

@@ -109,28 +109,32 @@ const LetterGlitchBackground = ({
     ' ',
   ]
 
-  const getRandomChar = () => {
-    return terminalChars[Math.floor(Math.random() * terminalChars.length)]
+  const getRandomChar = (): string => {
+    const ch = terminalChars[Math.floor(Math.random() * terminalChars.length)]
+    return typeof ch === 'string' ? ch : ' '
   }
 
-  const getRandomColor = () => {
-    return glitchColors[Math.floor(Math.random() * glitchColors.length)]
+  const getRandomColor = (): string => {
+    const c = glitchColors[Math.floor(Math.random() * glitchColors.length)]
+    return typeof c === 'string' ? c : '#00D4FF'
   }
 
   const hexToRgb = (hex: string) => {
     const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i
-    hex = hex.replace(shorthandRegex, (m, r, g, b) => {
+    hex = hex.replace(shorthandRegex, (_m: string, r: string, g: string, b: string) => {
       return r + r + g + g + b + b
     })
 
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-    return result
-      ? {
-          r: parseInt(result[1], 16),
-          g: parseInt(result[2], 16),
-          b: parseInt(result[3], 16),
-        }
-      : null
+    if (!result) return null
+    const r = result[1]
+    const g = result[2]
+    const b = result[3]
+    return {
+      r: parseInt(r ?? '00', 16),
+      g: parseInt(g ?? '00', 16),
+      b: parseInt(b ?? '00', 16),
+    }
   }
 
   const interpolateColor = (
@@ -197,10 +201,11 @@ const LetterGlitchBackground = ({
     ctx.textBaseline = 'top'
 
     letters.current.forEach((letter, index) => {
-      const x = (index % grid.current.columns) * charWidth
-      const y = Math.floor(index / grid.current.columns) * charHeight
-      ctx.fillStyle = letter.color
-      ctx.fillText(letter.char, x, y)
+      const cols = Math.max(1, grid.current.columns)
+      const x = (index % cols) * charWidth
+      const y = Math.floor(index / cols) * charHeight
+      ctx.fillStyle = letter.color || '#00D4FF'
+      ctx.fillText(letter.char || ' ', x, y)
     })
   }
 

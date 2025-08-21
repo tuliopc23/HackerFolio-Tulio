@@ -74,6 +74,7 @@ export default function TerminalWindow({
         document.removeEventListener('mouseup', handleMouseUp)
       }
     }
+    return () => {}
   }, [isDragging])
 
   const handleMaximize = () => {

@@ -79,6 +79,9 @@ export class CommandProcessor {
     }
   }
 
+  // kept for reference; currently unused
+  /* @__PURE__ */
+  // @ts-expect-error kept for reference
   private _help(): CommandResult {
     return {
       output: `Available Commands:
@@ -107,6 +110,11 @@ Tab                 - Autocomplete command
 Ctrl+C              - Clear current input`,
     }
   }
+
+  // kept for reference; currently unused
+  /* @__PURE__ */
+
+  // @ts-ignore - kept for reference, currently unused
 
   private _whoami(): CommandResult {
     return {

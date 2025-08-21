@@ -15,7 +15,7 @@ export const EvervaultCard = ({ text, className }: { text?: string; className?: 
     setRandomString(str)
   }, [])
 
-  function onMouseMove({ currentTarget, clientX, clientY }: any) {
+  function onMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent<HTMLDivElement>) {
     const { left, top } = currentTarget.getBoundingClientRect()
     mouseX.set(clientX - left)
     mouseY.set(clientY - top)
@@ -47,7 +47,15 @@ export const EvervaultCard = ({ text, className }: { text?: string; className?: 
   )
 }
 
-function CardPattern({ mouseX, mouseY, randomString }: any) {
+function CardPattern({
+  mouseX,
+  mouseY,
+  randomString,
+}: {
+  mouseX: import('framer-motion').MotionValue<number>
+  mouseY: import('framer-motion').MotionValue<number>
+  randomString: string
+}) {
   const maskImage = useMotionTemplate`radial-gradient(250px at ${mouseX}px ${mouseY}px, white, transparent)`
   const style = { maskImage, WebkitMaskImage: maskImage }
 

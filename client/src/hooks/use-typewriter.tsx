@@ -51,6 +51,7 @@ function useTypewriter({
         clearTimeout(timeout)
       }
     }
+    return undefined
   }, [currentIndex, memoizedText, speed, delay, enabled, updateText])
 
   return { displayText, isComplete }

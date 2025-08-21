@@ -59,7 +59,7 @@ export default function TerminalPane() {
   useEffect(() => {
     // Scroll to bottom when history updates
     if (outputRef.current) {
-      outputRef.current.scrollTop = outputRef.current.scrollHeight
+      outputRef.current.scrollTop = outputRef.current.scrollHeight ?? 0
     }
   }, [history])
 
@@ -70,11 +70,11 @@ export default function TerminalPane() {
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
       const historyCommand = processor.getHistoryCommand('up')
-      setInput(historyCommand)
+      setInput(historyCommand || '')
     } else if (e.key === 'ArrowDown') {
       e.preventDefault()
       const historyCommand = processor.getHistoryCommand('down')
-      setInput(historyCommand)
+      setInput(historyCommand || '')
     } else if (e.key === 'Tab') {
       e.preventDefault()
       handleAutocomplete()
@@ -103,8 +103,10 @@ export default function TerminalPane() {
     // Handle navigation
     if (result.navigate) {
       if (result.navigate.startsWith('theme:')) {
-        const themeName = result.navigate.substring(6) as 'lumon' | 'neon' | 'mono'
-        setTheme(themeName)
+        const themeName = result.navigate.substring(6)
+        if (themeName === 'lumon' || themeName === 'neon' || themeName === 'mono') {
+          setTheme(themeName)
+        }
       } else {
         navigate({ to: result.navigate })
       }
@@ -172,7 +174,7 @@ export default function TerminalPane() {
   const handleAutocomplete = () => {
     const suggestions = processor.getAutocomplete(input)
     if (suggestions.length === 1) {
-      setInput(suggestions[0])
+      setInput(suggestions[0] ?? '')
     } else if (suggestions.length > 1) {
       // Show suggestions in output
       setHistory(prev => [
@@ -186,7 +188,14 @@ export default function TerminalPane() {
     }
   }
 
-  const formatOutput = (output: string) => {
+  const formatOutput = (output: string): React.ReactNode => {
+    if (!output) return null
+
+    // Hard cap to avoid rendering extremely large outputs accidentally
+    const MAX_CHARS = 50_000
+    if (output.length > MAX_CHARS) {
+      output = output.slice(0, MAX_CHARS) + '\n' + '\x1b[33m[truncated]\x1b[39m'
+    }
     // ANSI parser for SGR codes (very small subset)
     const urlRegex = /(https?:\/\/[^\s]+)/g
     const ANSI_PATTERN = /\x1b\[([0-9;]+)m/g // e.g., \x1b[31m or \x1b[1;32m
@@ -307,7 +316,7 @@ export default function TerminalPane() {
         if (idx > lastIndex) {
           segments.push({ text: line.slice(lastIndex, idx), classes: stateToClass(state) })
         }
-        const codes = match[1].split(';').map(n => Number(n || '0'))
+        const codes = match[1]?.split(';').map(n => Number(n || '0')) ?? []
         for (const code of codes) state = applyCode(state, code)
         lastIndex = ANSI_PATTERN.lastIndex
       }

@@ -1,9 +1,9 @@
 // server/app.ts
 import { cors } from '@elysiajs/cors'
 import { staticPlugin } from '@elysiajs/static'
-import { desc, eq, sql } from 'drizzle-orm'
+import { and, desc, eq, sql } from 'drizzle-orm'
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
-import { Elysia } from 'elysia'
+import { Elysia, type Context } from 'elysia'
 
 import { orm } from './db/drizzle'
 import {
@@ -68,7 +68,7 @@ const ansi = {
 const app = new Elysia()
   .use(cors())
   // API routes
-  .group('/api', (app: any) =>
+  .group('/api', app =>
     app
       .get('/health', () => ({
         status: 'ok',
@@ -81,7 +81,7 @@ const app = new Elysia()
         location: 'Remote',
         status: 'Available for projects',
       }))
-      .get('/projects', async (context: any) => {
+      .get('/projects', async (context: Context) => {
         const query = validateQuery(projectQuerySchema, context)
 
         const rows = await orm
@@ -92,7 +92,7 @@ const app = new Elysia()
           .offset(query.offset)
 
         // Validate and transform the database results
-        const validatedProjects: Project[] = rows.map((row: any) =>
+        const validatedProjects: Project[] = rows.map((row: unknown) =>
           validateData(selectProjectSchema, row)
         )
 
@@ -101,29 +101,29 @@ const app = new Elysia()
           tech_stack: project.techStack ? JSON.parse(project.techStack) : [],
         }))
       })
-      .get('/commands', async (context: any) => {
+      .get('/commands', async (context: Context) => {
         const query = validateQuery(terminalCommandQuerySchema, context)
 
-        let queryBuilder = orm
+        const queryBuilder = orm
           .select()
           .from(tCommands)
-          .where(eq(tCommands.isActive, true))
+          .where(
+            query.category
+              ? and(eq(tCommands.isActive, true), eq(tCommands.category, query.category))
+              : eq(tCommands.isActive, true)
+          )
           .orderBy(tCommands.command)
-
-        if (query.category) {
-          queryBuilder = queryBuilder.where(eq(tCommands.category, query.category))
-        }
 
         const rows = await queryBuilder
 
         // Validate the database results
-        const validatedCommands: TerminalCommand[] = rows.map((row: any) =>
+        const validatedCommands: TerminalCommand[] = rows.map((row: unknown) =>
           validateData(selectTerminalCommandSchema, row)
         )
 
         return validatedCommands
       })
-      .post('/commands/execute', async (context: any) => {
+      .post('/commands/execute', async (context: Context) => {
         const { command, args } = validateBody(executeCommandSchema, context)
 
         // Basic command lookup (allows toggling via is_active)
@@ -251,12 +251,14 @@ const app = new Elysia()
             const tokens = Array.isArray(args) ? [...args] : []
             for (let i = 0; i < tokens.length; i++) {
               const t = tokens[i]
+              if (!t) continue
+
               if (t === '--per' && tokens[i + 1]) {
                 per = Number(tokens[++i]) || null
                 continue
               }
               if (t.startsWith('--per=')) {
-                per = Number(t.split('=')[1]) || null
+                per = Number(t.split('=')[1] ?? '') || null
                 continue
               }
               if (t === '--page' && tokens[i + 1]) {
@@ -264,7 +266,7 @@ const app = new Elysia()
                 continue
               }
               if (t.startsWith('--page=')) {
-                page = Number(t.split('=')[1]) || null
+                page = Number(t.split('=')[1] ?? '') || null
                 continue
               }
               if (t === '--limit' && tokens[i + 1]) {
@@ -272,23 +274,23 @@ const app = new Elysia()
                 continue
               }
               if (t.startsWith('--limit=')) {
-                limit = Number(t.split('=')[1]) || null
+                limit = Number(t.split('=')[1] ?? '') || null
                 continue
               }
               if (t === '--status' && tokens[i + 1]) {
-                status = String(tokens[++i]).toLowerCase()
+                status = String(tokens[++i] ?? '').toLowerCase()
                 continue
               }
               if (t.startsWith('--status=')) {
-                status = String(t.split('=')[1]).toLowerCase()
+                status = String(t.split('=')[1] ?? '').toLowerCase()
                 continue
               }
               if (t === '--stack' && tokens[i + 1]) {
-                stackFilter = String(tokens[++i]).toLowerCase()
+                stackFilter = String(tokens[++i] ?? '').toLowerCase()
                 continue
               }
               if (t.startsWith('--stack=')) {
-                stackFilter = String(t.split('=')[1]).toLowerCase()
+                stackFilter = String(t.split('=')[1] ?? '').toLowerCase()
                 continue
               }
               filter += (filter ? ' ' : '') + t
@@ -305,9 +307,19 @@ const app = new Elysia()
               })
               .from(tProjects)
               .orderBy(desc(tProjects.createdAt))
-            let list = projects
+            // Type the projects properly based on the select query
+            interface ProjectRow {
+              name: string | null
+              description: string | null
+              tech_stack: string | null
+              github_url: string | null
+              live_url: string | null
+              status: string | null
+            }
+
+            let list: ProjectRow[] = projects as ProjectRow[]
             if (filter) {
-              list = projects.filter((p: any) => {
+              list = projects.filter((p: ProjectRow) => {
                 const name = (p.name ?? '').toLowerCase()
                 const desc = (p.description ?? '').toLowerCase()
                 const stackArr: string[] = p.tech_stack ? JSON.parse(p.tech_stack) : []
@@ -316,10 +328,10 @@ const app = new Elysia()
               })
             }
             if (status) {
-              list = list.filter((p: any) => String(p.status || '').toLowerCase() === status)
+              list = list.filter((p: ProjectRow) => String(p.status || '').toLowerCase() === status)
             }
             if (stackFilter) {
-              list = list.filter((p: any) => {
+              list = list.filter((p: ProjectRow) => {
                 const arr: string[] = p.tech_stack ? JSON.parse(p.tech_stack) : []
                 return arr.some(x => String(x).toLowerCase().includes(stackFilter))
               })
@@ -341,7 +353,7 @@ const app = new Elysia()
             const pageItems = list.slice(start, end)
 
             const text = pageItems
-              .map((p: any) => {
+              .map((p: ProjectRow) => {
                 const stack = (p.tech_stack ? JSON.parse(p.tech_stack) : []) as string[]
                 const parts = [
                   `${ansi.magenta('•')} ${ansi.cyan(ansi.bold(String(p.name)))}`,
@@ -384,8 +396,10 @@ const app = new Elysia()
                 .from(tContent)
                 .where(eq(tContent.section, 'about'))
                 .limit(1)
-            ).at(0) as any
-            const content = row?.content ? JSON.parse(row.content) : { markdown: '' }
+            ).at(0) as { content: string | null } | undefined
+            const content = row?.content
+              ? (JSON.parse(row.content) as { markdown?: string })
+              : { markdown: '' }
             const md = content.markdown ?? 'About section not available.'
             return { output: ansi.cyan(md) }
           }
@@ -396,8 +410,10 @@ const app = new Elysia()
                 .from(tContent)
                 .where(eq(tContent.section, 'skills'))
                 .limit(1)
-            ).at(0) as any
-            const content = row?.content ? JSON.parse(row.content) : { list: [] }
+            ).at(0) as { content: string | null } | undefined
+            const content = row?.content
+              ? (JSON.parse(row.content) as { list?: string[] })
+              : { list: [] }
             const list: string[] = Array.isArray(content.list) ? content.list : []
             if (!list.length) return { output: ansi.yellow('No skills found') }
             const items = list.map(s => `${ansi.magenta('-')} ${ansi.cyan(String(s))}`).join('\n')
@@ -412,8 +428,15 @@ const app = new Elysia()
                 .from(tContent)
                 .where(eq(tContent.section, 'contact'))
                 .limit(1)
-            ).at(0) as any
-            const c = row?.content ? JSON.parse(row.content) : {}
+            ).at(0) as { content: string | null } | undefined
+            const c = row?.content
+              ? (JSON.parse(row.content) as {
+                  email?: string
+                  github?: string
+                  linkedin?: string
+                  twitter?: string
+                })
+              : {}
             const lines = [
               c.email ? `Email   : ${c.email}` : null,
               c.github ? `GitHub  : ${c.github}` : null,
@@ -427,8 +450,9 @@ const app = new Elysia()
             }
           }
           case 'github': {
+            const foundCommand = found as { responseTemplate?: string }
             const profile =
-              (found as any).responseTemplate ||
+              foundCommand.responseTemplate ||
               process.env.GITHUB_PROFILE ||
               'https://github.com/tuliopc23'
             return {
@@ -437,8 +461,9 @@ const app = new Elysia()
             }
           }
           case 'resume': {
+            const foundCommand = found as { responseTemplate?: string }
             const url =
-              (found as any).responseTemplate ||
+              foundCommand.responseTemplate ||
               process.env.RESUME_URL ||
               'Resume not configured. Set RESUME_URL env var.'
             if (typeof url === 'string' && url.startsWith('http')) {
@@ -473,8 +498,10 @@ const app = new Elysia()
                   .from(tContent)
                   .where(eq(tContent.section, 'skills'))
                   .limit(1)
-              ).at(0) as any
-              const content = row?.content ? JSON.parse(row.content) : { list: [] }
+              ).at(0) as { content: string | null } | undefined
+              const content = row?.content
+                ? (JSON.parse(row.content) as { list?: string[] })
+                : { list: [] }
               const list: string[] = Array.isArray(content.list) ? content.list : []
               const items = list.length
                 ? list.map(s => `${ansi.magenta('-')} ${ansi.cyan(String(s))}`).join('\n')
@@ -512,8 +539,10 @@ const app = new Elysia()
                 .from(tContent)
                 .where(eq(tContent.section, 'skills'))
                 .limit(1)
-            ).at(0) as any
-            const content = row?.content ? JSON.parse(row.content) as { list?: string[] } : { list: [] }
+            ).at(0) as { content: string | null } | undefined
+            const content = row?.content
+              ? (JSON.parse(row.content) as { list?: string[] })
+              : { list: [] }
             const list: string[] = Array.isArray(content.list) ? content.list : []
             const items = list.length ? list.map(s => `- ${s}`).join('\n') : '-'
             return { output: `Stack\n-----\n${items}` }
@@ -521,15 +550,17 @@ const app = new Elysia()
           case 'clear':
             // Frontend interprets CLEAR specially
             return { output: 'CLEAR' }
-          default:
+          default: {
+            const foundCommand = found as { responseTemplate?: string }
             return {
-              output: found.responseTemplate
-                ? String(found.responseTemplate)
+              output: foundCommand.responseTemplate
+                ? String(foundCommand.responseTemplate)
                 : ansi.green(`${command} executed`),
             }
+          }
         }
       })
-      .get('/github/:owner/:repo/commits', async ({ params, query }: any) => {
+      .get('/github/:owner/:repo/commits', async ({ params, query }: Context) => {
         const { owner, repo } = params as { owner: string; repo: string }
         const limit = Math.min(Number(query.limit ?? 10), 50)
         const headers: Record<string, string> = {
@@ -542,7 +573,7 @@ const app = new Elysia()
             { headers }
           )
           if (!res.ok) throw new Error(`GitHub error ${res.status}`)
-          const data = await res.json() as Array<{
+          const data = (await res.json()) as Array<{
             sha: string
             commit: {
               message: string
@@ -550,18 +581,18 @@ const app = new Elysia()
             }
             html_url: string
           }>
-          return data.map((c) => ({
+          return data.map(c => ({
             sha: c.sha,
             message: c.commit?.message,
             author: c.commit?.author?.name,
             date: c.commit?.author?.date,
             url: c.html_url,
           }))
-        } catch (e: any) {
-          return { error: 'Failed to fetch commits', message: e?.message }
+        } catch (e: unknown) {
+          return { error: 'Failed to fetch commits', message: (e as Error)?.message }
         }
       })
-      .get('/content/:section', async ({ params }: any) => {
+      .get('/content/:section', async ({ params }: Context) => {
         const row = (
           await orm
             .select({
@@ -580,7 +611,7 @@ const app = new Elysia()
           updated_at: row.updated_at,
         }
       })
-      .put('/content/:section', async ({ params, body }: any) => {
+      .put('/content/:section', async ({ params, body }: Context) => {
         const payload = typeof body === 'string' ? JSON.parse(body) : body
         const content = JSON.stringify(payload?.content ?? {})
         // Upsert by section
@@ -589,28 +620,22 @@ const app = new Elysia()
         )
         return { ok: true }
       })
-      .post('/terminal/log', ({ body }: any) => {
+      .post('/terminal/log', ({ body }: Context) => {
         const { command, timestamp } = body as { command?: string; timestamp?: string }
         if (command) console.log(`Terminal command: ${command} at ${timestamp ?? 'unknown time'}`)
         return { logged: true }
       })
       // simple onAfterHandle logger for API
-      .onAfterHandle(
-        ({
-          request,
-          set,
-          response: _response,
-        }: any) => {
-          const startHeader = request.headers.get('x-start-time')
-          const started = startHeader ? Number(startHeader) : undefined
-          const duration = started ? Date.now() - started : 0
-          const url = new URL(request.url)
-          if (url.pathname.startsWith('/api')) {
-            logApi(request.method, url.pathname, Number(set.status) ?? 200, duration)
-          }
+      .onAfterHandle(({ request, set, response: _response }: Context) => {
+        const startHeader = request.headers.get('x-start-time')
+        const started = startHeader ? Number(startHeader) : undefined
+        const duration = started ? Date.now() - started : 0
+        const url = new URL(request.url)
+        if (url.pathname.startsWith('/api')) {
+          logApi(request.method, url.pathname, Number(set.status) ?? 200, duration)
         }
-      )
-      .onBeforeHandle(({ request }: any) => {
+      })
+      .onBeforeHandle(({ request }: Context) => {
         // mark start time for simple duration measurement
         const headers = new Headers(request.headers)
         headers.set('x-start-time', String(Date.now()))
@@ -632,26 +657,27 @@ if (process.env.NODE_ENV === 'production') {
   let ssrRender: null | ((url: string) => Promise<string>) = null
   let ssrRenderWithData:
     | null
-    | ((url: string) => Promise<{ html: string; data: Record<string, any> }>) = null
+    | ((url: string) => Promise<{ html: string; data: Record<string, unknown> }>) = null
   try {
+    // @ts-ignore - SSR bundle may not exist during development
     const ssr = await import('../dist/server/entry-server.js')
     ssrRender = ssr.render as (url: string) => Promise<string>
     ssrRenderWithData = ssr.renderWithData as (
       url: string
-    ) => Promise<{ html: string; data: Record<string, any> }>
+    ) => Promise<{ html: string; data: Record<string, unknown> }>
     console.log('SSR renderer loaded')
   } catch {
     console.warn('SSR renderer not found, serving static HTML')
   }
 
-  app.get('*', async ({ request, set }: any) => {
+  app.get('*', async ({ request, set }: Context) => {
     const url = new URL(request.url)
     if (url.pathname.startsWith('/api')) return
     try {
       const htmlText = await indexHtml.text()
       if (ssrRenderWithData || ssrRender) {
         let appHtml = ''
-        let data: Record<string, any> | undefined
+        let data: Record<string, unknown> | undefined
         if (ssrRenderWithData) {
           const r = await ssrRenderWithData(request.url)
           appHtml = r.html

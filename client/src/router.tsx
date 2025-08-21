@@ -36,9 +36,14 @@ const projectsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/projects',
   loader: async () => {
-    if (typeof window !== 'undefined' && (window as any).__INITIAL_DATA__?.projects) {
-      const { projects } = (window as any).__INITIAL_DATA__
-      delete (window as any).__INITIAL_DATA__.projects
+    if (
+      typeof window !== 'undefined' &&
+      (window as Window & { __INITIAL_DATA__?: Record<string, unknown> }).__INITIAL_DATA__?.projects
+    ) {
+      const initialData = (window as Window & { __INITIAL_DATA__?: Record<string, unknown> })
+        .__INITIAL_DATA__
+      const { projects } = initialData!
+      delete initialData!.projects
       return { projects }
     }
     const projects = await fetchProjects()
@@ -51,9 +56,14 @@ const aboutRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/about',
   loader: async () => {
-    if (typeof window !== 'undefined' && (window as any).__INITIAL_DATA__?.about) {
-      const content = (window as any).__INITIAL_DATA__.about
-      delete (window as any).__INITIAL_DATA__.about
+    if (
+      typeof window !== 'undefined' &&
+      (window as Window & { __INITIAL_DATA__?: Record<string, unknown> }).__INITIAL_DATA__?.about
+    ) {
+      const initialData = (window as Window & { __INITIAL_DATA__?: Record<string, unknown> })
+        .__INITIAL_DATA__!
+      const content = initialData.about
+      delete initialData.about
       return { content }
     }
     const { content } = await fetchContent('about')
@@ -66,9 +76,14 @@ const contactRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/contact',
   loader: async () => {
-    if (typeof window !== 'undefined' && (window as any).__INITIAL_DATA__?.contact) {
-      const content = (window as any).__INITIAL_DATA__.contact
-      delete (window as any).__INITIAL_DATA__.contact
+    if (
+      typeof window !== 'undefined' &&
+      (window as Window & { __INITIAL_DATA__?: Record<string, unknown> }).__INITIAL_DATA__?.contact
+    ) {
+      const initialData = (window as Window & { __INITIAL_DATA__?: Record<string, unknown> })
+        .__INITIAL_DATA__!
+      const content = initialData.contact
+      delete initialData.contact
       return { content }
     }
     const { content } = await fetchContent('contact')
@@ -82,9 +97,14 @@ const resumeRoute = createRoute({
   path: '/resume',
   loader: async () => {
     // Optional SSR fetch; falls back to local content
-    if (typeof window !== 'undefined' && (window as any).__INITIAL_DATA__?.resume) {
-      const content = (window as any).__INITIAL_DATA__.resume
-      delete (window as any).__INITIAL_DATA__.resume
+    if (
+      typeof window !== 'undefined' &&
+      (window as Window & { __INITIAL_DATA__?: Record<string, unknown> }).__INITIAL_DATA__?.resume
+    ) {
+      const initialData = (window as Window & { __INITIAL_DATA__?: Record<string, unknown> })
+        .__INITIAL_DATA__!
+      const content = initialData.resume
+      delete initialData.resume
       return { content }
     }
     try {
@@ -112,7 +132,7 @@ const routeTree = rootRoute.addChildren([
   notFoundRoute,
 ])
 
-export function createAppRouter(opts?: { history?: any }) {
+export function createAppRouter(opts?: { history?: unknown }) {
   return createRouter({
     routeTree,
     history: opts?.history,

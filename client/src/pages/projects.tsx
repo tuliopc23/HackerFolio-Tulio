@@ -12,11 +12,11 @@ export default function Projects() {
       description?: string
       stack?: string[]
       tech_stack?: string[]
-      links?: any
+      links?: Record<string, string>
       featured?: boolean
       role?: string
       image?: string
-      stats?: any
+      stats?: Record<string, unknown>
     }>
   >([])
   const [loading, setLoading] = useState(true)
@@ -30,17 +30,19 @@ export default function Projects() {
           items.map(p => ({
             id: p.id,
             name: p.name,
-            description: p.description ?? undefined,
+            description: p.description ?? '',
             stack: p.tech_stack ?? [],
             featured: p.status === 'active',
             role: 'Full Stack Developer', // Default role
-            image: p.image,
-            stats: p.stats,
-            links: {
-              github: p.github_url,
-              demo: p.live_url,
-              appstore: p.appstore_url,
-            },
+            ...(p.image && { image: p.image }),
+            ...(p.stats && { stats: p.stats }),
+            links: Object.fromEntries(
+              Object.entries({
+                github: p.github_url,
+                demo: p.live_url,
+                appstore: p.appstore_url,
+              }).filter(([, value]) => value !== undefined)
+            ) as Record<string, string>,
           }))
         )
       })
@@ -124,12 +126,14 @@ export default function Projects() {
               {project.stats && (
                 <div className='grid grid-cols-2 gap-2 mb-4'>
                   <div className='text-center p-2 bg-lumon-dark border border-cyan-soft rounded'>
-                    <div className='text-neon-blue font-medium'>{project.stats.performance}</div>
+                    <div className='text-neon-blue font-medium'>
+                      {String(project.stats.performance ?? '')}
+                    </div>
                     <div className='text-text-soft text-xs'>Performance</div>
                   </div>
                   <div className='text-center p-2 bg-lumon-dark border border-cyan-soft rounded'>
                     <div className='text-terminal-green font-medium'>
-                      {project.stats.accessibility}
+                      {String(project.stats.accessibility ?? '')}
                     </div>
                     <div className='text-text-soft text-xs'>Accessibility</div>
                   </div>

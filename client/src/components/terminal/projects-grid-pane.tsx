@@ -8,11 +8,11 @@ interface Project {
   id: number | string
   name: string
   description?: string | undefined
-  tech_stack?: string[]
-  github_url?: string
-  live_url?: string
+  tech_stack?: string[] | undefined
+  github_url?: string | undefined
+  live_url?: string | undefined
   status?: string | undefined
-  image?: string
+  image?: string | undefined
 }
 
 export default function ProjectsGridPane() {
@@ -23,10 +23,15 @@ export default function ProjectsGridPane() {
   useEffect(() => {
     fetchProjects()
       .then(data => {
-        const processedData = data.slice(0, 6).map(project => ({
-          ...project,
+        const processedData: Project[] = data.slice(0, 6).map(project => ({
+          id: project.id,
+          name: project.name,
           description: project.description ?? undefined,
+          tech_stack: Array.isArray(project.tech_stack) ? project.tech_stack : [],
+          github_url: project.github_url,
+          live_url: project.live_url,
           status: project.status ?? undefined,
+          image: project.image,
         }))
         setProjects(processedData)
       })

@@ -1,73 +1,84 @@
 // client/src/lib/api.ts
+import { z } from 'zod'
 
-export interface CommandAction {
-  type: 'open_url';
-  url: string;
-}
+import {
+  type ApiProject,
+  type TerminalCommand,
+  type ServerCommandResult,
+  type PortfolioContent,
+  apiProjectSchema,
+  terminalCommandSchema,
+  serverCommandResultSchema,
+  portfolioContentSchema,
+  executeCommandRequestSchema,
+} from '../../../shared/types'
 
-export interface ServerCommandResult {
-  output: string;
-  error?: boolean;
-  action?: CommandAction;
-}
-
-export interface ApiProject {
-  id: number;
-  name: string;
-  description?: string;
-  tech_stack?: string[];
-  github_url?: string;
-  live_url?: string;
-  appstore_url?: string;
-  status?: string;
-  image?: string;
-  stats?: {
-    performance?: string;
-    accessibility?: string;
-  };
-  created_at?: string;
-  updated_at?: string;
-}
-
-function getBaseUrl() {
+function getBaseUrl(): string {
   if (typeof window === 'undefined') {
     const fromEnv = process.env.SSR_BASE_URL
     if (fromEnv) return fromEnv
-    const port = process.env.PORT || '3001'
+    const port = process.env.PORT ?? '3001'
     return `http://127.0.0.1:${port}`
   }
   return ''
 }
 
+// Validation helper
+function validateResponse<T>(schema: z.ZodSchema<T>, data: unknown): T {
+  const result = schema.safeParse(data)
+  if (!result.success) {
+    console.error('API response validation failed:', result.error)
+    throw new Error(`Invalid API response: ${result.error.message}`)
+  }
+  return result.data
+}
+
 export async function fetchProjects(): Promise<ApiProject[]> {
   const base = getBaseUrl()
-  const res = await fetch(`${base}/api/projects`);
-  if (!res.ok) throw new Error('Failed to fetch projects');
-  return res.json() as Promise<ApiProject[]>;
+  const res = await fetch(`${base}/api/projects`)
+  if (!res.ok) throw new Error('Failed to fetch projects')
+
+  const data = await res.json()
+  return validateResponse(z.array(apiProjectSchema), data)
 }
 
-export async function fetchCommands(): Promise<Array<{ command: string; description?: string; category?: string }>> {
+export async function fetchCommands(): Promise<TerminalCommand[]> {
   const base = getBaseUrl()
-  const res = await fetch(`${base}/api/commands`);
-  if (!res.ok) throw new Error('Failed to fetch commands');
-  return res.json() as Promise<Array<{ command: string; description?: string; category?: string }>>;
+  const res = await fetch(`${base}/api/commands`)
+  if (!res.ok) throw new Error('Failed to fetch commands')
+
+  const data = await res.json()
+  return validateResponse(z.array(terminalCommandSchema), data)
 }
 
+export async function executeCommand(
+  command: string,
+  args: string[] = []
+): Promise<ServerCommandResult> {
+  // Validate request data
+  const requestData = validateResponse(executeCommandRequestSchema, { command, args })
 
-export async function executeCommand(command: string, args: string[] = []): Promise<ServerCommandResult>{
   const base = getBaseUrl()
   const res = await fetch(`${base}/api/commands/execute`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ command, args })
-  });
-  if (!res.ok) throw new Error('Command failed');
-  return res.json() as Promise<ServerCommandResult>;
+    body: JSON.stringify(requestData),
+  })
+  if (!res.ok) throw new Error('Command failed')
+
+  const data = await res.json()
+  return validateResponse(serverCommandResultSchema, data)
 }
 
-export async function fetchContent(section: string): Promise<{ section: string; content: any }>{
+export async function fetchContent(section: string): Promise<PortfolioContent> {
   const base = getBaseUrl()
-  const res = await fetch(`${base}/api/content/${encodeURIComponent(section)}`);
-  if (!res.ok) throw new Error('Failed to fetch content');
-  return res.json() as Promise<{ section: string; content: any }>;
+  const res = await fetch(`${base}/api/content/${encodeURIComponent(section)}`)
+  if (!res.ok) throw new Error('Failed to fetch content')
+
+  const data = await res.json()
+  return validateResponse(portfolioContentSchema, data)
 }
+
+// Re-export types for convenience
+export type { ApiProject, TerminalCommand, ServerCommandResult, PortfolioContent }
+export type { CommandAction } from '../../../shared/types'

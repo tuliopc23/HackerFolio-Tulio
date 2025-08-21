@@ -1,79 +1,83 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react'
 
 interface UseTypewriterOptions {
-  text: string;
-  speed?: number;
-  delay?: number;
-  loop?: boolean;
-  enabled?: boolean;
+  text: string
+  speed?: number
+  delay?: number
+  loop?: boolean
+  enabled?: boolean
 }
 
-export function useTypewriter({ text, speed = 50, delay = 0, loop = false, enabled = true }: UseTypewriterOptions) {
-  const [displayText, setDisplayText] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isComplete, setIsComplete] = useState(false);
+function useTypewriter({
+  text,
+  speed = 50,
+  delay = 0,
+  loop = false,
+  enabled = true,
+}: UseTypewriterOptions) {
+  const [displayText, setDisplayText] = useState('')
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [isComplete, setIsComplete] = useState(false)
 
-  const memoizedText = useMemo(() => text, [text]);
+  const memoizedText = useMemo(() => text, [text])
 
   const updateText = useCallback(() => {
     if (currentIndex < memoizedText.length) {
-      setDisplayText(prev => prev + memoizedText[currentIndex]);
-      setCurrentIndex(prev => prev + 1);
+      setDisplayText(prev => prev + memoizedText[currentIndex])
+      setCurrentIndex(prev => prev + 1)
     } else {
-      setIsComplete(true);
-      
+      setIsComplete(true)
+
       if (loop) {
         setTimeout(() => {
-          setDisplayText('');
-          setCurrentIndex(0);
-          setIsComplete(false);
-        }, 2000);
+          setDisplayText('')
+          setCurrentIndex(0)
+          setIsComplete(false)
+        }, 2000)
       }
     }
-  }, [currentIndex, memoizedText, loop]);
+  }, [currentIndex, memoizedText, loop])
 
   useEffect(() => {
     if (!enabled) {
-      setDisplayText(text);
-      setIsComplete(true);
-      return;
+      setDisplayText(text)
+      setIsComplete(true)
+      return
     }
 
     if (currentIndex < memoizedText.length) {
-      const timeout = setTimeout(updateText, currentIndex === 0 ? delay : speed);
-      return () => clearTimeout(timeout);
+      const timeout = setTimeout(updateText, currentIndex === 0 ? delay : speed)
+      return () => {
+        clearTimeout(timeout)
+      }
     }
-  }, [currentIndex, memoizedText, speed, delay, enabled, updateText]);
+  }, [currentIndex, memoizedText, speed, delay, enabled, updateText])
 
-  return { displayText, isComplete };
+  return { displayText, isComplete }
 }
 
-export function TypewriterText({ 
-  text, 
-  speed = 50, 
-  delay = 0, 
+export function TypewriterText({
+  text,
+  speed = 50,
+  delay = 0,
   className = '',
   enabled = true,
-  onComplete 
-}: UseTypewriterOptions & { 
-  className?: string; 
-  onComplete?: () => void;
+  onComplete,
+}: UseTypewriterOptions & {
+  className?: string
+  onComplete?: () => void
 }) {
-  const { displayText, isComplete } = useTypewriter({ text, speed, delay, enabled });
-  
+  const { displayText, isComplete } = useTypewriter({ text, speed, delay, enabled })
+
   const memoizedOnComplete = useCallback(() => {
-    if (onComplete) onComplete();
-  }, [onComplete]);
-  
+    if (onComplete) onComplete()
+  }, [onComplete])
+
   useEffect(() => {
     if (isComplete && onComplete) {
-      memoizedOnComplete();
+      memoizedOnComplete()
     }
-  }, [isComplete, memoizedOnComplete, onComplete]);
-  
-  return (
-    <span className={className}>
-      {displayText}
-    </span>
-  );
+  }, [isComplete, memoizedOnComplete, onComplete])
+
+  return <span className={className}>{displayText}</span>
 }

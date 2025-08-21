@@ -1,80 +1,85 @@
-import { profileData, projectsData, aboutContent, contactContent, resumeContent } from '@/data/portfolio-data';
-import { executeCommand } from '@/lib/api';
+import {
+  profileData,
+  projectsData,
+  aboutContent,
+  contactContent,
+  resumeContent,
+} from '@/data/portfolio-data'
 
 export interface CommandResult {
-  output: string;
-  error?: boolean;
-  navigate?: string;
+  output: string
+  error?: boolean
+  navigate?: string
 }
 
 export class CommandProcessor {
-  private history: string[] = [];
-  private historyIndex: number = -1;
-  private serverCommands: Set<string> = new Set();
+  private history: string[] = []
+  private historyIndex = -1
+  private serverCommands = new Set<string>()
 
   constructor() {
     // Load history from localStorage
-    const savedHistory = localStorage.getItem('terminal-history');
+    const savedHistory = localStorage.getItem('terminal-history')
     if (savedHistory) {
-      this.history = JSON.parse(savedHistory) as string[];
+      this.history = JSON.parse(savedHistory) as string[]
     }
   }
 
   addToHistory(command: string) {
     if (command.trim() && this.history[this.history.length - 1] !== command) {
-      this.history.push(command);
-      localStorage.setItem('terminal-history', JSON.stringify(this.history));
+      this.history.push(command)
+      localStorage.setItem('terminal-history', JSON.stringify(this.history))
     }
-    this.historyIndex = this.history.length;
+    this.historyIndex = this.history.length
   }
 
   getHistoryCommand(direction: 'up' | 'down'): string {
     if (direction === 'up') {
       if (this.historyIndex > 0) {
-        this.historyIndex--;
-        return this.history[this.historyIndex];
+        this.historyIndex--
+        return this.history[this.historyIndex] ?? ''
       }
     } else {
       if (this.historyIndex < this.history.length - 1) {
-        this.historyIndex++;
-        return this.history[this.historyIndex];
+        this.historyIndex++
+        return this.history[this.historyIndex] ?? ''
       } else {
-        this.historyIndex = this.history.length;
-        return '';
+        this.historyIndex = this.history.length
+        return ''
       }
     }
-    return '';
+    return ''
   }
 
   processCommand(input: string): CommandResult {
-    const trimmed = input.trim();
-    if (!trimmed) return { output: '' };
+    const trimmed = input.trim()
+    if (!trimmed) return { output: '' }
 
-    const [command, ...args] = trimmed.split(' ');
-    const arg = args.join(' ');
+    const [command, ...args] = trimmed.split(' ')
+    const arg = args.join(' ')
 
-    switch (command.toLowerCase()) {
+    switch (command?.toLowerCase()) {
       case 'open':
-        return this.open(arg);
+        return this.open(arg)
       case 'theme':
-        return this.theme(arg);
+        return this.theme(arg)
       case 'clear':
-        return { output: 'CLEAR' };
+        return { output: 'CLEAR' }
       case 'ls':
-        return this.ls();
+        return this.ls()
       case 'cat':
-        return this.cat(arg);
+        return this.cat(arg)
       case 'cams':
-        return { output: 'ACCESS DENIED.', error: true };
+        return { output: 'ACCESS DENIED.', error: true }
       default:
-        return { 
-          output: `Command not found: ${command}\nType 'help' for available commands.`, 
-          error: true 
-        };
+        return {
+          output: `Command not found: ${command}\nType 'help' for available commands.`,
+          error: true,
+        }
     }
   }
 
-  private help(): CommandResult {
+  private _help(): CommandResult {
     return {
       output: `Available Commands:
 
@@ -99,60 +104,58 @@ Navigation:
 Keyboard Shortcuts:
 Tab                 - Autocomplete command
 ↑↓                  - Command history
-Ctrl+C              - Clear current input`
-    };
+Ctrl+C              - Clear current input`,
+    }
   }
 
-  private whoami(): CommandResult {
+  private _whoami(): CommandResult {
     return {
       output: `Name: ${profileData.name}
 Role: ${profileData.title}
 Location: ${profileData.location}
-Status: ${profileData.status}`
-    };
+Status: ${profileData.status}`,
+    }
   }
-
-  
 
   private open(target: string): CommandResult {
     if (!target) {
-      return { output: 'Usage: open <route|url>', error: true };
+      return { output: 'Usage: open <route|url>', error: true }
     }
 
     // Check if it's an internal route
-    const internalRoutes = ['/projects', '/about', '/contact', '/resume'];
+    const internalRoutes = ['/projects', '/about', '/contact', '/resume']
     if (internalRoutes.includes(target)) {
-      return { output: `Navigating to ${target}...`, navigate: target };
+      return { output: `Navigating to ${target}...`, navigate: target }
     }
 
     // Check if it's a URL
     if (target.startsWith('http://') || target.startsWith('https://')) {
-      window.open(target, '_blank');
-      return { output: `Opening ${target} in new tab...` };
+      window.open(target, '_blank')
+      return { output: `Opening ${target} in new tab...` }
     }
 
     // Check if it's a project link
-    const project = projectsData.find(p => p.name.toLowerCase().includes(target.toLowerCase()));
-    if (project && project.links) {
-      const firstLink = Object.values(project.links)[0] as string;
-      window.open(firstLink, '_blank');
-      return { output: `Opening ${project.name}...` };
+    const project = projectsData.find(p => p.name.toLowerCase().includes(target.toLowerCase()))
+    if (project?.links) {
+      const firstLink = Object.values(project.links)[0]!
+      window.open(firstLink, '_blank')
+      return { output: `Opening ${project.name}...` }
     }
 
-    return { output: `Cannot open '${target}' - not found`, error: true };
+    return { output: `Cannot open '${target}' - not found`, error: true }
   }
 
   private theme(themeName: string): CommandResult {
-    const validThemes = ['lumon', 'neon', 'mono'];
+    const validThemes = ['lumon', 'neon', 'mono']
     if (!validThemes.includes(themeName)) {
-      return { 
-        output: `Invalid theme '${themeName}'\nAvailable themes: ${validThemes.join(', ')}`, 
-        error: true 
-      };
+      return {
+        output: `Invalid theme '${themeName}'\nAvailable themes: ${validThemes.join(', ')}`,
+        error: true,
+      }
     }
 
     // Theme switching will be handled by the component
-    return { output: `Switching to ${themeName} theme...`, navigate: `theme:${themeName}` };
+    return { output: `Switching to ${themeName} theme...`, navigate: `theme:${themeName}` }
   }
 
   private ls(): CommandResult {
@@ -164,65 +167,79 @@ projects/
   terminal-portfolio/
   ecommerce-platform/
   rust-cli-tool/
-  mobile-trading-app/`
-    };
+  mobile-trading-app/`,
+    }
   }
 
   private cat(filename: string): CommandResult {
     switch (filename) {
       case 'about.md':
-        return { output: aboutContent };
+        return { output: aboutContent }
       case 'contact.md':
-        return { output: contactContent };
+        return { output: contactContent }
       case 'resume.md':
-        return { output: resumeContent };
+        return { output: resumeContent }
       default:
-        return { output: `cat: ${filename}: No such file or directory`, error: true };
+        return { output: `cat: ${filename}: No such file or directory`, error: true }
     }
   }
 
-  
-
   getAutocomplete(input: string): string[] {
-    const commands = ['help', 'whoami', 'stack', 'projects', 'open', 'theme', 'clear', 'ls', 'cat', 'time', 'grep stack', 'contact', 'about', 'github', 'resume'];
-    const merged = Array.from(new Set([...commands, ...Array.from(this.serverCommands)]));
-    
-    const routes = ['/projects', '/about', '/contact', '/resume'];
-    const themes = ['lumon', 'neon', 'mono'];
-    
+    const commands = [
+      'help',
+      'whoami',
+      'stack',
+      'projects',
+      'open',
+      'theme',
+      'clear',
+      'ls',
+      'cat',
+      'time',
+      'grep stack',
+      'contact',
+      'about',
+      'github',
+      'resume',
+    ]
+    const merged = Array.from(new Set([...commands, ...Array.from(this.serverCommands)]))
+
+    const routes = ['/projects', '/about', '/contact', '/resume']
+    const themes = ['lumon', 'neon', 'mono']
+
     if (input.startsWith('open ')) {
-      const partial = input.substring(5);
-      return routes.filter(route => route.startsWith(partial)).map(route => `open ${route}`);
+      const partial = input.substring(5)
+      return routes.filter(route => route.startsWith(partial)).map(route => `open ${route}`)
     }
-    
+
     if (input.startsWith('theme ')) {
-      const partial = input.substring(6);
-      return themes.filter(theme => theme.startsWith(partial)).map(theme => `theme ${theme}`);
+      const partial = input.substring(6)
+      return themes.filter(theme => theme.startsWith(partial)).map(theme => `theme ${theme}`)
     }
-    
+
     if (input.startsWith('cat ')) {
-      const files = ['about.md', 'contact.md', 'resume.md'];
-      const partial = input.substring(4);
-      return files.filter(file => file.startsWith(partial)).map(file => `cat ${file}`);
+      const files = ['about.md', 'contact.md', 'resume.md']
+      const partial = input.substring(4)
+      return files.filter(file => file.startsWith(partial)).map(file => `cat ${file}`)
     }
-    
+
     if (input.startsWith('projects ')) {
-      const opts = ['--limit ', '--per ', '--page ', '--status ', '--stack '];
-      const partial = input.substring('projects '.length);
-      return opts.filter(o => o.startsWith(partial)).map(o => `projects ${o}`);
+      const opts = ['--limit ', '--per ', '--page ', '--status ', '--stack ']
+      const partial = input.substring('projects '.length)
+      return opts.filter(o => o.startsWith(partial)).map(o => `projects ${o}`)
     }
 
     if (input.startsWith('help ')) {
-      const partial = input.substring('help '.length).toLowerCase();
-      const names = Array.from(new Set([...Array.from(this.serverCommands), ...commands]));
+      const partial = input.substring('help '.length).toLowerCase()
+      const names = Array.from(new Set([...Array.from(this.serverCommands), ...commands]))
       return names
         .filter(n => n && !n.includes(' ') && n.toLowerCase().startsWith(partial))
-        .map(n => `help ${n}`);
+        .map(n => `help ${n}`)
     }
 
-    return merged.filter(cmd => cmd.startsWith(input));
+    return merged.filter(cmd => cmd.startsWith(input))
   }
   setServerCommands = (cmds: string[]) => {
-    for (const c of cmds) this.serverCommands.add(c);
+    for (const c of cmds) this.serverCommands.add(c)
   }
 }

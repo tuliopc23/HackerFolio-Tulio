@@ -1,25 +1,25 @@
-import React from 'react'
 import {
   createRootRoute,
   createRoute,
   createRouter,
   RouterProvider,
   Outlet,
-  Link,
 } from '@tanstack/react-router'
-import Home from '@/pages/home'
-import Projects from '@/pages/projects'
-import About from '@/pages/about'
-import Contact from '@/pages/contact'
-import Resume from '@/pages/resume'
-import NotFound from '@/pages/not-found'
+import React from 'react'
+
 import { ThemeProvider } from '@/components/terminal/theme-context'
 import { fetchProjects, fetchContent } from '@/lib/api'
+import About from '@/pages/about'
+import Contact from '@/pages/contact'
+import Home from '@/pages/home'
+import NotFound from '@/pages/not-found'
+import Projects from '@/pages/projects'
+import Resume from '@/pages/resume'
 
-export const rootRoute = createRootRoute({
+const rootRoute = createRootRoute({
   component: () => (
     <ThemeProvider>
-      <div className="crt-screen">
+      <div className='crt-screen'>
         <Outlet />
       </div>
     </ThemeProvider>
@@ -37,7 +37,7 @@ const projectsRoute = createRoute({
   path: '/projects',
   loader: async () => {
     if (typeof window !== 'undefined' && (window as any).__INITIAL_DATA__?.projects) {
-      const projects = (window as any).__INITIAL_DATA__.projects
+      const { projects } = (window as any).__INITIAL_DATA__
       delete (window as any).__INITIAL_DATA__.projects
       return { projects }
     }
@@ -103,7 +103,7 @@ const notFoundRoute = createRoute({
   component: NotFound,
 })
 
-export const routeTree = rootRoute.addChildren([
+const routeTree = rootRoute.addChildren([
   indexRoute,
   projectsRoute,
   aboutRoute,

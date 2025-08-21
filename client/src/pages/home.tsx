@@ -1,42 +1,43 @@
-import { useState } from 'react';
-import TerminalPane from '@/components/terminal/terminal-pane';
-import SystemInfoPane from '@/components/terminal/system-info-pane';
-import ProjectsGridPane from '@/components/terminal/projects-grid-pane';
-import FloatingDockTerminal from '@/components/terminal/floating-dock-terminal';
-import TerminalWindow from '@/components/terminal/terminal-window';
-import DesktopBackground from '@/components/desktop/desktop-background';
-import ResizeHandle from '@/components/ui/resize-handle';
+import { useState } from 'react'
+
+import DesktopBackground from '@/components/desktop/desktop-background'
+import FloatingDockTerminal from '@/components/terminal/floating-dock-terminal'
+import ProjectsGridPane from '@/components/terminal/projects-grid-pane'
+import SystemInfoPane from '@/components/terminal/system-info-pane'
+import TerminalPane from '@/components/terminal/terminal-pane'
+import TerminalWindow from '@/components/terminal/terminal-window'
+import ResizeHandle from '@/components/ui/resize-handle'
 
 export default function Home() {
-  const [leftPaneWidth, setLeftPaneWidth] = useState(66.666667);
-  const [terminalVisible, setTerminalVisible] = useState(true);
-  const [terminalMinimized, setTerminalMinimized] = useState(false);
+  const [leftPaneWidth, setLeftPaneWidth] = useState(66.666667)
+  const [terminalVisible, setTerminalVisible] = useState(true)
+  const [terminalMinimized, setTerminalMinimized] = useState(false)
 
   const handleResize = (delta: number) => {
-    const windowWidth = window.innerWidth;
-    const deltaPercent = (delta / windowWidth) * 100;
-    const newWidth = Math.max(30, Math.min(80, leftPaneWidth + deltaPercent));
-    setLeftPaneWidth(newWidth);
-  };
+    const windowWidth = window.innerWidth
+    const deltaPercent = (delta / windowWidth) * 100
+    const newWidth = Math.max(30, Math.min(80, leftPaneWidth + deltaPercent))
+    setLeftPaneWidth(newWidth)
+  }
 
   const handleTerminalClose = () => {
-    setTerminalVisible(false);
-  };
+    setTerminalVisible(false)
+  }
 
   const handleTerminalMinimize = () => {
-    setTerminalMinimized(!terminalMinimized);
-  };
+    setTerminalMinimized(!terminalMinimized)
+  }
 
   const handleRestoreTerminal = () => {
-    setTerminalVisible(true);
-    setTerminalMinimized(false);
-  };
+    setTerminalVisible(true)
+    setTerminalMinimized(false)
+  }
 
   return (
-    <div className="h-screen overflow-hidden">
+    <div className='h-screen overflow-hidden'>
       {/* Desktop Background */}
       <DesktopBackground />
-      
+
       {/* Floating Dock - Only show when terminal is minimized or closed */}
       {(!terminalVisible || terminalMinimized) && (
         <FloatingDockTerminal onRestoreTerminal={handleRestoreTerminal} />
@@ -45,20 +46,25 @@ export default function Home() {
       {/* Terminal Window */}
       {terminalVisible && !terminalMinimized && (
         <TerminalWindow
-          title="HackerFolio Terminal v2.1.7"
+          title='HackerFolio Terminal v2.1.7'
           onClose={handleTerminalClose}
           onMinimize={handleTerminalMinimize}
-          className="animate-in fade-in duration-300"
+          className='animate-in fade-in duration-300'
         >
-          <div 
-            className="h-full grid gap-0 p-4"
+          <div
+            className='h-full grid gap-0 p-4'
             style={{
               gridTemplateColumns: `${leftPaneWidth}% 4px ${100 - leftPaneWidth - 0.4}%`,
-              height: 'calc(100vh - 40px)' // Account for title bar
+              height: 'calc(100vh - 40px)', // Account for title bar
             }}
           >
             {/* Terminal Pane */}
-            <div className="min-w-0" id="main-terminal" role="main" aria-label="Interactive Terminal">
+            <div
+              className='min-w-0'
+              id='main-terminal'
+              role='main'
+              aria-label='Interactive Terminal'
+            >
               <TerminalPane />
             </div>
 
@@ -66,7 +72,7 @@ export default function Home() {
             <ResizeHandle onResize={handleResize} />
 
             {/* Right Panes Container */}
-            <div className="grid grid-rows-2 gap-4 min-w-0">
+            <div className='grid grid-rows-2 gap-4 min-w-0'>
               <SystemInfoPane />
               <ProjectsGridPane />
             </div>
@@ -78,12 +84,12 @@ export default function Home() {
       {!terminalVisible && (
         <button
           onClick={handleRestoreTerminal}
-          className="fixed bottom-4 left-4 px-4 py-2 bg-lumon-bg border border-magenta-soft rounded-lg text-magenta-bright hover:bg-magenta-soft hover:bg-opacity-20 transition-colors animate-in fade-in"
-          aria-label="Open Terminal"
+          className='fixed bottom-4 left-4 px-4 py-2 bg-lumon-bg border border-magenta-soft rounded-lg text-magenta-bright hover:bg-magenta-soft hover:bg-opacity-20 transition-colors animate-in fade-in'
+          aria-label='Open Terminal'
         >
           Open Terminal
         </button>
       )}
     </div>
-  );
+  )
 }

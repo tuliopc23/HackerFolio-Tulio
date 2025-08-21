@@ -1,7 +1,10 @@
-import { Database } from 'bun:sqlite'
-import { drizzle } from 'drizzle-orm/bun-sqlite'
 import { existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
+
+import { Database } from 'bun:sqlite'
+import { drizzle, type BunSQLiteDatabase } from 'drizzle-orm/bun-sqlite'
+
+import * as schema from './schema'
 
 const DATA_DIR = join(process.cwd(), 'database')
 const DB_PATH = join(DATA_DIR, 'portfolio.db')
@@ -13,5 +16,4 @@ if (!existsSync(DATA_DIR)) {
 export const sqlite = new Database(DB_PATH, { create: true, readwrite: true })
 sqlite.exec('PRAGMA journal_mode = WAL;')
 
-export const orm = drizzle(sqlite)
-
+export const orm: BunSQLiteDatabase<typeof schema> = drizzle(sqlite, { schema })

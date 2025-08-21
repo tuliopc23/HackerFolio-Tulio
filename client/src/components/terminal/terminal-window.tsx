@@ -1,84 +1,96 @@
-import React, { useState, useRef } from 'react';
-import { X, Minus, Square } from 'lucide-react';
+import { X, Minus, Square } from 'lucide-react'
+import React, { useState, useRef } from 'react'
 
 interface TerminalWindowProps {
-  children: React.ReactNode;
-  title?: string;
-  onClose?: () => void;
-  onMinimize?: () => void;
-  onMaximize?: () => void;
-  className?: string;
+  children: React.ReactNode
+  title?: string
+  onClose?: () => void
+  onMinimize?: () => void
+  onMaximize?: () => void
+  className?: string
 }
 
-export default function TerminalWindow({ 
-  children, 
-  title = "Terminal", 
+export default function TerminalWindow({
+  children,
+  title = 'Terminal',
   onClose,
   onMinimize,
   onMaximize,
-  className = ""
+  className = '',
 }: TerminalWindowProps) {
-  const [isDragging, setIsDragging] = useState(false);
-  const [position, setPosition] = useState({ x: 50, y: 50 });
-  const [isMaximized, setIsMaximized] = useState(false);
-  const windowRef = useRef<HTMLDivElement>(null);
-  const dragStartRef = useRef({ x: 0, y: 0, windowX: 0, windowY: 0 });
+  const [isDragging, setIsDragging] = useState(false)
+  const [position, setPosition] = useState({ x: 50, y: 50 })
+  const [isMaximized, setIsMaximized] = useState(false)
+  const windowRef = useRef<HTMLDivElement>(null)
+  const dragStartRef = useRef({ x: 0, y: 0, windowX: 0, windowY: 0 })
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (isMaximized) return;
-    
-    setIsDragging(true);
+    if (isMaximized) return
+
+    setIsDragging(true)
     dragStartRef.current = {
       x: e.clientX,
       y: e.clientY,
       windowX: position.x,
-      windowY: position.y
-    };
-  };
+      windowY: position.y,
+    }
+  }
 
   const handleMouseMove = (e: MouseEvent) => {
-    if (!isDragging || isMaximized) return;
+    if (!isDragging || isMaximized) return
 
-    const deltaX = e.clientX - dragStartRef.current.x;
-    const deltaY = e.clientY - dragStartRef.current.y;
+    const deltaX = e.clientX - dragStartRef.current.x
+    const deltaY = e.clientY - dragStartRef.current.y
 
     setPosition({
-      x: Math.max(0, Math.min((typeof window !== 'undefined' ? window.innerWidth : 1200) - 800, dragStartRef.current.windowX + deltaX)),
-      y: Math.max(0, Math.min((typeof window !== 'undefined' ? window.innerHeight : 800) - 600, dragStartRef.current.windowY + deltaY))
-    });
-  };
+      x: Math.max(
+        0,
+        Math.min(
+          (typeof window !== 'undefined' ? window.innerWidth : 1200) - 800,
+          dragStartRef.current.windowX + deltaX
+        )
+      ),
+      y: Math.max(
+        0,
+        Math.min(
+          (typeof window !== 'undefined' ? window.innerHeight : 800) - 600,
+          dragStartRef.current.windowY + deltaY
+        )
+      ),
+    })
+  }
 
   const handleMouseUp = () => {
-    setIsDragging(false);
-  };
+    setIsDragging(false)
+  }
 
   // Attach global mouse events for dragging
   React.useEffect(() => {
     if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('mousemove', handleMouseMove)
+      document.addEventListener('mouseup', handleMouseUp)
       return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-      };
+        document.removeEventListener('mousemove', handleMouseMove)
+        document.removeEventListener('mouseup', handleMouseUp)
+      }
     }
-  }, [isDragging]);
+  }, [isDragging])
 
   const handleMaximize = () => {
-    setIsMaximized(!isMaximized);
-    if (onMaximize) onMaximize();
-  };
+    setIsMaximized(!isMaximized)
+    if (onMaximize) onMaximize()
+  }
 
-  const windowStyle = isMaximized 
+  const windowStyle = isMaximized
     ? { top: 0, left: 0, width: '100vw', height: '100vh' }
-    : { 
-        top: `${position.y}px`, 
+    : {
+        top: `${position.y}px`,
         left: `${position.x}px`,
         width: '90vw',
         maxWidth: '1400px',
         height: '80vh',
-        maxHeight: '900px'
-      };
+        maxHeight: '900px',
+      }
 
   return (
     <div
@@ -87,68 +99,66 @@ export default function TerminalWindow({
       style={windowStyle}
     >
       {/* Window Title Bar */}
-      <div 
-        className="bg-lumon-border border-b border-magenta-soft px-4 py-2 flex items-center justify-between cursor-move select-none"
+      <div
+        className='bg-lumon-border border-b border-magenta-soft px-4 py-2 flex items-center justify-between cursor-move select-none'
         onMouseDown={handleMouseDown}
       >
         {/* Traffic Lights */}
-        <div className="flex items-center gap-2">
+        <div className='flex items-center gap-2'>
           <button
             onClick={onClose}
-            className="w-3 h-3 rounded-full bg-terminal-red hover:brightness-110 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-terminal-red focus:ring-opacity-50"
-            aria-label="Close window"
-            title="Close"
+            className='w-3 h-3 rounded-full bg-terminal-red hover:brightness-110 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-terminal-red focus:ring-opacity-50'
+            aria-label='Close window'
+            title='Close'
           />
           <button
             onClick={onMinimize}
-            className="w-3 h-3 rounded-full bg-terminal-orange hover:brightness-110 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-terminal-orange focus:ring-opacity-50"
-            aria-label="Minimize window"
-            title="Minimize"
+            className='w-3 h-3 rounded-full bg-terminal-orange hover:brightness-110 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-terminal-orange focus:ring-opacity-50'
+            aria-label='Minimize window'
+            title='Minimize'
           />
           <button
             onClick={handleMaximize}
-            className="w-3 h-3 rounded-full bg-terminal-green hover:brightness-110 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-terminal-green focus:ring-opacity-50"
-            aria-label={isMaximized ? "Restore window" : "Maximize window"}
-            title={isMaximized ? "Restore" : "Maximize"}
+            className='w-3 h-3 rounded-full bg-terminal-green hover:brightness-110 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-terminal-green focus:ring-opacity-50'
+            aria-label={isMaximized ? 'Restore window' : 'Maximize window'}
+            title={isMaximized ? 'Restore' : 'Maximize'}
           />
         </div>
 
         {/* Window Title */}
-        <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-terminal-green animate-pulse" />
-          <span className="text-magenta-bright font-medium text-sm">{title}</span>
+        <div className='absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2'>
+          <div className='w-2 h-2 rounded-full bg-terminal-green animate-pulse' />
+          <span className='text-magenta-bright font-medium text-sm'>{title}</span>
         </div>
 
         {/* Window Controls (right side) */}
-        <div className="flex items-center gap-1 opacity-60">
+        <div className='flex items-center gap-1 opacity-60'>
           <button
             onClick={onMinimize}
-            className="p-1 hover:bg-magenta-soft hover:bg-opacity-20 rounded transition-colors"
-            aria-label="Minimize"
+            className='p-1 hover:bg-magenta-soft hover:bg-opacity-20 rounded transition-colors'
+            aria-label='Minimize'
           >
-            <Minus className="w-3 h-3 text-text-soft" />
+            <Minus className='w-3 h-3 text-text-soft' />
           </button>
           <button
             onClick={handleMaximize}
-            className="p-1 hover:bg-magenta-soft hover:bg-opacity-20 rounded transition-colors"
-            aria-label={isMaximized ? "Restore" : "Maximize"}
+            className='p-1 hover:bg-magenta-soft hover:bg-opacity-20 rounded transition-colors'
+            aria-label={isMaximized ? 'Restore' : 'Maximize'}
           >
-            <Square className="w-3 h-3 text-text-soft" />
+            <Square className='w-3 h-3 text-text-soft' />
           </button>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-terminal-red hover:bg-opacity-20 rounded transition-colors"
-            aria-label="Close"
+            className='p-1 hover:bg-terminal-red hover:bg-opacity-20 rounded transition-colors'
+            aria-label='Close'
           >
-            <X className="w-3 h-3 text-text-soft" />
+            <X className='w-3 h-3 text-text-soft' />
           </button>
         </div>
       </div>
 
       {/* Window Content */}
-      <div className="h-full overflow-hidden">
-        {children}
-      </div>
+      <div className='h-full overflow-hidden'>{children}</div>
     </div>
-  );
+  )
 }

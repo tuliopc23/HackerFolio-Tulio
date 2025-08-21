@@ -207,7 +207,7 @@ projects/
     }
     
     if (input.startsWith('projects ')) {
-      const opts = ['--limit ', '--status ', '--stack '];
+      const opts = ['--limit ', '--per ', '--page ', '--status ', '--stack '];
       const partial = input.substring('projects '.length);
       return opts.filter(o => o.startsWith(partial)).map(o => `projects ${o}`);
     }

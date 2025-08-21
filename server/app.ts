@@ -102,7 +102,7 @@ const app = new Elysia()
             if (target) {
               const usage: Record<string, { desc: string; usage: string; examples?: string[] }> = {
                 help: { desc: 'Show general or command-specific help', usage: 'help [command]', examples: ['help', 'help projects'] },
-                projects: { desc: 'List projects with optional filter/flags', usage: 'projects [filter] [--limit N] [--status STATUS] [--stack TECH]', examples: ['projects', 'projects react --limit 5', 'projects --status active'] },
+                projects: { desc: 'List projects with optional filter/flags', usage: 'projects [filter] [--limit N|--per N] [--page N] [--status STATUS] [--stack TECH]', examples: ['projects', 'projects react --limit 5', 'projects --status active', 'projects --per 5 --page 2'] },
                 whoami: { desc: 'Display profile information', usage: 'whoami' },
                 stack: { desc: 'Display technical skills list', usage: 'stack' },
                 grep: { desc: 'Search helpers (stack supported)', usage: 'grep stack' },
@@ -173,6 +173,7 @@ const app = new Elysia()
             // Parse flags and free-text filter
             let filter = ''
             let per: number | null = null
+            let limit: number | null = null // alias for per
             let page: number | null = null
             let status: string | null = null
             let stackFilter: string | null = null
@@ -183,6 +184,8 @@ const app = new Elysia()
               if (t.startsWith('--per=')) { per = Number(t.split('=')[1]) || null; continue }
               if (t === '--page' && tokens[i + 1]) { page = Number(tokens[++i]) || null; continue }
               if (t.startsWith('--page=')) { page = Number(t.split('=')[1]) || null; continue }
+              if (t === '--limit' && tokens[i + 1]) { limit = Number(tokens[++i]) || null; continue }
+              if (t.startsWith('--limit=')) { limit = Number(t.split('=')[1]) || null; continue }
               if (t === '--status' && tokens[i + 1]) { status = String(tokens[++i]).toLowerCase(); continue }
               if (t.startsWith('--status=')) { status = String(t.split('=')[1]).toLowerCase(); continue }
               if (t === '--stack' && tokens[i + 1]) { stackFilter = String(tokens[++i]).toLowerCase(); continue }
@@ -217,11 +220,18 @@ const app = new Elysia()
                 return arr.some(x => String(x).toLowerCase().includes(stackFilter!))
               })
             }
-            if (typeof limit === 'number' && limit > 0) {
-              list = list.slice(0, limit)
-            }
             if (list.length === 0) return { output: filter ? ansi.yellow(`No projects found matching '${filter}'`) : ansi.yellow('No projects found') }
-            const text = list.map(p => {
+
+            // Pagination calculations
+            const total = list.length
+            const effPer = Math.max(1, Math.min(50, per ?? limit ?? 5))
+            const totalPages = Math.max(1, Math.ceil(total / effPer))
+            const effPage = Math.max(1, Math.min(page ?? 1, totalPages))
+            const start = (effPage - 1) * effPer
+            const end = Math.min(total, start + effPer)
+            const pageItems = list.slice(start, end)
+
+            const text = pageItems.map(p => {
               const stack = ((p.tech_stack as any) ? JSON.parse(p.tech_stack as any) : []) as string[]
               const parts = [
                 `${ansi.magenta('•')} ${ansi.cyan(ansi.bold(String(p.name)))}`,

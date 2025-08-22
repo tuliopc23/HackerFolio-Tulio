@@ -36,8 +36,8 @@ export const insertProjectSchema = createInsertSchema(projects, {
   name: z.string().min(1, 'Project name is required'),
   description: z.string().optional(),
   techStack: z.string().optional(), // JSON string validation
-  githubUrl: z.string().url().optional().or(z.literal('')),
-  liveUrl: z.string().url().optional().or(z.literal('')),
+  githubUrl: z.union([z.url(), z.literal('')]).optional(),
+  liveUrl: z.union([z.url(), z.literal('')]).optional(),
   status: z.enum(['active', 'completed', 'archived']).optional(),
 })
 

@@ -49,7 +49,7 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
     {
       color: 'bg-terminal-red',
       action: () => {
-        console.log('Close')
+        // Close action placeholder
       },
     },
     {
@@ -61,7 +61,7 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
     {
       color: 'bg-terminal-green',
       action: () => {
-        console.log('Maximize')
+        // Maximize action placeholder
       },
     },
   ]
@@ -76,7 +76,7 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
       >
         {trafficLights.map((light, index) => (
           <button
-            key={index}
+            key={`traffic-light-${light.color}-${index}`}
             onClick={light.action}
             className={`w-3 h-3 rounded-full ${light.color} hover:brightness-110 transition-all duration-200`}
             aria-label={

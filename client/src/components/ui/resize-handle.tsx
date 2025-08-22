@@ -51,7 +51,7 @@ export default function ResizeHandle({ onResize, className = '' }: ResizeHandleP
       onMouseDown={handleMouseDown}
       type='button'
       aria-label='Resize panes'
-      onKeyDown={(e) => {
+      onKeyDown={e => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()
           // Could implement keyboard resize here
@@ -61,7 +61,7 @@ export default function ResizeHandle({ onResize, className = '' }: ResizeHandleP
     >
       {/* Visual indicator for resize handle */}
       <div className='w-full h-full flex items-center justify-center'>
-        <div className='w-1 h-8 bg-current opacity-30'></div>
+        <div className='w-1 h-8 bg-current opacity-30' />
       </div>
     </button>
   )

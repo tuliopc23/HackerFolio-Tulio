@@ -20,9 +20,9 @@ export default function DesktopBackground() {
         hour12: false,
         timeZone: 'America/Sao_Paulo',
       })
-    } catch (error) {
-      console.warn('Failed to format time:', error)
-      return time.toTimeString().slice(0, 8) // Fallback to basic time format
+    } catch {
+      // Fallback to basic time format on error
+      return time.toTimeString().slice(0, 8)
     }
   }
 

@@ -5,10 +5,6 @@ import { TypewriterText } from '@/hooks/use-typewriter'
 export default function SystemInfoPane() {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [showFastfetch, setShowFastfetch] = useState(false)
-  const prefersReducedMotion =
-    typeof window !== 'undefined' && window.matchMedia
-      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      : false
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -58,9 +54,9 @@ Local IP (en0): 192.168.0.3/24`
         hour12: false,
         timeZone: 'America/Sao_Paulo',
       })
-    } catch (error) {
-      console.warn('Failed to format time:', error)
-      return time.toTimeString().slice(0, 8) // Fallback to basic time format
+    } catch {
+      // Fallback to basic time format on error
+      return time.toTimeString().slice(0, 8)
     }
   }
 
@@ -107,8 +103,8 @@ Local IP (en0): 192.168.0.3/24`
             <div className='bg-lumon-dark border border-magenta-soft rounded p-2 sm:p-3 text-xs text-cyan-bright font-mono'>
               <TypewriterText
                 text={fastfetchOutput}
-                speed={prefersReducedMotion ? 0 : 15}
-                enabled={!prefersReducedMotion}
+                speed={15}
+                enabled
                 className='whitespace-pre-line'
               />
             </div>

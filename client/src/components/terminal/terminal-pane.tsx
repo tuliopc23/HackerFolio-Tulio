@@ -51,7 +51,7 @@ export default function TerminalPane() {
     void (async () => {
       try {
         const cmds = await fetchCommands()
-        processor.setServerCommands?.(cmds.map(c => c.command))
+        processor.setServerCommands(cmds.map(c => c.command))
       } catch {
         /* intentional noop - server commands are optional */
       }
@@ -61,7 +61,7 @@ export default function TerminalPane() {
   useEffect(() => {
     // Scroll to bottom when history updates
     if (outputRef.current) {
-      outputRef.current.scrollTop = outputRef.current.scrollHeight ?? 0
+      outputRef.current.scrollTop = outputRef.current.scrollHeight
     }
   }, [history])
 

@@ -35,8 +35,8 @@ export default function ProjectsGridPane() {
         }))
         setProjects(processedData)
       })
-      .catch(error => {
-        console.error('Failed to fetch projects:', error)
+      .catch(() => {
+        // Handle fetch error silently
         setError('Failed to load projects')
       })
       .finally(() => {
@@ -72,8 +72,8 @@ export default function ProjectsGridPane() {
                 if (typeof window !== 'undefined') {
                   try {
                     window.open(project.live_url, '_blank')
-                  } catch (error) {
-                    console.warn('Failed to open live URL:', project.live_url, error)
+                  } catch {
+                    // Silently handle URL opening errors
                   }
                 }
               }}
@@ -90,8 +90,8 @@ export default function ProjectsGridPane() {
                 if (typeof window !== 'undefined') {
                   try {
                     window.open(project.github_url, '_blank')
-                  } catch (error) {
-                    console.warn('Failed to open GitHub URL:', project.github_url, error)
+                  } catch {
+                    // Silently handle URL opening errors
                   }
                 }
               }}

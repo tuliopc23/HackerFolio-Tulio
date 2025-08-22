@@ -32,7 +32,7 @@ export const portfolioContentSchema = z.object({
 // API response schemas
 export const commandActionSchema = z.object({
   type: z.literal('open_url'),
-  url: z.string().url(),
+  url: z.url(),
 })
 
 export const serverCommandResultSchema = z.object({

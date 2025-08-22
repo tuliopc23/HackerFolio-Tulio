@@ -10,16 +10,11 @@
     "client/src/**/*",
     "server/**/*.ts",
     "components/**/*.tsx",
-    "components/**/*.ts", 
+    "components/**/*.ts",
     "shared/**/*.ts",
     "reset.d.ts",
     "*.ts",
     "*.tsx"
   ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "build",
-    "drizzle"
-  ]
+  "exclude": ["node_modules", "dist", "build", "drizzle"]
 }

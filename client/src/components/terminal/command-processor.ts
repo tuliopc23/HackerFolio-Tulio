@@ -73,7 +73,7 @@ export class CommandProcessor {
         return { output: 'ACCESS DENIED.', error: true }
       default:
         return {
-          output: `Command not found: ${command}\nType 'help' for available commands.`,
+          output: `Command not found: ${command ?? 'unknown'}\nType 'help' for available commands.`,
           error: true,
         }
     }

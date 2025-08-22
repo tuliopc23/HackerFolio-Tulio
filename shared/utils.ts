@@ -4,10 +4,10 @@
  * Generate a stable key for React components
  * Prefers item.id, falls back to content hash, then index as last resort
  */
-export function getStableKey<T>(item: T, index: number): string {
+export function getStableKey(item: unknown, index: number): string {
   // Try to use id field if available
   if (typeof item === 'object' && item && 'id' in item) {
-    const { id } = item as any
+    const { id } = item as Record<string, unknown>
     if (typeof id === 'string' || typeof id === 'number') {
       return String(id)
     }
@@ -15,19 +15,20 @@ export function getStableKey<T>(item: T, index: number): string {
 
   // Try to use name/title field if available
   if (typeof item === 'object' && item) {
-    const name = (item as any).name || (item as any).title
+    const record = item as Record<string, unknown>
+    const name = record.name ?? record.title
     if (typeof name === 'string') {
-      return `${name}-${index}`
+      return `${name}-${String(index)}`
     }
   }
 
   // For strings, use the string itself with index
   if (typeof item === 'string') {
-    return `${item}-${index}`
+    return `${item}-${String(index)}`
   }
 
   // Last resort: use index (but this is still better than raw index)
-  return `item-${index}`
+  return `item-${String(index)}`
 }
 
 /**
@@ -37,6 +38,13 @@ export function asString(value: unknown, fallback = ''): string {
   if (typeof value === 'string') return value
   if (typeof value === 'number') return String(value)
   if (value == null) return fallback
+  if (typeof value === 'object') {
+    try {
+      return JSON.stringify(value)
+    } catch {
+      return '[object Object]'
+    }
+  }
   return String(value)
 }
 
@@ -44,7 +52,7 @@ export function asString(value: unknown, fallback = ''): string {
  * Generate hash from object for stable keys
  */
 export function simpleHash(obj: unknown): string {
-  const str = JSON.stringify(obj)
+  const str = typeof obj === 'string' ? obj : JSON.stringify(obj)
   let hash = 0
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i)

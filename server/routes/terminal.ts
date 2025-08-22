@@ -1,5 +1,5 @@
-import { Elysia, type Context } from 'elysia'
 import { and, desc, eq } from 'drizzle-orm'
+import { Elysia, type Context } from 'elysia'
 
 import { orm } from '../db/drizzle'
 import {
@@ -115,7 +115,7 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
         }
         const sections: string[] = []
         const wrap = (txt: string, width: number, indent: string) => {
-          const words = (txt ?? '').split(/\\s+/)
+          const words = (txt || '').split(/\s+/)
           const lines: string[] = []
           let line = ''
           for (const word of words) {
@@ -316,13 +316,11 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
       case 'clear':
         // Frontend interprets CLEAR specially
         return { output: 'CLEAR' }
-      
+
       default: {
         const foundCommand = found as { responseTemplate?: string }
         return {
-          output: foundCommand.responseTemplate
-            ? foundCommand.responseTemplate
-            : ansi.green(`${command} executed`),
+          output: foundCommand.responseTemplate ?? ansi.green(`${command} executed`),
         }
       }
     }

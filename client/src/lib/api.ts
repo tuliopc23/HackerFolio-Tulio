@@ -27,9 +27,6 @@ function getBaseUrl(): string {
 function validateResponse<T>(schema: z.ZodType<T>, data: unknown): T {
   const result = schema.safeParse(data)
   if (!result.success) {
-    if (import.meta.env.DEV) {
-      console.error('API response validation failed:', result.error)
-    }
     throw new Error(`Invalid API response: ${result.error.message}`)
   }
   return result.data

@@ -37,6 +37,8 @@ export function getStableKey(item: unknown, index: number): string {
 export function asString(value: unknown, fallback = ''): string {
   if (typeof value === 'string') return value
   if (typeof value === 'number') return String(value)
+  if (typeof value === 'boolean') return String(value)
+  if (typeof value === 'bigint') return String(value)
   if (value == null) return fallback
   if (typeof value === 'object') {
     try {
@@ -45,7 +47,10 @@ export function asString(value: unknown, fallback = ''): string {
       return '[object Object]'
     }
   }
-  return String(value)
+  if (typeof value === 'function') return '[Function]'
+  if (typeof value === 'symbol') return value.toString()
+  // This should never be reached, but just in case
+  return fallback
 }
 
 /**

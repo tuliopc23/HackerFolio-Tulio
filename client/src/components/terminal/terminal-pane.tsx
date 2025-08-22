@@ -153,8 +153,8 @@ export default function TerminalPane() {
       if (url.startsWith('http') && typeof window !== 'undefined') {
         try {
           window.open(url, '_blank')
-        } catch (error) {
-          console.warn('Failed to open URL:', url, error)
+        } catch (_error) {
+          // Failed to open URL - silently ignore
         }
       }
     }
@@ -200,6 +200,7 @@ export default function TerminalPane() {
     }
     // ANSI parser for SGR codes (very small subset)
     const urlRegex = /(https?:\/\/[^\s]+)/g
+    // eslint-disable-next-line no-control-regex
     const ANSI_PATTERN = new RegExp('\\x1b\\[([0-9;]+)m', 'g') // e.g., \x1b[31m or \x1b[1;32m
 
     interface StyleState {
@@ -284,7 +285,7 @@ export default function TerminalPane() {
       const matches = Array.from(text.matchAll(urlRegex))
       for (const match of matches) {
         const url = match[0]
-        const index = match.index ?? 0
+        const index = match.index || 0
         if (index > lastIndex) parts.push(text.slice(lastIndex, index))
         parts.push({ url })
         lastIndex = index + url.length
@@ -293,10 +294,10 @@ export default function TerminalPane() {
       if (parts.length === 0) parts.push(text)
       return parts.map((p, j) =>
         typeof p === 'string' ? (
-          <span key={j}>{p}</span>
+          <span key={`text-${String(j)}-${p.slice(0, 10)}`}>{p}</span>
         ) : (
           <a
-            key={j}
+            key={`url-${String(j)}-${p.url}`}
             href={p.url}
             target='_blank'
             rel='noopener noreferrer'
@@ -314,22 +315,26 @@ export default function TerminalPane() {
       let state = initState()
       let match: RegExpExecArray | null
       while ((match = ANSI_PATTERN.exec(line)) !== null) {
-        const idx = match.index
+        const { index: idx } = match
         if (idx > lastIndex) {
           segments.push({ text: line.slice(lastIndex, idx), classes: stateToClass(state) })
         }
         const codes = match[1]?.split(';').map(n => Number(n || '0')) ?? []
         for (const code of codes) state = applyCode(state, code)
-        lastIndex = ANSI_PATTERN.lastIndex
+        const { lastIndex: newLastIndex } = ANSI_PATTERN
+        lastIndex = newLastIndex
       }
       if (lastIndex < line.length) {
         segments.push({ text: line.slice(lastIndex), classes: stateToClass(state) })
       }
 
       return (
-        <div key={i} className='whitespace-pre-wrap'>
+        <div key={`line-${String(i)}`} className='whitespace-pre-wrap'>
           {segments.map((seg, k) => (
-            <span key={k} className={seg.classes}>
+            <span
+              key={`segment-${String(i)}-${String(k)}-${seg.text.slice(0, 10)}`}
+              className={seg.classes}
+            >
               {renderTextWithLinks(seg.text)}
             </span>
           ))}
@@ -367,7 +372,7 @@ export default function TerminalPane() {
         {/* Command History */}
         <div className='terminal-output space-y-2'>
           {history.map((entry, index) => (
-            <div key={index}>
+            <div key={`history-${String(index)}-${entry.command}`}>
               <div className='flex'>
                 <span className='text-magenta-bright'>user@portfolio:~$</span>
                 <span className='ml-2 text-text-cyan'>{entry.command}</span>

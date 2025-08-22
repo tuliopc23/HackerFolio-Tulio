@@ -1,5 +1,5 @@
-import { Elysia, type Context } from 'elysia'
 import { desc, eq, sql } from 'drizzle-orm'
+import { Elysia, type Context } from 'elysia'
 
 import { orm } from '../db/drizzle'
 import {
@@ -65,31 +65,27 @@ export const apiRoutes = new Elysia({ prefix: '/api' })
       updated_at: row.updated_at,
     }
   })
-  .put('/content/:section', async ({ params, body }: Context) => {
+  .put('/content/:section', ({ params, body }: Context) => {
     if (!params.section) {
       throw new Error('Missing "section" parameter')
     }
 
     interface UpsertContentBody {
-      content?: unknown | Record<string, unknown>
+      content?: Record<string, unknown>
     }
 
     const payload = (typeof body === 'string' ? JSON.parse(body) : body) as UpsertContentBody
-    const content = JSON.stringify(
-      (payload && typeof payload === 'object' && 'content' in payload ? payload.content : {}) ??
-        {}
-    )
+    const content = JSON.stringify(payload.content ?? {})
     // Use sql template for upsert
-    await orm.run(
+    orm.run(
       sql`INSERT INTO portfolio_content (section, content) VALUES (${params.section}, ${content}) ON CONFLICT(section) DO UPDATE SET content=excluded.content, updated_at=CURRENT_TIMESTAMP`
     )
     return { ok: true }
   })
   .post('/terminal/log', ({ body }: Context) => {
-    const { command, timestamp } = body as { command?: string; timestamp?: string }
+    const { command } = body as { command?: string; timestamp?: string }
     if (command) {
-      // In production, use proper structured logging
-      console.log(`Terminal command: ${command} at ${timestamp ?? 'unknown time'}`)
+      // Terminal command logged: ${command}
     }
     return { logged: true }
   })
@@ -105,7 +101,7 @@ export const apiRoutes = new Elysia({ prefix: '/api' })
         `https://api.github.com/repos/${owner}/${repo}/commits?per_page=${String(limit)}`,
         { headers }
       )
-      if (!res.ok) throw new Error(`GitHub error ${res.status}`)
+      if (!res.ok) throw new Error(`GitHub error ${String(res.status)}`)
       const data = (await res.json()) as Array<{
         sha: string
         commit: {
@@ -116,12 +112,12 @@ export const apiRoutes = new Elysia({ prefix: '/api' })
       }>
       return data.map(c => ({
         sha: c.sha,
-        message: c.commit?.message,
-        author: c.commit?.author?.name,
-        date: c.commit?.author?.date,
+        message: c.commit.message,
+        author: c.commit.author.name,
+        date: c.commit.author.date,
         url: c.html_url,
       }))
     } catch (e: unknown) {
-      return { error: 'Failed to fetch commits', message: (e as Error)?.message }
+      return { error: 'Failed to fetch commits', message: (e as Error).message }
     }
   })

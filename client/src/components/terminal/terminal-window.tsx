@@ -107,8 +107,14 @@ export default function TerminalWindow({
       <div
         className='bg-lumon-border border-b border-magenta-soft px-4 py-2 flex items-center justify-between cursor-move select-none'
         onMouseDown={handleMouseDown}
-        role='banner'
-        aria-label='Terminal window title bar'
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            handleMouseDown(e as unknown as React.MouseEvent<HTMLDivElement>)
+          }
+        }}
+        role='button'
+        tabIndex={0}
+        aria-label='Drag to move terminal window'
       >
         {/* Traffic Lights */}
         <div className='flex items-center gap-2'>

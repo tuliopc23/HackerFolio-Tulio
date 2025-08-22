@@ -9,23 +9,29 @@ export default function Contact() {
     return content.split('\n').map((line, index) => {
       if (line.startsWith('# ')) {
         return (
-          <h1 key={index} className='text-3xl font-bold text-cyan-bright phosphor-glow mb-4'>
+          <h1
+            key={`h1-${line.substring(2).slice(0, 20)}`}
+            className='text-3xl font-bold text-cyan-bright phosphor-glow mb-4'
+          >
             {line.substring(2)}
           </h1>
         )
       }
       if (line.startsWith('## ')) {
         return (
-          <h2 key={index} className='text-2xl font-semibold text-cyan-bright mb-3 mt-6'>
+          <h2
+            key={`h2-${line.substring(3).slice(0, 20)}`}
+            className='text-2xl font-semibold text-cyan-bright mb-3 mt-6'
+          >
             {line.substring(3)}
           </h2>
         )
       }
       if (line.trim() === '') {
-        return <div key={index} className='mb-4' />
+        return <div key={`empty-${String(index)}`} className='mb-4' />
       }
       return (
-        <p key={index} className='text-text-soft mb-2'>
+        <p key={`para-${line.slice(0, 20)}`} className='text-text-soft mb-2'>
           {line}
         </p>
       )

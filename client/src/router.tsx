@@ -44,8 +44,9 @@ const projectsRoute = createRoute({
     ) {
       const initialData = (window as Window & { __INITIAL_DATA__?: Record<string, unknown> })
         .__INITIAL_DATA__
-      const { projects } = initialData!
-      delete initialData!.projects
+      if (!initialData) return { projects: [] }
+      const { projects } = initialData
+      delete initialData.projects
       return { projects }
     }
     const projects = await fetchProjects()
@@ -63,7 +64,8 @@ const aboutRoute = createRoute({
       (window as Window & { __INITIAL_DATA__?: Record<string, unknown> }).__INITIAL_DATA__?.about
     ) {
       const initialData = (window as Window & { __INITIAL_DATA__?: Record<string, unknown> })
-        .__INITIAL_DATA__!
+        .__INITIAL_DATA__
+      if (!initialData) return null
       const content = initialData.about
       delete initialData.about
       return { content }
@@ -83,7 +85,8 @@ const contactRoute = createRoute({
       (window as Window & { __INITIAL_DATA__?: Record<string, unknown> }).__INITIAL_DATA__?.contact
     ) {
       const initialData = (window as Window & { __INITIAL_DATA__?: Record<string, unknown> })
-        .__INITIAL_DATA__!
+        .__INITIAL_DATA__
+      if (!initialData) return null
       const content = initialData.contact
       delete initialData.contact
       return { content }
@@ -104,7 +107,8 @@ const resumeRoute = createRoute({
       (window as Window & { __INITIAL_DATA__?: Record<string, unknown> }).__INITIAL_DATA__?.resume
     ) {
       const initialData = (window as Window & { __INITIAL_DATA__?: Record<string, unknown> })
-        .__INITIAL_DATA__!
+        .__INITIAL_DATA__
+      if (!initialData) return null
       const content = initialData.resume
       delete initialData.resume
       return { content }

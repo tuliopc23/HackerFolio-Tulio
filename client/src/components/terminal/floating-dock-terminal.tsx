@@ -74,13 +74,17 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
         role='toolbar'
         aria-label='Window controls'
       >
-        {trafficLights.map((light, index) => (
+        {trafficLights.map(light => (
           <button
-            key={`traffic-light-${light.color}-${index}`}
+            key={`traffic-light-${light.color}`}
             onClick={light.action}
             className={`w-3 h-3 rounded-full ${light.color} hover:brightness-110 transition-all duration-200`}
             aria-label={
-              index === 0 ? 'Close window' : index === 1 ? 'Minimize window' : 'Maximize window'
+              light.color === 'bg-red-500'
+                ? 'Close window'
+                : light.color === 'bg-yellow-500'
+                  ? 'Minimize window'
+                  : 'Maximize window'
             }
             tabIndex={0}
           />

@@ -1,5 +1,5 @@
 {
-  "include": ["client/src/**/*", "shared/**/*", "server/**/*"],
+  "include": ["client/src/**/*", "shared/**/*", "server/**/*", "reset.d.ts"],
   "exclude": ["node_modules", "build", "dist", "**/*.test.ts", "**/*.test.tsx", "drizzle/**/*"],
   "compilerOptions": {
     // Build options
@@ -62,7 +62,6 @@
     "skipDefaultLibCheck": true,
 
     // Completeness
-    "skipLibCheck": true,
 
     // Path mapping
     "baseUrl": ".",

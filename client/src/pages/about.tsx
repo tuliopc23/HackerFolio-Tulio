@@ -9,21 +9,30 @@ export default function About() {
     return content.split('\n').map((line, index) => {
       if (line.startsWith('# ')) {
         return (
-          <h1 key={index} className='text-3xl font-bold text-cyan-bright phosphor-glow mb-4'>
+          <h1
+            key={`h1-${line.substring(2).slice(0, 20)}`}
+            className='text-3xl font-bold text-cyan-bright phosphor-glow mb-4'
+          >
             {line.substring(2)}
           </h1>
         )
       }
       if (line.startsWith('## ')) {
         return (
-          <h2 key={index} className='text-2xl font-semibold text-cyan-bright mb-3 mt-6'>
+          <h2
+            key={`h2-${line.substring(3).slice(0, 20)}`}
+            className='text-2xl font-semibold text-cyan-bright mb-3 mt-6'
+          >
             {line.substring(3)}
           </h2>
         )
       }
       if (line.startsWith('### ')) {
         return (
-          <h3 key={index} className='text-xl font-medium text-cyan-soft mb-2 mt-4'>
+          <h3
+            key={`h3-${line.substring(4).slice(0, 20)}`}
+            className='text-xl font-medium text-cyan-soft mb-2 mt-4'
+          >
             {line.substring(4)}
           </h3>
         )
@@ -32,7 +41,7 @@ export default function About() {
         const match = /- \*\*(.*?)\*\*(.*)/.exec(line)
         if (match) {
           return (
-            <div key={index} className='mb-2'>
+            <div key={`list-${match[1]?.slice(0, 20) ?? 'unknown'}`} className='mb-2'>
               <span className='text-cyan-bright font-medium'>{match[1]}</span>
               <span className='text-text-soft'>{match[2]}</span>
             </div>
@@ -41,16 +50,19 @@ export default function About() {
       }
       if (line.startsWith('- ')) {
         return (
-          <div key={index} className='text-text-soft mb-1 ml-4'>
+          <div
+            key={`bullet-${line.substring(2).slice(0, 20)}`}
+            className='text-text-soft mb-1 ml-4'
+          >
             {line.substring(2)}
           </div>
         )
       }
       if (line.trim() === '') {
-        return <div key={index} className='mb-4' />
+        return <div key={`empty-${String(index)}`} className='mb-4' />
       }
       return (
-        <p key={index} className='text-text-soft mb-2'>
+        <p key={`para-${line.slice(0, 20)}`} className='text-text-soft mb-2'>
           {line}
         </p>
       )

@@ -23,23 +23,11 @@ export function parseStringArray(json: string): string[] {
 
 // Minimal request logging for /api routes
 export const logApi = (
-  method: string,
-  path: string,
-  status: number,
-  durationMs: number,
-  body?: unknown
+  _method: string,
+  _path: string,
+  _status: number,
+  _durationMs: number,
+  _body?: unknown
 ) => {
-  const time = new Date().toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: true,
-  })
-  let line = `${time} [elysia] ${method} ${path} ${status} in ${String(durationMs)}ms`
-  if (body) {
-    const json = JSON.stringify(body)
-    if (json.length <= 80) line += ` :: ${json}`
-  }
-  // Using structured logging would be better in production
-  console.log(line)
+  // Logging would happen here in production
 }

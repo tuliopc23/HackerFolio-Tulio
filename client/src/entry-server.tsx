@@ -1,13 +1,20 @@
+import { createMemoryHistory } from '@tanstack/history'
 import { renderToString } from 'react-dom/server'
-import { StaticRouter } from 'react-router-dom'
 
-import App from './App'
+import { createAppRouter, AppRouterProvider } from './router'
 
 export function render(url: string) {
-  const html = renderToString(
-    <StaticRouter location={url}>
-      <App />
-    </StaticRouter>
-  )
+  const history = createMemoryHistory({ initialEntries: [url] })
+  const router = createAppRouter({ history })
+
+  const html = renderToString(<AppRouterProvider router={router} />)
   return { html }
+}
+
+export function renderWithData(url: string, data?: Record<string, unknown>) {
+  const history = createMemoryHistory({ initialEntries: [url] })
+  const router = createAppRouter({ history })
+
+  const html = renderToString(<AppRouterProvider router={router} />)
+  return { html, data: data ?? {} }
 }

@@ -7,16 +7,18 @@ import {
   Outlet,
   type RouterHistory,
 } from '@tanstack/react-router'
-import React from 'react'
+import React, { lazy } from 'react'
 
 import { ThemeProvider } from '@/components/terminal/theme-context'
 import { fetchProjects, fetchContent } from '@/lib/api'
-import About from '@/pages/about'
-import Contact from '@/pages/contact'
 import Home from '@/pages/home'
-import NotFound from '@/pages/not-found'
-import Projects from '@/pages/projects'
-import Resume from '@/pages/resume'
+
+// Lazy load heavy components to reduce initial bundle size
+const About = lazy(() => import('@/pages/about'))
+const Contact = lazy(() => import('@/pages/contact'))
+const NotFound = lazy(() => import('@/pages/not-found'))
+const Projects = lazy(() => import('@/pages/projects'))
+const Resume = lazy(() => import('@/pages/resume'))
 
 const rootRoute = createRootRoute({
   component: () => (

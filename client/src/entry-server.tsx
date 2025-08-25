@@ -3,12 +3,11 @@ import { renderToString } from 'react-dom/server'
 
 import { createAppRouter, AppRouterProvider } from './router'
 
-export function render(url: string) {
+export function render(url: string): string {
   const history = createMemoryHistory({ initialEntries: [url] })
   const router = createAppRouter({ history })
 
-  const html = renderToString(<AppRouterProvider router={router} />)
-  return { html }
+  return renderToString(<AppRouterProvider router={router} />)
 }
 
 export function renderWithData(url: string, data?: Record<string, unknown>) {

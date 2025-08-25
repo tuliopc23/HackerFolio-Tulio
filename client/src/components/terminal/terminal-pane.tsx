@@ -6,6 +6,8 @@ import {
   fetchCommands,
   type ServerCommandResult,
 } from '@/lib/api'
+import { useTerminalAccessibility } from '@/hooks/use-accessibility'
+import { useFocusRegistration } from '@/components/accessibility/focus-manager'
 
 import { CommandProcessor, type CommandResult } from './command-processor'
 import { useTheme } from './theme-context'
@@ -23,13 +25,22 @@ export default function TerminalPane() {
   const [input, setInput] = useState('')
   const [history, setHistory] = useState<TerminalHistory[]>([])
   const [processor] = useState(() => new CommandProcessor())
+  const [isExecuting, setIsExecuting] = useState(false)
+  const [lastCommandStatus, setLastCommandStatus] = useState<'success' | 'error' | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const outputRef = useRef<HTMLDivElement>(null)
+  const terminalRef = useRef<HTMLDivElement>(null)
+  
+  // Accessibility hooks
+  const { announce, announceCommand, announceError } = useTerminalAccessibility()
+  useFocusRegistration('terminal-input', inputRef)
+  useFocusRegistration('terminal-pane', terminalRef)
 
   useEffect(() => {
     // Auto-focus input
     if (inputRef.current) {
       inputRef.current.focus()
+      announce('Terminal initialized and ready for commands', 'polite')
     }
     // Add ANSI-colored boot messages into history for consistent styling
     setHistory(prev => {
@@ -68,30 +79,48 @@ export default function TerminalPane() {
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault()
+      if (isExecuting) {
+        announce('Command is already executing, please wait', 'assertive')
+        return
+      }
       void runCommand(input)
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
       const historyCommand = processor.getHistoryCommand('up')
-      setInput(historyCommand || '')
+      const newInput = historyCommand || ''
+      setInput(newInput)
+      if (newInput) {
+        announce(`Previous command: ${newInput}`, 'polite')
+      }
     } else if (e.key === 'ArrowDown') {
       e.preventDefault()
       const historyCommand = processor.getHistoryCommand('down')
-      setInput(historyCommand || '')
+      const newInput = historyCommand || ''
+      setInput(newInput)
+      if (newInput) {
+        announce(`Next command: ${newInput}`, 'polite')
+      } else {
+        announce('Cleared command input', 'polite')
+      }
     } else if (e.key === 'Tab') {
       e.preventDefault()
       handleAutocomplete()
     } else if (e.ctrlKey && e.key === 'c') {
       e.preventDefault()
       setInput('')
+      announce('Command input cleared', 'polite')
     } else if (e.ctrlKey && e.key === 'l') {
       e.preventDefault()
       setHistory([])
+      announce('Terminal screen cleared', 'polite')
     }
   }
 
   const runCommand = async (command: string) => {
     if (!command.trim()) return
 
+    setIsExecuting(true)
+    announceCommand(command)
     processor.addToHistory(command)
     const result: CommandResult = processor.processCommand(command)
 
@@ -160,33 +189,50 @@ export default function TerminalPane() {
     }
 
     // Add to history with final output
+    const isError = finalError || result.type === 'error'
+    
     setHistory(prev => [
       ...prev,
       {
         command,
         output: finalOutput,
         timestamp: new Date(),
-        error: finalError,
+        error: isError,
       },
     ])
 
+    // Announce command completion
+    setLastCommandStatus(isError ? 'error' : 'success')
+    if (isError) {
+      announceError(finalOutput)
+    } else {
+      announce(`Command completed: ${finalOutput.split('\n')[0]}`, 'polite')
+    }
+
     setInput('')
+    setIsExecuting(false)
   }
 
   const handleAutocomplete = () => {
     const suggestions = processor.getAutocomplete(input)
     if (suggestions.length === 1) {
-      setInput(suggestions[0] ?? '')
+      const suggestion = suggestions[0] ?? ''
+      setInput(suggestion)
+      announce(`Autocompleted to: ${suggestion}`, 'polite')
     } else if (suggestions.length > 1) {
       // Show suggestions in output
+      const suggestionText = suggestions.join('  ')
       setHistory(prev => [
         ...prev,
         {
           command: input,
-          output: suggestions.join('  '),
+          output: suggestionText,
           timestamp: new Date(),
         },
       ])
+      announce(`${suggestions.length} autocomplete suggestions shown`, 'polite')
+    } else {
+      announce('No autocomplete suggestions available', 'polite')
     }
   }
 
@@ -301,7 +347,8 @@ export default function TerminalPane() {
             href={p.url}
             target='_blank'
             rel='noopener noreferrer'
-            className='underline text-cyan-bright'
+            className='underline text-cyan-bright focus:outline-none focus:ring-2 focus:ring-cyan-bright focus:ring-opacity-50 rounded'
+            aria-label={`External link: ${p.url}`}
           >
             {p.url}
           </a>
@@ -346,18 +393,49 @@ export default function TerminalPane() {
   }
 
   return (
-    <div className='pane-border pane-focus rounded-lg overflow-hidden flex flex-col h-full'>
+    <div 
+      ref={terminalRef}
+      className='pane-border pane-focus rounded-lg overflow-hidden flex flex-col h-full'
+      role='application'
+      aria-label='Interactive Terminal'
+      aria-describedby='terminal-help terminal-status'
+    >
       {/* Pane Header */}
       <div className='bg-lumon-border px-4 py-2 border-b border-cyan-soft flex items-center justify-between'>
         <div className='flex items-center gap-2'>
-          <span className='text-cyan-bright font-medium'>[pane-01]</span>
+          <span className='text-cyan-bright font-medium' aria-label='Terminal pane 1'>[pane-01]</span>
           <span className='text-text-soft'>terminal</span>
         </div>
-        <div className='flex gap-2'>
-          <div className='w-3 h-3 rounded-full bg-terminal-red' />
-          <div className='w-3 h-3 rounded-full bg-terminal-orange' />
-          <div className='w-3 h-3 rounded-full bg-terminal-green' />
+        <div className='flex gap-2' role='group' aria-label='Terminal status indicators'>
+          <div 
+            className='w-3 h-3 rounded-full bg-terminal-red' 
+            aria-label='Terminal status: active'
+            role='status'
+          />
+          <div 
+            className='w-3 h-3 rounded-full bg-terminal-orange' 
+            aria-label={isExecuting ? 'Command executing' : 'Terminal ready'}
+            role='status'
+          />
+          <div 
+            className='w-3 h-3 rounded-full bg-terminal-green' 
+            aria-label={lastCommandStatus === 'error' ? 'Last command failed' : 'Last command succeeded'}
+            role='status'
+          />
         </div>
+      </div>
+
+      {/* Status announcement for screen readers */}
+      <div 
+        id='terminal-status' 
+        className='sr-only' 
+        aria-live='polite' 
+        aria-atomic='true'
+      >
+        {isExecuting ? 'Command executing...' : 
+         lastCommandStatus === 'error' ? 'Last command failed' : 
+         lastCommandStatus === 'success' ? 'Last command completed successfully' : 
+         'Terminal ready for commands'}
       </div>
 
       {/* Terminal Content */}
@@ -367,7 +445,9 @@ export default function TerminalPane() {
         id='terminal-content'
         role='log'
         aria-live='polite'
-        aria-label='Terminal output'
+        aria-label='Terminal command output'
+        aria-describedby='terminal-help'
+        tabIndex={-1}
       >
         {/* Command History */}
         <div className='terminal-output space-y-2'>
@@ -389,41 +469,61 @@ export default function TerminalPane() {
         </div>
 
         {/* Current Command Line */}
-        <div className='flex items-center'>
-          <span className='text-magenta-bright'>user@portfolio:~$</span>
+        <div className='flex items-center' role='group' aria-label='Command input'>
+          <span className='text-magenta-bright' aria-hidden='true'>user@portfolio:~$</span>
+          <label htmlFor='terminal-input' className='sr-only'>
+            Terminal command input. Use Tab for autocomplete, up and down arrows for command history.
+          </label>
           <input
             ref={inputRef}
+            id='terminal-input'
             type='text'
             value={input}
             onChange={e => {
               setInput(e.target.value)
             }}
             onKeyDown={handleKeyDown}
-            className='ml-2 bg-transparent border-none outline-none text-text-cyan flex-1 focus:ring-2 focus:ring-magenta-bright focus:ring-opacity-30'
+            className='ml-2 bg-transparent border-none outline-none text-text-cyan flex-1 focus:ring-2 focus:ring-magenta-bright focus:ring-opacity-50 focus:ring-offset-2 focus:ring-offset-lumon-bg'
             aria-label='Terminal command input'
-            aria-describedby='terminal-help'
+            aria-describedby='terminal-help terminal-status'
+            aria-invalid={lastCommandStatus === 'error' ? 'true' : 'false'}
             autoComplete='off'
             spellCheck='false'
-            placeholder='Type a command...'
+            placeholder={isExecuting ? 'Command executing...' : 'Type a command...'}
+            disabled={isExecuting}
+            role='textbox'
+            aria-multiline='false'
           />
-          <span className='cursor-block' />
+          <span 
+            className={`cursor-block ${isExecuting ? 'animate-pulse' : ''}`} 
+            aria-hidden='true'
+          />
         </div>
       </div>
 
       {/* Command Help Footer */}
-      <div className='bg-lumon-border px-4 py-2 border-t border-cyan-soft text-xs text-text-soft'>
+      <div 
+        id='terminal-help' 
+        className='bg-lumon-border px-4 py-2 border-t border-cyan-soft text-xs text-text-soft'
+        role='complementary'
+        aria-label='Terminal keyboard shortcuts'
+      >
         <div className='flex flex-wrap gap-4'>
           <span>
-            <kbd className='bg-lumon-dark px-1 rounded'>Tab</kbd> autocomplete
+            <kbd className='bg-lumon-dark px-1 rounded' aria-label='Tab key'>Tab</kbd> 
+            <span className='sr-only'>key for </span>autocomplete
           </span>
           <span>
-            <kbd className='bg-lumon-dark px-1 rounded'>↑↓</kbd> history
+            <kbd className='bg-lumon-dark px-1 rounded' aria-label='Up and down arrow keys'>↑↓</kbd> 
+            <span className='sr-only'>keys for </span>history
           </span>
           <span>
-            <kbd className='bg-lumon-dark px-1 rounded'>Ctrl+C</kbd> clear
+            <kbd className='bg-lumon-dark px-1 rounded' aria-label='Control plus C'>Ctrl+C</kbd> 
+            <span className='sr-only'>to </span>clear
           </span>
           <span>
-            <kbd className='bg-lumon-dark px-1 rounded'>Ctrl+L</kbd> clear screen
+            <kbd className='bg-lumon-dark px-1 rounded' aria-label='Control plus L'>Ctrl+L</kbd> 
+            <span className='sr-only'>to </span>clear screen
           </span>
         </div>
       </div>

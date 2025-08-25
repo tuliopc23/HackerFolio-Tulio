@@ -29,26 +29,34 @@ export class CommandProcessor {
     if (command.trim() && this.history[this.history.length - 1] !== command) {
       this.history.push(command)
       localStorage.setItem('terminal-history', JSON.stringify(this.history))
+      this.historyIndex = this.history.length
     }
-    this.historyIndex = this.history.length
   }
 
   getHistoryCommand(direction: 'up' | 'down'): string {
+    if (this.history.length === 0) {
+      return ''
+    }
+    
     if (direction === 'up') {
       if (this.historyIndex > 0) {
         this.historyIndex--
-        return this.history[this.historyIndex] ?? ''
+      } else if (this.historyIndex === this.history.length) {
+        // Coming from "beyond" history, go to last command
+        this.historyIndex = this.history.length - 1
       }
+      // Stay at current position if already at 0
+      return this.history[this.historyIndex] ?? ''
     } else {
       if (this.historyIndex < this.history.length - 1) {
         this.historyIndex++
         return this.history[this.historyIndex] ?? ''
       } else {
+        // Go beyond history (empty input)
         this.historyIndex = this.history.length
         return ''
       }
     }
-    return ''
   }
 
   processCommand(input: string): CommandResult {

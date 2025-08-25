@@ -10,44 +10,121 @@ import {
   type TerminalCommand,
 } from '../db/schema'
 import { validateQuery, validateData, validateBody, executeCommandSchema } from '../lib/validation'
+import {
+  createTerminalError,
+  createTerminalSuccess,
+  createDatabaseError,
+  handleApiError,
+  validateApiQuery,
+  validateApiBody,
+  ApiError,
+} from '../lib/error-handling'
+import {
+  rateLimit,
+  terminalRateLimitOptions,
+  InputSanitizer,
+  SecurityLogger,
+  getClientId
+} from '../lib/security'
 import { ansi, parseStringArray } from '../utils/terminal'
 
+// Terminal rate limiting middleware
+const terminalRateLimit = (context: Context) => {
+  const rateLimitPassed = rateLimit(terminalRateLimitOptions)(context)
+  
+  if (!rateLimitPassed) {
+    SecurityLogger.log({
+      type: 'rate_limit',
+      clientId: getClientId(context),
+      timestamp: Date.now(),
+      details: {
+        endpoint: 'terminal',
+        command: 'rate_limited'
+      }
+    })
+    
+    throw new Error('Command rate limit exceeded, please slow down')
+  }
+  
+  return true
+}
+
 export const terminalRoutes = new Elysia({ prefix: '/api' })
+  .onError(({ error }) => handleApiError(error))
+  .derive(terminalRateLimit)
   .get('/commands', async (context: Context) => {
-    const query = validateQuery(terminalCommandQuerySchema, context)
+    try {
+      const query = validateApiQuery(terminalCommandQuerySchema, context)
 
-    const queryBuilder = orm
-      .select()
-      .from(tCommands)
-      .where(
-        query.category
-          ? and(eq(tCommands.isActive, true), eq(tCommands.category, query.category))
-          : eq(tCommands.isActive, true)
+      const queryBuilder = orm
+        .select()
+        .from(tCommands)
+        .where(
+          query.category
+            ? and(eq(tCommands.isActive, true), eq(tCommands.category, query.category))
+            : eq(tCommands.isActive, true)
+        )
+        .orderBy(tCommands.command)
+
+      const rows = await queryBuilder
+
+      // Validate the database results
+      const validatedCommands: TerminalCommand[] = rows.map((row: unknown) =>
+        validateData(selectTerminalCommandSchema, row)
       )
-      .orderBy(tCommands.command)
 
-    const rows = await queryBuilder
-
-    // Validate the database results
-    const validatedCommands: TerminalCommand[] = rows.map((row: unknown) =>
-      validateData(selectTerminalCommandSchema, row)
-    )
-
-    return validatedCommands
+      return validatedCommands
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error
+      }
+      throw createDatabaseError('Failed to fetch commands', error)
+    }
   })
   .post('/commands/execute', async (context: Context) => {
-    const { command, args } = validateBody(executeCommandSchema, context)
+    try {
+      const { command, args } = validateApiBody(executeCommandSchema, context)
+      
+      // Sanitize command input for security
+      const sanitizedCommand = InputSanitizer.sanitizeCommand(command)
+      const sanitizedArgs = Array.isArray(args) ? args.map(arg => 
+        typeof arg === 'string' ? InputSanitizer.sanitizeString(arg, 100) : String(arg)
+      ) : []
+      
+      // Log suspicious commands
+      const suspiciousPatterns = [
+        /rm\s+-rf/,
+        /curl\s+.*\|\s*sh/,
+        /wget\s+.*\|\s*sh/,
+        /eval\s*\(/,
+        /__import__/,
+        /exec\(/,
+        /system\(/,
+        /shell_exec/
+      ]
+      
+      if (suspiciousPatterns.some(pattern => pattern.test(command))) {
+        SecurityLogger.log({
+          type: 'suspicious_request',
+          clientId: getClientId(context),
+          timestamp: Date.now(),
+          details: {
+            command: sanitizedCommand,
+            originalCommand: command.slice(0, 100)
+          }
+        })
+      }
 
-    // Basic command lookup (allows toggling via is_active)
-    const found = (
-      await orm.select().from(tCommands).where(eq(tCommands.command, command)).limit(1)
-    ).at(0)
+      // Basic command lookup (allows toggling via is_active)
+      const found = (
+        await orm.select().from(tCommands).where(eq(tCommands.command, sanitizedCommand)).limit(1)
+      ).at(0)
 
-    if (!found) {
-      return { output: ansi.red(`Command not found: ${command}`), error: true }
-    }
+      if (!found) {
+        return createTerminalError(ansi.red(`Command not found: ${sanitizedCommand}`))
+      }
 
-    switch (command) {
+    switch (sanitizedCommand) {
       case 'help': {
         const cmds = await orm
           .select({
@@ -93,7 +170,7 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
             clear: { desc: 'Clear terminal', usage: 'clear' },
           }
           const u = usage[target]
-          if (!u) return { output: ansi.red(`No help for '${target}'`), error: true }
+          if (!u) return createTerminalError(ansi.red(`No help for '${target}'`))
           const lines = [
             `${ansi.magenta(ansi.bold('Command'))}: ${ansi.cyan(target)}`,
             `${ansi.magenta('Description')}: ${u.desc}`,
@@ -160,7 +237,7 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
         let page: number | null = null
         let status: string | null = null
         let stackFilter: string | null = null
-        const tokens = Array.isArray(args) ? [...args] : []
+        const tokens = sanitizedArgs
         for (let i = 0; i < tokens.length; i++) {
           const t = tokens[i]
           if (!t) continue
@@ -320,8 +397,20 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
       default: {
         const foundCommand = found as { responseTemplate?: string }
         return {
-          output: foundCommand.responseTemplate ?? ansi.green(`${command} executed`),
+          output: foundCommand.responseTemplate ?? ansi.green(`${sanitizedCommand} executed`),
         }
       }
     }
-  })
+  } catch (error) {
+    SecurityLogger.log({
+      type: 'invalid_input',
+      clientId: getClientId(context),
+      timestamp: Date.now(),
+      details: {
+        error: error instanceof Error ? error.message : 'Unknown error'
+      }
+    })
+    
+    return createTerminalError('Invalid command or arguments')
+  }
+})

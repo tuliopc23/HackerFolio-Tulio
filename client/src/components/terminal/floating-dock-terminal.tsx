@@ -2,6 +2,8 @@ import { useNavigate } from '@tanstack/react-router'
 import { Home, FolderOpen, User, Mail, Palette } from 'lucide-react'
 import { useState } from 'react'
 
+import { useTerminalAccessibility } from '@/hooks/use-accessibility'
+
 import { useTheme } from './theme-context'
 
 // Terminal icon component - moved outside render to avoid recreation
@@ -17,6 +19,7 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
   const navigate = useNavigate()
   const { setTheme } = useTheme()
   const [isMinimized, setIsMinimized] = useState(false)
+  const { announceNavigation } = useTerminalAccessibility()
 
   const navigationItems = [
     { id: 'home', icon: Home, label: 'Home', path: '/' },
@@ -74,21 +77,18 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
         role='toolbar'
         aria-label='Window controls'
       >
-        {trafficLights.map(light => (
-          <button
-            key={`traffic-light-${light.color}`}
-            onClick={light.action}
-            className={`w-3 h-3 rounded-full ${light.color} hover:brightness-110 transition-all duration-200`}
-            aria-label={
-              light.color === 'bg-red-500'
-                ? 'Close window'
-                : light.color === 'bg-yellow-500'
-                  ? 'Minimize window'
-                  : 'Maximize window'
-            }
-            tabIndex={0}
-          />
-        ))}
+        {trafficLights.map((light, index) => {
+          const labels = ['Close window', 'Minimize window', 'Maximize window']
+          return (
+            <button
+              key={`traffic-light-${light.color}`}
+              onClick={light.action}
+              className={`w-3 h-3 rounded-full ${light.color} hover:brightness-110 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50`}
+              aria-label={labels[index]}
+              tabIndex={0}
+            />
+          )
+        })}
       </div>
 
       {/* Dock Container */}
@@ -106,19 +106,22 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
             {navigationItems.map(item => (
               <button
                 key={item.id}
-                onClick={() => void navigate({ to: item.path })}
+                onClick={() => {
+                  void navigate({ to: item.path })
+                  announceNavigation(item.label)
+                }}
                 className='w-full flex items-center gap-2 px-3 py-2 rounded text-sm text-cyan-bright hover:bg-magenta-soft hover:bg-opacity-20 transition-colors group focus:outline-none focus:ring-2 focus:ring-magenta-bright focus:ring-opacity-50'
                 title={item.label}
                 aria-label={`Navigate to ${item.label}`}
               >
-                <item.icon className='w-4 h-4' />
+                <item.icon className='w-4 h-4' aria-hidden='true' />
                 <span className='text-xs'>{item.label}</span>
               </button>
             ))}
           </div>
 
           {/* Divider */}
-          <div className='h-px bg-magenta-soft bg-opacity-30' />
+          <div className='h-px bg-magenta-soft bg-opacity-30' role='separator' aria-hidden='true' />
 
           {/* System Section */}
           <div className='space-y-1' role='group' aria-labelledby='system-heading'>

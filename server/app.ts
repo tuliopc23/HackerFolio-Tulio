@@ -7,6 +7,12 @@ import { Elysia, type Context } from 'elysia'
 import { orm } from './db/drizzle'
 import { env } from './lib/validation'
 import { apiLogger } from './middleware/logging'
+import { 
+  applySecurityHeaders, 
+  getCorsOrigins, 
+  rateLimit, 
+  defaultRateLimitOptions 
+} from './lib/security'
 import { apiRoutes } from './routes/api'
 import { terminalRoutes } from './routes/terminal'
 
@@ -19,8 +25,45 @@ try {
   // Migration already applied or table exists
 }
 
+// Security middleware
+const securityMiddleware = (context: Context, next: () => void) => {
+  // Apply security headers
+  applySecurityHeaders(context)
+  
+  // Apply rate limiting for all requests
+  const rateLimitPassed = rateLimit(defaultRateLimitOptions)(context)
+  
+  if (!rateLimitPassed) {
+    return new Response(
+      JSON.stringify({ 
+        success: false, 
+        error: { 
+          code: 'RATE_LIMIT_EXCEEDED',
+          message: 'Too many requests, please try again later' 
+        } 
+      }), 
+      { 
+        status: 429, 
+        headers: { 'Content-Type': 'application/json' }
+      }
+    )
+  }
+  
+  return next()
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-const app = new Elysia().use(cors()).use(apiLogger).use(apiRoutes).use(terminalRoutes)
+const app = new Elysia()
+  .use(cors({
+    origin: getCorsOrigins(),
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }))
+  .derive(securityMiddleware)
+  .use(apiLogger)
+  .use(apiRoutes)
+  .use(terminalRoutes)
 
 // Serve the built client in production
 if (process.env.NODE_ENV === 'production') {
@@ -35,14 +78,13 @@ if (process.env.NODE_ENV === 'production') {
   const indexHtml = Bun.file('dist/public/index.html')
   // Type definitions for SSR module
   interface SSRModule {
-    render: (url: string) => Promise<string>
-    renderWithData: (url: string) => Promise<{ html: string; data: Record<string, unknown> }>
+    render: (url: string) => string
+    renderWithData: (url: string) => { html: string; data: Record<string, unknown> }
   }
 
-  let ssrRender: null | ((url: string) => Promise<string>) = null
-  let ssrRenderWithData:
-    | null
-    | ((url: string) => Promise<{ html: string; data: Record<string, unknown> }>) = null
+  let ssrRender: null | ((url: string) => string) = null
+  let ssrRenderWithData: null | ((url: string) => { html: string; data: Record<string, unknown> }) =
+    null
   try {
     // @ts-ignore - SSR bundle may not exist during development
     const ssr = (await import('../dist/server/entry-server.js')) as SSRModule
@@ -63,18 +105,21 @@ if (process.env.NODE_ENV === 'production') {
         let data: Record<string, unknown> | undefined
         const { pathname } = url
         if (ssrRenderWithData) {
-          const { html, data: responseData } = await ssrRenderWithData(request.url)
+          const { html, data: responseData } = ssrRenderWithData(request.url)
           appHtml = html
           data = responseData
         } else if (ssrRender) {
-          appHtml = await ssrRender(pathname)
+          appHtml = ssrRender(pathname)
         }
         let rendered = htmlText.replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`)
         if (data && Object.keys(data).length) {
           const script = `\n<script>window.__INITIAL_DATA__ = ${JSON.stringify(data).replace(/</g, '\\u003c')};</script>`
           rendered = rendered.replace('</body>', `${script}\n</body>`)
         }
-        set.headers = { 'Content-Type': 'text/html; charset=utf-8' }
+        set.headers = { 
+          'Content-Type': 'text/html; charset=utf-8',
+          ...context.set.headers // Include security headers
+        }
         return rendered
       } else {
         return new Response(indexHtml)

@@ -1,5 +1,5 @@
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest'
-import { CommandProcessor, type CommandResult } from '@/components/terminal/command-processor'
+import { CommandProcessor } from '@/components/terminal/command-processor'
 
 // Mock localStorage
 const localStorageMock = {

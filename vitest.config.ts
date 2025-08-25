@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import path from 'path'
+import { config } from './shared/config'
 
 export default defineConfig({
   plugins: [react()],
@@ -14,6 +15,7 @@ export default defineConfig({
         'node_modules/',
         'dist/',
         'build/',
+        'coverage/',
         '**/*.d.ts',
         '**/*.test.*',
         '**/*.spec.*',
@@ -47,10 +49,6 @@ export default defineConfig({
     ],
   },
   resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './client/src'),
-      '@shared': path.resolve(__dirname, './shared'),
-      '@server': path.resolve(__dirname, './server'),
-    },
+    alias: config.getViteConfig().resolve.alias,
   },
 })

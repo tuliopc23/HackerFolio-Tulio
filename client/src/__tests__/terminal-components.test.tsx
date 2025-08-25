@@ -131,7 +131,7 @@ describe('Terminal Components - Basic Functionality', () => {
             e.preventDefault()
             const matches = commands.filter(cmd => cmd.startsWith(input))
             if (matches.length === 1) {
-              setInput(matches[0])
+              setInput(matches[0]!)
             } else {
               setSuggestions(matches)
             }
@@ -175,7 +175,7 @@ describe('Terminal Components - Basic Functionality', () => {
       // Mock console.error to suppress error output during test
       const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-      function ErrorComponent() {
+      function ErrorComponent(): React.ReactElement {
         throw new Error('Test error')
       }
 

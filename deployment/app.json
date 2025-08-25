@@ -1,0 +1,52 @@
+{
+  "name": "hackerfolio-tulio",
+  "description": "Modern developer portfolio with GitHub integration",
+  "repository": "https://github.com/your-username/hackerfolio-tulio",
+  "keywords": [
+    "portfolio",
+    "developer",
+    "react",
+    "typescript",
+    "bun"
+  ],
+  "stack": "heroku-22",
+  "buildpacks": [
+    {
+      "url": "https://github.com/oven-sh/heroku-buildpack-bun"
+    }
+  ],
+  "env": {
+    "NODE_ENV": {
+      "description": "Environment mode",
+      "value": "production",
+      "required": true
+    },
+    "SESSION_SECRET": {
+      "description": "Secret key for session encryption (32+ characters)",
+      "generator": "secret",
+      "required": true
+    },
+    "CORS_ORIGINS": {
+      "description": "Allowed CORS origins (comma-separated)",
+      "value": "https://your-app.herokuapp.com",
+      "required": true
+    },
+    "LOG_LEVEL": {
+      "description": "Logging level",
+      "value": "info"
+    },
+    "GITHUB_TOKEN": {
+      "description": "GitHub API token for repository integration",
+      "required": false
+    }
+  },
+  "addons": [
+    {
+      "plan": "heroku-postgresql:mini",
+      "as": "DATABASE"
+    }
+  ],
+  "scripts": {
+    "postdeploy": "bun run db:migrate"
+  }
+}

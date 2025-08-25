@@ -114,7 +114,7 @@ export function handleApiError(error: unknown): Response {
       ApiErrorCode.VALIDATION_ERROR,
       'Validation failed',
       400,
-      error.errors
+      error.issues
     )
     const errorResponse = createErrorResponse(validationError)
     return new Response(JSON.stringify(errorResponse), {
@@ -159,7 +159,7 @@ export function validateApiQuery<T>(schema: z.ZodType<T>, context: Context): T {
     return schema.parse(context.query)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      throw createValidationError('Query validation failed', error.errors)
+      throw createValidationError('Query validation failed', error.issues)
     }
     throw error
   }
@@ -170,7 +170,7 @@ export function validateApiBody<T>(schema: z.ZodType<T>, context: Context): T {
     return schema.parse(context.body)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      throw createValidationError('Request body validation failed', error.errors)
+      throw createValidationError('Request body validation failed', error.issues)
     }
     throw error
   }
@@ -183,7 +183,7 @@ export function validateApiData<T>(schema: z.ZodType<T>, data: unknown, context?
     if (error instanceof z.ZodError) {
       throw createValidationError(
         context ? `${context} validation failed` : 'Data validation failed',
-        error.errors
+        error.issues
       )
     }
     throw error

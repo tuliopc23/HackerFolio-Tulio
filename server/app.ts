@@ -26,7 +26,7 @@ try {
 }
 
 // Security middleware
-const securityMiddleware = (context: Context, next: () => void) => {
+const securityMiddleware = (context: any) => {
   // Apply security headers
   applySecurityHeaders(context)
   
@@ -34,25 +34,19 @@ const securityMiddleware = (context: Context, next: () => void) => {
   const rateLimitPassed = rateLimit(defaultRateLimitOptions)(context)
   
   if (!rateLimitPassed) {
-    return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: { 
-          code: 'RATE_LIMIT_EXCEEDED',
-          message: 'Too many requests, please try again later' 
-        } 
-      }), 
-      { 
-        status: 429, 
-        headers: { 'Content-Type': 'application/json' }
+    context.set.status = 429
+    return {
+      success: false,
+      error: {
+        code: 'RATE_LIMIT_EXCEEDED',
+        message: 'Too many requests, please try again later'
       }
-    )
+    }
   }
   
-  return next()
+  return
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 const app = new Elysia()
   .use(cors({
     origin: getCorsOrigins(),
@@ -60,7 +54,7 @@ const app = new Elysia()
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
   }))
-  .derive(securityMiddleware)
+  .onBeforeHandle(securityMiddleware)
   .use(apiLogger)
   .use(apiRoutes)
   .use(terminalRoutes)
@@ -117,8 +111,7 @@ if (process.env.NODE_ENV === 'production') {
           rendered = rendered.replace('</body>', `${script}\n</body>`)
         }
         set.headers = { 
-          'Content-Type': 'text/html; charset=utf-8',
-          ...context.set.headers // Include security headers
+          'Content-Type': 'text/html; charset=utf-8'
         }
         return rendered
       } else {

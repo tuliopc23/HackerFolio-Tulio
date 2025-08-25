@@ -1,0 +1,42 @@
+{
+  "version": "2",
+  "services": {
+    "app": {
+      "source": {
+        "repo": "your-username/hackerfolio-tulio",
+        "branch": "main"
+      },
+      "build": {
+        "commands": [
+          "bun install",
+          "bun run check:all",
+          "bun run build"
+        ]
+      },
+      "start": {
+        "command": "bun run start"
+      },
+      "env": {
+        "NODE_ENV": "production",
+        "PORT": "${{PORT}}",
+        "APP_URL": "${{RAILWAY_STATIC_URL}}",
+        "API_URL": "${{RAILWAY_STATIC_URL}}",
+        "DATABASE_URL": "${{DATABASE_URL}}",
+        "SESSION_SECRET": "${{SESSION_SECRET}}",
+        "CORS_ORIGINS": "${{RAILWAY_STATIC_URL}}",
+        "LOG_LEVEL": "info",
+        "LOG_FORMAT": "json"
+      },
+      "healthcheck": {
+        "path": "/health",
+        "interval": 30,
+        "timeout": 10,
+        "retries": 3
+      },
+      "scaling": {
+        "minInstances": 1,
+        "maxInstances": 5
+      }
+    }
+  }
+}

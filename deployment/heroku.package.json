@@ -1,0 +1,10 @@
+{
+  "engines": {
+    "bun": ">=1.0.0",
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "heroku-postbuild": "bun run build",
+    "start:heroku": "bun run start"
+  }
+}

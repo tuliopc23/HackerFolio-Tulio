@@ -9,10 +9,9 @@ import {
   terminalCommandQuerySchema,
   type TerminalCommand,
 } from '../db/schema'
-import { validateQuery, validateData, validateBody, executeCommandSchema } from '../lib/validation'
+import { validateData, executeCommandSchema } from '../lib/validation'
 import {
   createTerminalError,
-  createTerminalSuccess,
   createDatabaseError,
   handleApiError,
   validateApiQuery,

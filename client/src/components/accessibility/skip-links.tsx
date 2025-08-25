@@ -43,7 +43,7 @@ export function SkipLinks() {
         Skip to navigation
       </a>
       
-      <style jsx>{`
+      <style>{`
         .skip-links {
           position: absolute;
           top: -100px;

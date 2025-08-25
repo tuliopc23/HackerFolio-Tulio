@@ -221,6 +221,7 @@ export function useFocusRegistration(id: string, elementRef: React.RefObject<HTM
       registerFocusable(id, elementRef.current)
       return () => unregisterFocusable(id)
     }
+    return undefined
   }, [id, elementRef, registerFocusable, unregisterFocusable])
 }
 

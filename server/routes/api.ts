@@ -9,11 +9,9 @@ import {
   projectQuerySchema,
   type Project,
 } from '../db/schema'
-import { validateQuery, validateData } from '../lib/validation'
+import { validateData } from '../lib/validation'
 import {
   createSuccessResponse,
-  createErrorResponse,
-  createNotFoundError,
   createMissingParameterError,
   createDatabaseError,
   createExternalApiError,
@@ -21,12 +19,10 @@ import {
   handleApiError,
   validateApiQuery,
   ApiError,
-  type ApiResponse,
 } from '../lib/error-handling'
 import {
   rateLimit,
   apiRateLimitOptions,
-  InputSanitizer,
   SecurityLogger,
   getClientId
 } from '../lib/security'

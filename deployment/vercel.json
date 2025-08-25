@@ -1,0 +1,43 @@
+{
+  "version": 2,
+  "name": "hackerfolio-tulio",
+  "builds": [
+    {
+      "src": "client/**",
+      "use": "@vercel/static-build",
+      "config": {
+        "buildCommand": "cd ../.. && bun install && bun run build",
+        "outputDirectory": "../../dist/public"
+      }
+    },
+    {
+      "src": "server/app.ts",
+      "use": "@vercel/bun",
+      "config": {
+        "buildCommand": "bun install && bun run build:server"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/server/app.ts"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/dist/public/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "SESSION_SECRET": "@session-secret",
+    "DATABASE_URL": "@database-url",
+    "CORS_ORIGINS": "https://your-domain.vercel.app",
+    "LOG_LEVEL": "info"
+  },
+  "functions": {
+    "server/app.ts": {
+      "runtime": "bun"
+    }
+  }
+}

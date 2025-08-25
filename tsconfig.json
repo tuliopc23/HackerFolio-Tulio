@@ -1,6 +1,6 @@
 {
   "include": ["client/src/**/*", "shared/**/*", "server/**/*", "test-config/**/*", "reset.d.ts"],
-  "exclude": ["node_modules", "build", "dist", "drizzle/**/*"],
+  "exclude": ["node_modules", "build", "dist", "drizzle/**/*", "coverage"],
   "compilerOptions": {
     // Build options
     "incremental": true,

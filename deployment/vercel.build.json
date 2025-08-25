@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "build:vercel": "bun run build && bun run build:server"
+  },
+  "vercel": {
+    "buildCommand": "bun run build:vercel",
+    "outputDirectory": "dist/public",
+    "installCommand": "bun install"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "bun install && bun run build",
+    "watchPatterns": [
+      "client/**",
+      "server/**",
+      "shared/**"
+    ]
+  },
+  "deploy": {
+    "startCommand": "bun run start",
+    "healthcheckPath": "/health",
+    "healthcheckTimeout": 300
+  },
+  "env": {
+    "NODE_ENV": "production",
+    "PORT": "${{PORT}}",
+    "APP_URL": "${{RAILWAY_STATIC_URL}}",
+    "API_URL": "${{RAILWAY_STATIC_URL}}",
+    "DATABASE_URL": "${{DATABASE_URL}}",
+    "SESSION_SECRET": "${{SESSION_SECRET}}",
+    "CORS_ORIGINS": "${{RAILWAY_STATIC_URL}}",
+    "LOG_LEVEL": "info",
+    "LOG_FORMAT": "json"
+  }
+}

@@ -21,38 +21,65 @@ const baseEnvSchema = z.object({
   // Security Configuration
   CORS_ORIGINS: z.string().optional(),
   CSP_REPORT_URI: z.string().url().optional(),
-  CSP_REPORT_ONLY: z.boolean().default(false).optional(),
+  CSP_REPORT_ONLY: z.preprocess(
+    (val) => val === 'true' || val === true,
+    z.boolean().default(false)
+  ).optional(),
   RATE_LIMIT_REQUESTS: z.coerce.number().min(1).default(100).optional(),
   RATE_LIMIT_WINDOW_MS: z.coerce.number().min(1000).default(900000).optional(),
   SESSION_SECRET: z.string().min(32).optional(),
 
   // Performance & Caching
   STATIC_CACHE_DURATION: z.coerce.number().min(0).default(86400).optional(),
-  API_CACHE_ENABLED: z.boolean().default(true).optional(),
+  API_CACHE_ENABLED: z.preprocess(
+    (val) => val === 'true' || val === true,
+    z.boolean().default(true)
+  ).optional(),
   API_CACHE_DURATION: z.coerce.number().min(0).default(300).optional(),
 
   // Logging & Monitoring
-  LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug']).default('info'),
+  LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug', 'silent']).default('info'),
   LOG_FORMAT: z.enum(['json', 'pretty']).default('pretty'),
-  LOG_REQUESTS: z.boolean().default(true),
+  LOG_REQUESTS: z.preprocess(
+    (val) => val === 'true' || val === true,
+    z.boolean().default(true)
+  ),
   SENTRY_DSN: z.string().url().optional(),
 
   // Development Configuration
-  DEBUG: z.boolean().default(false),
+  DEBUG: z.preprocess(
+    (val) => val === 'true' || val === true,
+    z.boolean().default(false)
+  ),
   DEV_WATCH_PATHS: z.string().optional(),
-  MOCK_GITHUB_API: z.boolean().default(false).optional(),
+  MOCK_GITHUB_API: z.preprocess(
+    (val) => val === 'true' || val === true,
+    z.boolean().default(false)
+  ).optional(),
 
   // Build & Deployment
   BUILD_DIR: z.string().default('dist').optional(),
   STATIC_DIR: z.string().default('public').optional(),
-  ENABLE_COMPRESSION: z.boolean().default(true).optional(),
+  ENABLE_COMPRESSION: z.preprocess(
+    (val) => val === 'true' || val === true,
+    z.boolean().default(true)
+  ).optional(),
   HEALTH_CHECK_ENDPOINT: z.string().default('/health').optional(),
   HEALTH_CHECK_TIMEOUT: z.coerce.number().min(1000).default(5000).optional(),
 
   // Feature Flags
-  FEATURE_GITHUB_INTEGRATION: z.boolean().default(true).optional(),
-  FEATURE_TERMINAL_LOGGING: z.boolean().default(true).optional(),
-  FEATURE_ANALYTICS: z.boolean().default(false).optional(),
+  FEATURE_GITHUB_INTEGRATION: z.preprocess(
+    (val) => val === 'true' || val === true,
+    z.boolean().default(true)
+  ).optional(),
+  FEATURE_TERMINAL_LOGGING: z.preprocess(
+    (val) => val === 'true' || val === true,
+    z.boolean().default(true)
+  ).optional(),
+  FEATURE_ANALYTICS: z.preprocess(
+    (val) => val === 'true' || val === true,
+    z.boolean().default(false)
+  ).optional(),
 })
 
 // Development-specific requirements
@@ -67,7 +94,7 @@ const productionEnvSchema = baseEnvSchema.extend({
   API_URL: z.string().url(),
   SESSION_SECRET: z.string().min(32),
   CORS_ORIGINS: z.string().min(1),
-}).strict()
+})
 
 // Test-specific requirements
 const testEnvSchema = baseEnvSchema.extend({

@@ -166,7 +166,6 @@ export function rateLimit(options: RateLimitOptions = defaultRateLimitOptions) {
   return function(context: Context): boolean {
     const clientId = getClientId(context)
     const now = Date.now()
-    const windowStart = now - options.windowMs
     
     // Get or create rate limit entry
     let entry = rateLimitStore.get(clientId)

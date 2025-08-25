@@ -33,8 +33,8 @@ export default function TerminalPane() {
   
   // Accessibility hooks
   const { announce, announceCommand, announceError } = useTerminalAccessibility()
-  useFocusRegistration('terminal-input', inputRef)
-  useFocusRegistration('terminal-pane', terminalRef)
+  useFocusRegistration('terminal-input', inputRef as React.RefObject<HTMLElement>)
+  useFocusRegistration('terminal-pane', terminalRef as React.RefObject<HTMLElement>)
 
   useEffect(() => {
     // Auto-focus input
@@ -189,7 +189,7 @@ export default function TerminalPane() {
     }
 
     // Add to history with final output
-    const isError = finalError || result.type === 'error'
+    const isError = finalError
     
     setHistory(prev => [
       ...prev,

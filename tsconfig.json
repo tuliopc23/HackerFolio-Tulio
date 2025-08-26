@@ -1,5 +1,12 @@
 {
-  "include": ["client/src/**/*", "shared/**/*", "server/**/*", "test-config/**/*", "reset.d.ts"],
+  "include": [
+    "client/src/**/*",
+    "client/__tests__/**/*",
+    "shared/**/*",
+    "server/**/*",
+    "test-config/**/*",
+    "reset.d.ts"
+  ],
   "exclude": ["node_modules", "build", "dist", "drizzle/**/*", "coverage"],
   "compilerOptions": {
     // Build options

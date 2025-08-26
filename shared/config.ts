@@ -1,6 +1,6 @@
 /**
  * Central Configuration Registry
- * 
+ *
  * This module provides a unified configuration system that:
  * - Consolidates all configuration values from environment variables
  * - Provides type-safe configuration access across all modules
@@ -9,7 +9,8 @@
  * - Enables cross-configuration validation
  */
 
-import { z } from 'zod'
+// Zod import available for future validation needs
+//
 import { validateEnvironment, type EnvConfig } from '../server/lib/env-config'
 
 // =============================================================================
@@ -204,9 +205,10 @@ export class ConfigurationManager {
       },
 
       security: {
-        corsOrigins: this.envConfig.CORS_ORIGINS?.split(',').map(o => o.trim()) || 
-                     (isDev ? ['http://localhost:5173'] : []),
-        sessionSecret: this.envConfig.SESSION_SECRET,
+        corsOrigins:
+          this.envConfig.CORS_ORIGINS?.split(',').map(o => o.trim()) ||
+          (isDev ? ['http://localhost:5173'] : []),
+        ...(this.envConfig.SESSION_SECRET && { sessionSecret: this.envConfig.SESSION_SECRET }),
         rateLimiting: {
           requests: this.envConfig.RATE_LIMIT_REQUESTS || 100,
           windowMs: this.envConfig.RATE_LIMIT_WINDOW_MS || 900000,
@@ -286,10 +288,12 @@ export class ConfigurationManager {
           cacheDuration: this.envConfig.GITHUB_CACHE_DURATION || 300,
           mockInDev: this.envConfig.MOCK_GITHUB_API || false,
         },
-        sentry: this.envConfig.SENTRY_DSN ? {
-          dsn: this.envConfig.SENTRY_DSN,
-          environment: this.envConfig.NODE_ENV,
-        } : undefined,
+        ...(this.envConfig.SENTRY_DSN && {
+          sentry: {
+            dsn: this.envConfig.SENTRY_DSN,
+            environment: this.envConfig.NODE_ENV || 'development',
+          },
+        }),
       },
     }
   }
@@ -314,7 +318,7 @@ export class ConfigurationManager {
     // Validate path aliases consistency
     const viteAliases = this.config.tools.vite.resolve.alias
     const tsAliases = this.config.tools.typescript.paths
-    
+
     if (Object.keys(viteAliases).length !== Object.keys(tsAliases).length) {
       errors.push('Vite aliases and TypeScript paths must be consistent')
     }
@@ -336,8 +340,7 @@ export class ConfigurationManager {
 
     if (errors.length > 0) {
       throw new Error(
-        'Configuration validation failed:\\n' +
-        errors.map(e => `  - ${e}`).join('\\n')
+        'Configuration validation failed:\\n' + errors.map(e => `  - ${e}`).join('\\n')
       )
     }
   }
@@ -453,7 +456,7 @@ export function validateCrossConfiguration(): ConfigValidationResult {
 
 export function generateConfigReport(): string {
   const fullConfig = config.getFullConfig()
-  
+
   return `
 # Configuration Report
 Generated: ${new Date().toISOString()}

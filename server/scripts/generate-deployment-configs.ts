@@ -1,18 +1,18 @@
 #!/usr/bin/env bun
 /**
  * Deployment Configuration Generator
- * 
+ *
  * This script generates platform-specific deployment configurations:
  * - Railway deployment config
- * - Vercel deployment config  
+ * - Vercel deployment config
  * - Heroku deployment config
  * - Docker deployment config
  * - Generic cloud platform config
  */
 
-import { writeFileSync, mkdirSync, existsSync } from 'node:fs'
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { config } from '../../shared/config'
+// Configuration is used in the deployment configs generation
 
 // ANSI colors
 const colors = {
@@ -51,7 +51,7 @@ class DeploymentConfigGenerator {
   constructor() {
     this.projectRoot = process.cwd()
     this.deployDir = join(this.projectRoot, 'deployment')
-    
+
     // Ensure deployment directory exists
     if (!existsSync(this.deployDir)) {
       mkdirSync(this.deployDir, { recursive: true })
@@ -60,30 +60,30 @@ class DeploymentConfigGenerator {
 
   async generateAll(): Promise<void> {
     logHeader('Deployment Configuration Generator')
-    
+
     await this.generateRailwayConfig()
     await this.generateVercelConfig()
     await this.generateHerokuConfig()
     await this.generateDockerConfig()
     await this.generateGenericCloudConfig()
     await this.generateDeploymentGuide()
-    
+
     logSuccess('All deployment configurations generated successfully!')
   }
 
   private async generateRailwayConfig(): Promise<void> {
     logInfo('Generating Railway deployment configuration...')
-    
+
     const railwayConfig = {
       build: {
         builder: 'NIXPACKS',
         buildCommand: 'bun install && bun run build',
-        watchPatterns: ['client/**', 'server/**', 'shared/**']
+        watchPatterns: ['client/**', 'server/**', 'shared/**'],
       },
       deploy: {
         startCommand: 'bun run start',
         healthcheckPath: '/health',
-        healthcheckTimeout: 300
+        healthcheckTimeout: 300,
       },
       env: {
         NODE_ENV: 'production',
@@ -94,10 +94,10 @@ class DeploymentConfigGenerator {
         SESSION_SECRET: '${{SESSION_SECRET}}',
         CORS_ORIGINS: '${{RAILWAY_STATIC_URL}}',
         LOG_LEVEL: 'info',
-        LOG_FORMAT: 'json'
-      }
+        LOG_FORMAT: 'json',
+      },
     }
-    
+
     // Railway service configuration
     const railwayService = {
       version: '2',
@@ -105,43 +105,36 @@ class DeploymentConfigGenerator {
         app: {
           source: {
             repo: 'your-username/hackerfolio-tulio',
-            branch: 'main'
+            branch: 'main',
           },
           build: {
-            commands: [
-              'bun install',
-              'bun run check:all',
-              'bun run build'
-            ]
+            commands: ['bun install', 'bun run check:all', 'bun run build'],
           },
           start: {
-            command: 'bun run start'
+            command: 'bun run start',
           },
           env: railwayConfig.env,
           healthcheck: {
             path: '/health',
             interval: 30,
             timeout: 10,
-            retries: 3
+            retries: 3,
           },
           scaling: {
             minInstances: 1,
-            maxInstances: 5
-          }
-        }
-      }
+            maxInstances: 5,
+          },
+        },
+      },
     }
-    
-    writeFileSync(
-      join(this.deployDir, 'railway.json'),
-      JSON.stringify(railwayConfig, null, 2)
-    )
-    
+
+    writeFileSync(join(this.deployDir, 'railway.json'), JSON.stringify(railwayConfig, null, 2))
+
     writeFileSync(
       join(this.deployDir, 'railway.service.json'),
       JSON.stringify(railwayService, null, 2)
     )
-    
+
     // Railway environment template
     const railwayEnv = `# Railway Environment Variables
 # Set these in your Railway project settings
@@ -150,7 +143,7 @@ class DeploymentConfigGenerator {
 SESSION_SECRET=\${SESSION_SECRET}
 DATABASE_URL=\${DATABASE_URL}
 
-# Optional Variables  
+# Optional Variables
 GITHUB_TOKEN=\${GITHUB_TOKEN}
 SENTRY_DSN=\${SENTRY_DSN}
 
@@ -161,13 +154,13 @@ SENTRY_DSN=\${SENTRY_DSN}
 `
 
     writeFileSync(join(this.deployDir, 'railway.env.example'), railwayEnv)
-    
+
     logSuccess('Railway configuration generated')
   }
 
   private async generateVercelConfig(): Promise<void> {
     logInfo('Generating Vercel deployment configuration...')
-    
+
     const vercelConfig = {
       version: 2,
       name: 'hackerfolio-tulio',
@@ -177,75 +170,69 @@ SENTRY_DSN=\${SENTRY_DSN}
           use: '@vercel/static-build',
           config: {
             buildCommand: 'cd ../.. && bun install && bun run build',
-            outputDirectory: '../../dist/public'
-          }
+            outputDirectory: '../../dist/public',
+          },
         },
         {
           src: 'server/app.ts',
           use: '@vercel/bun',
           config: {
-            buildCommand: 'bun install && bun run build:server'
-          }
-        }
+            buildCommand: 'bun install && bun run build:server',
+          },
+        },
       ],
       routes: [
         {
           src: '/api/(.*)',
-          dest: '/server/app.ts'
+          dest: '/server/app.ts',
         },
         {
           src: '/(.*)',
-          dest: '/dist/public/$1'
-        }
+          dest: '/dist/public/$1',
+        },
       ],
       env: {
         NODE_ENV: 'production',
         SESSION_SECRET: '@session-secret',
         DATABASE_URL: '@database-url',
         CORS_ORIGINS: 'https://your-domain.vercel.app',
-        LOG_LEVEL: 'info'
+        LOG_LEVEL: 'info',
       },
       functions: {
         'server/app.ts': {
-          runtime: 'bun'
-        }
-      }
+          runtime: 'bun',
+        },
+      },
     }
-    
-    writeFileSync(
-      join(this.deployDir, 'vercel.json'),
-      JSON.stringify(vercelConfig, null, 2)
-    )
-    
+
+    writeFileSync(join(this.deployDir, 'vercel.json'), JSON.stringify(vercelConfig, null, 2))
+
     // Vercel build configuration
     const vercelBuild = {
       scripts: {
-        'build:vercel': 'bun run build && bun run build:server'
+        'build:vercel': 'bun run build && bun run build:server',
       },
       vercel: {
         buildCommand: 'bun run build:vercel',
         outputDirectory: 'dist/public',
-        installCommand: 'bun install'
-      }
+        installCommand: 'bun install',
+      },
     }
-    
-    writeFileSync(
-      join(this.deployDir, 'vercel.build.json'),
-      JSON.stringify(vercelBuild, null, 2)
-    )
-    
+
+    writeFileSync(join(this.deployDir, 'vercel.build.json'), JSON.stringify(vercelBuild, null, 2))
+
     logSuccess('Vercel configuration generated')
   }
 
   private async generateHerokuConfig(): Promise<void> {
     logInfo('Generating Heroku deployment configuration...')
-    
+
     // Procfile
     const procfile = `web: bun run start
 release: bun run db:migrate`
-    
+
     writeFileSync(join(this.deployDir, 'Procfile'), procfile)
-    
+
     // app.json for Heroku app configuration
     const appJson = {
       name: 'hackerfolio-tulio',
@@ -255,73 +242,70 @@ release: bun run db:migrate`
       stack: 'heroku-22',
       buildpacks: [
         {
-          url: 'https://github.com/oven-sh/heroku-buildpack-bun'
-        }
+          url: 'https://github.com/oven-sh/heroku-buildpack-bun',
+        },
       ],
       env: {
         NODE_ENV: {
           description: 'Environment mode',
           value: 'production',
-          required: true
+          required: true,
         },
         SESSION_SECRET: {
           description: 'Secret key for session encryption (32+ characters)',
           generator: 'secret',
-          required: true
+          required: true,
         },
         CORS_ORIGINS: {
           description: 'Allowed CORS origins (comma-separated)',
           value: 'https://your-app.herokuapp.com',
-          required: true
+          required: true,
         },
         LOG_LEVEL: {
           description: 'Logging level',
-          value: 'info'
+          value: 'info',
         },
         GITHUB_TOKEN: {
           description: 'GitHub API token for repository integration',
-          required: false
-        }
+          required: false,
+        },
       },
       addons: [
         {
           plan: 'heroku-postgresql:mini',
-          as: 'DATABASE'
-        }
+          as: 'DATABASE',
+        },
       ],
       scripts: {
-        postdeploy: 'bun run db:migrate'
-      }
+        postdeploy: 'bun run db:migrate',
+      },
     }
-    
-    writeFileSync(
-      join(this.deployDir, 'app.json'),
-      JSON.stringify(appJson, null, 2)
-    )
-    
+
+    writeFileSync(join(this.deployDir, 'app.json'), JSON.stringify(appJson, null, 2))
+
     // Heroku-specific package.json additions
     const herokuPackage = {
       engines: {
         bun: '>=1.0.0',
-        node: '>=20.0.0'
+        node: '>=20.0.0',
       },
       scripts: {
         'heroku-postbuild': 'bun run build',
-        'start:heroku': 'bun run start'
-      }
+        'start:heroku': 'bun run start',
+      },
     }
-    
+
     writeFileSync(
       join(this.deployDir, 'heroku.package.json'),
       JSON.stringify(herokuPackage, null, 2)
     )
-    
+
     logSuccess('Heroku configuration generated')
   }
 
   private async generateDockerConfig(): Promise<void> {
     logInfo('Generating Docker deployment configuration...')
-    
+
     // Multi-stage Dockerfile
     const dockerfile = `# Multi-stage Docker build for HackerFolio
 FROM oven/bun:1-alpine AS base
@@ -366,9 +350,9 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \\
 EXPOSE 3001
 
 CMD ["bun", "run", "start"]`
-    
+
     writeFileSync(join(this.deployDir, 'Dockerfile'), dockerfile)
-    
+
     // Docker Compose for local development
     const dockerCompose = `version: '3.8'
 
@@ -403,9 +387,9 @@ services:
 
 volumes:
   postgres_data:`
-    
+
     writeFileSync(join(this.deployDir, 'docker-compose.yml'), dockerCompose)
-    
+
     // .dockerignore
     const dockerignore = `node_modules
 .git
@@ -417,62 +401,46 @@ coverage
 .env.local
 .DS_Store
 Thumbs.db`
-    
+
     writeFileSync(join(this.deployDir, '.dockerignore'), dockerignore)
-    
+
     logSuccess('Docker configuration generated')
   }
 
   private async generateGenericCloudConfig(): Promise<void> {
     logInfo('Generating generic cloud deployment configuration...')
-    
+
     // Cloud platform agnostic configuration
     const cloudConfig = {
       runtime: 'bun',
       version: '1.0.0',
       build: {
-        commands: [
-          'bun install',
-          'bun run check:all', 
-          'bun run build'
-        ],
-        outputDirectory: 'dist'
+        commands: ['bun install', 'bun run check:all', 'bun run build'],
+        outputDirectory: 'dist',
       },
       start: {
-        command: 'bun run start'
+        command: 'bun run start',
       },
       healthCheck: {
         path: '/health',
         interval: 30,
         timeout: 10,
-        retries: 3
+        retries: 3,
       },
       scaling: {
         minInstances: 1,
         maxInstances: 10,
         targetCPU: 70,
-        targetMemory: 80
+        targetMemory: 80,
       },
       environment: {
-        required: [
-          'NODE_ENV',
-          'SESSION_SECRET',
-          'CORS_ORIGINS'
-        ],
-        optional: [
-          'DATABASE_URL',
-          'GITHUB_TOKEN',
-          'SENTRY_DSN',
-          'LOG_LEVEL'
-        ]
-      }
+        required: ['NODE_ENV', 'SESSION_SECRET', 'CORS_ORIGINS'],
+        optional: ['DATABASE_URL', 'GITHUB_TOKEN', 'SENTRY_DSN', 'LOG_LEVEL'],
+      },
     }
-    
-    writeFileSync(
-      join(this.deployDir, 'cloud-platform.json'),
-      JSON.stringify(cloudConfig, null, 2)
-    )
-    
+
+    writeFileSync(join(this.deployDir, 'cloud-platform.json'), JSON.stringify(cloudConfig, null, 2))
+
     // Environment variable template
     const envTemplate = `# Production Environment Variables Template
 # Copy and customize for your deployment platform
@@ -500,15 +468,15 @@ LOG_FORMAT=json
 ENABLE_COMPRESSION=true
 API_CACHE_ENABLED=true
 STATIC_CACHE_DURATION=86400`
-    
+
     writeFileSync(join(this.deployDir, 'production.env.template'), envTemplate)
-    
+
     logSuccess('Generic cloud configuration generated')
   }
 
   private async generateDeploymentGuide(): Promise<void> {
     logInfo('Generating deployment guide...')
-    
+
     const deploymentGuide = `# HackerFolio Deployment Guide
 
 This directory contains platform-specific deployment configurations for HackerFolio.
@@ -644,9 +612,9 @@ Before deploying to production:
 6. Set up monitoring and alerts
 
 Happy deploying! 🚀`
-    
+
     writeFileSync(join(this.deployDir, 'README.md'), deploymentGuide)
-    
+
     logSuccess('Deployment guide generated')
   }
 }

@@ -1,5 +1,5 @@
-import { describe, test, expect, beforeEach, vi } from 'vitest'
 import { Elysia } from 'elysia'
+import { describe, test, expect, beforeEach, vi } from 'vitest'
 
 // Simple API route tests focusing on basic functionality
 describe('API Routes - Basic Functionality', () => {
@@ -7,53 +7,64 @@ describe('API Routes - Basic Functionality', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    
+
     // Mock fetch for GitHub API tests
     mockFetch = vi.fn()
     global.fetch = mockFetch
-    
+
     // Mock environment variables
     process.env.GITHUB_TOKEN = 'mock-token'
-    
+
     // Mock uptime
     vi.spyOn(process, 'uptime').mockReturnValue(123.45)
   })
 
   test('should create basic health endpoint', async () => {
-    const app = new Elysia()
-      .get('/api/health', () => ({
-        status: 'ok',
-        timestamp: new Date().toISOString(),
-        uptime: process.uptime(),
-      }))
+    const app = new Elysia().get('/api/health', () => ({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+    }))
 
     const response = await app.handle(new Request('http://localhost/api/health'))
-    
+
     expect(response.status).toBe(200)
     const data = await response.json()
-    
+
     expect(data).toEqual({
       status: 'ok',
       timestamp: expect.any(String),
       uptime: 123.45,
     })
-    expect(new Date(data.timestamp)).toBeInstanceOf(Date)
+    // Type guard for data with timestamp
+    const isDataWithTimestamp = (data: unknown): data is { timestamp: string } => {
+      return (
+        typeof data === 'object' &&
+        data !== null &&
+        'timestamp' in data &&
+        typeof (data as any).timestamp === 'string'
+      )
+    }
+
+    expect(isDataWithTimestamp(data)).toBe(true)
+    if (isDataWithTimestamp(data)) {
+      expect(new Date(data.timestamp)).toBeInstanceOf(Date)
+    }
   })
 
   test('should create basic profile endpoint', async () => {
-    const app = new Elysia()
-      .get('/api/profile', () => ({
-        name: 'Tulio Cunha',
-        title: 'Full-stack Developer',
-        location: 'Remote',
-        status: 'Available for projects',
-      }))
+    const app = new Elysia().get('/api/profile', () => ({
+      name: 'Tulio Cunha',
+      title: 'Full-stack Developer',
+      location: 'Remote',
+      status: 'Available for projects',
+    }))
 
     const response = await app.handle(new Request('http://localhost/api/profile'))
-    
+
     expect(response.status).toBe(200)
     const data = await response.json()
-    
+
     expect(data).toEqual({
       name: 'Tulio Cunha',
       title: 'Full-stack Developer',
@@ -63,18 +74,17 @@ describe('API Routes - Basic Functionality', () => {
   })
 
   test('should handle POST request with JSON body', async () => {
-    const app = new Elysia()
-      .post('/api/terminal/log', ({ body }: { body: any }) => {
-        const { command } = body
-        if (command) {
-          // Log command
-        }
-        return { logged: true }
-      })
+    const app = new Elysia().post('/api/terminal/log', ({ body }: { body: any }) => {
+      const { command } = body
+      if (command) {
+        // Log command
+      }
+      return { logged: true }
+    })
 
     const requestBody = {
       command: 'help',
-      timestamp: '2024-01-01T00:00:00Z'
+      timestamp: '2024-01-01T00:00:00Z',
     }
 
     const response = await app.handle(
@@ -84,10 +94,10 @@ describe('API Routes - Basic Functionality', () => {
         body: JSON.stringify(requestBody),
       })
     )
-    
+
     expect(response.status).toBe(200)
     const data = await response.json()
-    
+
     expect(data).toEqual({ logged: true })
   })
 
@@ -108,18 +118,19 @@ describe('API Routes - Basic Functionality', () => {
       json: vi.fn().mockResolvedValue(mockCommits),
     })
 
-    const app = new Elysia()
-      .get('/api/github/:owner/:repo/commits', async ({ params, query }: any) => {
+    const app = new Elysia().get(
+      '/api/github/:owner/:repo/commits',
+      async ({ params, query }: any) => {
         const { owner, repo } = params
         const limit = Math.min(Number(query.limit ?? 10), 50)
-        
+
         const headers: Record<string, string> = {
           Accept: 'application/vnd.github+json',
         }
         if (process.env.GITHUB_TOKEN) {
           headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`
         }
-        
+
         try {
           const res = await fetch(
             `https://api.github.com/repos/${owner}/${repo}/commits?per_page=${String(limit)}`,
@@ -127,8 +138,33 @@ describe('API Routes - Basic Functionality', () => {
           )
           if (!res.ok) throw new Error(`GitHub error ${String(res.status)}`)
           const data = await res.json()
-          
-          return data.map((c: any) => ({
+
+          // Type guard for GitHub commit data
+          const isCommitArray = (
+            data: unknown
+          ): data is Array<{
+            sha: string
+            commit: { message: string; author: { name: string; date: string } }
+            html_url: string
+          }> => {
+            return (
+              Array.isArray(data) &&
+              data.every(
+                item =>
+                  typeof item === 'object' &&
+                  item !== null &&
+                  'sha' in item &&
+                  'commit' in item &&
+                  'html_url' in item
+              )
+            )
+          }
+
+          if (!isCommitArray(data)) {
+            throw new Error('Invalid GitHub API response format')
+          }
+
+          return data.map(c => ({
             sha: c.sha,
             message: c.commit.message,
             author: c.commit.author.name,
@@ -138,15 +174,16 @@ describe('API Routes - Basic Functionality', () => {
         } catch (e: any) {
           return { error: 'Failed to fetch commits', message: e.message }
         }
-      })
+      }
+    )
 
     const response = await app.handle(
       new Request('http://localhost/api/github/tuliocunha/repo/commits?limit=1')
     )
-    
+
     expect(response.status).toBe(200)
     const data = await response.json()
-    
+
     expect(data).toEqual([
       {
         sha: 'abc123',
@@ -156,7 +193,7 @@ describe('API Routes - Basic Functionality', () => {
         url: 'https://github.com/tuliocunha/repo/commit/abc123',
       },
     ])
-    
+
     expect(mockFetch).toHaveBeenCalledWith(
       'https://api.github.com/repos/tuliocunha/repo/commits?per_page=1',
       {
@@ -174,28 +211,25 @@ describe('API Routes - Basic Functionality', () => {
       status: 404,
     })
 
-    const app = new Elysia()
-      .get('/api/github/:owner/:repo/commits', async ({ params }: any) => {
-        const { owner, repo } = params
-        
-        try {
-          const res = await fetch(
-            `https://api.github.com/repos/${owner}/${repo}/commits?per_page=10`
-          )
-          if (!res.ok) throw new Error(`GitHub error ${String(res.status)}`)
-          return await res.json()
-        } catch (e: any) {
-          return { error: 'Failed to fetch commits', message: e.message }
-        }
-      })
+    const app = new Elysia().get('/api/github/:owner/:repo/commits', async ({ params }: any) => {
+      const { owner, repo } = params
+
+      try {
+        const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/commits?per_page=10`)
+        if (!res.ok) throw new Error(`GitHub error ${String(res.status)}`)
+        return await res.json()
+      } catch (e: any) {
+        return { error: 'Failed to fetch commits', message: e.message }
+      }
+    })
 
     const response = await app.handle(
       new Request('http://localhost/api/github/tuliocunha/nonexistent/commits')
     )
-    
+
     expect(response.status).toBe(200)
     const data = await response.json()
-    
+
     expect(data).toEqual({
       error: 'Failed to fetch commits',
       message: 'GitHub error 404',
@@ -208,23 +242,23 @@ describe('API Routes - Basic Functionality', () => {
       json: vi.fn().mockResolvedValue([]),
     })
 
-    const app = new Elysia()
-      .get('/api/github/:owner/:repo/commits', async ({ params, query }: any) => {
+    const app = new Elysia().get(
+      '/api/github/:owner/:repo/commits',
+      async ({ params, query }: any) => {
         const { owner, repo } = params
         const limit = Math.min(Number(query.limit ?? 10), 50)
-        
+
         await fetch(
           `https://api.github.com/repos/${owner}/${repo}/commits?per_page=${String(limit)}`
         )
-        
+
         return []
-      })
+      }
+    )
 
     // Test with limit over maximum
-    await app.handle(
-      new Request('http://localhost/api/github/tuliocunha/repo/commits?limit=100')
-    )
-    
+    await app.handle(new Request('http://localhost/api/github/tuliocunha/repo/commits?limit=100'))
+
     expect(mockFetch).toHaveBeenCalledWith(
       'https://api.github.com/repos/tuliocunha/repo/commits?per_page=50'
     )
@@ -232,53 +266,43 @@ describe('API Routes - Basic Functionality', () => {
 
   test('should work without GitHub token', async () => {
     delete process.env.GITHUB_TOKEN
-    
+
     mockFetch.mockResolvedValue({
       ok: true,
       json: vi.fn().mockResolvedValue([]),
     })
 
-    const app = new Elysia()
-      .get('/api/github/:owner/:repo/commits', async ({ params }: any) => {
-        const { owner, repo } = params
-        
-        const headers: Record<string, string> = {
-          Accept: 'application/vnd.github+json',
-        }
-        if (process.env.GITHUB_TOKEN) {
-          headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`
-        }
-        
-        await fetch(
-          `https://api.github.com/repos/${owner}/${repo}/commits?per_page=10`,
-          { headers }
-        )
-        
-        return []
-      })
+    const app = new Elysia().get('/api/github/:owner/:repo/commits', async ({ params }: any) => {
+      const { owner, repo } = params
 
-    await app.handle(
-      new Request('http://localhost/api/github/tuliocunha/repo/commits')
-    )
-    
-    expect(mockFetch).toHaveBeenCalledWith(
-      expect.any(String),
-      {
-        headers: {
-          Accept: 'application/vnd.github+json',
-        },
+      const headers: Record<string, string> = {
+        Accept: 'application/vnd.github+json',
       }
-    )
+      if (process.env.GITHUB_TOKEN) {
+        headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`
+      }
+
+      await fetch(`https://api.github.com/repos/${owner}/${repo}/commits?per_page=10`, { headers })
+
+      return []
+    })
+
+    await app.handle(new Request('http://localhost/api/github/tuliocunha/repo/commits'))
+
+    expect(mockFetch).toHaveBeenCalledWith(expect.any(String), {
+      headers: {
+        Accept: 'application/vnd.github+json',
+      },
+    })
   })
 
   test('should validate request structure', async () => {
-    const app = new Elysia()
-      .post('/api/test', ({ body }: { body: any }) => {
-        if (!body || typeof body !== 'object') {
-          throw new Error('Invalid request body')
-        }
-        return { success: true }
-      })
+    const app = new Elysia().post('/api/test', ({ body }: { body: any }) => {
+      if (!body || typeof body !== 'object') {
+        throw new Error('Invalid request body')
+      }
+      return { success: true }
+    })
 
     // Valid request
     const validResponse = await app.handle(
@@ -288,7 +312,7 @@ describe('API Routes - Basic Functionality', () => {
         body: JSON.stringify({ test: 'data' }),
       })
     )
-    
+
     expect(validResponse.status).toBe(200)
     const validData = await validResponse.json()
     expect(validData).toEqual({ success: true })
@@ -301,7 +325,7 @@ describe('API Routes - Basic Functionality', () => {
         body: 'invalid json',
       })
     )
-    
+
     expect(invalidResponse.status).toBe(400)
   })
 })

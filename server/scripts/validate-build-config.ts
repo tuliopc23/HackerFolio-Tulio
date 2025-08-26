@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Build Configuration Validation Script
- * 
+ *
  * This script validates that all build-related configurations are properly aligned:
  * - package.json scripts reference correct paths and configs
  * - vite.config.ts settings match expected build outputs
@@ -28,7 +28,7 @@ class BuildConfigValidator {
     this.result = {
       valid: true,
       issues: [],
-      warnings: []
+      warnings: [],
     }
   }
 
@@ -52,10 +52,10 @@ class BuildConfigValidator {
 
   validatePackageJsonScripts(): void {
     console.log('🔍 Validating package.json scripts...')
-    
+
     const packageJsonPath = join(this.projectRoot, 'package.json')
     const packageJson = this.readJsonFile(packageJsonPath)
-    
+
     if (!packageJson) return
 
     const scripts = packageJson.scripts || {}
@@ -71,8 +71,13 @@ class BuildConfigValidator {
       this.addIssue('build script should explicitly reference vite.config.ts for both builds')
     }
 
-    if (buildScript.includes('src/entry-server.tsx') && !buildScript.includes('client/src/entry-server.tsx')) {
-      this.addIssue('build script references wrong SSR entry path (should be relative to vite root)')
+    if (
+      buildScript.includes('src/entry-server.tsx') &&
+      !buildScript.includes('client/src/entry-server.tsx')
+    ) {
+      this.addIssue(
+        'build script references wrong SSR entry path (should be relative to vite root)'
+      )
     }
 
     if (buildScript.includes('../dist/server')) {
@@ -84,9 +89,9 @@ class BuildConfigValidator {
 
   validateViteConfig(): void {
     console.log('🔍 Validating vite.config.ts...')
-    
+
     const viteConfigPath = join(this.projectRoot, 'vite.config.ts')
-    
+
     if (!existsSync(viteConfigPath)) {
       this.addIssue('vite.config.ts not found in project root')
       return
@@ -117,13 +122,13 @@ class BuildConfigValidator {
 
   validateFileStructure(): void {
     console.log('🔍 Validating file structure...')
-    
+
     const requiredFiles = [
       'client/src/entry-server.tsx',
-      'client/src/entry-client.tsx', 
+      'client/src/entry-client.tsx',
       'server/app.ts',
       'vite.config.ts',
-      'package.json'
+      'package.json',
     ]
 
     for (const file of requiredFiles) {
@@ -138,21 +143,17 @@ class BuildConfigValidator {
 
   validateBuildOutputs(): void {
     console.log('🔍 Validating expected build outputs...')
-    
-    // Check if dist directories would be created correctly
-    const expectedDirs = [
-      'dist/public', // Client build output
-      'dist/server'  // SSR build output
-    ]
 
     // We can't validate actual build outputs without building,
     // but we can validate the configuration points to correct paths
     const serverAppPath = join(this.projectRoot, 'server/app.ts')
     if (existsSync(serverAppPath)) {
       const serverContent = readFileSync(serverAppPath, 'utf-8')
-      
+
       if (!serverContent.includes("'../dist/server/entry-server.js'")) {
-        this.addWarning('server/app.ts should import SSR bundle from ../dist/server/entry-server.js')
+        this.addWarning(
+          'server/app.ts should import SSR bundle from ../dist/server/entry-server.js'
+        )
       }
 
       if (!serverContent.includes("'./dist/public'")) {
@@ -165,7 +166,7 @@ class BuildConfigValidator {
 
   validateDevelopmentSetup(): void {
     console.log('🔍 Validating development setup...')
-    
+
     const viteConfigPath = join(this.projectRoot, 'vite.config.ts')
     const viteConfigContent = readFileSync(viteConfigPath, 'utf-8')
 
@@ -174,9 +175,6 @@ class BuildConfigValidator {
       this.addIssue('vite.config.ts should proxy /api to port 3001')
     }
 
-    const packageJsonPath = join(this.projectRoot, 'package.json')
-    const packageJson = this.readJsonFile(packageJsonPath)
-    
     // Check if server env defaults to 3001 (should match proxy)
     const serverEnvPath = join(this.projectRoot, 'server/lib/validation.ts')
     if (existsSync(serverEnvPath)) {
@@ -203,7 +201,7 @@ class BuildConfigValidator {
     this.validateDevelopmentSetup()
 
     console.log('\n📊 Validation Results:')
-    console.log('=' .repeat(50))
+    console.log('='.repeat(50))
 
     if (this.result.issues.length === 0) {
       console.log('✅ All validations passed!')
@@ -227,7 +225,7 @@ class BuildConfigValidator {
       console.log('   2. Ensure all scripts reference vite.config.ts explicitly')
       console.log('   3. Use consistent paths throughout the configuration')
       console.log('   4. Test both development and build processes')
-      
+
       exit(1)
     }
 

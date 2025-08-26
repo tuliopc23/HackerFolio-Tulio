@@ -1,18 +1,18 @@
 #!/usr/bin/env bun
 /**
  * Configuration Testing Framework with Validation Matrix
- * 
+ *
  * This script implements comprehensive configuration testing across all environments:
  * - Development Environment Testing
- * - Production Environment Testing  
+ * - Production Environment Testing
  * - Test Environment Testing
  * - Cross-environment validation matrix
  * - Configuration consistency checks
  */
 
-import { spawn } from 'node:child_process'
-import { writeFileSync, readFileSync, existsSync, unlinkSync } from 'node:fs'
+import { writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+
 import { createTestConfig, testEnvironments } from './config-test-utils'
 
 // ANSI colors
@@ -74,13 +74,13 @@ class ConfigurationTestFramework {
 
   private async testDevelopmentEnvironment(): Promise<void> {
     console.log(colorize('🔧 Testing Development Environment...', 'cyan'))
-    
+
     const suite: EnvironmentTestSuite = {
       environment: 'development',
       results: [],
       passed: 0,
       failed: 0,
-      total: 0
+      total: 0,
     }
 
     // Set development environment
@@ -88,7 +88,7 @@ class ConfigurationTestFramework {
       NODE_ENV: 'development',
       PORT: '3001',
       DEBUG: 'true',
-      LOG_LEVEL: 'debug'
+      LOG_LEVEL: 'debug',
     })
 
     // Test development-specific configurations
@@ -99,17 +99,17 @@ class ConfigurationTestFramework {
 
     await this.runTest(suite, 'HMR Enabled', async () => {
       const { config } = await import('../../shared/config')
-      return config.get('development').hmr === true
+      return config.get('development').hmr
     })
 
     await this.runTest(suite, 'Source Maps Enabled', async () => {
       const { config } = await import('../../shared/config')
-      return config.get('build').sourcemap === true
+      return config.get('build').sourcemap
     })
 
     await this.runTest(suite, 'Minification Disabled', async () => {
       const { config } = await import('../../shared/config')
-      return config.get('build').minify === false
+      return !config.get('build').minify
     })
 
     await this.runTest(suite, 'CORS Development Origins', async () => {
@@ -131,13 +131,13 @@ class ConfigurationTestFramework {
 
   private async testProductionEnvironment(): Promise<void> {
     console.log(colorize('🚀 Testing Production Environment...', 'cyan'))
-    
+
     const suite: EnvironmentTestSuite = {
       environment: 'production',
       results: [],
       passed: 0,
       failed: 0,
-      total: 0
+      total: 0,
     }
 
     // Set production environment
@@ -148,7 +148,7 @@ class ConfigurationTestFramework {
       API_URL: 'https://api.example.com',
       SESSION_SECRET: 'test-secret-key-32-characters-long',
       CORS_ORIGINS: 'https://example.com,https://www.example.com',
-      LOG_LEVEL: 'info'
+      LOG_LEVEL: 'info',
     })
 
     await this.runTest(suite, 'Central Config Loads', async () => {
@@ -158,17 +158,17 @@ class ConfigurationTestFramework {
 
     await this.runTest(suite, 'Source Maps Production Setting', async () => {
       const { config } = await import('../../shared/config')
-      return config.get('build').sourcemap === false
+      return !config.get('build').sourcemap
     })
 
     await this.runTest(suite, 'Minification Enabled', async () => {
       const { config } = await import('../../shared/config')
-      return config.get('build').minify === true
+      return config.get('build').minify
     })
 
     await this.runTest(suite, 'SSR Enabled', async () => {
       const { config } = await import('../../shared/config')
-      return config.get('features').ssr === true
+      return config.get('features').ssr
     })
 
     await this.runTest(suite, 'Session Secret Required', async () => {
@@ -184,7 +184,7 @@ class ConfigurationTestFramework {
 
     await this.runTest(suite, 'HSTS Headers Enabled', async () => {
       const { config } = await import('../../shared/config')
-      return config.get('security').headers.hsts === true
+      return config.get('security').headers.hsts
     })
 
     this.testResults.push(suite)
@@ -193,13 +193,13 @@ class ConfigurationTestFramework {
 
   private async testTestEnvironment(): Promise<void> {
     console.log(colorize('🧪 Testing Test Environment...', 'cyan'))
-    
+
     const suite: EnvironmentTestSuite = {
       environment: 'test',
       results: [],
       passed: 0,
       failed: 0,
-      total: 0
+      total: 0,
     }
 
     // Set test environment
@@ -208,7 +208,7 @@ class ConfigurationTestFramework {
       PORT: '3001',
       LOG_LEVEL: 'silent',
       DATABASE_URL: ':memory:',
-      MOCK_GITHUB_API: 'true'
+      MOCK_GITHUB_API: 'true',
     })
 
     await this.runTest(suite, 'Central Config Loads', async () => {
@@ -218,22 +218,22 @@ class ConfigurationTestFramework {
 
     await this.runTest(suite, 'Source Maps Test Setting', async () => {
       const { config } = await import('../../shared/config')
-      return config.get('build').sourcemap === true
+      return config.get('build').sourcemap
     })
 
     await this.runTest(suite, 'Minification Disabled', async () => {
       const { config } = await import('../../shared/config')
-      return config.get('build').minify === false
+      return !config.get('build').minify
     })
 
     await this.runTest(suite, 'GitHub API Mocking', async () => {
       const { config } = await import('../../shared/config')
-      return config.get('external').github.mockInDev === true
+      return config.get('external').github.mockInDev
     })
 
     await this.runTest(suite, 'SSR Disabled', async () => {
       const { config } = await import('../../shared/config')
-      return config.get('features').ssr === false
+      return !config.get('features').ssr
     })
 
     this.testResults.push(suite)
@@ -242,13 +242,13 @@ class ConfigurationTestFramework {
 
   private async testCrossEnvironmentMatrix(): Promise<void> {
     console.log(colorize('🔄 Testing Cross-Environment Matrix...', 'cyan'))
-    
+
     const suite: EnvironmentTestSuite = {
       environment: 'cross-environment',
       results: [],
       passed: 0,
       failed: 0,
-      total: 0
+      total: 0,
     }
 
     // Test configuration consistency across environments
@@ -281,26 +281,30 @@ class ConfigurationTestFramework {
     this.printSuiteResults(suite)
   }
 
-  private async runTest(suite: EnvironmentTestSuite, name: string, testFn: () => Promise<boolean>): Promise<void> {
+  private async runTest(
+    suite: EnvironmentTestSuite,
+    name: string,
+    testFn: () => Promise<boolean>
+  ): Promise<void> {
     const startTime = Date.now()
-    
+
     try {
       // Clear module cache to ensure fresh config loading
       this.clearConfigCache()
-      
+
       const result = await testFn()
       const duration = Date.now() - startTime
-      
+
       const testResult: TestResult = {
         name,
         passed: result,
         message: result ? 'Passed' : 'Failed',
-        duration
+        duration,
       }
-      
+
       suite.results.push(testResult)
       suite.total++
-      
+
       if (result) {
         suite.passed++
         console.log(colorize(`  ✓ ${name}`, 'green'))
@@ -308,21 +312,20 @@ class ConfigurationTestFramework {
         suite.failed++
         console.log(colorize(`  ✗ ${name}`, 'red'))
       }
-      
     } catch (error) {
       const duration = Date.now() - startTime
-      
+
       const testResult: TestResult = {
         name,
         passed: false,
         message: `Error: ${error}`,
-        duration
+        duration,
       }
-      
+
       suite.results.push(testResult)
       suite.total++
       suite.failed++
-      
+
       console.log(colorize(`  ✗ ${name} - ${error}`, 'red'))
     }
   }
@@ -331,16 +334,16 @@ class ConfigurationTestFramework {
     // Create a minimal environment with only our test variables
     const minimalEnv = {
       NODE_ENV: env,
-      ...variables
+      ...variables,
     }
-    
+
     // Store current environment for restoration
     Object.keys(process.env).forEach(key => {
       if (this.originalEnv[key] === undefined) {
         this.originalEnv[key] = process.env[key]
       }
     })
-    
+
     // Clear all environment variables except essentials
     const essentialVars = ['PATH', 'HOME', 'NODE', 'BUN_INSTALL', 'SHELL', 'USER']
     Object.keys(process.env).forEach(key => {
@@ -348,7 +351,7 @@ class ConfigurationTestFramework {
         delete process.env[key]
       }
     })
-    
+
     // Set test-specific variables
     Object.entries(minimalEnv).forEach(([key, value]) => {
       process.env[key] = value
@@ -357,11 +360,8 @@ class ConfigurationTestFramework {
 
   private clearConfigCache(): void {
     // Clear require cache for config modules
-    const configModules = [
-      '../../shared/config',
-      '../../server/lib/env-config'
-    ]
-    
+    const configModules = ['../../shared/config', '../../server/lib/env-config']
+
     configModules.forEach(module => {
       try {
         const resolvedPath = require.resolve(module, { paths: [__dirname] })
@@ -370,7 +370,7 @@ class ConfigurationTestFramework {
         // Module might not be cached yet, ignore
       }
     })
-    
+
     // Also clear dynamic imports cache by deleting from module registry
     // This is needed for ES modules
     Object.keys(require.cache).forEach(key => {
@@ -384,22 +384,24 @@ class ConfigurationTestFramework {
     try {
       const environments = ['development', 'production', 'test'] as const
       const pathMappings: any[] = []
-      
+
       for (const env of environments) {
         const config = createTestConfig(testEnvironments[env])
         pathMappings.push(config.get('tools').typescript.paths)
       }
-      
+
       // Check if all path mappings are identical
       const firstMapping = JSON.stringify(pathMappings[0])
       const allMatch = pathMappings.every(mapping => JSON.stringify(mapping) === firstMapping)
-      
+
       if (!allMatch) {
-        console.log('Path mappings differ:', pathMappings.map((p, i) => ({ env: environments[i], paths: p })))
+        console.log(
+          'Path mappings differ:',
+          pathMappings.map((p, i) => ({ env: environments[i], paths: p }))
+        )
       }
-      
+
       return allMatch
-      
     } catch (error) {
       console.log('Path mappings test error:', error)
       return false
@@ -410,26 +412,28 @@ class ConfigurationTestFramework {
     try {
       const environments = ['development', 'production', 'test'] as const
       const buildOutputs: any[] = []
-      
+
       for (const env of environments) {
         const config = createTestConfig(testEnvironments[env])
         const build = config.get('build')
         buildOutputs.push({
           clientOutDir: build.clientOutDir,
-          serverOutDir: build.serverOutDir
+          serverOutDir: build.serverOutDir,
         })
       }
-      
+
       // Check if output directories are consistent
       const firstOutput = JSON.stringify(buildOutputs[0])
       const allMatch = buildOutputs.every(output => JSON.stringify(output) === firstOutput)
-      
+
       if (!allMatch) {
-        console.log('Build outputs differ:', buildOutputs.map((b, i) => ({ env: environments[i], build: b })))
+        console.log(
+          'Build outputs differ:',
+          buildOutputs.map((b, i) => ({ env: environments[i], build: b }))
+        )
       }
-      
+
       return allMatch
-      
     } catch (error) {
       console.log('Build outputs test error:', error)
       return false
@@ -439,20 +443,19 @@ class ConfigurationTestFramework {
   private async testPortConsistency(): Promise<boolean> {
     try {
       const environments = ['development', 'production', 'test'] as const
-      
+
       for (const env of environments) {
         const config = createTestConfig(testEnvironments[env])
         const appPort = config.get('app').port
         const devPort = config.get('development').proxyPort
-        
+
         if (appPort !== devPort) {
           console.log(`Port mismatch in ${env}: app=${appPort}, proxy=${devPort}`)
           return false
         }
       }
-      
+
       return true
-      
     } catch (error) {
       console.log('Port consistency test error:', error)
       return false
@@ -462,20 +465,19 @@ class ConfigurationTestFramework {
   private async testDatabaseConfiguration(): Promise<boolean> {
     try {
       const environments = ['development', 'production', 'test'] as const
-      
+
       for (const env of environments) {
         const config = createTestConfig(testEnvironments[env])
         const dbConfig = config.get('database')
-        
+
         // Check that database configuration exists and is valid
         if (!dbConfig.url || !dbConfig.dialect) {
           console.log(`Database config invalid in ${env}:`, dbConfig)
           return false
         }
       }
-      
+
       return true
-      
     } catch (error) {
       console.log('Database configuration test error:', error)
       return false
@@ -487,20 +489,19 @@ class ConfigurationTestFramework {
       // Test development
       const devConfig = createTestConfig(testEnvironments.development)
       const devHsts = devConfig.get('security').headers.hsts
-      
+
       // Test production
       const prodConfig = createTestConfig(testEnvironments.production)
       const prodHsts = prodConfig.get('security').headers.hsts
-      
+
       // HSTS should be disabled in dev, enabled in prod
       const result = devHsts === false && prodHsts === true
-      
+
       if (!result) {
         console.log(`Security headers mismatch: dev HSTS=${devHsts}, prod HSTS=${prodHsts}`)
       }
-      
+
       return result
-      
     } catch (error) {
       console.log('Security headers test error:', error)
       return false
@@ -510,11 +511,21 @@ class ConfigurationTestFramework {
   private printSuiteResults(suite: EnvironmentTestSuite): void {
     console.log('')
     const passRate = ((suite.passed / suite.total) * 100).toFixed(1)
-    
+
     if (suite.failed === 0) {
-      console.log(colorize(`✅ ${suite.environment}: ${suite.passed}/${suite.total} tests passed (${passRate}%)`, 'green'))
+      console.log(
+        colorize(
+          `✅ ${suite.environment}: ${suite.passed}/${suite.total} tests passed (${passRate}%)`,
+          'green'
+        )
+      )
     } else {
-      console.log(colorize(`❌ ${suite.environment}: ${suite.passed}/${suite.total} tests passed (${passRate}%)`, 'red'))
+      console.log(
+        colorize(
+          `❌ ${suite.environment}: ${suite.passed}/${suite.total} tests passed (${passRate}%)`,
+          'red'
+        )
+      )
     }
     console.log('')
   }
@@ -532,22 +543,28 @@ class ConfigurationTestFramework {
       totalPassed += suite.passed
       totalFailed += suite.failed
       totalTests += suite.total
-      
+
       const passRate = ((suite.passed / suite.total) * 100).toFixed(1)
       const status = suite.failed === 0 ? '✅' : '❌'
-      
-      console.log(`${status} ${suite.environment.padEnd(15)} ${suite.passed}/${suite.total} (${passRate}%)`)
+
+      console.log(
+        `${status} ${suite.environment.padEnd(15)} ${suite.passed}/${suite.total} (${passRate}%)`
+      )
     })
 
     console.log('')
     console.log(colorize('Overall Results:', 'cyan'))
-    
+
     const overallPassRate = ((totalPassed / totalTests) * 100).toFixed(1)
-    
+
     if (totalFailed === 0) {
-      console.log(colorize(`🎉 All ${totalTests} configuration tests passed! (${overallPassRate}%)`, 'green'))
+      console.log(
+        colorize(`🎉 All ${totalTests} configuration tests passed! (${overallPassRate}%)`, 'green')
+      )
     } else {
-      console.log(colorize(`⚠️  ${totalPassed}/${totalTests} tests passed (${overallPassRate}%)`, 'yellow'))
+      console.log(
+        colorize(`⚠️  ${totalPassed}/${totalTests} tests passed (${overallPassRate}%)`, 'yellow')
+      )
       console.log(colorize(`${totalFailed} tests failed`, 'red'))
     }
 
@@ -559,11 +576,11 @@ class ConfigurationTestFramework {
         totalTests,
         totalPassed,
         totalFailed,
-        passRate: overallPassRate
+        passRate: overallPassRate,
       },
-      environments: this.testResults
+      environments: this.testResults,
     }
-    
+
     writeFileSync(reportPath, JSON.stringify(report, null, 2))
     console.log('')
     console.log(colorize(`📄 Detailed report saved to: ${reportPath}`, 'blue'))
@@ -577,7 +594,7 @@ class ConfigurationTestFramework {
         delete process.env[key]
       }
     })
-    
+
     // Restore original environment
     Object.keys(this.originalEnv).forEach(key => {
       const value = this.originalEnv[key]
@@ -585,7 +602,7 @@ class ConfigurationTestFramework {
         process.env[key] = value
       }
     })
-    
+
     // Clear config cache one final time
     this.clearConfigCache()
   }

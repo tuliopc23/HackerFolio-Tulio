@@ -1,13 +1,13 @@
 import { useNavigate } from '@tanstack/react-router'
 import { useState, useEffect, useRef, type KeyboardEvent } from 'react'
 
+import { useFocusRegistration } from '@/components/accessibility/focus-manager'
+import { useTerminalAccessibility } from '@/hooks/use-accessibility'
 import {
   executeCommand as executeServerCommand,
   fetchCommands,
   type ServerCommandResult,
 } from '@/lib/api'
-import { useTerminalAccessibility } from '@/hooks/use-accessibility'
-import { useFocusRegistration } from '@/components/accessibility/focus-manager'
 
 import { CommandProcessor, type CommandResult } from './command-processor'
 import { useTheme } from './theme-context'
@@ -30,7 +30,7 @@ export default function TerminalPane() {
   const inputRef = useRef<HTMLInputElement>(null)
   const outputRef = useRef<HTMLDivElement>(null)
   const terminalRef = useRef<HTMLDivElement>(null)
-  
+
   // Accessibility hooks
   const { announce, announceCommand, announceError } = useTerminalAccessibility()
   useFocusRegistration('terminal-input', inputRef as React.RefObject<HTMLElement>)
@@ -190,7 +190,7 @@ export default function TerminalPane() {
 
     // Add to history with final output
     const isError = finalError
-    
+
     setHistory(prev => [
       ...prev,
       {
@@ -393,7 +393,7 @@ export default function TerminalPane() {
   }
 
   return (
-    <div 
+    <div
       ref={terminalRef}
       className='pane-border pane-focus rounded-lg overflow-hidden flex flex-col h-full'
       role='application'
@@ -403,39 +403,41 @@ export default function TerminalPane() {
       {/* Pane Header */}
       <div className='bg-lumon-border px-4 py-2 border-b border-cyan-soft flex items-center justify-between'>
         <div className='flex items-center gap-2'>
-          <span className='text-cyan-bright font-medium' aria-label='Terminal pane 1'>[pane-01]</span>
+          <span className='text-cyan-bright font-medium' aria-label='Terminal pane 1'>
+            [pane-01]
+          </span>
           <span className='text-text-soft'>terminal</span>
         </div>
         <div className='flex gap-2' role='group' aria-label='Terminal status indicators'>
-          <div 
-            className='w-3 h-3 rounded-full bg-terminal-red' 
+          <div
+            className='w-3 h-3 rounded-full bg-terminal-red'
             aria-label='Terminal status: active'
             role='status'
           />
-          <div 
-            className='w-3 h-3 rounded-full bg-terminal-orange' 
+          <div
+            className='w-3 h-3 rounded-full bg-terminal-orange'
             aria-label={isExecuting ? 'Command executing' : 'Terminal ready'}
             role='status'
           />
-          <div 
-            className='w-3 h-3 rounded-full bg-terminal-green' 
-            aria-label={lastCommandStatus === 'error' ? 'Last command failed' : 'Last command succeeded'}
+          <div
+            className='w-3 h-3 rounded-full bg-terminal-green'
+            aria-label={
+              lastCommandStatus === 'error' ? 'Last command failed' : 'Last command succeeded'
+            }
             role='status'
           />
         </div>
       </div>
 
       {/* Status announcement for screen readers */}
-      <div 
-        id='terminal-status' 
-        className='sr-only' 
-        aria-live='polite' 
-        aria-atomic='true'
-      >
-        {isExecuting ? 'Command executing...' : 
-         lastCommandStatus === 'error' ? 'Last command failed' : 
-         lastCommandStatus === 'success' ? 'Last command completed successfully' : 
-         'Terminal ready for commands'}
+      <div id='terminal-status' className='sr-only' aria-live='polite' aria-atomic='true'>
+        {isExecuting
+          ? 'Command executing...'
+          : lastCommandStatus === 'error'
+            ? 'Last command failed'
+            : lastCommandStatus === 'success'
+              ? 'Last command completed successfully'
+              : 'Terminal ready for commands'}
       </div>
 
       {/* Terminal Content */}
@@ -470,9 +472,12 @@ export default function TerminalPane() {
 
         {/* Current Command Line */}
         <div className='flex items-center' role='group' aria-label='Command input'>
-          <span className='text-magenta-bright' aria-hidden='true'>user@portfolio:~$</span>
+          <span className='text-magenta-bright' aria-hidden='true'>
+            user@portfolio:~$
+          </span>
           <label htmlFor='terminal-input' className='sr-only'>
-            Terminal command input. Use Tab for autocomplete, up and down arrows for command history.
+            Terminal command input. Use Tab for autocomplete, up and down arrows for command
+            history.
           </label>
           <input
             ref={inputRef}
@@ -494,35 +499,43 @@ export default function TerminalPane() {
             role='textbox'
             aria-multiline='false'
           />
-          <span 
-            className={`cursor-block ${isExecuting ? 'animate-pulse' : ''}`} 
+          <span
+            className={`cursor-block ${isExecuting ? 'animate-pulse' : ''}`}
             aria-hidden='true'
           />
         </div>
       </div>
 
       {/* Command Help Footer */}
-      <div 
-        id='terminal-help' 
+      <div
+        id='terminal-help'
         className='bg-lumon-border px-4 py-2 border-t border-cyan-soft text-xs text-text-soft'
         role='complementary'
         aria-label='Terminal keyboard shortcuts'
       >
         <div className='flex flex-wrap gap-4'>
           <span>
-            <kbd className='bg-lumon-dark px-1 rounded' aria-label='Tab key'>Tab</kbd> 
+            <kbd className='bg-lumon-dark px-1 rounded' aria-label='Tab key'>
+              Tab
+            </kbd>
             <span className='sr-only'>key for </span>autocomplete
           </span>
           <span>
-            <kbd className='bg-lumon-dark px-1 rounded' aria-label='Up and down arrow keys'>↑↓</kbd> 
+            <kbd className='bg-lumon-dark px-1 rounded' aria-label='Up and down arrow keys'>
+              ↑↓
+            </kbd>
             <span className='sr-only'>keys for </span>history
           </span>
           <span>
-            <kbd className='bg-lumon-dark px-1 rounded' aria-label='Control plus C'>Ctrl+C</kbd> 
+            <kbd className='bg-lumon-dark px-1 rounded' aria-label='Control plus C'>
+              Ctrl+C
+            </kbd>
             <span className='sr-only'>to </span>clear
           </span>
           <span>
-            <kbd className='bg-lumon-dark px-1 rounded' aria-label='Control plus L'>Ctrl+L</kbd> 
+            <kbd className='bg-lumon-dark px-1 rounded' aria-label='Control plus L'>
+              Ctrl+L
+            </kbd>
             <span className='sr-only'>to </span>clear screen
           </span>
         </div>

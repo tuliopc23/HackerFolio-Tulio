@@ -21,65 +21,52 @@ const baseEnvSchema = z.object({
   // Security Configuration
   CORS_ORIGINS: z.string().optional(),
   CSP_REPORT_URI: z.string().url().optional(),
-  CSP_REPORT_ONLY: z.preprocess(
-    (val) => val === 'true' || val === true,
-    z.boolean().default(false)
-  ).optional(),
+  CSP_REPORT_ONLY: z
+    .preprocess(val => val === 'true' || val === true, z.boolean().default(false))
+    .optional(),
   RATE_LIMIT_REQUESTS: z.coerce.number().min(1).default(100).optional(),
   RATE_LIMIT_WINDOW_MS: z.coerce.number().min(1000).default(900000).optional(),
   SESSION_SECRET: z.string().min(32).optional(),
 
   // Performance & Caching
   STATIC_CACHE_DURATION: z.coerce.number().min(0).default(86400).optional(),
-  API_CACHE_ENABLED: z.preprocess(
-    (val) => val === 'true' || val === true,
-    z.boolean().default(true)
-  ).optional(),
+  API_CACHE_ENABLED: z
+    .preprocess(val => val === 'true' || val === true, z.boolean().default(true))
+    .optional(),
   API_CACHE_DURATION: z.coerce.number().min(0).default(300).optional(),
 
   // Logging & Monitoring
   LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug', 'silent']).default('info'),
   LOG_FORMAT: z.enum(['json', 'pretty']).default('pretty'),
-  LOG_REQUESTS: z.preprocess(
-    (val) => val === 'true' || val === true,
-    z.boolean().default(true)
-  ),
+  LOG_REQUESTS: z.preprocess(val => val === 'true' || val === true, z.boolean().default(true)),
   SENTRY_DSN: z.string().url().optional(),
 
   // Development Configuration
-  DEBUG: z.preprocess(
-    (val) => val === 'true' || val === true,
-    z.boolean().default(false)
-  ),
+  DEBUG: z.preprocess(val => val === 'true' || val === true, z.boolean().default(false)),
   DEV_WATCH_PATHS: z.string().optional(),
-  MOCK_GITHUB_API: z.preprocess(
-    (val) => val === 'true' || val === true,
-    z.boolean().default(false)
-  ).optional(),
+  MOCK_GITHUB_API: z
+    .preprocess(val => val === 'true' || val === true, z.boolean().default(false))
+    .optional(),
 
   // Build & Deployment
   BUILD_DIR: z.string().default('dist').optional(),
   STATIC_DIR: z.string().default('public').optional(),
-  ENABLE_COMPRESSION: z.preprocess(
-    (val) => val === 'true' || val === true,
-    z.boolean().default(true)
-  ).optional(),
+  ENABLE_COMPRESSION: z
+    .preprocess(val => val === 'true' || val === true, z.boolean().default(true))
+    .optional(),
   HEALTH_CHECK_ENDPOINT: z.string().default('/health').optional(),
   HEALTH_CHECK_TIMEOUT: z.coerce.number().min(1000).default(5000).optional(),
 
   // Feature Flags
-  FEATURE_GITHUB_INTEGRATION: z.preprocess(
-    (val) => val === 'true' || val === true,
-    z.boolean().default(true)
-  ).optional(),
-  FEATURE_TERMINAL_LOGGING: z.preprocess(
-    (val) => val === 'true' || val === true,
-    z.boolean().default(true)
-  ).optional(),
-  FEATURE_ANALYTICS: z.preprocess(
-    (val) => val === 'true' || val === true,
-    z.boolean().default(false)
-  ).optional(),
+  FEATURE_GITHUB_INTEGRATION: z
+    .preprocess(val => val === 'true' || val === true, z.boolean().default(true))
+    .optional(),
+  FEATURE_TERMINAL_LOGGING: z
+    .preprocess(val => val === 'true' || val === true, z.boolean().default(true))
+    .optional(),
+  FEATURE_ANALYTICS: z
+    .preprocess(val => val === 'true' || val === true, z.boolean().default(false))
+    .optional(),
 })
 
 // Development-specific requirements
@@ -108,31 +95,29 @@ export const envSchema = z.preprocess(
     NODE_ENV: 'development',
     ...data,
   }),
-  z.discriminatedUnion('NODE_ENV', [
-    developmentEnvSchema,
-    productionEnvSchema,
-    testEnvSchema,
-  ])
+  z.discriminatedUnion('NODE_ENV', [developmentEnvSchema, productionEnvSchema, testEnvSchema])
 )
 
 export type EnvConfig = z.infer<typeof envSchema>
 
 // Environment validation function
-export function validateEnvironment(env: Record<string, string | undefined> = process.env): EnvConfig {
+export function validateEnvironment(
+  env: Record<string, string | undefined> = process.env
+): EnvConfig {
   const result = envSchema.safeParse(env)
-  
+
   if (!result.success) {
     const errorMessages = result.error.issues.map(issue => {
       const path = issue.path.join('.')
       return `${path}: ${issue.message}`
     })
-    
+
     throw new Error(
       `Environment validation failed:\\n${errorMessages.join('\\n')}\\n\\n` +
-      'Please check your .env file against .env.example for required variables.'
+        'Please check your .env file against .env.example for required variables.'
     )
   }
-  
+
   return result.data
 }
 
@@ -152,11 +137,20 @@ export function isTest(env: EnvConfig): boolean {
 // Parse CORS origins from comma-separated string
 export function parseCorsOrigins(corsOrigins?: string): string[] {
   if (!corsOrigins) return ['http://localhost:5173']
-  return corsOrigins.split(',').map(origin => origin.trim()).filter(Boolean)
+  return corsOrigins
+    .split(',')
+    .map(origin => origin.trim())
+    .filter(Boolean)
 }
 
 // Feature flag helpers
-export function isFeatureEnabled(env: EnvConfig, feature: keyof Pick<EnvConfig, 'FEATURE_GITHUB_INTEGRATION' | 'FEATURE_TERMINAL_LOGGING' | 'FEATURE_ANALYTICS'>): boolean {
+export function isFeatureEnabled(
+  env: EnvConfig,
+  feature: keyof Pick<
+    EnvConfig,
+    'FEATURE_GITHUB_INTEGRATION' | 'FEATURE_TERMINAL_LOGGING' | 'FEATURE_ANALYTICS'
+  >
+): boolean {
   return Boolean(env[feature])
 }
 

@@ -37,7 +37,7 @@ export class CommandProcessor {
     if (this.history.length === 0) {
       return ''
     }
-    
+
     if (direction === 'up') {
       if (this.historyIndex > 0) {
         this.historyIndex--

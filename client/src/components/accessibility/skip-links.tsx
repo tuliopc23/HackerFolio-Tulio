@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { useSkipLinks } from '@/hooks/use-accessibility'
 
 /**
@@ -9,40 +10,40 @@ export function SkipLinks() {
   const { skipToMain, skipToNavigation } = useSkipLinks()
 
   return (
-    <div className="skip-links">
+    <div className='skip-links'>
       <a
-        href="#main-terminal"
-        onClick={(e) => {
+        href='#main-terminal'
+        onClick={e => {
           e.preventDefault()
           skipToMain()
         }}
-        onKeyDown={(e) => {
+        onKeyDown={e => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault()
             skipToMain()
           }
         }}
-        className="skip-link"
+        className='skip-link'
       >
         Skip to main terminal
       </a>
       <a
-        href="#navigation"
-        onClick={(e) => {
+        href='#navigation'
+        onClick={e => {
           e.preventDefault()
           skipToNavigation()
         }}
-        onKeyDown={(e) => {
+        onKeyDown={e => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault()
             skipToNavigation()
           }
         }}
-        className="skip-link"
+        className='skip-link'
       >
         Skip to navigation
       </a>
-      
+
       <style>{`
         .skip-links {
           position: absolute;

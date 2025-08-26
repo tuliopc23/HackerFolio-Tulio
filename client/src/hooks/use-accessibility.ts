@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 export interface UseAccessibilityOptions {
   /** Whether to trap focus within the component */
@@ -22,7 +22,6 @@ export function useAccessibility({
   autoFocus = false,
   onEscape,
   restoreFocus = true,
-  ariaLabel,
 }: UseAccessibilityOptions = {}) {
   const containerRef = useRef<HTMLElement>(null)
   const previousFocusRef = useRef<HTMLElement | null>(null)
@@ -34,9 +33,9 @@ export function useAccessibility({
     announcement.setAttribute('aria-atomic', 'true')
     announcement.className = 'sr-only'
     announcement.textContent = message
-    
+
     document.body.appendChild(announcement)
-    
+
     // Remove after announcement
     setTimeout(() => {
       if (document.body.contains(announcement)) {
@@ -48,7 +47,7 @@ export function useAccessibility({
   // Get all focusable elements within container
   const getFocusableElements = useCallback((): HTMLElement[] => {
     if (!containerRef.current) return []
-    
+
     const focusableSelectors = [
       'button:not([disabled])',
       'input:not([disabled])',
@@ -61,58 +60,62 @@ export function useAccessibility({
       '[role="menuitem"]',
       '[contenteditable="true"]',
     ].join(', ')
-    
-    return Array.from(containerRef.current.querySelectorAll(focusableSelectors))
-      .filter((el): el is HTMLElement => {
+
+    return Array.from(containerRef.current.querySelectorAll(focusableSelectors)).filter(
+      (el): el is HTMLElement => {
         const element = el as HTMLElement
         return (
           element.offsetParent !== null &&
           getComputedStyle(element).visibility !== 'hidden' &&
           !element.hasAttribute('inert')
         )
-      })
+      }
+    )
   }, [])
 
   // Handle keyboard navigation
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    if (!containerRef.current) return
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (!containerRef.current) return
 
-    switch (event.key) {
-      case 'Escape':
-        if (onEscape) {
-          event.preventDefault()
-          onEscape()
-        }
-        break
-
-      case 'Tab':
-        if (trapFocus) {
-          const focusableElements = getFocusableElements()
-          if (focusableElements.length === 0) {
+      switch (event.key) {
+        case 'Escape':
+          if (onEscape) {
             event.preventDefault()
-            return
+            onEscape()
           }
+          break
 
-          const firstElement = focusableElements[0]
-          const lastElement = focusableElements[focusableElements.length - 1]
-
-          if (event.shiftKey) {
-            // Shift + Tab (backwards)
-            if (document.activeElement === firstElement) {
+        case 'Tab':
+          if (trapFocus) {
+            const focusableElements = getFocusableElements()
+            if (focusableElements.length === 0) {
               event.preventDefault()
-              lastElement.focus()
+              return
             }
-          } else {
-            // Tab (forwards)
-            if (document.activeElement === lastElement) {
-              event.preventDefault()
-              firstElement.focus()
+
+            const firstElement = focusableElements[0]
+            const lastElement = focusableElements[focusableElements.length - 1]
+
+            if (event.shiftKey) {
+              // Shift + Tab (backwards)
+              if (document.activeElement === firstElement) {
+                event.preventDefault()
+                lastElement?.focus()
+              }
+            } else {
+              // Tab (forwards)
+              if (document.activeElement === lastElement) {
+                event.preventDefault()
+                firstElement?.focus()
+              }
             }
           }
-        }
-        break
-    }
-  }, [trapFocus, onEscape, getFocusableElements])
+          break
+      }
+    },
+    [trapFocus, onEscape, getFocusableElements]
+  )
 
   // Auto focus on mount
   useEffect(() => {
@@ -125,7 +128,7 @@ export function useAccessibility({
       // Focus container or first focusable element
       const focusableElements = getFocusableElements()
       if (focusableElements.length > 0) {
-        focusableElements[0].focus()
+        focusableElements[0]?.focus()
       } else if (containerRef.current) {
         containerRef.current.focus()
       }
@@ -136,8 +139,11 @@ export function useAccessibility({
   useEffect(() => {
     if (trapFocus || onEscape) {
       document.addEventListener('keydown', handleKeyDown)
-      return () => document.removeEventListener('keydown', handleKeyDown)
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown)
+      }
     }
+    return undefined // Explicit return for consistency
   }, [trapFocus, onEscape, handleKeyDown])
 
   // Restore focus on unmount
@@ -166,9 +172,9 @@ export function useTerminalAccessibility() {
     announcement.setAttribute('aria-atomic', 'true')
     announcement.className = 'sr-only'
     announcement.textContent = `Terminal: ${message}`
-    
+
     document.body.appendChild(announcement)
-    
+
     setTimeout(() => {
       if (document.body.contains(announcement)) {
         document.body.removeChild(announcement)
@@ -176,17 +182,26 @@ export function useTerminalAccessibility() {
     }, 1000)
   }, [])
 
-  const announceCommand = useCallback((command: string) => {
-    announce(`Command executed: ${command}`, 'assertive')
-  }, [announce])
+  const announceCommand = useCallback(
+    (command: string) => {
+      announce(`Command executed: ${command}`, 'assertive')
+    },
+    [announce]
+  )
 
-  const announceError = useCallback((error: string) => {
-    announce(`Error: ${error}`, 'assertive')
-  }, [announce])
+  const announceError = useCallback(
+    (error: string) => {
+      announce(`Error: ${error}`, 'assertive')
+    },
+    [announce]
+  )
 
-  const announceNavigation = useCallback((location: string) => {
-    announce(`Navigated to ${location}`, 'polite')
-  }, [announce])
+  const announceNavigation = useCallback(
+    (location: string) => {
+      announce(`Navigated to ${location}`, 'polite')
+    },
+    [announce]
+  )
 
   return {
     announce,
@@ -201,22 +216,23 @@ export function useTerminalAccessibility() {
  */
 export function useSkipLinks() {
   const skipToMain = useCallback(() => {
-    const mainContent = document.getElementById('main-terminal') || 
-                       document.querySelector('[role="main"]') ||
-                       document.querySelector('main')
-    
+    const mainContent =
+      document.getElementById('main-terminal') ||
+      document.querySelector('[role="main"]') ||
+      document.querySelector('main')
+
     if (mainContent) {
-      (mainContent as HTMLElement).focus()
+      mainContent.focus()
       mainContent.scrollIntoView({ behavior: 'smooth' })
     }
   }, [])
 
   const skipToNavigation = useCallback(() => {
-    const navigation = document.querySelector('[role="navigation"]') ||
-                      document.querySelector('nav')
-    
+    const navigation =
+      document.querySelector('[role="navigation"]') || document.querySelector('nav')
+
     if (navigation) {
-      (navigation as HTMLElement).focus()
+      ;(navigation as HTMLElement).focus()
       navigation.scrollIntoView({ behavior: 'smooth' })
     }
   }, [])

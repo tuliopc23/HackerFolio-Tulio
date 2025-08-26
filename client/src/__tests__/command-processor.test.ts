@@ -1,4 +1,5 @@
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest'
+
 import { CommandProcessor } from '@/components/terminal/command-processor'
 
 // Mock localStorage
@@ -20,7 +21,7 @@ beforeEach(() => {
     configurable: true,
     writable: true,
   })
-  
+
   Object.defineProperty(globalThis, 'window', {
     value: {
       localStorage: localStorageMock,
@@ -37,10 +38,10 @@ describe('CommandProcessor', () => {
   beforeEach(() => {
     // Clear all mocks first
     vi.clearAllMocks()
-    
+
     // Reset localStorage mock to return null (empty storage)
     localStorageMock.getItem.mockReturnValue(null)
-    
+
     // Create a fresh processor instance for each test
     processor = new CommandProcessor()
   })
@@ -66,7 +67,7 @@ describe('CommandProcessor', () => {
     test('adds commands to history', () => {
       processor.addToHistory('help')
       processor.addToHistory('ls')
-      
+
       // Test that we can navigate through the history
       expect(processor.getHistoryCommand('up')).toBe('ls')
       expect(processor.getHistoryCommand('up')).toBe('help')
@@ -75,14 +76,14 @@ describe('CommandProcessor', () => {
     test('does not add empty commands to history', () => {
       processor.addToHistory('  ')
       processor.addToHistory('')
-      
+
       expect(localStorageMock.setItem).not.toHaveBeenCalled()
     })
 
     test('does not add duplicate consecutive commands', () => {
       processor.addToHistory('help')
       processor.addToHistory('help')
-      
+
       // Should only have one 'help' command in history
       expect(processor.getHistoryCommand('up')).toBe('help')
       // When we try to go up again, we should stay at the same command
@@ -93,14 +94,14 @@ describe('CommandProcessor', () => {
       processor.addToHistory('first')
       processor.addToHistory('second')
       processor.addToHistory('third')
-      
+
       // Navigate up through history
       expect(processor.getHistoryCommand('up')).toBe('third')
       expect(processor.getHistoryCommand('up')).toBe('second')
       expect(processor.getHistoryCommand('up')).toBe('first')
       expect(processor.getHistoryCommand('up')).toBe('first') // Can't go further up
-      
-      // Navigate down through history  
+
+      // Navigate down through history
       expect(processor.getHistoryCommand('down')).toBe('second')
       expect(processor.getHistoryCommand('down')).toBe('third')
       expect(processor.getHistoryCommand('down')).toBe('') // Back to empty input
@@ -144,12 +145,12 @@ describe('CommandProcessor', () => {
   describe('Open Command', () => {
     test('navigates to internal routes', () => {
       const routes = ['/projects', '/about', '/contact', '/resume']
-      
+
       routes.forEach(route => {
         const result = processor.processCommand(`open ${route}`)
         expect(result).toEqual({
           output: `Navigating to ${route}...`,
-          navigate: route
+          navigate: route,
         })
       })
     })
@@ -157,18 +158,15 @@ describe('CommandProcessor', () => {
     test('opens external URLs in new tab', () => {
       const url = 'https://github.com/tuliocunha'
       const result = processor.processCommand(`open ${url}`)
-      
+
       expect(mockWindowOpen).toHaveBeenCalledWith(url, '_blank')
       expect(result.output).toBe(`Opening ${url} in new tab...`)
     })
 
     test('opens project links by name match', () => {
       const result = processor.processCommand('open terminal')
-      
-      expect(mockWindowOpen).toHaveBeenCalledWith(
-        'https://portfolio.tuliocunha.dev',
-        '_blank'
-      )
+
+      expect(mockWindowOpen).toHaveBeenCalledWith('https://portfolio.tuliocunha.dev', '_blank')
       expect(result.output).toBe('Opening Terminal Portfolio...')
     })
 
@@ -176,7 +174,7 @@ describe('CommandProcessor', () => {
       const result = processor.processCommand('open invalid-target')
       expect(result).toEqual({
         output: "Cannot open 'invalid-target' - not found",
-        error: true
+        error: true,
       })
     })
 
@@ -184,7 +182,7 @@ describe('CommandProcessor', () => {
       const result = processor.processCommand('open')
       expect(result).toEqual({
         output: 'Usage: open <route|url>',
-        error: true
+        error: true,
       })
     })
   })
@@ -192,12 +190,12 @@ describe('CommandProcessor', () => {
   describe('Theme Command', () => {
     test('switches to valid themes', () => {
       const validThemes = ['lumon', 'neon', 'mono']
-      
+
       validThemes.forEach(theme => {
         const result = processor.processCommand(`theme ${theme}`)
         expect(result).toEqual({
           output: `Switching to ${theme} theme...`,
-          navigate: `theme:${theme}`
+          navigate: `theme:${theme}`,
         })
       })
     })
@@ -206,7 +204,7 @@ describe('CommandProcessor', () => {
       const result = processor.processCommand('theme invalid')
       expect(result).toEqual({
         output: "Invalid theme 'invalid'\nAvailable themes: lumon, neon, mono",
-        error: true
+        error: true,
       })
     })
 
@@ -214,7 +212,7 @@ describe('CommandProcessor', () => {
       const result = processor.processCommand('theme')
       expect(result).toEqual({
         output: "Invalid theme ''\nAvailable themes: lumon, neon, mono",
-        error: true
+        error: true,
       })
     })
   })
@@ -233,7 +231,7 @@ describe('CommandProcessor', () => {
   describe('Cat Command', () => {
     test('displays file contents for valid files', () => {
       const files = ['about.md', 'contact.md', 'resume.md']
-      
+
       files.forEach(file => {
         const result = processor.processCommand(`cat ${file}`)
         expect(result.output).toBeTruthy()
@@ -245,7 +243,7 @@ describe('CommandProcessor', () => {
       const result = processor.processCommand('cat invalid.txt')
       expect(result).toEqual({
         output: 'cat: invalid.txt: No such file or directory',
-        error: true
+        error: true,
       })
     })
 
@@ -253,7 +251,7 @@ describe('CommandProcessor', () => {
       const result = processor.processCommand('cat')
       expect(result).toEqual({
         output: 'cat: : No such file or directory',
-        error: true
+        error: true,
       })
     })
   })
@@ -263,7 +261,7 @@ describe('CommandProcessor', () => {
       const result = processor.processCommand('cams')
       expect(result).toEqual({
         output: 'ACCESS DENIED.',
-        error: true
+        error: true,
       })
     })
   })
@@ -273,7 +271,7 @@ describe('CommandProcessor', () => {
       const result = processor.processCommand('unknown-command')
       expect(result).toEqual({
         output: "Command not found: unknown-command\nType 'help' for available commands.",
-        error: true
+        error: true,
       })
     })
 
@@ -334,7 +332,7 @@ describe('CommandProcessor', () => {
     test('adds server commands to available commands', () => {
       const serverCommands = ['server-cmd1', 'server-cmd2']
       processor.setServerCommands(serverCommands)
-      
+
       const suggestions = processor.getAutocomplete('server')
       expect(suggestions).toContain('server-cmd1')
       expect(suggestions).toContain('server-cmd2')
@@ -342,7 +340,7 @@ describe('CommandProcessor', () => {
 
     test('includes server commands in help suggestions', () => {
       processor.setServerCommands(['api-status'])
-      
+
       const suggestions = processor.getAutocomplete('help api')
       expect(suggestions).toContain('help api-status')
     })
@@ -353,7 +351,7 @@ describe('CommandProcessor', () => {
       const lowerResult = processor.processCommand('clear')
       const upperResult = processor.processCommand('CLEAR')
       const mixedResult = processor.processCommand('Clear')
-      
+
       expect(lowerResult).toEqual(upperResult)
       expect(upperResult).toEqual(mixedResult)
     })

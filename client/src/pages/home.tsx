@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+import FocusManager from '@/components/accessibility/focus-manager'
+import SkipLinks from '@/components/accessibility/skip-links'
 import DesktopBackground from '@/components/desktop/desktop-background'
 import FloatingDockTerminal from '@/components/terminal/floating-dock-terminal'
 import ProjectsGridPane from '@/components/terminal/projects-grid-pane'
@@ -7,8 +9,6 @@ import SystemInfoPane from '@/components/terminal/system-info-pane'
 import TerminalPane from '@/components/terminal/terminal-pane'
 import TerminalWindow from '@/components/terminal/terminal-window'
 import ResizeHandle from '@/components/ui/resize-handle'
-import SkipLinks from '@/components/accessibility/skip-links'
-import FocusManager from '@/components/accessibility/focus-manager'
 
 export default function Home() {
   const [leftPaneWidth, setLeftPaneWidth] = useState(66.666667)

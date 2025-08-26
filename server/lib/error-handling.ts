@@ -27,20 +27,20 @@ export enum ApiErrorCode {
   VALIDATION_ERROR = 'VALIDATION_ERROR',
   MISSING_PARAMETER = 'MISSING_PARAMETER',
   INVALID_INPUT = 'INVALID_INPUT',
-  
+
   // Authentication/Authorization errors (401/403)
   UNAUTHORIZED = 'UNAUTHORIZED',
   FORBIDDEN = 'FORBIDDEN',
-  
+
   // Not found errors (404)
   NOT_FOUND = 'NOT_FOUND',
   RESOURCE_NOT_FOUND = 'RESOURCE_NOT_FOUND',
-  
+
   // Server errors (500)
   INTERNAL_ERROR = 'INTERNAL_ERROR',
   DATABASE_ERROR = 'DATABASE_ERROR',
   EXTERNAL_API_ERROR = 'EXTERNAL_API_ERROR',
-  
+
   // Business logic errors (422)
   BUSINESS_LOGIC_ERROR = 'BUSINESS_LOGIC_ERROR',
 }
@@ -50,7 +50,7 @@ export class ApiError extends Error {
   constructor(
     public code: ApiErrorCode,
     message: string,
-    public statusCode: number = 500,
+    public statusCode = 500,
     public details?: unknown
   ) {
     super(message)
@@ -99,7 +99,7 @@ export function createErrorResponse(error: ApiError): ApiErrorResponse {
 // Error handler middleware for Elysia
 export function handleApiError(error: unknown): Response {
   console.error('API Error:', error)
-  
+
   if (error instanceof ApiError) {
     const errorResponse = createErrorResponse(error)
     return new Response(JSON.stringify(errorResponse), {
@@ -144,11 +144,13 @@ export function asyncHandler<T extends unknown[], R>(
     try {
       return await fn(...args)
     } catch (error) {
-      throw error instanceof ApiError ? error : new ApiError(
-        ApiErrorCode.INTERNAL_ERROR,
-        error instanceof Error ? error.message : 'Unknown error',
-        500
-      )
+      throw error instanceof ApiError
+        ? error
+        : new ApiError(
+            ApiErrorCode.INTERNAL_ERROR,
+            error instanceof Error ? error.message : 'Unknown error',
+            500
+          )
     }
   }
 }

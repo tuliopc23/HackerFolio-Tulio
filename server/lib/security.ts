@@ -1,4 +1,5 @@
 import type { Context } from 'elysia'
+
 import { env } from './env-config'
 
 // Rate limiting store - in production, use Redis or similar
@@ -10,14 +11,17 @@ interface RateLimitEntry {
 const rateLimitStore = new Map<string, RateLimitEntry>()
 
 // Clean up expired entries every 5 minutes
-setInterval(() => {
-  const now = Date.now()
-  for (const [key, entry] of rateLimitStore.entries()) {
-    if (now > entry.resetTime) {
-      rateLimitStore.delete(key)
+setInterval(
+  () => {
+    const now = Date.now()
+    for (const [key, entry] of rateLimitStore.entries()) {
+      if (now > entry.resetTime) {
+        rateLimitStore.delete(key)
+      }
     }
-  }
-}, 5 * 60 * 1000)
+  },
+  5 * 60 * 1000
+)
 
 /**
  * Security headers configuration
@@ -25,16 +29,16 @@ setInterval(() => {
 export const securityHeaders = {
   // Prevent clickjacking attacks
   'X-Frame-Options': 'DENY',
-  
+
   // Prevent MIME type sniffing
   'X-Content-Type-Options': 'nosniff',
-  
+
   // Enable XSS protection
   'X-XSS-Protection': '1; mode=block',
-  
+
   // Referrer policy for privacy
   'Referrer-Policy': 'strict-origin-when-cross-origin',
-  
+
   // Content Security Policy
   'Content-Security-Policy': [
     "default-src 'self'",
@@ -45,9 +49,9 @@ export const securityHeaders = {
     "connect-src 'self' api.github.com",
     "frame-ancestors 'none'",
     "base-uri 'self'",
-    "form-action 'self'"
+    "form-action 'self'",
   ].join('; '),
-  
+
   // Permissions policy
   'Permissions-Policy': [
     'camera=()',
@@ -57,13 +61,13 @@ export const securityHeaders = {
     'usb=()',
     'magnetometer=()',
     'gyroscope=()',
-    'accelerometer=()'
+    'accelerometer=()',
   ].join(', '),
-  
+
   // Cross-Origin policies
   'Cross-Origin-Embedder-Policy': 'require-corp',
   'Cross-Origin-Opener-Policy': 'same-origin',
-  'Cross-Origin-Resource-Policy': 'same-origin'
+  'Cross-Origin-Resource-Policy': 'same-origin',
 }
 
 /**
@@ -82,8 +86,8 @@ export const devSecurityHeaders = {
     "img-src 'self' data: https: http: localhost:* 127.0.0.1:*",
     "connect-src 'self' ws: wss: localhost:* 127.0.0.1:* api.github.com",
     "frame-ancestors 'self'",
-    "base-uri 'self'"
-  ].join('; ')
+    "base-uri 'self'",
+  ].join('; '),
 }
 
 /**
@@ -91,14 +95,15 @@ export const devSecurityHeaders = {
  */
 export function applySecurityHeaders(context: Context): void {
   const headers = env.NODE_ENV === 'development' ? devSecurityHeaders : securityHeaders
-  
+
   for (const [key, value] of Object.entries(headers)) {
     context.set.headers[key] = value
   }
-  
+
   // Add HSTS only in production with HTTPS
   if (env.NODE_ENV === 'production') {
-    context.set.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains; preload'
+    context.set.headers['Strict-Transport-Security'] =
+      'max-age=31536000; includeSubDomains; preload'
   }
 }
 
@@ -121,7 +126,7 @@ export const defaultRateLimitOptions: RateLimitOptions = {
   maxRequests: 100, // 100 requests per 15 minutes
   message: 'Too many requests, please try again later',
   skipSuccessfulRequests: false,
-  skipFailedRequests: false
+  skipFailedRequests: false,
 }
 
 /**
@@ -130,7 +135,7 @@ export const defaultRateLimitOptions: RateLimitOptions = {
 export const apiRateLimitOptions: RateLimitOptions = {
   windowMs: 5 * 60 * 1000, // 5 minutes
   maxRequests: 50, // 50 requests per 5 minutes
-  message: 'API rate limit exceeded, please try again later'
+  message: 'API rate limit exceeded, please try again later',
 }
 
 /**
@@ -139,7 +144,7 @@ export const apiRateLimitOptions: RateLimitOptions = {
 export const terminalRateLimitOptions: RateLimitOptions = {
   windowMs: 1 * 60 * 1000, // 1 minute
   maxRequests: 30, // 30 commands per minute
-  message: 'Command rate limit exceeded, please slow down'
+  message: 'Command rate limit exceeded, please slow down',
 }
 
 /**
@@ -148,14 +153,13 @@ export const terminalRateLimitOptions: RateLimitOptions = {
 export function getClientId(context: Context): string {
   // In production, consider using a more sophisticated approach
   const forwarded = context.request.headers.get('x-forwarded-for')
-  const ip = forwarded?.split(',')[0]?.trim() || 
-             context.request.headers.get('x-real-ip') ||
-             'unknown'
-  
+  const ip =
+    forwarded?.split(',')[0]?.trim() || context.request.headers.get('x-real-ip') || 'unknown'
+
   // Add user agent for additional uniqueness
   const userAgent = context.request.headers.get('user-agent') || ''
   const userAgentHash = userAgent ? btoa(userAgent).slice(0, 8) : 'none'
-  
+
   return `${ip}-${userAgentHash}`
 }
 
@@ -163,23 +167,29 @@ export function getClientId(context: Context): string {
  * Rate limiting middleware
  */
 export function rateLimit(options: RateLimitOptions = defaultRateLimitOptions) {
-  return function(context: Context): boolean {
+  return function (context: Context): boolean {
     const clientId = getClientId(context)
     const now = Date.now()
-    
+
     // Get or create rate limit entry
     let entry = rateLimitStore.get(clientId)
-    
+
     if (!entry || now > entry.resetTime) {
       // Create new entry or reset expired one
       entry = {
         count: 1,
-        resetTime: now + options.windowMs
+        resetTime: now + options.windowMs,
       }
       rateLimitStore.set(clientId, entry)
+
+      // Set rate limit headers for new/reset entries
+      context.set.headers['X-RateLimit-Limit'] = options.maxRequests.toString()
+      context.set.headers['X-RateLimit-Remaining'] = (options.maxRequests - entry.count).toString()
+      context.set.headers['X-RateLimit-Reset'] = entry.resetTime.toString()
+
       return true // Allow request
     }
-    
+
     if (entry.count >= options.maxRequests) {
       // Rate limit exceeded
       context.set.status = 429
@@ -187,19 +197,19 @@ export function rateLimit(options: RateLimitOptions = defaultRateLimitOptions) {
       context.set.headers['X-RateLimit-Limit'] = options.maxRequests.toString()
       context.set.headers['X-RateLimit-Remaining'] = '0'
       context.set.headers['X-RateLimit-Reset'] = entry.resetTime.toString()
-      
+
       return false // Block request
     }
-    
+
     // Increment counter
     entry.count++
     rateLimitStore.set(clientId, entry)
-    
+
     // Add rate limit headers
     context.set.headers['X-RateLimit-Limit'] = options.maxRequests.toString()
     context.set.headers['X-RateLimit-Remaining'] = (options.maxRequests - entry.count).toString()
     context.set.headers['X-RateLimit-Reset'] = entry.resetTime.toString()
-    
+
     return true // Allow request
   }
 }
@@ -211,18 +221,18 @@ export class InputSanitizer {
   /**
    * Sanitize string input by removing potentially dangerous characters
    */
-  static sanitizeString(input: string, maxLength: number = 1000): string {
+  static sanitizeString(input: string, maxLength = 1000): string {
     if (typeof input !== 'string') {
       throw new Error('Input must be a string')
     }
-    
+
     return input
       .trim()
       .slice(0, maxLength)
       .replace(/[<>\"'&]/g, '') // Remove basic XSS characters
       .replace(/[\x00-\x1f\x7f-\x9f]/g, '') // Remove control characters
   }
-  
+
   /**
    * Sanitize command input for terminal
    */
@@ -230,7 +240,7 @@ export class InputSanitizer {
     if (typeof command !== 'string') {
       throw new Error('Command must be a string')
     }
-    
+
     return command
       .trim()
       .slice(0, 200) // Reasonable command length limit
@@ -238,7 +248,7 @@ export class InputSanitizer {
       .replace(/[\x00-\x1f\x7f-\x9f]/g, '') // Remove control characters
       .replace(/\s+/g, ' ') // Normalize whitespace
   }
-  
+
   /**
    * Validate email format
    */
@@ -246,7 +256,7 @@ export class InputSanitizer {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
     return emailRegex.test(email) && email.length <= 254
   }
-  
+
   /**
    * Validate URL format
    */
@@ -258,7 +268,7 @@ export class InputSanitizer {
       return false
     }
   }
-  
+
   /**
    * Sanitize file path to prevent directory traversal
    */
@@ -280,10 +290,10 @@ export function getCorsOrigins(): string[] {
       'http://localhost:3000',
       'http://localhost:5173',
       'http://127.0.0.1:3000',
-      'http://127.0.0.1:5173'
+      'http://127.0.0.1:5173',
     ]
   }
-  
+
   // In production, only allow your actual domain
   return ['https://yourdomain.com'] // Replace with actual domain
 }
@@ -300,25 +310,25 @@ export interface SecurityEvent {
 
 export class SecurityLogger {
   private static events: SecurityEvent[] = []
-  
+
   static log(event: SecurityEvent): void {
     this.events.push(event)
-    
+
     // In production, send to external logging service
     if (env.NODE_ENV === 'production') {
       console.warn('[SECURITY]', JSON.stringify(event))
     }
-    
+
     // Keep only last 1000 events in memory
     if (this.events.length > 1000) {
       this.events.shift()
     }
   }
-  
-  static getRecentEvents(limit: number = 50): SecurityEvent[] {
+
+  static getRecentEvents(limit = 50): SecurityEvent[] {
     return this.events.slice(-limit)
   }
-  
+
   static getEventsByType(type: SecurityEvent['type']): SecurityEvent[] {
     return this.events.filter(event => event.type === type)
   }

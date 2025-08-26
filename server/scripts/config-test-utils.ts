@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Configuration Testing Utilities
- * 
+ *
  * This module provides utilities for testing configuration across different environments
  * without ES module caching issues.
  */
@@ -18,14 +18,10 @@ const testEnvSchema = z.object({
   SESSION_SECRET: z.string().min(32).optional(),
   CORS_ORIGINS: z.string().optional(),
   LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug', 'silent']).default('info'),
-  MOCK_GITHUB_API: z.preprocess(
-    (val) => val === 'true' || val === true,
-    z.boolean().default(false)
-  ).optional(),
-  DEBUG: z.preprocess(
-    (val) => val === 'true' || val === true,
-    z.boolean().default(false)
-  ),
+  MOCK_GITHUB_API: z
+    .preprocess(val => val === 'true' || val === true, z.boolean().default(false))
+    .optional(),
+  DEBUG: z.preprocess(val => val === 'true' || val === true, z.boolean().default(false)),
 })
 
 export type TestEnvConfig = z.infer<typeof testEnvSchema>
@@ -35,7 +31,7 @@ export type TestEnvConfig = z.infer<typeof testEnvSchema>
  */
 export function createTestConfig(envVars: Record<string, string>) {
   const env = testEnvSchema.parse(envVars)
-  
+
   const isDev = env.NODE_ENV === 'development'
   const isProd = env.NODE_ENV === 'production'
   const isTest = env.NODE_ENV === 'test'
@@ -82,8 +78,8 @@ export function createTestConfig(envVars: Record<string, string>) {
     },
 
     security: {
-      corsOrigins: env.CORS_ORIGINS?.split(',').map(o => o.trim()) || 
-                   (isDev ? ['http://localhost:5173'] : []),
+      corsOrigins:
+        env.CORS_ORIGINS?.split(',').map(o => o.trim()) || (isDev ? ['http://localhost:5173'] : []),
       sessionSecret: env.SESSION_SECRET,
       rateLimiting: {
         requests: 100,
@@ -140,9 +136,9 @@ export const testEnvironments = {
     NODE_ENV: 'development',
     PORT: '3001',
     DEBUG: 'true',
-    LOG_LEVEL: 'debug'
+    LOG_LEVEL: 'debug',
   },
-  
+
   production: {
     NODE_ENV: 'production',
     PORT: '3001',
@@ -150,16 +146,16 @@ export const testEnvironments = {
     API_URL: 'https://api.example.com',
     SESSION_SECRET: 'test-secret-key-32-characters-long',
     CORS_ORIGINS: 'https://example.com,https://www.example.com',
-    LOG_LEVEL: 'info'
+    LOG_LEVEL: 'info',
   },
-  
+
   test: {
     NODE_ENV: 'test',
     PORT: '3001',
     LOG_LEVEL: 'silent',
     DATABASE_URL: ':memory:',
-    MOCK_GITHUB_API: 'true'
-  }
+    MOCK_GITHUB_API: 'true',
+  },
 }
 
 export default { createTestConfig, testEnvironments }

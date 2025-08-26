@@ -10,7 +10,7 @@ const MockTerminalPane = () => {
   const [input, setInput] = React.useState('')
   const [isExecuting, setIsExecuting] = React.useState(false)
   const [lastCommandStatus, setLastCommandStatus] = React.useState<'success' | 'error' | null>(null)
-  
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       setIsExecuting(true)
@@ -20,26 +20,24 @@ const MockTerminalPane = () => {
       }, 100)
     }
   }
-  
+
   return (
-    <div 
+    <div
       className='terminal-pane'
       role='application'
       aria-label='Interactive Terminal'
       aria-describedby='terminal-help terminal-status'
     >
-      <div 
-        id='terminal-status' 
-        className='sr-only' 
-        aria-live='polite' 
-        aria-atomic='true'
-      >
-        {isExecuting ? 'Command executing...' : 
-         lastCommandStatus === 'error' ? 'Last command failed' : 
-         lastCommandStatus === 'success' ? 'Last command completed successfully' : 
-         'Terminal ready for commands'}
+      <div id='terminal-status' className='sr-only' aria-live='polite' aria-atomic='true'>
+        {isExecuting
+          ? 'Command executing...'
+          : lastCommandStatus === 'error'
+            ? 'Last command failed'
+            : lastCommandStatus === 'success'
+              ? 'Last command completed successfully'
+              : 'Terminal ready for commands'}
       </div>
-      
+
       <div
         className='terminal-output'
         role='log'
@@ -48,7 +46,7 @@ const MockTerminalPane = () => {
       >
         {/* Terminal output would go here */}
       </div>
-      
+
       <div className='command-input'>
         <span aria-hidden='true'>user@portfolio:~$</span>
         <input
@@ -65,12 +63,8 @@ const MockTerminalPane = () => {
         />
         <span className='cursor-block' aria-hidden='true' />
       </div>
-      
-      <div 
-        id='terminal-help' 
-        role='complementary'
-        aria-label='Terminal keyboard shortcuts'
-      >
+
+      <div id='terminal-help' role='complementary' aria-label='Terminal keyboard shortcuts'>
         <span>
           <kbd aria-label='Tab key'>Tab</kbd> autocomplete
         </span>
@@ -87,19 +81,21 @@ const MockFloatingDock = ({ onRestoreTerminal }: { onRestoreTerminal?: () => voi
         <button aria-label='Minimize window'>Minimize</button>
         <button aria-label='Maximize window'>Maximize</button>
       </div>
-      
+
       <div role='navigation' aria-label='Main navigation dock'>
         <div role='group' aria-labelledby='nav-heading'>
           <div id='nav-heading'>Navigation</div>
           <button aria-label='Navigate to Home'>Home</button>
           <button aria-label='Navigate to Projects'>Projects</button>
         </div>
-        
+
         <div role='separator' aria-hidden='true' />
-        
+
         <div role='group' aria-labelledby='system-heading'>
           <div id='system-heading'>System</div>
-          <button aria-label='System: Terminal' onClick={onRestoreTerminal}>Terminal</button>
+          <button aria-label='System: Terminal' onClick={onRestoreTerminal}>
+            Terminal
+          </button>
         </div>
       </div>
     </div>
@@ -143,9 +139,9 @@ describe('Accessibility Features', () => {
 
     it('should announce command execution to screen readers', async () => {
       render(<MockTerminalPane />)
-      
+
       const input = screen.getByRole('textbox')
-      
+
       // Type and execute a command
       fireEvent.change(input, { target: { value: 'help' } })
       fireEvent.keyDown(input, { key: 'Enter' })
@@ -159,25 +155,25 @@ describe('Accessibility Features', () => {
 
     it('should indicate errors with aria-invalid', async () => {
       render(<MockTerminalPane />)
-      
+
       const input = screen.getByRole('textbox')
-      
+
       // Initially should not be invalid
       expect(input).toHaveAttribute('aria-invalid', 'false')
     })
 
     it('should disable input during command execution', async () => {
       render(<MockTerminalPane />)
-      
+
       const input = screen.getByRole('textbox')
-      
+
       // Execute a command
       fireEvent.change(input, { target: { value: 'test' } })
       fireEvent.keyDown(input, { key: 'Enter' })
-      
+
       // Input should be disabled briefly
       expect(input).toBeDisabled()
-      
+
       // Wait for command to complete
       await waitFor(() => {
         expect(input).not.toBeDisabled()
@@ -226,10 +222,10 @@ describe('Accessibility Features', () => {
       // Check that buttons are focusable
       const closeButton = screen.getByRole('button', { name: /close window/i })
       expect(closeButton).toBeInTheDocument()
-      
+
       const minimizeButton = screen.getByRole('button', { name: /minimize window/i })
       expect(minimizeButton).toBeInTheDocument()
-      
+
       const maximizeButton = screen.getByRole('button', { name: /maximize window/i })
       expect(maximizeButton).toBeInTheDocument()
     })
@@ -256,7 +252,7 @@ describe('Accessibility Features', () => {
       render(<SkipLinks />)
 
       const skipLink = screen.getByText('Skip to main terminal')
-      
+
       // Click skip link
       fireEvent.click(skipLink)
 
@@ -288,7 +284,7 @@ describe('Accessibility Features', () => {
 
     it('should handle escape key when onEscape is provided', () => {
       const mockEscape = () => {}
-      
+
       const TestComponent = () => {
         return (
           <FocusManager onEscape={mockEscape}>
@@ -323,9 +319,9 @@ describe('Accessibility Features', () => {
 
       const buttons = screen.getAllByRole('button')
       expect(buttons).toHaveLength(2)
-      
+
       // Test Tab key handling
-      fireEvent.keyDown(buttons[0], { key: 'Tab' })
+      fireEvent.keyDown(buttons[0]!, { key: 'Tab' })
       expect(buttons[0]).toBeInTheDocument()
     })
   })
@@ -336,8 +332,8 @@ describe('Accessibility Features', () => {
         return (
           <FocusManager>
             <div>
-              <button data-testid="button1">Button 1</button>
-              <button data-testid="button2">Button 2</button>
+              <button data-testid='button1'>Button 1</button>
+              <button data-testid='button2'>Button 2</button>
             </div>
           </FocusManager>
         )
@@ -350,7 +346,7 @@ describe('Accessibility Features', () => {
 
       // Test F6 key handling
       fireEvent.keyDown(button1, { key: 'F6' })
-      
+
       // Verify components exist (basic functionality test)
       expect(button1).toBeInTheDocument()
       expect(button2).toBeInTheDocument()

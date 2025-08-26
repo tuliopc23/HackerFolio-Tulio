@@ -5,14 +5,14 @@ import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import { Elysia, type Context } from 'elysia'
 
 import { orm } from './db/drizzle'
+import {
+  applySecurityHeaders,
+  getCorsOrigins,
+  rateLimit,
+  defaultRateLimitOptions,
+} from './lib/security'
 import { env } from './lib/validation'
 import { apiLogger } from './middleware/logging'
-import { 
-  applySecurityHeaders, 
-  getCorsOrigins, 
-  rateLimit, 
-  defaultRateLimitOptions 
-} from './lib/security'
 import { apiRoutes } from './routes/api'
 import { terminalRoutes } from './routes/terminal'
 
@@ -25,36 +25,38 @@ try {
   // Migration already applied or table exists
 }
 
-// Security middleware
+// Security middleware using derive pattern
 const securityMiddleware = (context: any) => {
   // Apply security headers
   applySecurityHeaders(context)
-  
+
   // Apply rate limiting for all requests
   const rateLimitPassed = rateLimit(defaultRateLimitOptions)(context)
-  
+
   if (!rateLimitPassed) {
     context.set.status = 429
     return {
       success: false,
       error: {
         code: 'RATE_LIMIT_EXCEEDED',
-        message: 'Too many requests, please try again later'
-      }
+        message: 'Too many requests, please try again later',
+      },
     }
   }
-  
-  return
+
+  return {}
 }
 
 const app = new Elysia()
-  .use(cors({
-    origin: getCorsOrigins(),
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-  }))
-  .onBeforeHandle(securityMiddleware)
+  .use(
+    cors({
+      origin: getCorsOrigins(),
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+    })
+  )
+  .derive(securityMiddleware)
   .use(apiLogger)
   .use(apiRoutes)
   .use(terminalRoutes)
@@ -110,8 +112,8 @@ if (process.env.NODE_ENV === 'production') {
           const script = `\n<script>window.__INITIAL_DATA__ = ${JSON.stringify(data).replace(/</g, '\\u003c')};</script>`
           rendered = rendered.replace('</body>', `${script}\n</body>`)
         }
-        set.headers = { 
-          'Content-Type': 'text/html; charset=utf-8'
+        set.headers = {
+          'Content-Type': 'text/html; charset=utf-8',
         }
         return rendered
       } else {

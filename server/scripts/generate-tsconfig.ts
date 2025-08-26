@@ -1,14 +1,15 @@
 #!/usr/bin/env bun
 /**
  * TypeScript Configuration Generator
- * 
+ *
  * This script generates a TypeScript configuration that is perfectly aligned
  * with the central configuration system, ensuring 100% consistency across
  * all tools and environments.
  */
 
-import { writeFileSync, readFileSync } from 'node:fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+
 import { config } from '../../shared/config'
 
 interface TSConfig {
@@ -19,22 +20,13 @@ interface TSConfig {
 }
 
 function generateTypeScriptConfig(): TSConfig {
-  const appConfig = config.get('app')
   const buildConfig = config.get('build')
-  const pathsConfig = config.get('paths')
   const toolsConfig = config.get('tools')
-  const isDev = config.isDevelopment()
   const isTest = config.isTest()
   const isProd = config.isProduction()
 
   return {
-    include: [
-      'client/src/**/*',
-      'shared/**/*', 
-      'server/**/*',
-      'test-config/**/*',
-      'reset.d.ts'
-    ],
+    include: ['client/src/**/*', 'shared/**/*', 'server/**/*', 'test-config/**/*', 'reset.d.ts'],
     exclude: [
       'node_modules',
       'build',
@@ -42,7 +34,7 @@ function generateTypeScriptConfig(): TSConfig {
       'drizzle/**/*',
       'coverage',
       '.vite/**/*',
-      'tmp/**/*'
+      'tmp/**/*',
     ],
     compilerOptions: {
       // Build options - aligned with central config
@@ -114,55 +106,46 @@ function generateTypeScriptConfig(): TSConfig {
         'vite/client',
         'bun',
         '@total-typescript/ts-reset',
-        ...(isTest ? ['vitest/globals'] : [])
-      ]
+        ...(isTest ? ['vitest/globals'] : []),
+      ],
     },
     'ts-node': {
-      esm: true
-    }
+      esm: true,
+    },
   }
 }
 
 function updateTSConfigFile(): void {
   const projectRoot = process.cwd()
   const tsconfigPath = join(projectRoot, 'tsconfig.json')
-  
+
   try {
-    // Read current config to preserve any manual customizations
-    const currentContent = readFileSync(tsconfigPath, 'utf-8')
-    
     // Generate new config
     const newConfig = generateTypeScriptConfig()
-    
+
     // Create header comment explaining the generation
     const header = `/*
  * TypeScript Configuration
- * 
+ *
  * This file is managed by the central configuration system.
  * To modify TypeScript settings, update shared/config.ts
- * 
+ *
  * Generated: ${new Date().toISOString()}
  * Environment: ${config.get('app').environment}
  */
 `
-    
+
     // Convert to formatted JSON with comments
     const configJson = JSON.stringify(newConfig, null, 2)
-    
-    // Preserve the structure but ensure alignment
-    const formattedConfig = configJson
-      .replace(/"(\w+)":/g, '$1:') // Remove quotes from keys for readability
-      .replace(/,$/gm, ',') // Ensure trailing commas
-    
-    const finalContent = header + '\\n' + configJson
-    
+
+    const finalContent = header + '\n' + configJson
+
     // Write the updated configuration
     writeFileSync(tsconfigPath, finalContent, 'utf-8')
-    
+
     console.log('✅ TypeScript configuration updated successfully')
     console.log(`📍 Configuration aligned with environment: ${config.get('app').environment}`)
     console.log(`🔗 Path mappings: ${Object.keys(config.get('tools').typescript.paths).join(', ')}`)
-    
   } catch (error) {
     console.error('❌ Failed to update TypeScript configuration:', error)
     process.exit(1)
@@ -172,35 +155,34 @@ function updateTSConfigFile(): void {
 function validateTSConfigAlignment(): boolean {
   try {
     const tsconfigPath = join(process.cwd(), 'tsconfig.json')
-    const currentConfig = JSON.parse(readFileSync(tsconfigPath, 'utf-8'))
+    const currentConfigData: any = JSON.parse(readFileSync(tsconfigPath, 'utf-8'))
     const expectedConfig = generateTypeScriptConfig()
-    
+
     // Check path mappings alignment
-    const currentPaths = currentConfig.compilerOptions?.paths || {}
+    const currentPaths = currentConfigData.compilerOptions?.paths || {}
     const expectedPaths = expectedConfig.compilerOptions.paths
-    
+
     const pathsMatch = JSON.stringify(currentPaths) === JSON.stringify(expectedPaths)
-    
+
     if (!pathsMatch) {
       console.log('⚠️  TypeScript paths not aligned with central config')
       console.log('Current paths:', currentPaths)
       console.log('Expected paths:', expectedPaths)
       return false
     }
-    
+
     // Check base URL alignment
-    const currentBaseUrl = currentConfig.compilerOptions?.baseUrl
+    const currentBaseUrl = currentConfigData.compilerOptions?.baseUrl
     const expectedBaseUrl = expectedConfig.compilerOptions.baseUrl
-    
+
     if (currentBaseUrl !== expectedBaseUrl) {
       console.log('⚠️  TypeScript baseUrl not aligned with central config')
       console.log(`Current: ${currentBaseUrl}, Expected: ${expectedBaseUrl}`)
       return false
     }
-    
+
     console.log('✅ TypeScript configuration is aligned with central config')
     return true
-    
   } catch (error) {
     console.error('❌ Failed to validate TypeScript configuration:', error)
     return false
@@ -217,10 +199,12 @@ if (process.argv.includes('--validate')) {
   console.log('TypeScript Configuration Generator')
   console.log('')
   console.log('Usage:')
-  console.log('  bun run server/scripts/generate-tsconfig.ts --validate    # Validate current config')
+  console.log(
+    '  bun run server/scripts/generate-tsconfig.ts --validate    # Validate current config'
+  )
   console.log('  bun run server/scripts/generate-tsconfig.ts --update      # Update tsconfig.json')
   console.log('')
-  
+
   // Show current status
   const isValid = validateTSConfigAlignment()
   if (!isValid) {

@@ -1,6 +1,7 @@
 import { describe, test, expect } from 'vitest'
-import { render, screen } from '@/test-utils/render-with-providers'
+
 import { useTheme } from '@/components/terminal/theme-context'
+import { render, screen } from '@/test-utils/render-with-providers'
 
 // Simple test component
 function TestComponent() {

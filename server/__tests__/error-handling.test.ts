@@ -22,12 +22,9 @@ describe('Error Handling System', () => {
 
   describe('ApiError', () => {
     test('creates error with correct properties', () => {
-      const error = new ApiError(
-        ApiErrorCode.VALIDATION_ERROR,
-        'Test error message',
-        400,
-        { field: 'test' }
-      )
+      const error = new ApiError(ApiErrorCode.VALIDATION_ERROR, 'Test error message', 400, {
+        field: 'test',
+      })
 
       expect(error.code).toBe(ApiErrorCode.VALIDATION_ERROR)
       expect(error.message).toBe('Test error message')
@@ -55,12 +52,9 @@ describe('Error Handling System', () => {
 
   describe('Error Response Creation', () => {
     test('creates error response with correct format', () => {
-      const error = new ApiError(
-        ApiErrorCode.NOT_FOUND,
-        'Resource not found',
-        404,
-        { resource: 'user' }
-      )
+      const error = new ApiError(ApiErrorCode.NOT_FOUND, 'Resource not found', 404, {
+        resource: 'user',
+      })
       const response = createErrorResponse(error)
 
       expect(response.success).toBe(false)
@@ -191,10 +185,10 @@ describe('Error Handling System', () => {
         id: number
         name: string
       }
-      
+
       const data: TestData = { id: 1, name: 'Test' }
       const response = createSuccessResponse(data)
-      
+
       // TypeScript should infer the correct type
       expect(response.data.id).toBe(1)
       expect(response.data.name).toBe('Test')
@@ -203,7 +197,7 @@ describe('Error Handling System', () => {
     test('error response maintains consistent structure', () => {
       const error = createValidationError('Test error')
       const response = createErrorResponse(error)
-      
+
       // All error responses should have the same structure
       expect(typeof response.success).toBe('boolean')
       expect(typeof response.error.code).toBe('string')

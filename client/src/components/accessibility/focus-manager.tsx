@@ -23,11 +23,7 @@ interface FocusManagerProps {
  * Focus manager that handles focus trapping, navigation, and restoration
  * specifically designed for terminal interfaces
  */
-export function FocusManager({ 
-  children, 
-  initialTrapFocus = false,
-  onEscape 
-}: FocusManagerProps) {
+export function FocusManager({ children, initialTrapFocus = false, onEscape }: FocusManagerProps) {
   const focusableElements = useRef<Map<string, HTMLElement>>(new Map())
   const focusHistory = useRef<string[]>([])
   const currentFocusIndex = useRef<number>(-1)
@@ -53,7 +49,7 @@ export function FocusManager({
     const element = focusableElements.current.get(id)
     if (element) {
       element.focus()
-      
+
       // Update focus history
       const existingIndex = focusHistory.current.indexOf(id)
       if (existingIndex > -1) {
@@ -61,7 +57,7 @@ export function FocusManager({
       }
       focusHistory.current.push(id)
       currentFocusIndex.current = focusHistory.current.length - 1
-      
+
       return true
     }
     return false
@@ -80,7 +76,7 @@ export function FocusManager({
       .sort((a, b) => {
         const aRect = a.getBoundingClientRect()
         const bRect = b.getBoundingClientRect()
-        
+
         // Sort by top position first, then left position
         if (Math.abs(aRect.top - bRect.top) > 10) {
           return aRect.top - bRect.top
@@ -95,14 +91,14 @@ export function FocusManager({
 
     const currentElement = document.activeElement as HTMLElement
     const currentIndex = orderedElements.indexOf(currentElement)
-    
+
     let nextIndex: number
     if (currentIndex === -1) {
       nextIndex = 0
     } else {
       nextIndex = (currentIndex + 1) % orderedElements.length
     }
-    
+
     const nextElement = orderedElements[nextIndex]
     if (nextElement) {
       nextElement.focus()
@@ -117,14 +113,14 @@ export function FocusManager({
 
     const currentElement = document.activeElement as HTMLElement
     const currentIndex = orderedElements.indexOf(currentElement)
-    
+
     let prevIndex: number
     if (currentIndex === -1) {
       prevIndex = orderedElements.length - 1
     } else {
       prevIndex = currentIndex === 0 ? orderedElements.length - 1 : currentIndex - 1
     }
-    
+
     const prevElement = orderedElements[prevIndex]
     if (prevElement) {
       prevElement.focus()
@@ -147,41 +143,46 @@ export function FocusManager({
     }
   }, [])
 
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    switch (event.key) {
-      case 'Escape':
-        if (onEscape) {
-          event.preventDefault()
-          onEscape()
-        }
-        break
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      switch (event.key) {
+        case 'Escape':
+          if (onEscape) {
+            event.preventDefault()
+            onEscape()
+          }
+          break
 
-      case 'Tab':
-        if (trapFocus.current) {
+        case 'Tab':
+          if (trapFocus.current) {
+            event.preventDefault()
+            if (event.shiftKey) {
+              focusPrevious()
+            } else {
+              focusNext()
+            }
+          }
+          break
+
+        case 'F6':
+          // Common accessibility shortcut for moving between major sections
           event.preventDefault()
           if (event.shiftKey) {
             focusPrevious()
           } else {
             focusNext()
           }
-        }
-        break
-
-      case 'F6':
-        // Common accessibility shortcut for moving between major sections
-        event.preventDefault()
-        if (event.shiftKey) {
-          focusPrevious()
-        } else {
-          focusNext()
-        }
-        break
-    }
-  }, [onEscape, focusNext, focusPrevious])
+          break
+      }
+    },
+    [onEscape, focusNext, focusPrevious]
+  )
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
   }, [handleKeyDown])
 
   const contextValue: FocusManagerContextType = {
@@ -196,9 +197,7 @@ export function FocusManager({
   }
 
   return (
-    <FocusManagerContext.Provider value={contextValue}>
-      {children}
-    </FocusManagerContext.Provider>
+    <FocusManagerContext.Provider value={contextValue}>{children}</FocusManagerContext.Provider>
   )
 }
 
@@ -219,7 +218,9 @@ export function useFocusRegistration(id: string, elementRef: React.RefObject<HTM
   useEffect(() => {
     if (elementRef.current) {
       registerFocusable(id, elementRef.current)
-      return () => unregisterFocusable(id)
+      return () => {
+        unregisterFocusable(id)
+      }
     }
     return undefined
   }, [id, elementRef, registerFocusable, unregisterFocusable])

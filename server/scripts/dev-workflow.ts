@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Enhanced Development Workflow Script
- * 
+ *
  * This script provides an optimized development experience with:
  * - Intelligent startup sequence
  * - Health checks and dependency validation
@@ -10,9 +10,10 @@
  * - Hot reload coordination
  */
 
-import { spawn, ChildProcess } from 'node:child_process'
-import { writeFileSync, readFileSync, existsSync } from 'node:fs'
+import { type ChildProcess, spawn } from 'node:child_process'
+import { existsSync } from 'node:fs'
 import { join } from 'node:path'
+
 import { config } from '../../shared/config'
 
 // ANSI colors for terminal output
@@ -65,7 +66,7 @@ interface ProcessInfo {
 
 class DevelopmentWorkflow {
   private projectRoot: string
-  private processes: Map<string, ProcessInfo> = new Map()
+  private processes = new Map<string, ProcessInfo>()
   private shuttingDown = false
 
   constructor() {
@@ -78,7 +79,7 @@ class DevelopmentWorkflow {
     const shutdown = () => {
       if (this.shuttingDown) return
       this.shuttingDown = true
-      
+
       console.log('')
       logInfo('Shutting down development servers...')
       this.stopAllProcesses()
@@ -92,17 +93,16 @@ class DevelopmentWorkflow {
 
   async run(): Promise<void> {
     logHeader('HackerFolio Development Environment')
-    
+
     try {
       // Pre-flight checks
       await this.performPreflightChecks()
-      
+
       // Start services in optimal order
       await this.startDevelopmentServices()
-      
+
       // Monitor processes
       this.monitorProcesses()
-      
     } catch (error) {
       logError(`Development workflow failed: ${error}`)
       this.stopAllProcesses()
@@ -112,19 +112,18 @@ class DevelopmentWorkflow {
 
   private async performPreflightChecks(): Promise<void> {
     logHeader('Pre-flight Configuration Checks')
-    
+
     // Validate environment configuration
     logInfo('Validating environment configuration...')
     try {
       const appConfig = config.get('app')
       const devConfig = config.get('development')
       const securityConfig = config.get('security')
-      
+
       logSuccess(`Environment: ${appConfig.environment}`)
       logSuccess(`Server port: ${appConfig.port}`)
       logSuccess(`HMR: ${devConfig.hmr ? 'enabled' : 'disabled'}`)
       logSuccess(`CORS origins: ${securityConfig.corsOrigins.join(', ')}`)
-      
     } catch (error) {
       logError(`Configuration validation failed: ${error}`)
       throw error
@@ -141,7 +140,7 @@ class DevelopmentWorkflow {
     // Check port availability
     logInfo('Checking port availability...')
     await this.checkPortAvailability()
-    
+
     logSuccess('All pre-flight checks passed!')
   }
 
@@ -151,7 +150,7 @@ class DevelopmentWorkflow {
       'vite.config.ts',
       'tsconfig.json',
       'server/app.ts',
-      'client/src/entry-client.tsx'
+      'client/src/entry-client.tsx',
     ]
 
     for (const file of criticalFiles) {
@@ -160,7 +159,7 @@ class DevelopmentWorkflow {
         throw new Error(`Critical file missing: ${file}`)
       }
     }
-    
+
     logSuccess('All critical dependencies present')
   }
 
@@ -168,19 +167,18 @@ class DevelopmentWorkflow {
     try {
       const viteConfig = config.getViteConfig()
       const tsConfig = config.getTypeScriptPaths()
-      
+
       // Check Vite configuration
       if (!viteConfig.root || !viteConfig.server || !viteConfig.resolve) {
         throw new Error('Vite configuration incomplete')
       }
-      
+
       // Check TypeScript configuration
       if (!tsConfig.baseUrl || !tsConfig.paths) {
         throw new Error('TypeScript configuration incomplete')
       }
-      
+
       logSuccess('Build configuration valid')
-      
     } catch (error) {
       throw new Error(`Build configuration validation failed: ${error}`)
     }
@@ -190,14 +188,14 @@ class DevelopmentWorkflow {
     const appConfig = config.get('app')
     const serverPort = appConfig.port
     const vitePort = 5173 // Default Vite dev server port
-    
+
     // Check server port
     if (await this.isPortInUse(serverPort)) {
       logWarning(`Port ${serverPort} is already in use. Server will handle this.`)
     } else {
       logSuccess(`Server port ${serverPort} is available`)
     }
-    
+
     // Check Vite port
     if (await this.isPortInUse(vitePort)) {
       logWarning(`Port ${vitePort} is already in use. Vite will find alternative.`)
@@ -207,14 +205,14 @@ class DevelopmentWorkflow {
   }
 
   private async isPortInUse(port: number): Promise<boolean> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       try {
         const server = Bun.serve({
           port,
           hostname: 'localhost',
-          fetch: () => new Response('test')
+          fetch: () => new Response('test'),
         })
-        
+
         // If we can start the server, the port is available
         server.stop()
         resolve(false)
@@ -227,30 +225,30 @@ class DevelopmentWorkflow {
 
   private async startDevelopmentServices(): Promise<void> {
     logHeader('Starting Development Services')
-    
+
     // Start backend server first
     await this.startBackendServer()
-    
+
     // Wait for backend to be ready
     await this.waitForService('backend', config.get('app').port, 10000)
-    
+
     // Start frontend development server
     await this.startFrontendServer()
-    
+
     // Wait for frontend to be ready
     await this.waitForService('frontend', 5173, 15000)
-    
+
     logSuccess('All development services started successfully!')
     this.showDevelopmentInfo()
   }
 
   private async startBackendServer(): Promise<void> {
     logInfo('Starting backend server...')
-    
+
     const serverProcess = spawn('bun', ['--hot', 'server/app.ts'], {
       cwd: this.projectRoot,
       stdio: ['inherit', 'pipe', 'pipe'],
-      env: { ...process.env }
+      env: { ...process.env },
     })
 
     this.processes.set('backend', {
@@ -259,30 +257,30 @@ class DevelopmentWorkflow {
       port: config.get('app').port,
       status: 'starting',
       startTime: Date.now(),
-      restartCount: 0
+      restartCount: 0,
     })
 
     // Handle process output
-    serverProcess.stdout?.on('data', (data) => {
+    serverProcess.stdout?.on('data', data => {
       const output = data.toString().trim()
       if (output) {
         console.log(colorize(`[SERVER] ${output}`, 'green'))
       }
     })
 
-    serverProcess.stderr?.on('data', (data) => {
+    serverProcess.stderr?.on('data', data => {
       const output = data.toString().trim()
       if (output && !output.includes('ExperimentalWarning')) {
         console.log(colorize(`[SERVER] ${output}`, 'yellow'))
       }
     })
 
-    serverProcess.on('error', (error) => {
+    serverProcess.on('error', error => {
       logError(`Backend server error: ${error}`)
       this.processes.get('backend')!.status = 'failed'
     })
 
-    serverProcess.on('exit', (code) => {
+    serverProcess.on('exit', code => {
       const processInfo = this.processes.get('backend')!
       if (code !== 0 && !this.shuttingDown) {
         logError(`Backend server exited with code ${code}`)
@@ -296,11 +294,11 @@ class DevelopmentWorkflow {
 
   private async startFrontendServer(): Promise<void> {
     logInfo('Starting frontend development server...')
-    
+
     const viteProcess = spawn('bun', ['run', 'dev:client'], {
       cwd: this.projectRoot,
       stdio: ['inherit', 'pipe', 'pipe'],
-      env: { ...process.env }
+      env: { ...process.env },
     })
 
     this.processes.set('frontend', {
@@ -309,30 +307,30 @@ class DevelopmentWorkflow {
       port: 5173,
       status: 'starting',
       startTime: Date.now(),
-      restartCount: 0
+      restartCount: 0,
     })
 
     // Handle process output
-    viteProcess.stdout?.on('data', (data) => {
+    viteProcess.stdout?.on('data', data => {
       const output = data.toString().trim()
       if (output) {
         console.log(colorize(`[VITE] ${output}`, 'cyan'))
       }
     })
 
-    viteProcess.stderr?.on('data', (data) => {
+    viteProcess.stderr?.on('data', data => {
       const output = data.toString().trim()
       if (output && !output.includes('ExperimentalWarning')) {
         console.log(colorize(`[VITE] ${output}`, 'magenta'))
       }
     })
 
-    viteProcess.on('error', (error) => {
+    viteProcess.on('error', error => {
       logError(`Frontend server error: ${error}`)
       this.processes.get('frontend')!.status = 'failed'
     })
 
-    viteProcess.on('exit', (code) => {
+    viteProcess.on('exit', code => {
       const processInfo = this.processes.get('frontend')!
       if (code !== 0 && !this.shuttingDown) {
         logError(`Frontend server exited with code ${code}`)
@@ -346,14 +344,14 @@ class DevelopmentWorkflow {
 
   private async waitForService(serviceName: string, port: number, timeout: number): Promise<void> {
     const startTime = Date.now()
-    
+
     while (Date.now() - startTime < timeout) {
       try {
         const response = await fetch(`http://localhost:${port}`, {
           method: 'GET',
-          signal: AbortSignal.timeout(1000)
+          signal: AbortSignal.timeout(1000),
         })
-        
+
         if (response.ok || response.status < 500) {
           this.processes.get(serviceName === 'backend' ? 'backend' : 'frontend')!.status = 'running'
           logSuccess(`${serviceName} service is ready on port ${port}`)
@@ -362,10 +360,10 @@ class DevelopmentWorkflow {
       } catch {
         // Service not ready yet, continue waiting
       }
-      
+
       await new Promise(resolve => setTimeout(resolve, 500))
     }
-    
+
     throw new Error(`${serviceName} service failed to start within ${timeout}ms`)
   }
 
@@ -374,10 +372,10 @@ class DevelopmentWorkflow {
     if (!processInfo || this.shuttingDown) return
 
     processInfo.restartCount++
-    
+
     if (processInfo.restartCount <= 3) {
       logWarning(`Restarting ${processInfo.name} (attempt ${processInfo.restartCount}/3)...`)
-      
+
       setTimeout(() => {
         if (processName === 'backend') {
           this.startBackendServer()
@@ -397,7 +395,7 @@ class DevelopmentWorkflow {
         clearInterval(healthCheckInterval)
         return
       }
-      
+
       this.performHealthCheck()
     }, 30000)
 
@@ -411,9 +409,9 @@ class DevelopmentWorkflow {
         try {
           const response = await fetch(`http://localhost:${processInfo.port}`, {
             method: 'GET',
-            signal: AbortSignal.timeout(5000)
+            signal: AbortSignal.timeout(5000),
           })
-          
+
           if (!response.ok && response.status >= 500) {
             logWarning(`${processInfo.name} health check failed`)
           }
@@ -429,7 +427,7 @@ class DevelopmentWorkflow {
   private showDevelopmentInfo(): void {
     const appConfig = config.get('app')
     const devConfig = config.get('development')
-    
+
     console.log('')
     logHeader('Development Environment Ready')
     console.log('')
@@ -444,11 +442,11 @@ class DevelopmentWorkflow {
   }
 
   private stopAllProcesses(): void {
-    for (const [name, processInfo] of this.processes) {
+    for (const [, processInfo] of this.processes) {
       if (processInfo.process && processInfo.status !== 'stopped') {
         logInfo(`Stopping ${processInfo.name}...`)
         processInfo.process.kill('SIGTERM')
-        
+
         // Force kill after 5 seconds if process doesn't stop gracefully
         setTimeout(() => {
           if (processInfo.process && !processInfo.process.killed) {

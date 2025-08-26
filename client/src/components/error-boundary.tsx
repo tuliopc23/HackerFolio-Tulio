@@ -43,7 +43,7 @@ export class TerminalErrorBoundary extends Component<Props, State> {
     })
 
     // Log error to external service in production
-    // eslint-disable-next-line no-console
+    // eslint-disable-next-line no-console -- Intentional error logging for debugging
     console.error('TerminalErrorBoundary caught an error:', error, errorInfo)
 
     // Call optional error handler
@@ -213,7 +213,7 @@ export class TerminalErrorBoundary extends Component<Props, State> {
 // Hook version for functional components
 export function useErrorHandler() {
   return (error: Error, errorInfo?: ErrorInfo) => {
-    // eslint-disable-next-line no-console
+    // eslint-disable-next-line no-console -- Intentional error logging for debugging
     console.error('Error caught by useErrorHandler:', error, errorInfo)
     // You can integrate with error reporting services here
   }

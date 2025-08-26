@@ -129,8 +129,8 @@ export function useAccessibility({
       const focusableElements = getFocusableElements()
       if (focusableElements.length > 0) {
         focusableElements[0]?.focus()
-      } else if (containerRef.current) {
-        containerRef.current.focus()
+      } else {
+        containerRef.current?.focus()
       }
     }
   }, [autoFocus, restoreFocus, getFocusableElements])
@@ -217,8 +217,8 @@ export function useTerminalAccessibility() {
 export function useSkipLinks() {
   const skipToMain = useCallback(() => {
     const mainContent =
-      document.getElementById('main-terminal') ||
-      document.querySelector('[role="main"]') ||
+      document.getElementById('main-terminal') ??
+      document.querySelector('[role="main"]') ??
       document.querySelector('main')
 
     if (mainContent) {
@@ -229,7 +229,7 @@ export function useSkipLinks() {
 
   const skipToNavigation = useCallback(() => {
     const navigation =
-      document.querySelector('[role="navigation"]') || document.querySelector('nav')
+      document.querySelector('[role="navigation"]') ?? document.querySelector('nav')
 
     if (navigation) {
       ;(navigation as HTMLElement).focus()

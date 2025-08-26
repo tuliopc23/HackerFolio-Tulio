@@ -55,7 +55,7 @@ export default function TerminalPane() {
         { command: '', output: tip, timestamp: new Date() },
       ]
     })
-  }, [])
+  }, [announce])
 
   useEffect(() => {
     // Fetch server commands for autocomplete enrichment
@@ -496,7 +496,7 @@ export default function TerminalPane() {
             spellCheck='false'
             placeholder={isExecuting ? 'Command executing...' : 'Type a command...'}
             disabled={isExecuting}
-            role='textbox'
+
             aria-multiline='false'
           />
           <span

@@ -26,15 +26,15 @@ try {
 }
 
 // Security middleware using derive pattern
-const securityMiddleware = (context: any) => {
+const securityMiddleware = (context: Record<string, unknown>) => {
   // Apply security headers
-  applySecurityHeaders(context)
+  applySecurityHeaders(context as Context)
 
   // Apply rate limiting for all requests
-  const rateLimitPassed = rateLimit(defaultRateLimitOptions)(context)
+  const rateLimitPassed = rateLimit(defaultRateLimitOptions)(context as Context)
 
   if (!rateLimitPassed) {
-    context.set.status = 429
+    ;(context as Context).set.status = 429
     return {
       success: false,
       error: {
@@ -127,4 +127,6 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 app.listen({ port: PORT, hostname: '0.0.0.0' })
-// Server listening on port ${PORT}
+
+// eslint-disable-next-line no-console
+console.log(`Server listening on port ${String(PORT)}`)

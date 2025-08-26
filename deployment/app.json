@@ -2,13 +2,7 @@
   "name": "hackerfolio-tulio",
   "description": "Modern developer portfolio with GitHub integration",
   "repository": "https://github.com/your-username/hackerfolio-tulio",
-  "keywords": [
-    "portfolio",
-    "developer",
-    "react",
-    "typescript",
-    "bun"
-  ],
+  "keywords": ["portfolio", "developer", "react", "typescript", "bun"],
   "stack": "heroku-22",
   "buildpacks": [
     {

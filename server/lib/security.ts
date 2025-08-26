@@ -154,10 +154,10 @@ export function getClientId(context: Context): string {
   // In production, consider using a more sophisticated approach
   const forwarded = context.request.headers.get('x-forwarded-for')
   const ip =
-    forwarded?.split(',')[0]?.trim() || context.request.headers.get('x-real-ip') || 'unknown'
+    forwarded?.split(',')[0]?.trim() ?? context.request.headers.get('x-real-ip') ?? 'unknown'
 
   // Add user agent for additional uniqueness
-  const userAgent = context.request.headers.get('user-agent') || ''
+  const userAgent = context.request.headers.get('user-agent') ?? ''
   const userAgentHash = userAgent ? btoa(userAgent).slice(0, 8) : 'none'
 
   return `${ip}-${userAgentHash}`
@@ -217,68 +217,94 @@ export function rateLimit(options: RateLimitOptions = defaultRateLimitOptions) {
 /**
  * Input sanitization utilities
  */
-export class InputSanitizer {
+export const InputSanitizer = {
   /**
    * Sanitize string input by removing potentially dangerous characters
    */
-  static sanitizeString(input: string, maxLength = 1000): string {
+  sanitizeString(input: string, maxLength = 1000): string {
     if (typeof input !== 'string') {
       throw new Error('Input must be a string')
     }
 
-    return input
-      .trim()
-      .slice(0, maxLength)
-      .replace(/[<>\"'&]/g, '') // Remove basic XSS characters
-      .replace(/[\x00-\x1f\x7f-\x9f]/g, '') // Remove control characters
-  }
+    return (
+      input
+        .trim()
+        .slice(0, maxLength)
+        .replace(/[<>"'&]/g, '') // Remove basic XSS characters
+        // eslint-disable-next-line no-control-regex
+        .replace(/[\x00-\x1F\x7F-\x9F]/g, '')
+    ) // Remove control characters
+  },
 
   /**
    * Sanitize command input for terminal
    */
-  static sanitizeCommand(command: string): string {
+  sanitizeCommand(command: string): string {
     if (typeof command !== 'string') {
       throw new Error('Command must be a string')
     }
 
-    return command
-      .trim()
-      .slice(0, 200) // Reasonable command length limit
-      .replace(/[;&|`$(){}[\]\\]/g, '') // Remove shell metacharacters
-      .replace(/[\x00-\x1f\x7f-\x9f]/g, '') // Remove control characters
-      .replace(/\s+/g, ' ') // Normalize whitespace
-  }
+    return (
+      command
+        .trim()
+        .slice(0, 200) // Reasonable command length limit
+        .replace(/[;&|`$(){}[\]\\]/g, '') // Remove shell metacharacters
+        // eslint-disable-next-line no-control-regex
+        .replace(/[\x00-\x1F\x7F-\x9F]/g, '') // Remove control characters
+        .replace(/\s+/g, ' ')
+    ) // Normalize whitespace
+  },
 
   /**
    * Validate email format
    */
-  static validateEmail(email: string): boolean {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+  validateEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return emailRegex.test(email) && email.length <= 254
-  }
+  },
+
+  /**
+   * Sanitize URL input
+   */
+  sanitizeUrl(url: string): string {
+    if (typeof url !== 'string') {
+      throw new Error('URL must be a string')
+    }
+
+    try {
+      const parsed = new URL(url)
+      // Only allow http and https protocols
+      if (!['http:', 'https:'].includes(parsed.protocol)) {
+        throw new Error('Invalid protocol')
+      }
+      return parsed.toString()
+    } catch {
+      throw new Error('Invalid URL format')
+    }
+  },
 
   /**
    * Validate URL format
    */
-  static validateUrl(url: string): boolean {
+  validateUrl(url: string): boolean {
     try {
-      const parsedUrl = new URL(url)
-      return ['http:', 'https:'].includes(parsedUrl.protocol)
+      const parsed = new URL(url)
+      return ['http:', 'https:'].includes(parsed.protocol)
     } catch {
       return false
     }
-  }
+  },
 
   /**
    * Sanitize file path to prevent directory traversal
    */
-  static sanitizePath(path: string): string {
+  sanitizePath(path: string): string {
     return path
       .replace(/\.\./g, '') // Remove parent directory references
       .replace(/[^a-zA-Z0-9._/-]/g, '') // Allow only safe characters
       .replace(/\/+/g, '/') // Normalize slashes
       .slice(0, 255) // Reasonable path length limit
-  }
+  },
 }
 
 /**
@@ -308,28 +334,37 @@ export interface SecurityEvent {
   details: Record<string, unknown>
 }
 
-export class SecurityLogger {
-  private static events: SecurityEvent[] = []
+const securityEvents: SecurityEvent[] = []
 
-  static log(event: SecurityEvent): void {
-    this.events.push(event)
+export const SecurityLogger = {
+  log(event: SecurityEvent): void {
+    securityEvents.push(event)
+
+    // Keep only last 1000 events in memory
+    if (securityEvents.length > 1000) {
+      securityEvents.shift()
+    }
 
     // In production, send to external logging service
     if (env.NODE_ENV === 'production') {
-      console.warn('[SECURITY]', JSON.stringify(event))
+      // eslint-disable-next-line no-console
+      console.error('[SECURITY]', JSON.stringify(event))
     }
+  },
 
-    // Keep only last 1000 events in memory
-    if (this.events.length > 1000) {
-      this.events.shift()
-    }
-  }
+  getEvents(): SecurityEvent[] {
+    return [...securityEvents]
+  },
 
-  static getRecentEvents(limit = 50): SecurityEvent[] {
-    return this.events.slice(-limit)
-  }
+  clearEvents(): void {
+    securityEvents.length = 0
+  },
 
-  static getEventsByType(type: SecurityEvent['type']): SecurityEvent[] {
-    return this.events.filter(event => event.type === type)
-  }
+  getRecentEvents(limit = 50): SecurityEvent[] {
+    return securityEvents.slice(-limit)
+  },
+
+  getEventsByType(type: SecurityEvent['type']): SecurityEvent[] {
+    return securityEvents.filter(event => event.type === type)
+  },
 }

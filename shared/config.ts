@@ -152,6 +152,7 @@ export class ConfigurationManager {
   }
 
   public static getInstance(): ConfigurationManager {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!ConfigurationManager.instance) {
       ConfigurationManager.instance = new ConfigurationManager()
     }
@@ -186,32 +187,32 @@ export class ConfigurationManager {
       development: {
         hmr: isDev,
         proxyPort: this.envConfig.PORT,
-        watchPaths: this.envConfig.DEV_WATCH_PATHS?.split(',') || ['./shared', './server/lib'],
-        mockApis: this.envConfig.MOCK_GITHUB_API || false,
+        watchPaths: this.envConfig.DEV_WATCH_PATHS?.split(',') ?? ['./shared', './server/lib'],
+        mockApis: this.envConfig.MOCK_GITHUB_API ?? false,
         devServerHost: '0.0.0.0',
       },
 
       database: {
-        url: this.envConfig.DATABASE_URL || './database/portfolio.db',
+        url: this.envConfig.DATABASE_URL ?? './database/portfolio.db',
         dialect: 'sqlite',
         migrations: {
           directory: './drizzle',
           tableName: '__drizzle_migrations',
         },
         pool: {
-          min: this.envConfig.DB_POOL_MIN || 2,
-          max: this.envConfig.DB_POOL_MAX || 10,
+          min: this.envConfig.DB_POOL_MIN ?? 2,
+          max: this.envConfig.DB_POOL_MAX ?? 10,
         },
       },
 
       security: {
         corsOrigins:
-          this.envConfig.CORS_ORIGINS?.split(',').map(o => o.trim()) ||
+          this.envConfig.CORS_ORIGINS?.split(',').map(o => o.trim()) ??
           (isDev ? ['http://localhost:5173'] : []),
         ...(this.envConfig.SESSION_SECRET && { sessionSecret: this.envConfig.SESSION_SECRET }),
         rateLimiting: {
-          requests: this.envConfig.RATE_LIMIT_REQUESTS || 100,
-          windowMs: this.envConfig.RATE_LIMIT_WINDOW_MS || 900000,
+          requests: this.envConfig.RATE_LIMIT_REQUESTS ?? 100,
+          windowMs: this.envConfig.RATE_LIMIT_WINDOW_MS ?? 900000,
         },
         headers: {
           ...(this.envConfig.CSP_REPORT_URI && { csp: this.envConfig.CSP_REPORT_URI }),
@@ -239,7 +240,7 @@ export class ConfigurationManager {
           server: {
             proxy: {
               '/api': {
-                target: `http://localhost:${this.envConfig.PORT}`,
+                target: `http://localhost:${String(this.envConfig.PORT)}`,
                 changeOrigin: true,
               },
             },
@@ -284,14 +285,14 @@ export class ConfigurationManager {
       external: {
         github: {
           ...(this.envConfig.GITHUB_TOKEN && { token: this.envConfig.GITHUB_TOKEN }),
-          timeout: this.envConfig.GITHUB_API_TIMEOUT || 30000,
-          cacheDuration: this.envConfig.GITHUB_CACHE_DURATION || 300,
-          mockInDev: this.envConfig.MOCK_GITHUB_API || false,
+          timeout: this.envConfig.GITHUB_API_TIMEOUT ?? 30000,
+          cacheDuration: this.envConfig.GITHUB_CACHE_DURATION ?? 300,
+          mockInDev: this.envConfig.MOCK_GITHUB_API ?? false,
         },
         ...(this.envConfig.SENTRY_DSN && {
           sentry: {
             dsn: this.envConfig.SENTRY_DSN,
-            environment: this.envConfig.NODE_ENV || 'development',
+            environment: this.envConfig.NODE_ENV,
           },
         }),
       },
@@ -463,8 +464,8 @@ Generated: ${new Date().toISOString()}
 
 ## Application
 - Environment: ${fullConfig.app.environment}
-- Port: ${fullConfig.app.port}
-- Base URL: ${fullConfig.app.baseUrl || 'Not set'}
+- Port: ${String(fullConfig.app.port)}
+- Base URL: ${fullConfig.app.baseUrl ?? 'Not set'}
 
 ## Build Settings
 - Client Output: ${fullConfig.build.clientOutDir}
@@ -474,13 +475,13 @@ Generated: ${new Date().toISOString()}
 
 ## Development
 - HMR: ${fullConfig.development.hmr ? 'Enabled' : 'Disabled'}
-- Proxy Port: ${fullConfig.development.proxyPort}
+- Proxy Port: ${String(fullConfig.development.proxyPort)}
 - Mock APIs: ${fullConfig.development.mockApis ? 'Enabled' : 'Disabled'}
 
 ## Security
 - CORS Origins: ${fullConfig.security.corsOrigins.join(', ') || 'None'}
 - Session Secret: ${fullConfig.security.sessionSecret ? 'Configured' : 'Not configured'}
-- Rate Limiting: ${fullConfig.security.rateLimiting.requests} requests per ${fullConfig.security.rateLimiting.windowMs}ms
+- Rate Limiting: ${String(fullConfig.security.rateLimiting.requests)} requests per ${String(fullConfig.security.rateLimiting.windowMs)}ms
 
 ## Features
 - GitHub Integration: ${fullConfig.features.githubIntegration ? 'Enabled' : 'Disabled'}
@@ -490,7 +491,7 @@ Generated: ${new Date().toISOString()}
 
 ## Database
 - URL: ${fullConfig.database.url}
-- Pool: ${fullConfig.database.pool.min}-${fullConfig.database.pool.max} connections
+- Pool: ${String(fullConfig.database.pool.min)}-${String(fullConfig.database.pool.max)} connections
 `
 }
 

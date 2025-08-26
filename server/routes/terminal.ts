@@ -317,13 +317,18 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
             return (
               typeof data === 'object' &&
               data !== null &&
-              (typeof (data as any).name === 'string' || (data as any).name === null) &&
-              (typeof (data as any).description === 'string' ||
-                (data as any).description === null) &&
-              (typeof (data as any).tech_stack === 'string' || (data as any).tech_stack === null) &&
-              (typeof (data as any).github_url === 'string' || (data as any).github_url === null) &&
-              (typeof (data as any).live_url === 'string' || (data as any).live_url === null) &&
-              (typeof (data as any).status === 'string' || (data as any).status === null)
+              (typeof (data as Record<string, unknown>).name === 'string' ||
+                (data as Record<string, unknown>).name === null) &&
+              (typeof (data as Record<string, unknown>).description === 'string' ||
+                (data as Record<string, unknown>).description === null) &&
+              (typeof (data as Record<string, unknown>).tech_stack === 'string' ||
+                (data as Record<string, unknown>).tech_stack === null) &&
+              (typeof (data as Record<string, unknown>).github_url === 'string' ||
+                (data as Record<string, unknown>).github_url === null) &&
+              (typeof (data as Record<string, unknown>).live_url === 'string' ||
+                (data as Record<string, unknown>).live_url === null) &&
+              (typeof (data as Record<string, unknown>).status === 'string' ||
+                (data as Record<string, unknown>).status === null)
             )
           }
 

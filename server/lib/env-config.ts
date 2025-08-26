@@ -5,8 +5,8 @@ const baseEnvSchema = z.object({
   // Application Configuration
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.coerce.number().min(1).max(65535).default(3001),
-  APP_URL: z.string().url().optional(),
-  API_URL: z.string().url().optional(),
+  APP_URL: z.url().optional(),
+  API_URL: z.url().optional(),
 
   // Database Configuration
   DATABASE_URL: z.string().optional(),
@@ -20,7 +20,7 @@ const baseEnvSchema = z.object({
 
   // Security Configuration
   CORS_ORIGINS: z.string().optional(),
-  CSP_REPORT_URI: z.string().url().optional(),
+  CSP_REPORT_URI: z.url().optional(),
   CSP_REPORT_ONLY: z
     .preprocess(val => val === 'true' || val === true, z.boolean().default(false))
     .optional(),
@@ -39,7 +39,7 @@ const baseEnvSchema = z.object({
   LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug', 'silent']).default('info'),
   LOG_FORMAT: z.enum(['json', 'pretty']).default('pretty'),
   LOG_REQUESTS: z.preprocess(val => val === 'true' || val === true, z.boolean().default(true)),
-  SENTRY_DSN: z.string().url().optional(),
+  SENTRY_DSN: z.url().optional(),
 
   // Development Configuration
   DEBUG: z.preprocess(val => val === 'true' || val === true, z.boolean().default(false)),
@@ -77,8 +77,8 @@ const developmentEnvSchema = baseEnvSchema.extend({
 // Production-specific requirements
 const productionEnvSchema = baseEnvSchema.extend({
   NODE_ENV: z.literal('production'),
-  APP_URL: z.string().url(),
-  API_URL: z.string().url(),
+  APP_URL: z.url(),
+  API_URL: z.url(),
   SESSION_SECRET: z.string().min(32),
   CORS_ORIGINS: z.string().min(1),
 })
@@ -91,9 +91,9 @@ const testEnvSchema = baseEnvSchema.extend({
 // Union of all environment schemas with proper fallback
 export const envSchema = z.preprocess(
   // Preprocess to set default NODE_ENV if missing
-  (data: any) => ({
+  (data: unknown) => ({
     NODE_ENV: 'development',
-    ...data,
+    ...(data as Record<string, unknown>),
   }),
   z.discriminatedUnion('NODE_ENV', [developmentEnvSchema, productionEnvSchema, testEnvSchema])
 )
@@ -157,9 +157,9 @@ export function isFeatureEnabled(
 // Database configuration helper
 export function getDatabaseConfig(env: EnvConfig) {
   return {
-    url: env.DATABASE_URL || 'file:./portfolio.db',
-    poolMin: env.DB_POOL_MIN || 2,
-    poolMax: env.DB_POOL_MAX || 10,
+    url: env.DATABASE_URL ?? 'file:./portfolio.db',
+    poolMin: env.DB_POOL_MIN ?? 2,
+    poolMax: env.DB_POOL_MAX ?? 10,
   }
 }
 
@@ -179,12 +179,12 @@ export function getSecurityConfig(env: EnvConfig) {
     corsOrigins: parseCorsOrigins(env.CORS_ORIGINS),
     sessionSecret: env.SESSION_SECRET,
     rateLimiting: {
-      requests: env.RATE_LIMIT_REQUESTS || 100,
-      windowMs: env.RATE_LIMIT_WINDOW_MS || 900000,
+      requests: env.RATE_LIMIT_REQUESTS ?? 100,
+      windowMs: env.RATE_LIMIT_WINDOW_MS ?? 900000,
     },
     csp: {
       reportUri: env.CSP_REPORT_URI,
-      reportOnly: env.CSP_REPORT_ONLY || false,
+      reportOnly: env.CSP_REPORT_ONLY ?? false,
     },
   }
 }
@@ -194,10 +194,10 @@ export function getCacheConfig(env: EnvConfig) {
   return {
     api: {
       enabled: env.API_CACHE_ENABLED ?? true,
-      duration: env.API_CACHE_DURATION || 300,
+      duration: env.API_CACHE_DURATION ?? 300,
     },
     static: {
-      duration: env.STATIC_CACHE_DURATION || 86400,
+      duration: env.STATIC_CACHE_DURATION ?? 86400,
     },
   }
 }
@@ -207,9 +207,9 @@ export function getExternalApiConfig(env: EnvConfig) {
   return {
     github: {
       token: env.GITHUB_TOKEN,
-      timeout: env.GITHUB_API_TIMEOUT || 30000,
-      cacheDuration: env.GITHUB_CACHE_DURATION || 300,
-      mockInDev: env.MOCK_GITHUB_API || false,
+      timeout: env.GITHUB_API_TIMEOUT ?? 30000,
+      cacheDuration: env.GITHUB_CACHE_DURATION ?? 300,
+      mockInDev: env.MOCK_GITHUB_API ?? false,
     },
   }
 }

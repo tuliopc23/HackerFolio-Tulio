@@ -127,7 +127,7 @@ export const apiRoutes = new Elysia({ prefix: '/api' })
       throw createDatabaseError('Failed to fetch content', error)
     }
   })
-  .put('/content/:section', async ({ params, body }: Context) => {
+  .put('/content/:section', ({ params, body }: Context) => {
     try {
       if (!params.section) {
         throw createMissingParameterError('section')
@@ -141,7 +141,7 @@ export const apiRoutes = new Elysia({ prefix: '/api' })
       const content = JSON.stringify(payload.content ?? {})
 
       // Use sql template for upsert
-      await orm.run(
+      orm.run(
         sql`INSERT INTO portfolio_content (section, content) VALUES (${params.section}, ${content}) ON CONFLICT(section) DO UPDATE SET content=excluded.content, updated_at=CURRENT_TIMESTAMP`
       )
 
@@ -168,8 +168,9 @@ export const apiRoutes = new Elysia({ prefix: '/api' })
         return (
           typeof data === 'object' &&
           data !== null &&
-          (!('command' in data) || typeof (data as any).command === 'string') &&
-          (!('timestamp' in data) || typeof (data as any).timestamp === 'string')
+          (!('command' in data) || typeof (data as Record<string, unknown>).command === 'string') &&
+          (!('timestamp' in data) ||
+            typeof (data as Record<string, unknown>).timestamp === 'string')
         )
       }
 
@@ -207,7 +208,7 @@ export const apiRoutes = new Elysia({ prefix: '/api' })
       )
 
       if (!res.ok) {
-        throw createExternalApiError('GitHub', `HTTP ${res.status}`, {
+        throw createExternalApiError('GitHub', `HTTP ${String(res.status)}`, {
           status: res.status,
           statusText: res.statusText,
         })

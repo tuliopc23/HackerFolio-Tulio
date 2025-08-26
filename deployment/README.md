@@ -1,16 +1,19 @@
 # HackerFolio Deployment Guide
 
-This directory contains platform-specific deployment configurations for HackerFolio.
+This directory contains platform-specific deployment configurations for
+HackerFolio.
 
 ## Prerequisites
 
-1. **Environment Variables**: Copy the appropriate `.env.template` and set your values
+1. **Environment Variables**: Copy the appropriate `.env.template` and set your
+   values
 2. **Build**: Ensure the application builds successfully with `bun run build`
 3. **Tests**: Verify all tests pass with `bun run check:all`
 
 ## Platform-Specific Deployments
 
 ### Railway
+
 **Files**: `railway.json`, `railway.service.json`, `railway.env.example`
 
 1. Push your code to GitHub
@@ -21,6 +24,7 @@ This directory contains platform-specific deployment configurations for HackerFo
 **Recommended for**: Fast deployment, built-in database, simple scaling
 
 ### Vercel
+
 **Files**: `vercel.json`, `vercel.build.json`
 
 1. Install Vercel CLI: `npm i -g vercel`
@@ -31,6 +35,7 @@ This directory contains platform-specific deployment configurations for HackerFo
 **Recommended for**: Serverless deployment, edge functions, global CDN
 
 ### Heroku
+
 **Files**: `Procfile`, `app.json`, `heroku.package.json`
 
 1. Install Heroku CLI
@@ -39,17 +44,21 @@ This directory contains platform-specific deployment configurations for HackerFo
 4. Set environment variables: `heroku config:set KEY=value`
 5. Deploy: `git push heroku main`
 
-**Recommended for**: Traditional deployment, add-ons ecosystem, process management
+**Recommended for**: Traditional deployment, add-ons ecosystem, process
+management
 
 ### Docker
+
 **Files**: `Dockerfile`, `docker-compose.yml`, `.dockerignore`
 
 #### Local Development
+
 ```bash
 docker-compose up -d
 ```
 
 #### Production Deployment
+
 ```bash
 docker build -t hackerfolio .
 docker run -p 3001:3001 --env-file .env hackerfolio
@@ -58,9 +67,11 @@ docker run -p 3001:3001 --env-file .env hackerfolio
 **Recommended for**: Container orchestration, Kubernetes, self-hosted
 
 ### Generic Cloud Platforms
+
 **Files**: `cloud-platform.json`, `production.env.template`
 
 Use these as templates for other cloud providers like:
+
 - AWS (Elastic Beanstalk, ECS, Lambda)
 - Google Cloud (App Engine, Cloud Run)
 - Azure (App Service, Container Instances)
@@ -119,7 +130,8 @@ Before deploying to production:
 
 ### Support
 
-- GitHub Issues: [Repository Issues](https://github.com/your-username/hackerfolio-tulio/issues)
+- GitHub Issues:
+  [Repository Issues](https://github.com/your-username/hackerfolio-tulio/issues)
 - Documentation: [Project README](../README.md)
 - Configuration Guide: [Configuration Documentation](../docs/configuration.md)
 

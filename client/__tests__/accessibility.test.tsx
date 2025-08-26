@@ -1,9 +1,9 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import React from 'react'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 
-import SkipLinks from '@/components/accessibility/skip-links'
 import FocusManager from '@/components/accessibility/focus-manager'
+import SkipLinks from '@/components/accessibility/skip-links'
 
 // Simple mock components for testing accessibility features
 const MockTerminalPane = () => {
@@ -52,7 +52,9 @@ const MockTerminalPane = () => {
         <input
           type='text'
           value={input}
-          onChange={e => setInput(e.target.value)}
+          onChange={e => {
+            setInput(e.target.value)
+          }}
           onKeyDown={handleKeyDown}
           role='textbox'
           aria-label='Terminal command input'
@@ -306,7 +308,7 @@ describe('Accessibility Features', () => {
     it('should render with focus trapping capability', () => {
       const TestComponent = () => {
         return (
-          <FocusManager initialTrapFocus={true}>
+          <FocusManager initialTrapFocus>
             <div>
               <button>First</button>
               <button>Last</button>

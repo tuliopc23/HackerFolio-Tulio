@@ -206,7 +206,8 @@ export default function TerminalPane() {
     if (isError) {
       announceError(finalOutput)
     } else {
-      announce(`Command completed: ${finalOutput.split('\n')[0]}`, 'polite')
+      const outputLine = finalOutput ? (finalOutput.split('\n')[0] ?? '') : ''
+      announce(`Command completed: ${outputLine}`, 'polite')
     }
 
     setInput('')
@@ -230,7 +231,7 @@ export default function TerminalPane() {
           timestamp: new Date(),
         },
       ])
-      announce(`${suggestions.length} autocomplete suggestions shown`, 'polite')
+      announce(`${suggestions.length.toString()} autocomplete suggestions shown`, 'polite')
     } else {
       announce('No autocomplete suggestions available', 'polite')
     }
@@ -496,7 +497,6 @@ export default function TerminalPane() {
             spellCheck='false'
             placeholder={isExecuting ? 'Command executing...' : 'Type a command...'}
             disabled={isExecuting}
-
             aria-multiline='false'
           />
           <span

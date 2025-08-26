@@ -2,11 +2,7 @@
   "build": {
     "builder": "NIXPACKS",
     "buildCommand": "bun install && bun run build",
-    "watchPatterns": [
-      "client/**",
-      "server/**",
-      "shared/**"
-    ]
+    "watchPatterns": ["client/**", "server/**", "shared/**"]
   },
   "deploy": {
     "startCommand": "bun run start",

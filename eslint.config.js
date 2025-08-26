@@ -58,6 +58,14 @@ export default tseslint.config(
       'vite.config.ts',
       'tailwind.config.ts',
       'postcss.config.js',
+      // Test files - not shipped to production
+      '**/__tests__/**',
+      '**/*.test.{js,jsx,ts,tsx}',
+      '**/*.spec.{js,jsx,ts,tsx}',
+      '**/test-utils/**',
+      '**/setup-tests.ts',
+      // Dev scripts - not shipped to production
+      'server/scripts/**',
     ],
   },
 

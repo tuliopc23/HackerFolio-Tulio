@@ -7,11 +7,7 @@
         "branch": "main"
       },
       "build": {
-        "commands": [
-          "bun install",
-          "bun run check:all",
-          "bun run build"
-        ]
+        "commands": ["bun install", "bun run check:all", "bun run build"]
       },
       "start": {
         "command": "bun run start"

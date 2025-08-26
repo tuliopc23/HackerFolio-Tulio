@@ -3,6 +3,7 @@
 ## 🚀 Development Commands
 
 ### Start Development Server
+
 ```bash
 # Start both client and server in development mode
 bun run dev
@@ -23,6 +24,7 @@ bun run dev:server
 ## 🏗️ Build Commands
 
 ### Basic Build
+
 ```bash
 # Build both client and server (recommended)
 bun run build
@@ -35,6 +37,7 @@ bun run build:server
 ```
 
 ### Advanced Build Options
+
 ```bash
 # Full build with all checks (types, lint, format, tests)
 bun run build:full
@@ -49,6 +52,7 @@ bun run build:production
 ## 🌐 Production & Preview Commands
 
 ### Full-Stack Preview (Client + Server + SSR)
+
 ```bash
 # Build and preview complete application with SSR
 bun run preview
@@ -61,6 +65,7 @@ bun run start:production
 ```
 
 ### Client-Only Preview (Frontend Only)
+
 ```bash
 # Preview only the client build (no server/SSR)
 bun run preview:client
@@ -70,6 +75,7 @@ bun run serve:client
 ```
 
 ### Development Server
+
 ```bash
 # Start development server (full-stack)
 bun run start
@@ -97,12 +103,14 @@ bun run test
 ## 🔍 Code Quality Commands
 
 ### Type Checking
+
 ```bash
 # Check TypeScript types
 bun run check:types
 ```
 
 ### Linting
+
 ```bash
 # Check for linting errors
 bun run check:lint
@@ -112,6 +120,7 @@ bun run fix:lint
 ```
 
 ### Formatting
+
 ```bash
 # Check code formatting
 bun run check:format
@@ -124,6 +133,7 @@ bun run fix:all
 ```
 
 ### All Checks
+
 ```bash
 # Run all checks (types, lint, format, tests)
 bun run check:all
@@ -132,6 +142,7 @@ bun run check:all
 ## 🗄️ Database Commands
 
 ### Schema Management
+
 ```bash
 # Generate database migrations from schema changes
 bun run db:generate
@@ -147,6 +158,7 @@ bun run db:drop
 ```
 
 ### Database Tools
+
 ```bash
 # Open Drizzle Studio (web-based database browser)
 bun run db:studio
@@ -159,8 +171,10 @@ bun run db:introspect
 ```
 
 ### Database Connection Info
+
 - **Type**: SQLite
-- **File Path**: `/Users/tuliopinheirocunha/HackerFolio-Tulio/database/portfolio.db`
+- **File Path**:
+  `/Users/tuliopinheirocunha/HackerFolio-Tulio/database/portfolio.db`
 - **Relative Path**: `./database/portfolio.db`
 
 ## 🌍 Environment Commands
@@ -218,31 +232,37 @@ bun run health-check
 ## 📋 Most Common Workflows
 
 ### 1. Start Development
+
 ```bash
 bun run dev
 ```
 
 ### 2. Build for Production
+
 ```bash
 bun run build
 ```
 
 ### 3. Preview Production Build
+
 ```bash
 bun run preview
 ```
 
 ### 4. Run All Checks Before Commit
+
 ```bash
 bun run check:all
 ```
 
 ### 5. Fix Code Issues
+
 ```bash
 bun run fix:all
 ```
 
 ### 6. Clean Build from Scratch
+
 ```bash
 bun run build:clean
 ```
@@ -250,6 +270,7 @@ bun run build:clean
 ## 🔧 Troubleshooting Commands
 
 ### If Build Fails
+
 ```bash
 # Clean everything and rebuild
 bun run clean
@@ -263,6 +284,7 @@ bun run config:validate
 ```
 
 ### If Development Server Issues
+
 ```bash
 # Check configuration integration
 bun run config:integration
@@ -272,6 +294,7 @@ bun run config:paths
 ```
 
 ### If Production Issues
+
 ```bash
 # Run security checks
 bun run prod:security
@@ -282,18 +305,18 @@ bun run deploy:setup
 
 ## 🎯 Quick Reference
 
-| Command | Description |
-|---------|-------------|
-| `bun run dev` | Start development |
-| `bun run build` | Build for production |
-| `bun run preview` | Build and preview (full-stack) |
-| `bun run preview:client` | Preview client-only |
-| `bun run serve` | Serve full-stack app |
-| `bun run serve:client` | Serve client-only |
-| `bun run test:run` | Run tests |
-| `bun run check:all` | Run all checks |
-| `bun run fix:all` | Fix code issues |
-| `bun run clean` | Clean build files |
+| Command                  | Description                    |
+| ------------------------ | ------------------------------ |
+| `bun run dev`            | Start development              |
+| `bun run build`          | Build for production           |
+| `bun run preview`        | Build and preview (full-stack) |
+| `bun run preview:client` | Preview client-only            |
+| `bun run serve`          | Serve full-stack app           |
+| `bun run serve:client`   | Serve client-only              |
+| `bun run test:run`       | Run tests                      |
+| `bun run check:all`      | Run all checks                 |
+| `bun run fix:all`        | Fix code issues                |
+| `bun run clean`          | Clean build files              |
 
 ## 🚨 Important Notes
 

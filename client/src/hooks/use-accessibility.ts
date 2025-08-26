@@ -130,7 +130,7 @@ export function useAccessibility({
       if (focusableElements.length > 0) {
         focusableElements[0]?.focus()
       } else {
-        containerRef.current?.focus()
+        containerRef.current.focus()
       }
     }
   }, [autoFocus, restoreFocus, getFocusableElements])

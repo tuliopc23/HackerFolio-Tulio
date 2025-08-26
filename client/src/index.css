@@ -321,7 +321,7 @@
 
 /* Enhanced button focus for accessibility */
 button:focus-visible,
-[role="button"]:focus-visible {
+[role='button']:focus-visible {
   outline: 2px solid var(--cyan-bright);
   outline-offset: 2px;
   box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.3);
@@ -346,12 +346,12 @@ select:focus-visible {
 }
 
 /* Status indicators for screen readers */
-[role="status"],
+[role='status'],
 [aria-live] {
   border: 1px solid transparent;
 }
 
-[role="status"]:focus-visible,
+[role='status']:focus-visible,
 [aria-live]:focus-visible {
   border-color: var(--cyan-bright);
   outline: 1px solid var(--cyan-bright);
@@ -399,12 +399,12 @@ select:focus-visible {
     --terminal-red: hsl(356, 100%, 60%);
     --terminal-green: hsl(120, 100%, 70%);
   }
-  
+
   .pane-border,
   .pane-focus {
     border-width: 2px;
   }
-  
+
   *:focus-visible {
     outline-width: 3px;
     box-shadow: 0 0 0 6px rgba(0, 212, 255, 0.5);

@@ -98,6 +98,7 @@ export function createErrorResponse(error: ApiError): ApiErrorResponse {
 
 // Error handler middleware for Elysia
 export function handleApiError(error: unknown): Response {
+  // eslint-disable-next-line no-console
   console.error('API Error:', error)
 
   if (error instanceof ApiError) {

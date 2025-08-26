@@ -2,11 +2,7 @@
   "runtime": "bun",
   "version": "1.0.0",
   "build": {
-    "commands": [
-      "bun install",
-      "bun run check:all",
-      "bun run build"
-    ],
+    "commands": ["bun install", "bun run check:all", "bun run build"],
     "outputDirectory": "dist"
   },
   "start": {
@@ -25,16 +21,7 @@
     "targetMemory": 80
   },
   "environment": {
-    "required": [
-      "NODE_ENV",
-      "SESSION_SECRET",
-      "CORS_ORIGINS"
-    ],
-    "optional": [
-      "DATABASE_URL",
-      "GITHUB_TOKEN",
-      "SENTRY_DSN",
-      "LOG_LEVEL"
-    ]
+    "required": ["NODE_ENV", "SESSION_SECRET", "CORS_ORIGINS"],
+    "optional": ["DATABASE_URL", "GITHUB_TOKEN", "SENTRY_DSN", "LOG_LEVEL"]
   }
 }

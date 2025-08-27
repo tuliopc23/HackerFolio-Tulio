@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import ResizeHandle from '@/components/ui/resize-handle'
 
 interface GhosttyTerminalWindowProps {
   leftPane: React.ReactNode
@@ -17,6 +18,8 @@ export default function GhosttyTerminalWindow({
   onMaximize,
   className = '',
 }: GhosttyTerminalWindowProps) {
+  const [leftPaneWidth, setLeftPaneWidth] = useState(50) // percentage
+
   // Lock body scroll when terminal is active
   useEffect(() => {
     document.body.classList.add('ghostty-active')
@@ -25,15 +28,27 @@ export default function GhosttyTerminalWindow({
     }
   }, [])
 
+  const handleResize = (delta: number) => {
+    // Convert pixel delta to percentage based on container width
+    const container = document.querySelector('[data-terminal-container]')
+    if (!container) return
+    
+    const containerWidth = container.clientWidth
+    const deltaPercent = (delta / containerWidth) * 100
+    
+    const newWidth = Math.max(20, Math.min(80, leftPaneWidth + deltaPercent))
+    setLeftPaneWidth(newWidth)
+  }
+
   return (
     <section
-      className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(85vw,1400px)] h-[min(80vh,1000px)] bg-lumon-bg rounded-[20px] shadow-[0_20px_60px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.03),inset_0_0_0_1px_rgba(255,255,255,0.02)] overflow-hidden flex flex-col z-40 ${className}`}
+      className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(90vw,1600px)] h-[min(85vh,1200px)] bg-lumon-bg rounded-[20px] shadow-[0_20px_60px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.03),inset_0_0_0_1px_rgba(255,255,255,0.02)] overflow-hidden flex flex-col z-40 ${className}`}
       role='region'
       aria-label='Terminal window'
     >
-      {/* Titlebar with traffic lights on RIGHT */}
+      {/* Titlebar with traffic lights on LEFT */}
       <div
-        className='flex items-center justify-end h-9 px-4 py-2 border-b border-white/[0.04]'
+        className='flex items-center justify-start h-9 px-4 py-2 border-b border-white/[0.04]'
         aria-hidden='true'
       >
         <div className='flex gap-2 items-center'>
@@ -59,15 +74,19 @@ export default function GhosttyTerminalWindow({
       </div>
 
       {/* Terminal content - scrollable */}
-      <div className='flex-1 overflow-y-auto overflow-x-hidden bg-lumon-bg scrollbar-thin scrollbar-track-transparent scrollbar-thumb-[rgba(122,0,255,0.25)] hover:scrollbar-thumb-[rgba(122,0,255,0.4)]'>
-        <div className='grid grid-cols-2 gap-4 p-4 min-h-full max-lg:grid-cols-1'>
+      <div 
+        className='flex-1 overflow-hidden bg-lumon-bg'
+        data-terminal-container
+      >
+        <div className='flex h-full p-4 gap-1'>
           {/* Left pane - Terminal */}
           <div
             className='bg-lumon-bg border border-[rgba(122,0,255,0.25)] rounded-2xl overflow-hidden shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02),0_2px_8px_rgba(0,0,0,0.15)] flex flex-col transition-colors duration-200 hover:border-[rgba(122,0,255,0.4)] focus-within:border-[rgba(122,0,255,0.4)]'
             role='group'
             aria-label='Terminal pane'
+            style={{ width: `${leftPaneWidth}%` }}
           >
-            <div className='px-[14px] py-[10px] bg-white/[0.02] border-b border-[rgba(122,0,255,0.25)] flex items-center justify-between'>
+            <div className='px-[14px] py-[10px] border-b border-white/[0.04] flex items-center justify-between'>
               <div>
                 <span className='font-mono text-[11px] font-semibold text-[rgba(122,0,255,0.9)] tracking-[0.3px]'>
                   [pane-01]
@@ -84,13 +103,22 @@ export default function GhosttyTerminalWindow({
             </div>
           </div>
 
+          {/* Resize Handle */}
+          <div className='flex items-center justify-center w-2'>
+            <ResizeHandle 
+              onResize={handleResize}
+              className='w-full h-16 flex items-center justify-center hover:bg-[rgba(122,0,255,0.1)] rounded text-[rgba(122,0,255,0.6)] hover:text-[rgba(122,0,255,0.9)] transition-colors duration-200'
+            />
+          </div>
+
           {/* Right pane - System */}
           <div
             className='bg-lumon-bg border border-[rgba(122,0,255,0.25)] rounded-2xl overflow-hidden shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02),0_2px_8px_rgba(0,0,0,0.15)] flex flex-col transition-colors duration-200 hover:border-[rgba(122,0,255,0.4)] focus-within:border-[rgba(122,0,255,0.4)]'
             role='group'
             aria-label='System information pane'
+            style={{ width: `${100 - leftPaneWidth}%` }}
           >
-            <div className='px-[14px] py-[10px] bg-white/[0.02] border-b border-[rgba(122,0,255,0.25)] flex items-center justify-between'>
+            <div className='px-[14px] py-[10px] border-b border-white/[0.04] flex items-center justify-between'>
               <div>
                 <span className='font-mono text-[11px] font-semibold text-[rgba(122,0,255,0.9)] tracking-[0.3px]'>
                   [pane-02]

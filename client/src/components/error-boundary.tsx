@@ -198,7 +198,6 @@ export class TerminalErrorBoundary extends Component<Props, State> {
               <div className='flex items-center gap-2 text-magenta-soft text-xs font-mono'>
                 <span className='text-terminal-green'>$</span>
                 <span>error_recovery_mode --active --restart-available</span>
-                <div className='w-2 h-3 bg-magenta-bright animate-pulse ml-1' />
               </div>
             </div>
           </div>

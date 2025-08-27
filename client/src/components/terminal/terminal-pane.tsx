@@ -396,40 +396,11 @@ export default function TerminalPane() {
   return (
     <div
       ref={terminalRef}
-      className='pane-border pane-focus rounded-lg overflow-hidden flex flex-col h-full'
+      className='h-full flex flex-col font-mono text-[12.5px] leading-[1.5] text-[rgba(235,241,255,0.9)]'
       role='application'
       aria-label='Interactive Terminal'
       aria-describedby='terminal-help terminal-status'
     >
-      {/* Pane Header */}
-      <div className='bg-lumon-border px-4 py-2 border-b border-cyan-soft flex items-center justify-between'>
-        <div className='flex items-center gap-2'>
-          <span className='text-cyan-bright font-medium' aria-label='Terminal pane 1'>
-            [pane-01]
-          </span>
-          <span className='text-text-soft'>terminal</span>
-        </div>
-        <div className='flex gap-2' role='group' aria-label='Terminal status indicators'>
-          <div
-            className='w-3 h-3 rounded-full bg-terminal-red'
-            aria-label='Terminal status: active'
-            role='status'
-          />
-          <div
-            className='w-3 h-3 rounded-full bg-terminal-orange'
-            aria-label={isExecuting ? 'Command executing' : 'Terminal ready'}
-            role='status'
-          />
-          <div
-            className='w-3 h-3 rounded-full bg-terminal-green'
-            aria-label={
-              lastCommandStatus === 'error' ? 'Last command failed' : 'Last command succeeded'
-            }
-            role='status'
-          />
-        </div>
-      </div>
-
       {/* Status announcement for screen readers */}
       <div id='terminal-status' className='sr-only' aria-live='polite' aria-atomic='true'>
         {isExecuting
@@ -444,7 +415,7 @@ export default function TerminalPane() {
       {/* Terminal Content */}
       <div
         ref={outputRef}
-        className='flex-1 p-4 bg-lumon-bg overflow-y-auto'
+        className='flex-1 overflow-y-auto'
         id='terminal-content'
         role='log'
         aria-live='polite'
@@ -457,12 +428,12 @@ export default function TerminalPane() {
           {history.map((entry, index) => (
             <div key={`history-${String(index)}-${entry.command}`}>
               <div className='flex'>
-                <span className='text-magenta-bright'>user@portfolio:~$</span>
-                <span className='ml-2 text-text-cyan'>{entry.command}</span>
+                <span className='text-[rgba(122,0,255,0.9)] font-semibold'>user@portfolio:~$</span>
+                <span className='ml-2 text-cyan-bright'>{entry.command}</span>
               </div>
               {entry.output && (
                 <div
-                  className={`ml-4 mb-2 ${entry.error ? 'text-terminal-red' : 'text-text-soft'}`}
+                  className={`ml-4 mb-2 ${entry.error ? 'text-terminal-red' : 'text-[rgba(235,241,255,0.9)]'}`}
                 >
                   {formatOutput(entry.output)}
                 </div>
@@ -473,7 +444,7 @@ export default function TerminalPane() {
 
         {/* Current Command Line */}
         <div className='flex items-center' role='group' aria-label='Command input'>
-          <span className='text-magenta-bright' aria-hidden='true'>
+          <span className='text-[rgba(122,0,255,0.9)] font-semibold' aria-hidden='true'>
             user@portfolio:~$
           </span>
           <label htmlFor='terminal-input' className='sr-only'>
@@ -489,7 +460,7 @@ export default function TerminalPane() {
               setInput(e.target.value)
             }}
             onKeyDown={handleKeyDown}
-            className='ml-2 bg-transparent border-none outline-none text-text-cyan flex-1 focus:ring-2 focus:ring-magenta-bright focus:ring-opacity-50 focus:ring-offset-2 focus:ring-offset-lumon-bg'
+            className='ml-2 bg-transparent border-none outline-none text-[rgba(0,234,255,0.9)] font-mono text-[12.5px] leading-[1.5] flex-1 focus-visible:shadow-[0_0_0_2px_rgba(0,234,255,0.3)] focus-visible:rounded-sm'
             aria-label='Terminal command input'
             aria-describedby='terminal-help terminal-status'
             aria-invalid={lastCommandStatus === 'error' ? 'true' : 'false'}
@@ -509,31 +480,31 @@ export default function TerminalPane() {
       {/* Command Help Footer */}
       <div
         id='terminal-help'
-        className='bg-lumon-border px-4 py-2 border-t border-cyan-soft text-xs text-text-soft'
+        className='px-3 py-2 border-t border-[rgba(122,0,255,0.25)] text-xs text-text-soft bg-black/20'
         role='complementary'
         aria-label='Terminal keyboard shortcuts'
       >
         <div className='flex flex-wrap gap-4'>
           <span>
-            <kbd className='bg-lumon-dark px-1 rounded' aria-label='Tab key'>
+            <kbd className='bg-black/40 px-1 rounded' aria-label='Tab key'>
               Tab
             </kbd>
             <span className='sr-only'>key for </span>autocomplete
           </span>
           <span>
-            <kbd className='bg-lumon-dark px-1 rounded' aria-label='Up and down arrow keys'>
+            <kbd className='bg-black/40 px-1 rounded' aria-label='Up and down arrow keys'>
               ↑↓
             </kbd>
             <span className='sr-only'>keys for </span>history
           </span>
           <span>
-            <kbd className='bg-lumon-dark px-1 rounded' aria-label='Control plus C'>
+            <kbd className='bg-black/40 px-1 rounded' aria-label='Control plus C'>
               Ctrl+C
             </kbd>
             <span className='sr-only'>to </span>clear
           </span>
           <span>
-            <kbd className='bg-lumon-dark px-1 rounded' aria-label='Control plus L'>
+            <kbd className='bg-black/40 px-1 rounded' aria-label='Control plus L'>
               Ctrl+L
             </kbd>
             <span className='sr-only'>to </span>clear screen

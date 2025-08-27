@@ -1,8 +1,38 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
+/* TailwindCSS v4 Theme Configuration */
+@theme {
+  --color-lumon-dark: #000000;
+  --color-lumon-bg: #0a0a0a;
+  --color-lumon-border: #3d1a3d;
+  --color-cyan-bright: #00eaff;
+  --color-cyan-soft: #4dd8f0;
+  --color-neon-blue: #00eaff;
+  --color-text-cyan: #e6fffa;
+  --color-text-soft: #b3e6e6;
+  --color-terminal-green: #00ff9f;
+  --color-terminal-orange: #ff8000;
+  --color-terminal-red: #ff4757;
+  --color-magenta-bright: #ff2fe6;
+  --color-magenta-soft: #ff99e6;
+  --color-magenta-glow: #ffccf2;
+
+  --color-background: var(--color-lumon-dark);
+  --color-foreground: var(--color-text-cyan);
+  --color-card: var(--color-lumon-bg);
+  --color-card-foreground: var(--color-text-cyan);
+  --color-primary: var(--color-cyan-bright);
+  --color-primary-foreground: var(--color-lumon-dark);
+  --color-secondary: var(--color-lumon-border);
+  --color-secondary-foreground: var(--color-text-cyan);
+  --color-border: var(--color-lumon-border);
+
+  --radius: 0.5rem;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+/* CSS Custom Properties for backwards compatibility */
 :root {
   /* Cyberpunk Theme Colors */
   --lumon-dark: hsl(0, 0%, 0%);
@@ -69,12 +99,50 @@
     border-color: var(--border);
   }
 
+  html,
+  body,
+  #root {
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+  }
+
   body {
     font-family: var(--font-mono);
     -webkit-font-smoothing: antialiased;
-    background-color: var(--background);
-    color: var(--foreground);
+    background-color: var(--lumon-dark) !important;
+    color: var(--text-cyan);
     overflow: hidden;
+  }
+
+  /* Lock body scroll when Ghostty terminal is active */
+  body.ghostty-active {
+    overflow: hidden;
+  }
+
+  #root {
+    background-color: var(--lumon-dark);
+    color: var(--text-cyan);
+  }
+}
+
+@layer components {
+  /* Terminal Pane Component Styles */
+  .terminal-pane {
+    background-color: var(--lumon-bg);
+    border: 1px solid var(--magenta-soft);
+    border-radius: var(--radius);
+    box-shadow:
+      0 0 10px rgba(255, 0, 255, 0.3),
+      inset 0 0 10px rgba(255, 0, 255, 0.1);
+  }
+
+  .terminal-pane:focus-within,
+  .terminal-pane.focused {
+    border-color: var(--cyan-bright);
+    box-shadow:
+      0 0 15px rgba(0, 212, 255, 0.5),
+      inset 0 0 15px rgba(0, 212, 255, 0.2);
   }
 }
 

@@ -19,6 +19,7 @@ const Contact = lazy(() => import('@/pages/contact'))
 const NotFound = lazy(() => import('@/pages/not-found'))
 const Projects = lazy(() => import('@/pages/projects'))
 const Resume = lazy(() => import('@/pages/resume'))
+const TerminalThemePreview = lazy(() => import('@/components/TerminalThemePreview'))
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -125,6 +126,13 @@ const resumeRoute = createRoute({
   component: Resume,
 })
 
+// Theme preview route for testing ANSI colors
+const themePreviewRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/theme-preview',
+  component: TerminalThemePreview,
+})
+
 const notFoundRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '*',
@@ -137,6 +145,7 @@ const routeTree = rootRoute.addChildren([
   aboutRoute,
   contactRoute,
   resumeRoute,
+  themePreviewRoute,
   notFoundRoute,
 ])
 

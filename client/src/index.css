@@ -3,30 +3,57 @@
 
 /* TailwindCSS v4 Theme Configuration */
 @theme {
-  --color-lumon-dark: #000000;
+  /* Terminal Base Colors */
+  --color-term-bg: #000000;
+  --color-term-fg: #f2f4f8;
+  --color-term-selection-bg: #393939;
+  --color-term-selection-fg: #f2f4f8;
+  --color-term-cursor: #ffffff;
+  --color-term-cursor-text: #000000;
+  
+  /* ANSI Color Palette */
+  --color-ansi-0: #161616;
+  --color-ansi-1: #78a9ff;
+  --color-ansi-2: #ff7eb6;
+  --color-ansi-3: #42be65;
+  --color-ansi-4: #08bdba;
+  --color-ansi-5: #82cfff;
+  --color-ansi-6: #33b1ff;
+  --color-ansi-7: #dde1e6;
+  --color-ansi-8: #393939;
+  --color-ansi-9: #78a9ff;
+  --color-ansi-10: #ff7eb6;
+  --color-ansi-11: #42be65;
+  --color-ansi-12: #08bdba;
+  --color-ansi-13: #be95ff;
+  --color-ansi-14: #33b1ff;
+  --color-ansi-15: #ffffff;
+  
+  /* Legacy aliases (mapped to new palette) */
+  --color-lumon-dark: var(--color-term-bg);
   --color-lumon-bg: #0a0a0a;
-  --color-lumon-border: #3d1a3d;
-  --color-cyan-bright: #00eaff;
-  --color-cyan-soft: #4dd8f0;
-  --color-neon-blue: #00eaff;
-  --color-text-cyan: #e6fffa;
+  --color-lumon-border: var(--color-ansi-8);
+  --color-cyan-bright: var(--color-ansi-6);
+  --color-cyan-soft: var(--color-ansi-5);
+  --color-neon-blue: var(--color-ansi-6);
+  --color-text-cyan: var(--color-term-fg);
   --color-text-soft: #b3e6e6;
-  --color-terminal-green: #00ff9f;
+  --color-terminal-green: var(--color-ansi-3);
   --color-terminal-orange: #ff8000;
-  --color-terminal-red: #ff4757;
-  --color-magenta-bright: #ff2fe6;
-  --color-magenta-soft: #ff99e6;
+  --color-terminal-red: var(--color-ansi-2);
+  --color-magenta-bright: var(--color-ansi-13);
+  --color-magenta-soft: var(--color-ansi-2);
   --color-magenta-glow: #ffccf2;
 
-  --color-background: var(--color-lumon-dark);
-  --color-foreground: var(--color-text-cyan);
+  --color-background: var(--color-term-bg);
+  --color-foreground: var(--color-term-fg);
   --color-card: var(--color-lumon-bg);
-  --color-card-foreground: var(--color-text-cyan);
-  --color-primary: var(--color-cyan-bright);
-  --color-primary-foreground: var(--color-lumon-dark);
-  --color-secondary: var(--color-lumon-border);
-  --color-secondary-foreground: var(--color-text-cyan);
-  --color-border: var(--color-lumon-border);
+  --color-card-foreground: var(--color-term-fg);
+  --color-primary: var(--color-ansi-6);
+  --color-primary-foreground: var(--color-term-bg);
+  --color-secondary: var(--color-ansi-8);
+  --color-secondary-foreground: var(--color-term-fg);
+  --color-border: var(--color-ansi-8);
 
   --radius: 0.5rem;
   --font-mono: 'JetBrains Mono', 'Courier New', monospace;
@@ -34,62 +61,101 @@
 
 /* CSS Custom Properties for backwards compatibility */
 :root {
-  /* Cyberpunk Theme Colors */
-  --lumon-dark: hsl(0, 0%, 0%);
-  --lumon-bg: hsl(0, 0%, 3%);
-  --lumon-border: hsl(300, 30%, 15%);
-  --cyan-bright: hsl(180, 100%, 50%);
-  --cyan-soft: hsl(180, 80%, 60%);
-  --neon-blue: hsl(180, 100%, 50%);
-  --text-cyan: hsl(180, 100%, 90%);
-  --text-soft: hsl(180, 70%, 80%);
-  --terminal-green: hsl(120, 100%, 63%);
-  --terminal-orange: hsl(30, 100%, 50%);
-  --terminal-red: hsl(356, 90%, 54%);
-  --magenta-bright: hsl(300, 100%, 60%);
-  --magenta-soft: hsl(310, 80%, 70%);
-  --magenta-glow: hsl(300, 100%, 80%);
+  /* Ghostty-inspired Terminal Theme
+   * This palette implements a unique ANSI color mapping where traditional
+   * color slots are mapped to different hues for a distinctive look:
+   * - Red slot (1) → Light blue (#78a9ff)
+   * - Green slot (2) → Pink (#ff7eb6)
+   * - Yellow slot (3) → Green (#42be65)
+   * - Blue slot (4) → Teal (#08bdba)
+   * This creates a harmonious, modern terminal aesthetic.
+   */
+  
+  /* Base Terminal Colors */
+  --term-bg: #000000;
+  --term-fg: #f2f4f8;
+  --term-selection-bg: #393939;
+  --term-selection-fg: #f2f4f8;
+  --term-cursor: #ffffff;
+  --term-cursor-text: #000000;
+  
+  /* ANSI 16-Color Palette */
+  --ansi-0:  #161616; /* black */
+  --ansi-1:  #78a9ff; /* red slot (mapped to light blue) */
+  --ansi-2:  #ff7eb6; /* green slot (mapped to pink) */
+  --ansi-3:  #42be65; /* yellow slot (mapped to green) */
+  --ansi-4:  #08bdba; /* blue slot (mapped to teal) */
+  --ansi-5:  #82cfff; /* magenta (light cyan) */
+  --ansi-6:  #33b1ff; /* cyan (blue) */
+  --ansi-7:  #dde1e6; /* white */
+  --ansi-8:  #393939; /* bright black */
+  --ansi-9:  #78a9ff; /* bright red (same as normal) */
+  --ansi-10: #ff7eb6; /* bright green (same as normal) */
+  --ansi-11: #42be65; /* bright yellow (same as normal) */
+  --ansi-12: #08bdba; /* bright blue (same as normal) */
+  --ansi-13: #be95ff; /* bright magenta (purple) */
+  --ansi-14: #33b1ff; /* bright cyan (same as normal) */
+  --ansi-15: #ffffff; /* bright white */
+  
+  /* Legacy Cyberpunk Theme Colors (mapped to new palette) */
+  --lumon-dark: var(--term-bg);
+  --lumon-bg: #0a0a0a;
+  --lumon-border: var(--ansi-8);
+  --cyan-bright: var(--ansi-6);
+  --cyan-soft: var(--ansi-5);
+  --neon-blue: var(--ansi-6);
+  --text-cyan: var(--term-fg);
+  --text-soft: #b3e6e6;
+  --terminal-green: var(--ansi-3);
+  --terminal-orange: #ff8000;
+  --terminal-red: var(--ansi-2);
+  --magenta-bright: var(--ansi-13);
+  --magenta-soft: var(--ansi-2);
+  --magenta-glow: #ffccf2;
 
-  /* Neon Theme Colors */
-  --neon-bg: hsl(300, 100%, 5%);
-  --neon-border: hsl(300, 50%, 20%);
-  --neon-pink: hsl(330, 100%, 60%);
-  --neon-purple: hsl(270, 100%, 60%);
-  --neon-cyan: hsl(180, 100%, 60%);
+  /* Neon Theme Colors (mapped to ANSI palette) */
+  --neon-bg: var(--term-bg);
+  --neon-border: var(--ansi-8);
+  --neon-pink: var(--ansi-2);
+  --neon-purple: var(--ansi-13);
+  --neon-cyan: var(--ansi-6);
 
-  /* Mono Theme Colors */
-  --mono-bg: hsl(0, 0%, 0%);
-  --mono-border: hsl(120, 100%, 20%);
-  --mono-green: hsl(120, 100%, 50%);
-  --mono-text: hsl(120, 100%, 80%);
+  /* Mono Theme Colors (mapped to ANSI palette) */
+  --mono-bg: var(--term-bg);
+  --mono-border: var(--ansi-3);
+  --mono-green: var(--ansi-3);
+  --mono-text: var(--ansi-10);
 
   /* Base tokens */
-  --background: var(--lumon-dark);
-  --foreground: var(--text-cyan);
+  --background: var(--term-bg);
+  --foreground: var(--term-fg);
   --card: var(--lumon-bg);
-  --card-foreground: var(--text-cyan);
+  --card-foreground: var(--term-fg);
   --popover: var(--lumon-bg);
-  --popover-foreground: var(--text-cyan);
-  --primary: var(--cyan-bright);
-  --primary-foreground: var(--lumon-dark);
-  --secondary: var(--lumon-border);
-  --secondary-foreground: var(--text-cyan);
-  --muted: var(--lumon-border);
+  --popover-foreground: var(--term-fg);
+  --primary: var(--ansi-6);
+  --primary-foreground: var(--term-bg);
+  --secondary: var(--ansi-8);
+  --secondary-foreground: var(--term-fg);
+  --muted: var(--ansi-8);
   --muted-foreground: var(--text-soft);
-  --accent: var(--cyan-soft);
-  --accent-foreground: var(--lumon-dark);
-  --destructive: var(--terminal-red);
-  --destructive-foreground: var(--text-cyan);
-  --border: var(--lumon-border);
+  --accent: var(--ansi-5);
+  --accent-foreground: var(--term-bg);
+  --destructive: var(--ansi-2);
+  --destructive-foreground: var(--term-fg);
+  --border: var(--ansi-8);
   --input: var(--lumon-bg);
-  --ring: var(--cyan-bright);
+  --ring: var(--ansi-6);
   --radius: 0.5rem;
   --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  
+  /* Color scheme declaration for proper dark mode */
+  color-scheme: dark;
 }
 
 .dark {
-  --background: var(--lumon-dark);
-  --foreground: var(--text-cyan);
+  --background: var(--term-bg);
+  --foreground: var(--term-fg);
 }
 
 /* Theme variants pruned: dark-only app uses default tokens (lumon) */
@@ -133,16 +199,16 @@
     border: 1px solid var(--magenta-soft);
     border-radius: var(--radius);
     box-shadow:
-      0 0 10px rgba(255, 0, 255, 0.3),
-      inset 0 0 10px rgba(255, 0, 255, 0.1);
+      0 0 10px rgba(255, 126, 182, 0.3),
+      inset 0 0 10px rgba(255, 126, 182, 0.1);
   }
 
   .terminal-pane:focus-within,
   .terminal-pane.focused {
     border-color: var(--cyan-bright);
     box-shadow:
-      0 0 15px rgba(0, 212, 255, 0.5),
-      inset 0 0 15px rgba(0, 212, 255, 0.2);
+      0 0 15px rgba(51, 177, 255, 0.5),
+      inset 0 0 15px rgba(51, 177, 255, 0.2);
   }
 }
 
@@ -160,10 +226,11 @@
   right: 0;
   bottom: 0;
   pointer-events: none;
+  /* Scanlines using the bright magenta color */
   background: repeating-linear-gradient(
     0deg,
-    rgba(255, 0, 255, 0.03) 0px,
-    rgba(255, 0, 255, 0.03) 2px,
+    rgba(190, 149, 255, 0.03) 0px,
+    rgba(190, 149, 255, 0.03) 2px,
     transparent 2px,
     transparent 4px
   );
@@ -195,28 +262,30 @@
 
 .pane-border {
   border: 1px solid var(--magenta-soft);
+  /* Pane glow using the pink color from the palette */
   -webkit-box-shadow:
-    0 0 10px rgba(255, 0, 255, 0.3),
-    inset 0 0 10px rgba(255, 0, 255, 0.1);
+    0 0 10px rgba(255, 126, 182, 0.3),
+    inset 0 0 10px rgba(255, 126, 182, 0.1);
   -moz-box-shadow:
-    0 0 10px rgba(255, 0, 255, 0.3),
-    inset 0 0 10px rgba(255, 0, 255, 0.1);
+    0 0 10px rgba(255, 126, 182, 0.3),
+    inset 0 0 10px rgba(255, 126, 182, 0.1);
   box-shadow:
-    0 0 10px rgba(255, 0, 255, 0.3),
-    inset 0 0 10px rgba(255, 0, 255, 0.1);
+    0 0 10px rgba(255, 126, 182, 0.3),
+    inset 0 0 10px rgba(255, 126, 182, 0.1);
 }
 
 .pane-focus {
   border-color: var(--cyan-bright);
+  /* Focus glow using the cyan color from the palette */
   -webkit-box-shadow:
-    0 0 15px rgba(0, 212, 255, 0.5),
-    inset 0 0 15px rgba(0, 212, 255, 0.2);
+    0 0 15px rgba(51, 177, 255, 0.5),
+    inset 0 0 15px rgba(51, 177, 255, 0.2);
   -moz-box-shadow:
-    0 0 15px rgba(0, 212, 255, 0.5),
-    inset 0 0 15px rgba(0, 212, 255, 0.2);
+    0 0 15px rgba(51, 177, 255, 0.5),
+    inset 0 0 15px rgba(51, 177, 255, 0.2);
   box-shadow:
-    0 0 15px rgba(0, 212, 255, 0.5),
-    inset 0 0 15px rgba(0, 212, 255, 0.2);
+    0 0 15px rgba(51, 177, 255, 0.5),
+    inset 0 0 15px rgba(51, 177, 255, 0.2);
 }
 
 .cursor-block {
@@ -343,14 +412,14 @@
 .focus-visible {
   outline: 2px solid var(--cyan-bright);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.3);
+  box-shadow: 0 0 0 4px rgba(51, 177, 255, 0.3);
 }
 
 /* High contrast focus for better visibility */
 *:focus-visible {
   outline: 2px solid var(--cyan-bright);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.3);
+  box-shadow: 0 0 0 4px rgba(51, 177, 255, 0.3);
 }
 
 /* Skip links */
@@ -392,14 +461,14 @@ button:focus-visible,
 [role='button']:focus-visible {
   outline: 2px solid var(--cyan-bright);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.3);
+  box-shadow: 0 0 0 4px rgba(51, 177, 255, 0.3);
 }
 
 /* Link focus styles */
 a:focus-visible {
   outline: 2px solid var(--cyan-bright);
   outline-offset: 2px;
-  box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.3);
+  box-shadow: 0 0 0 2px rgba(51, 177, 255, 0.3);
   border-radius: 2px;
 }
 
@@ -409,7 +478,7 @@ textarea:focus-visible,
 select:focus-visible {
   outline: 2px solid var(--cyan-bright);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.3);
+  box-shadow: 0 0 0 4px rgba(51, 177, 255, 0.3);
   border-color: var(--cyan-bright);
 }
 
@@ -429,13 +498,13 @@ select:focus-visible {
 /* Focus management for terminal interface */
 .terminal-focused {
   border-color: var(--cyan-bright) !important;
-  box-shadow: 0 0 15px rgba(0, 212, 255, 0.5) !important;
+  box-shadow: 0 0 15px rgba(51, 177, 255, 0.5) !important;
 }
 
 /* Keyboard navigation hints */
 .keyboard-hint {
   border: 1px dashed var(--magenta-soft);
-  background: rgba(255, 0, 255, 0.05);
+  background: rgba(255, 126, 182, 0.05);
 }
 
 /* Reduce motion for accessibility - enhanced */
@@ -475,7 +544,7 @@ select:focus-visible {
 
   *:focus-visible {
     outline-width: 3px;
-    box-shadow: 0 0 0 6px rgba(0, 212, 255, 0.5);
+    box-shadow: 0 0 0 6px rgba(51, 177, 255, 0.5);
   }
 }
 
@@ -506,7 +575,7 @@ select:focus-visible {
 
 /* Desktop icons hover effect */
 .desktop-icon:hover {
-  background: rgba(255, 0, 255, 0.1);
+  background: rgba(255, 126, 182, 0.1);
   transform: translateY(-2px);
 }
 
@@ -526,79 +595,120 @@ select:focus-visible {
   text-decoration: underline;
 }
 
-/* Foreground colors */
+/* Foreground colors - using ANSI palette */
 .ansi-fg-black {
-  color: #000;
+  color: var(--ansi-0);
 }
 .ansi-fg-red {
-  color: var(--terminal-red);
+  color: var(--ansi-1);
 }
 .ansi-fg-green {
-  color: var(--terminal-green);
+  color: var(--ansi-2);
 }
 .ansi-fg-yellow {
-  color: var(--terminal-orange);
+  color: var(--ansi-3);
 }
 .ansi-fg-blue {
-  color: var(--neon-blue);
+  color: var(--ansi-4);
 }
 .ansi-fg-magenta {
-  color: var(--magenta-bright);
+  color: var(--ansi-5);
 }
 .ansi-fg-cyan {
-  color: var(--cyan-bright);
+  color: var(--ansi-6);
 }
 .ansi-fg-white {
-  color: #f5f5f5;
+  color: var(--ansi-7);
 }
 
 .ansi-fg-bright-black {
-  color: #555;
+  color: var(--ansi-8);
 }
 .ansi-fg-bright-red {
-  color: #ff6b6b;
+  color: var(--ansi-9);
 }
 .ansi-fg-bright-green {
-  color: #7cfc00;
+  color: var(--ansi-10);
 }
 .ansi-fg-bright-yellow {
-  color: #ffd166;
+  color: var(--ansi-11);
 }
 .ansi-fg-bright-blue {
-  color: #7ccfff;
+  color: var(--ansi-12);
 }
 .ansi-fg-bright-magenta {
-  color: #ff99ff;
+  color: var(--ansi-13);
 }
 .ansi-fg-bright-cyan {
-  color: #a0ffff;
+  color: var(--ansi-14);
 }
 .ansi-fg-bright-white {
-  color: #ffffff;
+  color: var(--ansi-15);
 }
 
-/* Background colors (kept subtle to fit theme) */
+/* Background colors - using ANSI palette */
 .ansi-bg-black {
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: var(--ansi-0);
 }
 .ansi-bg-red {
-  background-color: rgba(255, 0, 0, 0.15);
+  background-color: var(--ansi-1);
 }
 .ansi-bg-green {
-  background-color: rgba(0, 255, 0, 0.12);
+  background-color: var(--ansi-2);
 }
 .ansi-bg-yellow {
-  background-color: rgba(255, 165, 0, 0.15);
+  background-color: var(--ansi-3);
 }
 .ansi-bg-blue {
-  background-color: rgba(0, 191, 255, 0.12);
+  background-color: var(--ansi-4);
 }
 .ansi-bg-magenta {
-  background-color: rgba(255, 0, 255, 0.12);
+  background-color: var(--ansi-5);
 }
 .ansi-bg-cyan {
-  background-color: rgba(0, 255, 255, 0.12);
+  background-color: var(--ansi-6);
 }
 .ansi-bg-white {
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: var(--ansi-7);
+}
+
+.ansi-bg-bright-black {
+  background-color: var(--ansi-8);
+}
+.ansi-bg-bright-red {
+  background-color: var(--ansi-9);
+}
+.ansi-bg-bright-green {
+  background-color: var(--ansi-10);
+}
+.ansi-bg-bright-yellow {
+  background-color: var(--ansi-11);
+}
+.ansi-bg-bright-blue {
+  background-color: var(--ansi-12);
+}
+.ansi-bg-bright-magenta {
+  background-color: var(--ansi-13);
+}
+.ansi-bg-bright-cyan {
+  background-color: var(--ansi-14);
+}
+.ansi-bg-bright-white {
+  background-color: var(--ansi-15);
+}
+
+/* Global selection styling */
+::selection {
+  background-color: var(--term-selection-bg);
+  color: var(--term-selection-fg);
+}
+
+/* Terminal cursor and caret styling */
+.terminal, .terminal * {
+  caret-color: var(--term-cursor);
+}
+
+.terminal .cursor, .cursor-block {
+  background-color: var(--term-cursor);
+  color: var(--term-cursor-text);
 }

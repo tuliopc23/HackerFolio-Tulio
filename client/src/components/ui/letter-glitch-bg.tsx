@@ -2,10 +2,12 @@ import React, { useRef, useEffect, useCallback, useMemo } from 'react'
 
 const LetterGlitchBackground = ({
   glitchColors = [
-    '#22c55e', // green-500 (main green)
-    '#4ade80', // green-400 (bright green)
-    '#ec4899', // pink-500 (main pink)
-    '#f472b6', // pink-400 (bright pink)
+    '#666666', // soft gray
+    '#777777', // medium gray
+    '#888888', // lighter gray
+    '#999999', // lightest gray
+    'rgba(255,255,255,0.05)', // ghosted white
+    'rgba(255,255,255,0.08)', // slightly more visible white
   ],
   glitchSpeed = 80,
   centerVignette = false,
@@ -119,10 +121,22 @@ const LetterGlitchBackground = ({
 
   const getRandomColor = useCallback((): string => {
     const c = glitchColors[Math.floor(Math.random() * glitchColors.length)]
-    return typeof c === 'string' ? c : '#00D4FF'
+    return typeof c === 'string' ? c : '#666666'
   }, [glitchColors])
 
   const hexToRgb = (hex: string) => {
+    // Handle rgba values
+    if (hex.startsWith('rgba(')) {
+      const match = hex.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*[\d.]+\)/)
+      if (match) {
+        return {
+          r: parseInt(match[1] ?? '102', 10),
+          g: parseInt(match[2] ?? '102', 10),
+          b: parseInt(match[3] ?? '102', 10),
+        }
+      }
+    }
+
     const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i
     hex = hex.replace(shorthandRegex, (_m: string, r: string, g: string, b: string) => {
       return r + r + g + g + b + b
@@ -188,7 +202,7 @@ const LetterGlitchBackground = ({
       const cols = Math.max(1, grid.current.columns)
       const x = (index % cols) * charWidth
       const y = Math.floor(index / cols) * charHeight
-      ctx.fillStyle = letter.color || '#00D4FF'
+      ctx.fillStyle = letter.color || '#666666'
       ctx.fillText(letter.char || ' ', x, y)
     })
   }, [fontSize])
@@ -315,7 +329,7 @@ const LetterGlitchBackground = ({
 
   return (
     <div className='relative w-full h-full bg-black overflow-hidden'>
-      <canvas ref={canvasRef} className='block w-full h-full opacity-60' />
+      <canvas ref={canvasRef} className='block w-full h-full opacity-40' />
       {outerVignette && (
         <div className='absolute top-0 left-0 w-full h-full pointer-events-none bg-gradient-radial from-transparent via-transparent to-black' />
       )}

@@ -229,7 +229,7 @@ GPU: Apple M4 Pro`
                   </div>
 
                   {/* Separator */}
-                  <div className='border-t border-[#393939] my-2'></div>
+                  <div className='border-t border-[#393939] my-2' />
 
                   {/* Network Stats */}
                   <div className='space-y-1'>

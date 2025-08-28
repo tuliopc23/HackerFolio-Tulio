@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react'
 import { motion, useMotionValue, useTransform, animate } from 'motion/react'
+import React, { useEffect, useRef, useState } from 'react'
+
 import './loading-screen.css'
 import { MACINTOSH_ASCII } from '../assets/ascii/macintosh'
 
@@ -43,7 +44,9 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
     const controls = animate(progress, 100, {
       duration: DURATION_MS / 1000,
       ease: 'linear',
-      onUpdate: v => setAriaNow(Math.round(v)),
+      onUpdate: v => {
+        setAriaNow(Math.round(v))
+      },
     })
 
     // Connection message sequence
@@ -52,7 +55,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
       const showMessage = (index: number) => {
         if (index >= CONNECTION_MESSAGES.length) return
 
-        const message = CONNECTION_MESSAGES[index] || ''
+        const message = CONNECTION_MESSAGES[index] ?? ''
         setCurrentMessageIndex(index)
         let charIndex = 0
 
@@ -72,7 +75,9 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
       }
 
       // Start first message after a brief delay
-      messageTimeout = window.setTimeout(() => showMessage(0), 500)
+      messageTimeout = window.setTimeout(() => {
+        showMessage(0)
+      }, 500)
     }
 
     startMessageSequence()
@@ -134,7 +139,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
         <div className='message-container'>
           {CONNECTION_MESSAGES.map((msg, index) => (
             <div
-              key={index}
+              key={`message-${String(index)}`}
               className={`message-line ${index <= currentMessageIndex ? 'visible' : 'hidden'}`}
             >
               {index === currentMessageIndex ? (
@@ -174,7 +179,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
           aria-hidden='true'
           data-testid='bar'
         />
-        <div className='progress-glow' style={{ width: `${ariaNow}%` }} />
+        <div className='progress-glow' style={{ width: `${String(ariaNow)}%` }} />
       </div>
 
       {/* Loading percentage indicator */}

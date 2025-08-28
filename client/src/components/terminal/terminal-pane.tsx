@@ -486,7 +486,7 @@ export default function TerminalPane() {
       {/* Command Help Footer */}
       <div
         id='terminal-help'
-        className='px-3 py-2 border-t border-[rgba(128,255,128,0.25)] text-xs text-text-soft bg-black/20'
+        className='px-3 py-2 border-t border-[rgba(128,255,128,0.25)] text-xs text-green-400 bg-black/20'
         role='complementary'
         aria-label='Terminal keyboard shortcuts'
       >

@@ -2,10 +2,10 @@ import React, { useRef, useEffect, useCallback, useMemo } from 'react'
 
 const LetterGlitchBackground = ({
   glitchColors = [
-    '#FF00FF', // magenta-bright
-    '#00D4FF', // cyan-bright
-    '#C954C9', // magenta-soft
-    '#7DD3FC', // cyan-soft
+    '#22c55e', // green-500 (main green)
+    '#4ade80', // green-400 (bright green)
+    '#ec4899', // pink-500 (main pink)
+    '#f472b6', // pink-400 (bright pink)
   ],
   glitchSpeed = 80,
   centerVignette = false,

@@ -198,22 +198,53 @@ GPU: Apple M4 Pro`
               <div className='w-44 bg-black/30 border border-[#393939] rounded-lg p-3 text-xs font-mono'>
                 {/* Header with Status */}
                 <div className='flex items-center justify-between mb-2'>
-                  <span className='text-[#be95ff] text-xs font-semibold'>SSH</span>
+                  <span className='text-pink-400 text-[10px] font-semibold uppercase tracking-wide'>
+                    CONNECTION
+                  </span>
                   <div className='flex items-center gap-1'>
-                    <div className='w-2 h-2 rounded-full bg-[#42be65] animate-pulse' />
-                    <span className='text-[#42be65] text-[10px] font-bold'>ONLINE</span>
+                    <div className='w-2 h-2 rounded-full bg-green-400 animate-pulse' />
+                    <span className='text-green-400 text-[9px] font-bold'>SECURE</span>
                   </div>
                 </div>
 
-                {/* Network Info */}
-                <div className='space-y-1'>
-                  <div className='flex justify-between text-[10px]'>
-                    <span className='text-[#dde1e6] opacity-70'>Down:</span>
-                    <span className='text-[#78a9ff] font-mono'>1 Gbps</span>
+                {/* Connection Info */}
+                <div className='space-y-1.5'>
+                  <div className='flex justify-between text-[9px]'>
+                    <span className='text-[#dde1e6] opacity-70'>Protocol:</span>
+                    <span className='text-green-400 font-mono'>SSH-2.0</span>
                   </div>
-                  <div className='flex justify-between text-[10px]'>
-                    <span className='text-[#dde1e6] opacity-70'>Up:</span>
-                    <span className='text-[#78a9ff] font-mono'>100 Mbps</span>
+                  <div className='flex justify-between text-[9px]'>
+                    <span className='text-[#dde1e6] opacity-70'>Cipher:</span>
+                    <span className='text-pink-400 font-mono'>AES-256</span>
+                  </div>
+                  <div className='flex justify-between text-[9px]'>
+                    <span className='text-[#dde1e6] opacity-70'>Latency:</span>
+                    <span className='text-green-400 font-mono'>12ms</span>
+                  </div>
+                  <div className='flex justify-between text-[9px]'>
+                    <span className='text-[#dde1e6] opacity-70'>Uptime:</span>
+                    <span className='text-pink-400 font-mono'>
+                      {Math.floor((Date.now() - 1704067200000) / 86400000)}d
+                    </span>
+                  </div>
+
+                  {/* Separator */}
+                  <div className='border-t border-[#393939] my-2'></div>
+
+                  {/* Network Stats */}
+                  <div className='space-y-1'>
+                    <div className='flex justify-between text-[9px]'>
+                      <span className='text-[#dde1e6] opacity-70'>TX:</span>
+                      <span className='text-green-400 font-mono'>1.2GB</span>
+                    </div>
+                    <div className='flex justify-between text-[9px]'>
+                      <span className='text-[#dde1e6] opacity-70'>RX:</span>
+                      <span className='text-green-400 font-mono'>3.4GB</span>
+                    </div>
+                    <div className='flex justify-between text-[9px]'>
+                      <span className='text-[#dde1e6] opacity-70'>Sessions:</span>
+                      <span className='text-pink-400 font-mono'>4</span>
+                    </div>
                   </div>
                 </div>
               </div>

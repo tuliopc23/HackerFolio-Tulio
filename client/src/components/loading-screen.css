@@ -1,0 +1,567 @@
+/* LoadingScreen Component Styles
+ * Enhanced terminal theme with CRT effects and Oxocarbon color palette
+ * Green ASCII art, pink loading bar, with phosphor glow and scanlines
+ */
+
+.loading-root {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-rows: 1fr auto auto auto;
+  align-items: center;
+  justify-items: center;
+  gap: 24px;
+  background: var(--term-bg, #000);
+  z-index: 9999;
+  overflow: hidden;
+  padding: 20px;
+}
+
+/* CRT Screen Effects */
+.crt-screen {
+  position: relative;
+}
+
+.crt-scanlines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(190, 149, 255, 0.03) 0px,
+    rgba(190, 149, 255, 0.03) 2px,
+    transparent 2px,
+    transparent 4px
+  );
+  z-index: 1;
+  animation: scanlines 2s linear infinite;
+}
+
+@keyframes scanlines {
+  0% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0.8;
+  }
+}
+
+/* ASCII Art Styling - Terminal Green */
+.ascii {
+  color: var(--terminal-green, #42be65);
+  white-space: pre;
+  font-family: var(
+    --font-mono,
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    'Liberation Mono',
+    monospace
+  );
+  font-size: clamp(8px, 1.4vw, 16px);
+  line-height: 1.05;
+  margin: 0;
+  user-select: none;
+  text-rendering: optimizeLegibility;
+  position: relative;
+  z-index: 2;
+}
+
+/* Phosphor Glow Effect */
+.phosphor-glow {
+  text-shadow:
+    0 0 5px currentColor,
+    0 0 10px currentColor,
+    0 0 15px currentColor,
+    0 0 20px rgba(66, 190, 101, 0.3);
+  animation: phosphor-pulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes phosphor-pulse {
+  0% {
+    text-shadow:
+      0 0 5px currentColor,
+      0 0 10px currentColor,
+      0 0 15px currentColor,
+      0 0 20px rgba(66, 190, 101, 0.3);
+  }
+  100% {
+    text-shadow:
+      0 0 8px currentColor,
+      0 0 15px currentColor,
+      0 0 25px currentColor,
+      0 0 35px rgba(66, 190, 101, 0.5);
+  }
+}
+
+/* Terminal Connection Messages */
+.connection-terminal {
+  position: relative;
+  z-index: 2;
+  width: min(600px, 90vw);
+  background: rgba(10, 10, 10, 0.8);
+  border: 1px solid var(--magenta-soft, #ff7eb6);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow:
+    0 0 20px rgba(255, 126, 182, 0.2),
+    inset 0 0 20px rgba(255, 126, 182, 0.05);
+  backdrop-filter: blur(10px);
+}
+
+.terminal-header {
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 126, 182, 0.3);
+}
+
+.terminal-title {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  text-shadow: 0 0 3px currentColor;
+}
+
+.message-container {
+  min-height: 140px;
+  max-height: 140px;
+  overflow: hidden;
+}
+
+.message-line {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.4;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease-out;
+}
+
+.message-line.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.message-line.hidden {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.message-text {
+  color: var(--text-cyan, #f2f4f8);
+  text-shadow: 0 0 3px rgba(242, 244, 248, 0.3);
+  flex: 1;
+}
+
+.message-text.completed {
+  color: var(--cyan-soft, #82cfff);
+  opacity: 0.8;
+}
+
+.status-ok {
+  color: var(--terminal-green, #42be65);
+  font-weight: bold;
+  text-shadow: 0 0 5px currentColor;
+  animation: status-glow 0.5s ease-out;
+}
+
+@keyframes status-glow {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.terminal-cursor {
+  color: var(--magenta-bright, #be95ff);
+  font-weight: bold;
+  animation: cursor-blink 1s infinite;
+}
+
+@keyframes cursor-blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Progress Bar Container */
+.progress {
+  width: min(720px, 84vw);
+  height: 14px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Progress Track - Subtle background */
+.track {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 126, 182, 0.15);
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 126, 182, 0.2);
+}
+
+/* Progress Bar - Pink with glow */
+.bar {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    var(--magenta-bright, #be95ff) 0%,
+    var(--magenta-soft, #ff7eb6) 50%,
+    var(--magenta-bright, #be95ff) 100%
+  );
+  border-radius: 9999px;
+  transform-origin: left;
+  box-shadow:
+    0 0 10px rgba(255, 126, 182, 0.6),
+    0 0 20px rgba(255, 126, 182, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Progress Glow Effect */
+.progress-glow {
+  position: absolute;
+  top: -4px;
+  left: 0;
+  height: 22px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 126, 182, 0.4) 50%,
+    transparent 100%
+  );
+  border-radius: 9999px;
+  filter: blur(8px);
+  transition: width 0.1s linear;
+  z-index: -1;
+}
+
+/* Loading Indicator */
+.loading-indicator {
+  position: relative;
+  z-index: 2;
+}
+
+.loading-text {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  text-shadow:
+    0 0 5px currentColor,
+    0 0 10px rgba(51, 177, 255, 0.3);
+  letter-spacing: 0.1em;
+}
+
+/* CRT Vignette Effect */
+.crt-screen::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.3) 100%);
+  z-index: 3;
+}
+
+/* Accessibility: Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .ascii,
+  .bar,
+  .phosphor-glow,
+  .status-ok,
+  .terminal-cursor {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .crt-scanlines {
+    animation: none !important;
+    opacity: 0.1 !important;
+  }
+
+  .phosphor-glow {
+    text-shadow: 0 0 5px currentColor !important;
+  }
+
+  .message-line {
+    transition: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .ascii {
+    color: #00ff00;
+    text-shadow: none;
+  }
+
+  .bar {
+    background: #ff00ff;
+    box-shadow: none;
+  }
+
+  .track {
+    border: 2px solid #ff00ff;
+  }
+
+  .connection-terminal {
+    border: 2px solid #ff00ff;
+    box-shadow: none;
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+  .loading-root {
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .ascii {
+    font-size: clamp(6px, 2vw, 12px);
+  }
+
+  .connection-terminal {
+    padding: 12px;
+  }
+
+  .message-line {
+    font-size: 10px;
+  }
+
+  .terminal-title {
+    font-size: 10px;
+  }
+}
+
+/* CRT Screen Effects */
+.crt-screen {
+  position: relative;
+}
+
+.crt-scanlines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(190, 149, 255, 0.03) 0px,
+    rgba(190, 149, 255, 0.03) 2px,
+    transparent 2px,
+    transparent 4px
+  );
+  z-index: 1;
+  animation: scanlines 2s linear infinite;
+}
+
+@keyframes scanlines {
+  0% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0.8;
+  }
+}
+
+/* ASCII Art Styling - Terminal Green */
+.ascii {
+  color: var(--terminal-green, #42be65);
+  white-space: pre;
+  font-family: var(
+    --font-mono,
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    'Liberation Mono',
+    monospace
+  );
+  font-size: clamp(8px, 1.4vw, 16px);
+  line-height: 1.05;
+  margin: 0;
+  user-select: none;
+  text-rendering: optimizeLegibility;
+  position: relative;
+  z-index: 2;
+}
+
+/* Phosphor Glow Effect */
+.phosphor-glow {
+  text-shadow:
+    0 0 5px currentColor,
+    0 0 10px currentColor,
+    0 0 15px currentColor,
+    0 0 20px rgba(66, 190, 101, 0.3);
+  animation: phosphor-pulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes phosphor-pulse {
+  0% {
+    text-shadow:
+      0 0 5px currentColor,
+      0 0 10px currentColor,
+      0 0 15px currentColor,
+      0 0 20px rgba(66, 190, 101, 0.3);
+  }
+  100% {
+    text-shadow:
+      0 0 8px currentColor,
+      0 0 15px currentColor,
+      0 0 25px currentColor,
+      0 0 35px rgba(66, 190, 101, 0.5);
+  }
+}
+
+/* Progress Bar Container */
+.progress {
+  width: min(720px, 84vw);
+  height: 14px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Progress Track - Subtle background */
+.track {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 126, 182, 0.15);
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 126, 182, 0.2);
+}
+
+/* Progress Bar - Pink with glow */
+.bar {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    var(--magenta-bright, #be95ff) 0%,
+    var(--magenta-soft, #ff7eb6) 50%,
+    var(--magenta-bright, #be95ff) 100%
+  );
+  border-radius: 9999px;
+  transform-origin: left;
+  box-shadow:
+    0 0 10px rgba(255, 126, 182, 0.6),
+    0 0 20px rgba(255, 126, 182, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Progress Glow Effect */
+.progress-glow {
+  position: absolute;
+  top: -4px;
+  left: 0;
+  height: 22px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 126, 182, 0.4) 50%,
+    transparent 100%
+  );
+  border-radius: 9999px;
+  filter: blur(8px);
+  transition: width 0.1s linear;
+  z-index: -1;
+}
+
+/* Loading Indicator */
+.loading-indicator {
+  position: relative;
+  z-index: 2;
+}
+
+.loading-text {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cyan-bright, #33b1ff);
+  text-shadow:
+    0 0 5px currentColor,
+    0 0 10px rgba(51, 177, 255, 0.3);
+  letter-spacing: 0.1em;
+}
+
+/* CRT Vignette Effect */
+.crt-screen::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.3) 100%);
+  z-index: 3;
+}
+
+/* Accessibility: Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .ascii,
+  .bar,
+  .phosphor-glow {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .crt-scanlines {
+    animation: none !important;
+    opacity: 0.1 !important;
+  }
+
+  .phosphor-glow {
+    text-shadow: 0 0 5px currentColor !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .ascii {
+    color: #00ff00;
+    text-shadow: none;
+  }
+
+  .bar {
+    background: #ff00ff;
+    box-shadow: none;
+  }
+
+  .track {
+    border: 2px solid #ff00ff;
+  }
+}

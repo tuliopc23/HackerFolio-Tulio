@@ -127,7 +127,7 @@ const LetterGlitchBackground = ({
   const hexToRgb = (hex: string) => {
     // Handle rgba values
     if (hex.startsWith('rgba(')) {
-      const match = hex.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*[\d.]+\)/)
+      const match = /rgba\((\d+),\s*(\d+),\s*(\d+),\s*[\d.]+\)/.exec(hex)
       if (match) {
         return {
           r: parseInt(match[1] ?? '102', 10),

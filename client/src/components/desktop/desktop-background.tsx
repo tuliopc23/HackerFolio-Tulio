@@ -40,18 +40,29 @@ export default function DesktopBackground() {
       <div className='absolute bottom-0 left-0 right-0 bg-[#0a0a0a] bg-opacity-80 border-t border-magenta-soft backdrop-blur-sm'>
         <div className='px-6 py-2 flex items-center justify-between'>
           {/* Left side - System status */}
-          <div className='flex items-center gap-4 text-xs text-text-soft'>
+          <div className='flex items-center gap-4 text-xs'>
             <div className='flex items-center gap-2'>
-              <div className='w-2 h-2 rounded-full bg-terminal-green animate-pulse' />
-              <span>System Online</span>
+              <div className='w-2 h-2 rounded-full bg-cyan-soft animate-pulse shadow-[0_0_6px_rgba(130,207,255,0.6)]' />
+              <span className='text-cyan-soft font-medium'>System Online</span>
             </div>
-            <div>CPU: 23% • RAM: 4.2GB • Network: Active</div>
+            <div className='text-magenta-soft'>
+              <span className='text-magenta-soft'>CPU:</span>
+              <span className='text-cyan-soft ml-1'>23%</span>
+              <span className='text-magenta-soft mx-2'>•</span>
+              <span className='text-magenta-soft'>RAM:</span>
+              <span className='text-cyan-soft ml-1'>4.2GB</span>
+              <span className='text-magenta-soft mx-2'>•</span>
+              <span className='text-magenta-soft'>Network:</span>
+              <span className='text-cyan-soft ml-1'>Active</span>
+            </div>
           </div>
 
           {/* Right side - Clock */}
           <div className='flex items-center gap-4 text-xs'>
-            <div className='text-magenta-bright font-mono'>{formatTime(currentTime)}</div>
-            <div className='text-text-soft'>
+            <div className='text-cyan-soft font-mono font-semibold text-shadow-sm'>
+              {formatTime(currentTime)}
+            </div>
+            <div className='text-magenta-soft'>
               {currentTime.toLocaleDateString('en-US', {
                 month: 'short',
                 day: 'numeric',

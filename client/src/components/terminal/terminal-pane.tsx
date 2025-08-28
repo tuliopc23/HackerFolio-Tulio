@@ -46,7 +46,7 @@ export default function TerminalPane() {
     setHistory(prev => {
       if (prev.length > 0) return prev
       const boot = `\x1b[36mInitializing secure connection...\x1b[39m\n\x1b[32m✓ Connection established\x1b[39m`
-      const art = `\x1b[36m████████╗██╗   ██╗██╗     ██╗ ██████╗ \n╚══██╔══╝██║   ██║██║     ██║██╔═══██╗\n   ██║   ██║   ██║██║     ██║██║   ██║\n   ██║   ██║   ██║██║     ██║██║   ██║\n   ██║   ╚██████╔╝███████╗██║╚██████╔╝\n   ╚═╝    ╚═════╝ ╚══════╝╚═╝ ╚═════╝\x1b[39m`
+      const art = `\x1b[32m _____ _   _ _    ___ ___   \x1b[35m  ___ _   _ _  _ _  _   _   \x1b[39m\n\x1b[32m|_   _| | | | |  |_ _/ _ \\  \x1b[35m / __| | | | \\| | || | /_\\  \x1b[39m\n\x1b[32m  | | | |_| | |__ | | (_) |\x1b[35m | (__| |_| | .\` | __ |/ _ \\ \x1b[39m\n\x1b[32m  |_|  \\___/|____|___\\___/ \x1b[35m  \\___|\\___|_|\\_|_||_/_/ \\_\\\x1b[39m\n\x1b[92m        _    \x1b[95m __         \x1b[96m _                      \x1b[39m\n\x1b[92m       |_  ||\x1b[95m (__|_ _. _| \x1b[96m| \\ _    _ | _ ._  _ ._ \x1b[39m\n\x1b[92m       ||_|||\x1b[95m __)|_(_|(_|<\x1b[96m|_/(/_\\/(/_|(_)|_)(/_|  \x1b[39m\n\x1b[92m             \x1b[95m            \x1b[96m               |        \x1b[39m`
       const tip = `\x1b[35mTip\x1b[39m: Type \x1b[36mhelp\x1b[39m or \x1b[36mhelp projects\x1b[39m for flags`
       return [
         ...prev,

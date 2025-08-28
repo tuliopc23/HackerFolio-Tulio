@@ -7,25 +7,9 @@ import { ThemeProvider } from '@/components/terminal/theme-context'
 // Create a custom render function that includes providers
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   initialEntries?: string[]
-  theme?: 'lumon' | 'neon' | 'mono'
 }
 
-function AllTheProviders({
-  children,
-  theme = 'lumon',
-}: {
-  children: React.ReactNode
-  theme?: 'lumon' | 'neon' | 'mono'
-}) {
-  // Ensure theme classes are applied to document element for testing
-  React.useEffect(() => {
-    const root = document.documentElement
-    root.classList.remove('theme-lumon', 'theme-neon', 'theme-mono')
-    if (theme !== 'lumon') {
-      root.classList.add(`theme-${theme}`)
-    }
-  }, [theme])
-
+function AllTheProviders({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
       <div className='crt-screen'>{children}</div>
@@ -33,9 +17,9 @@ function AllTheProviders({
   )
 }
 
-const customRender = (ui: ReactElement, { theme, ...options }: CustomRenderOptions = {}) => {
+const customRender = (ui: ReactElement, options: CustomRenderOptions = {}) => {
   const Wrapper = ({ children }: { children: React.ReactNode }) => (
-    <AllTheProviders theme={theme ?? 'lumon'}>{children}</AllTheProviders>
+    <AllTheProviders>{children}</AllTheProviders>
   )
 
   return render(ui, { wrapper: Wrapper, ...options })
@@ -66,14 +50,9 @@ export const TEST_CONSTANTS = {
     created_at: '2023-01-01T00:00:00.000Z',
     updated_at: '2023-01-01T00:00:00.000Z',
   },
-  THEME_CLASSES: {
-    LUMON: 'theme-lumon',
-    NEON: 'theme-neon',
-    MONO: 'theme-mono',
-  },
   CSS_CLASSES: {
-    TERMINAL_WINDOW: 'bg-lumon-bg border border-magenta-soft',
-    ERROR_BOUNDARY: 'bg-lumon-bg border border-terminal-red',
+    TERMINAL_WINDOW: 'bg-[#0a0a0a] border border-[#ff7eb6]',
+    ERROR_BOUNDARY: 'bg-[#0a0a0a] border border-[#ff7eb6]',
     TERMINAL_OUTPUT: 'terminal-output',
     PHOSPHOR_GLOW: 'phosphor-glow',
   },

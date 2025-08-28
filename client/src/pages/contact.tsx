@@ -39,7 +39,7 @@ export default function Contact() {
   }
 
   return (
-    <div className='min-h-screen bg-lumon-dark text-text-cyan p-6'>
+    <div className='min-h-screen bg-black text-text-cyan p-6'>
       <div className='max-w-3xl mx-auto'>
         {/* Header */}
         <div className='mb-8'>
@@ -54,24 +54,24 @@ export default function Contact() {
 
         <div className='grid gap-8 md:grid-cols-2'>
           {/* Content */}
-          <div className='pane-border rounded-lg p-6 bg-lumon-bg'>
+          <div className='pane-border rounded-lg p-6 bg-[#0a0a0a]'>
             <div className='prose prose-invert max-w-none'>{formatMarkdown(contactContent)}</div>
           </div>
 
           {/* Contact Links */}
           <div className='space-y-4'>
-            <div className='pane-border rounded-lg p-6 bg-lumon-bg'>
+            <div className='pane-border rounded-lg p-6 bg-[#0a0a0a]'>
               <h3 className='text-xl font-semibold text-cyan-bright mb-4'>Connect With Me</h3>
 
               <div className='space-y-3'>
                 <a
                   href={`mailto:${profileData.contact.email}`}
-                  className='flex items-center gap-3 p-3 border border-cyan-soft rounded hover:bg-cyan-soft hover:text-lumon-dark transition-colors group'
+                  className='flex items-center gap-3 p-3 border border-cyan-soft rounded hover:bg-cyan-soft hover:text-[#f2f4f8] transition-colors group'
                 >
-                  <Mail className='w-5 h-5 text-cyan-bright group-hover:text-lumon-dark' />
+                  <Mail className='w-5 h-5 text-cyan-bright group-hover:text-[#f2f4f8]' />
                   <div>
                     <div className='font-medium'>Email</div>
-                    <div className='text-sm text-text-soft group-hover:text-lumon-dark'>
+                    <div className='text-sm text-text-soft group-hover:text-[#f2f4f8]'>
                       {profileData.contact.email}
                     </div>
                   </div>
@@ -81,12 +81,12 @@ export default function Contact() {
                   href={profileData.contact.github}
                   target='_blank'
                   rel='noopener noreferrer'
-                  className='flex items-center gap-3 p-3 border border-cyan-soft rounded hover:bg-cyan-soft hover:text-lumon-dark transition-colors group'
+                  className='flex items-center gap-3 p-3 border border-cyan-soft rounded hover:bg-cyan-soft hover:text-[#f2f4f8] transition-colors group'
                 >
-                  <Code2 className='w-5 h-5 text-cyan-bright group-hover:text-lumon-dark' />
+                  <Code2 className='w-5 h-5 text-cyan-bright group-hover:text-[#f2f4f8]' />
                   <div>
                     <div className='font-medium'>GitHub</div>
-                    <div className='text-sm text-text-soft group-hover:text-lumon-dark'>
+                    <div className='text-sm text-text-soft group-hover:text-[#f2f4f8]'>
                       @tuliocunha
                     </div>
                   </div>
@@ -96,12 +96,12 @@ export default function Contact() {
                   href={profileData.contact.twitter}
                   target='_blank'
                   rel='noopener noreferrer'
-                  className='flex items-center gap-3 p-3 border border-cyan-soft rounded hover:bg-cyan-soft hover:text-lumon-dark transition-colors group'
+                  className='flex items-center gap-3 p-3 border border-cyan-soft rounded hover:bg-cyan-soft hover:text-[#f2f4f8] transition-colors group'
                 >
-                  <MessageCircle className='w-5 h-5 text-cyan-bright group-hover:text-lumon-dark' />
+                  <MessageCircle className='w-5 h-5 text-cyan-bright group-hover:text-[#f2f4f8]' />
                   <div>
                     <div className='font-medium'>Twitter</div>
-                    <div className='text-sm text-text-soft group-hover:text-lumon-dark'>
+                    <div className='text-sm text-text-soft group-hover:text-[#f2f4f8]'>
                       @tuliocunha
                     </div>
                   </div>
@@ -111,12 +111,12 @@ export default function Contact() {
                   href={profileData.contact.linkedin}
                   target='_blank'
                   rel='noopener noreferrer'
-                  className='flex items-center gap-3 p-3 border border-cyan-soft rounded hover:bg-cyan-soft hover:text-lumon-dark transition-colors group'
+                  className='flex items-center gap-3 p-3 border border-cyan-soft rounded hover:bg-cyan-soft hover:text-[#f2f4f8] transition-colors group'
                 >
-                  <Users className='w-5 h-5 text-cyan-bright group-hover:text-lumon-dark' />
+                  <Users className='w-5 h-5 text-cyan-bright group-hover:text-[#f2f4f8]' />
                   <div>
                     <div className='font-medium'>LinkedIn</div>
-                    <div className='text-sm text-text-soft group-hover:text-lumon-dark'>
+                    <div className='text-sm text-text-soft group-hover:text-[#f2f4f8]'>
                       tuliocunha
                     </div>
                   </div>
@@ -125,7 +125,7 @@ export default function Contact() {
             </div>
 
             {/* Availability Status */}
-            <div className='pane-border rounded-lg p-6 bg-lumon-bg'>
+            <div className='pane-border rounded-lg p-6 bg-[#0a0a0a]'>
               <h3 className='text-xl font-semibold text-cyan-bright mb-4'>Current Availability</h3>
               <div className='flex items-center gap-2 mb-3'>
                 <div className='w-3 h-3 rounded-full bg-terminal-green animate-pulse' />

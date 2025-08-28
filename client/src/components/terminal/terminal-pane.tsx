@@ -135,7 +135,7 @@ export default function TerminalPane() {
     if (result.navigate) {
       if (result.navigate.startsWith('theme:')) {
         const themeName = result.navigate.substring(6)
-        if (themeName === 'lumon' || themeName === 'neon' || themeName === 'mono') {
+        if (themeName === 'oxocarbon') {
           setTheme(themeName)
         }
       } else {

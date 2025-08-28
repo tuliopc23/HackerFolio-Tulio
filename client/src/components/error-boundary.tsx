@@ -76,14 +76,14 @@ export class TerminalErrorBoundary extends Component<Props, State> {
       const { title = 'Terminal Error', showDetails = true } = this.props
 
       return (
-        <div className='w-full h-full bg-lumon-bg border border-terminal-red rounded-lg overflow-hidden shadow-2xl'>
+        <div className='w-full h-full bg-[#0a0a0a] border border-terminal-red rounded-lg overflow-hidden shadow-2xl'>
           {/* Error Header */}
           <div className='bg-terminal-red/10 border-b border-terminal-red px-4 py-3 flex items-center justify-between'>
             <div className='flex items-center gap-3'>
               <div className='flex items-center gap-2'>
                 <div className='w-3 h-3 rounded-full bg-terminal-red animate-pulse' />
                 <div className='w-3 h-3 rounded-full bg-terminal-orange' />
-                <div className='w-3 h-3 rounded-full bg-lumon-border' />
+                <div className='w-3 h-3 rounded-full bg-[#393939]' />
               </div>
               <Terminal className='w-4 h-4 text-terminal-red' />
               <span className='text-terminal-red font-medium text-sm'>{title}</span>
@@ -112,14 +112,14 @@ export class TerminalErrorBoundary extends Component<Props, State> {
             </div>
 
             {/* Error Message */}
-            <div className='bg-lumon-border/50 border border-terminal-red/30 rounded p-4'>
+            <div className='bg-[#393939]/50 border border-terminal-red/30 rounded p-4'>
               <div className='flex items-start gap-3'>
                 <AlertTriangle className='w-5 h-5 text-terminal-red flex-shrink-0 mt-0.5' />
                 <div className='flex-1'>
                   <h3 className='text-magenta-bright font-semibold mb-2'>
                     System Malfunction Detected
                   </h3>
-                  <p className='text-lumon-text text-sm leading-relaxed'>
+                  <p className='text-[#f2f4f8] text-sm leading-relaxed'>
                     The terminal encountered an unexpected error and needs to restart this
                     component. Your session data has been preserved.
                   </p>
@@ -145,7 +145,7 @@ export class TerminalErrorBoundary extends Component<Props, State> {
               {showDetails && (
                 <button
                   onClick={this.handleToggleDetails}
-                  className='flex items-center gap-2 px-4 py-2 bg-lumon-border/50 hover:bg-lumon-border border border-magenta-soft text-magenta-bright rounded transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-magenta-bright focus:ring-opacity-50'
+                  className='flex items-center gap-2 px-4 py-2 bg-[#393939]/50 hover:bg-[#393939] border border-magenta-soft text-magenta-bright rounded transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-magenta-bright focus:ring-opacity-50'
                 >
                   <Code className='w-4 h-4' />
                   {isExpanded ? 'Hide Details' : 'Show Details'}
@@ -156,7 +156,7 @@ export class TerminalErrorBoundary extends Component<Props, State> {
                 onClick={() => {
                   window.location.reload()
                 }}
-                className='flex items-center gap-2 px-4 py-2 bg-lumon-border/30 hover:bg-lumon-border/50 border border-lumon-border text-lumon-text rounded transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-lumon-border focus:ring-opacity-50'
+                className='flex items-center gap-2 px-4 py-2 bg-[#393939]/30 hover:bg-[#393939]/50 border border-lumon-border text-[#f2f4f8] rounded transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-lumon-border focus:ring-opacity-50'
               >
                 <Terminal className='w-4 h-4' />
                 Reload Terminal
@@ -165,7 +165,7 @@ export class TerminalErrorBoundary extends Component<Props, State> {
 
             {/* Error Details (Expandable) */}
             {showDetails && isExpanded && (error ?? errorInfo) && (
-              <div className='mt-6 p-4 bg-lumon-bg border border-terminal-red/20 rounded overflow-hidden'>
+              <div className='mt-6 p-4 bg-[#0a0a0a] border border-terminal-red/20 rounded overflow-hidden'>
                 <div className='flex items-center gap-2 mb-3'>
                   <Bug className='w-4 h-4 text-terminal-red' />
                   <h4 className='text-magenta-bright font-medium'>Debug Information</h4>
@@ -175,7 +175,7 @@ export class TerminalErrorBoundary extends Component<Props, State> {
                   {error && (
                     <div>
                       <div className='text-terminal-red font-semibold mb-2'>Error Stack:</div>
-                      <pre className='text-lumon-text bg-lumon-border/20 p-3 rounded overflow-x-auto whitespace-pre-wrap break-words'>
+                      <pre className='text-[#f2f4f8] bg-[#393939]/20 p-3 rounded overflow-x-auto whitespace-pre-wrap break-words'>
                         {error.stack}
                       </pre>
                     </div>
@@ -184,7 +184,7 @@ export class TerminalErrorBoundary extends Component<Props, State> {
                   {errorInfo?.componentStack && (
                     <div>
                       <div className='text-terminal-red font-semibold mb-2'>Component Stack:</div>
-                      <pre className='text-lumon-text bg-lumon-border/20 p-3 rounded overflow-x-auto whitespace-pre-wrap break-words'>
+                      <pre className='text-[#f2f4f8] bg-[#393939]/20 p-3 rounded overflow-x-auto whitespace-pre-wrap break-words'>
                         {errorInfo.componentStack}
                       </pre>
                     </div>

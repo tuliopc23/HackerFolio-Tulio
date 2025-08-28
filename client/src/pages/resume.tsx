@@ -85,7 +85,7 @@ export default function Resume() {
   }
 
   return (
-    <div className='min-h-screen bg-lumon-dark text-text-cyan p-6'>
+    <div className='min-h-screen bg-black text-text-cyan p-6'>
       <div className='max-w-4xl mx-auto'>
         {/* Header */}
         <div className='mb-8'>
@@ -104,7 +104,7 @@ export default function Resume() {
             </div>
             <button
               onClick={handleDownload}
-              className='flex items-center gap-2 px-4 py-2 bg-neon-blue text-lumon-dark rounded hover:bg-cyan-bright transition-colors font-medium'
+              className='flex items-center gap-2 px-4 py-2 bg-[#33b1ff] text-[#f2f4f8] rounded hover:bg-cyan-bright transition-colors font-medium'
             >
               <Download className='w-4 h-4' />
               Download PDF
@@ -114,14 +114,14 @@ export default function Resume() {
 
         <div className='grid gap-8 lg:grid-cols-[2fr_1fr]'>
           {/* Main Content */}
-          <div className='pane-border rounded-lg p-8 bg-lumon-bg'>
+          <div className='pane-border rounded-lg p-8 bg-[#0a0a0a]'>
             <div className='prose prose-invert max-w-none'>{formatMarkdown(resumeContent)}</div>
           </div>
 
           {/* Sidebar */}
           <div className='space-y-6'>
             {/* Contact Info */}
-            <div className='pane-border rounded-lg p-6 bg-lumon-bg'>
+            <div className='pane-border rounded-lg p-6 bg-[#0a0a0a]'>
               <h3 className='text-lg font-semibold text-cyan-bright mb-4'>Contact</h3>
               <div className='space-y-3 text-sm'>
                 <a
@@ -153,7 +153,7 @@ export default function Resume() {
             </div>
 
             {/* Skills Summary */}
-            <div className='pane-border rounded-lg p-6 bg-lumon-bg'>
+            <div className='pane-border rounded-lg p-6 bg-[#0a0a0a]'>
               <h3 className='text-lg font-semibold text-cyan-bright mb-4'>Core Skills</h3>
               <div className='space-y-3'>
                 <div>
@@ -162,7 +162,7 @@ export default function Resume() {
                     {profileData.stack.languages.map(lang => (
                       <span
                         key={lang}
-                        className='px-2 py-1 bg-lumon-dark border border-cyan-soft rounded text-xs text-cyan-bright'
+                        className='px-2 py-1 bg-black border border-cyan-soft rounded text-xs text-cyan-bright'
                       >
                         {lang}
                       </span>
@@ -175,7 +175,7 @@ export default function Resume() {
                     {profileData.stack.web.slice(0, 3).map(tech => (
                       <span
                         key={tech}
-                        className='px-2 py-1 bg-lumon-dark border border-cyan-soft rounded text-xs text-cyan-bright'
+                        className='px-2 py-1 bg-black border border-cyan-soft rounded text-xs text-cyan-bright'
                       >
                         {tech}
                       </span>
@@ -188,7 +188,7 @@ export default function Resume() {
                     {profileData.stack.cloud.map(tech => (
                       <span
                         key={tech}
-                        className='px-2 py-1 bg-lumon-dark border border-cyan-soft rounded text-xs text-cyan-bright'
+                        className='px-2 py-1 bg-black border border-cyan-soft rounded text-xs text-cyan-bright'
                       >
                         {tech}
                       </span>
@@ -199,7 +199,7 @@ export default function Resume() {
             </div>
 
             {/* Quick Stats */}
-            <div className='pane-border rounded-lg p-6 bg-lumon-bg'>
+            <div className='pane-border rounded-lg p-6 bg-[#0a0a0a]'>
               <h3 className='text-lg font-semibold text-cyan-bright mb-4'>Quick Stats</h3>
               <div className='space-y-3 text-sm'>
                 <div className='flex justify-between'>

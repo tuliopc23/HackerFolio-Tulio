@@ -47,7 +47,7 @@ export default function ProjectsGridPane() {
   const cards = projects.map((project, index) => ({
     id: index,
     content: (
-      <div className='bg-lumon-bg p-3 sm:p-4 h-full'>
+      <div className='bg-[#0a0a0a] p-3 sm:p-4 h-full'>
         <h3 className='text-cyan-bright font-medium text-base sm:text-lg mb-2'>{project.name}</h3>
         <p className='text-text-soft text-sm mb-3'>{project.description}</p>
 
@@ -77,7 +77,7 @@ export default function ProjectsGridPane() {
                   }
                 }
               }}
-              className='px-3 py-1 bg-cyan-bright text-lumon-dark rounded text-xs hover:bg-cyan-soft transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-bright focus:ring-opacity-50'
+              className='px-3 py-1 bg-cyan-bright text-[#f2f4f8] rounded text-xs hover:bg-cyan-soft transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-bright focus:ring-opacity-50'
               aria-label={`View live demo of ${project.name}`}
             >
               Demo
@@ -95,7 +95,7 @@ export default function ProjectsGridPane() {
                   }
                 }
               }}
-              className='px-3 py-1 border border-magenta-soft text-magenta-soft rounded text-xs hover:bg-magenta-soft hover:text-lumon-dark transition-colors focus:outline-none focus:ring-2 focus:ring-magenta-soft focus:ring-opacity-50'
+              className='px-3 py-1 border border-magenta-soft text-magenta-soft rounded text-xs hover:bg-magenta-soft hover:text-[#f2f4f8] transition-colors focus:outline-none focus:ring-2 focus:ring-magenta-soft focus:ring-opacity-50'
               aria-label={`View source code of ${project.name} on GitHub`}
             >
               Code
@@ -116,7 +116,7 @@ export default function ProjectsGridPane() {
       aria-label='Projects Grid'
     >
       {/* Pane Header */}
-      <div className='bg-lumon-border px-4 py-2 border-b border-magenta-soft flex items-center justify-between'>
+      <div className='bg-[#393939] px-4 py-2 border-b border-magenta-soft flex items-center justify-between'>
         <div className='flex items-center gap-2'>
           <span className='text-magenta-bright font-medium'>[pane-03]</span>
           <span className='text-text-soft'>projects</span>
@@ -124,7 +124,7 @@ export default function ProjectsGridPane() {
         <div className='text-xs text-text-soft'>{projects.length} items</div>
       </div>
 
-      <div className='flex-1 bg-lumon-bg overflow-hidden'>
+      <div className='flex-1 bg-[#0a0a0a] overflow-hidden'>
         {loading ? (
           <div className='p-4 flex items-center justify-center'>
             <TerminalLoadingSpinner text='Loading projects...' />

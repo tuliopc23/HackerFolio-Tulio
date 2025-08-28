@@ -125,8 +125,8 @@ describe('CommandProcessor', () => {
     })
 
     test('parses command with multiple arguments', () => {
-      const result = processor.processCommand('theme lumon')
-      expect(result.navigate).toBe('theme:lumon')
+      const result = processor.processCommand('theme oxocarbon')
+      expect(result.navigate).toBe('theme:oxocarbon')
     })
   })
 
@@ -189,7 +189,7 @@ describe('CommandProcessor', () => {
 
   describe('Theme Command', () => {
     test('switches to valid themes', () => {
-      const validThemes = ['lumon', 'neon', 'mono']
+      const validThemes = ['oxocarbon']
 
       validThemes.forEach(theme => {
         const result = processor.processCommand(`theme ${theme}`)
@@ -203,7 +203,7 @@ describe('CommandProcessor', () => {
     test('returns error for invalid themes', () => {
       const result = processor.processCommand('theme invalid')
       expect(result).toEqual({
-        output: "Invalid theme 'invalid'\nAvailable themes: lumon, neon, mono",
+        output: "Invalid theme 'invalid'\nAvailable themes: oxocarbon",
         error: true,
       })
     })
@@ -211,7 +211,7 @@ describe('CommandProcessor', () => {
     test('handles missing theme argument', () => {
       const result = processor.processCommand('theme')
       expect(result).toEqual({
-        output: "Invalid theme ''\nAvailable themes: lumon, neon, mono",
+        output: "Invalid theme ''\nAvailable themes: oxocarbon",
         error: true,
       })
     })
@@ -298,9 +298,7 @@ describe('CommandProcessor', () => {
 
     test('suggests themes for theme command', () => {
       const suggestions = processor.getAutocomplete('theme ')
-      expect(suggestions).toContain('theme lumon')
-      expect(suggestions).toContain('theme neon')
-      expect(suggestions).toContain('theme mono')
+      expect(suggestions).toContain('theme oxocarbon')
     })
 
     test('suggests files for cat command', () => {
@@ -311,9 +309,8 @@ describe('CommandProcessor', () => {
     })
 
     test('suggests partial matches for theme command', () => {
-      const suggestions = processor.getAutocomplete('theme ne')
-      expect(suggestions).toContain('theme neon')
-      expect(suggestions).not.toContain('theme lumon')
+      const suggestions = processor.getAutocomplete('theme ox')
+      expect(suggestions).toContain('theme oxocarbon')
     })
 
     test('suggests options for projects command', () => {

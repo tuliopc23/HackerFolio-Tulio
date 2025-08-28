@@ -1,7 +1,6 @@
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import path from 'path'
-import { config } from './shared/config'
 
 export default defineConfig({
   plugins: [react()],
@@ -91,7 +90,7 @@ export default defineConfig({
     },
 
     // Reporter configuration
-    reporter: ['default', 'junit', 'json'],
+    reporters: ['default', 'junit', 'json'],
     outputFile: {
       junit: './coverage/junit-report.xml',
       json: './coverage/test-results.json',
@@ -99,7 +98,6 @@ export default defineConfig({
 
     // Watch mode configuration
     watch: false, // Disabled by default for CI
-    watchExclude: ['**/node_modules/**', '**/dist/**', '**/coverage/**', '**/build/**'],
   },
 
   resolve: {

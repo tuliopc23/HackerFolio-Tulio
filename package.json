@@ -17,6 +17,8 @@
     "build:clean": "rm -rf dist coverage .vite && bun run build",
     "build:production": "NODE_ENV=production bun run build",
     "build:production:full": "NODE_ENV=production bun run build:full",
+    "build:analyze": "bun run build && npx vite-bundle-analyzer dist/public",
+    "lighthouse": "lhci autorun",
     "clean": "rm -rf dist coverage .vite tmp node_modules/.cache",
     "start": "bun run env:validate && bun server/app.ts",
     "start:production": "NODE_ENV=production bun run start",

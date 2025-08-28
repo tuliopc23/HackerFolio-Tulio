@@ -14,6 +14,6 @@ if (!existsSync(DATA_DIR)) {
 }
 
 export const sqlite = new Database(DB_PATH, { create: true, readwrite: true })
-sqlite.exec('PRAGMA journal_mode = WAL;')
+sqlite.run('PRAGMA journal_mode = WAL;')
 
 export const orm: BunSQLiteDatabase<typeof schema> = drizzle(sqlite, { schema })

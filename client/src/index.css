@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* TailwindCSS v4 Theme Configuration */
 @theme {
@@ -10,7 +10,7 @@
   --color-term-selection-fg: #f2f4f8;
   --color-term-cursor: #ffffff;
   --color-term-cursor-text: #000000;
-  
+
   /* ANSI Color Palette */
   --color-ansi-0: #161616;
   --color-ansi-1: #78a9ff;
@@ -28,14 +28,26 @@
   --color-ansi-13: #be95ff;
   --color-ansi-14: #33b1ff;
   --color-ansi-15: #ffffff;
-  
-  /* Legacy aliases (mapped to new palette) */
+
+  /* Oxocarbon theme colors */
+  --color-background: var(--color-term-bg);
+  --color-foreground: var(--color-term-fg);
+  --color-card: #0a0a0a;
+  --color-card-foreground: var(--color-term-fg);
+  --color-primary: var(--color-ansi-6);
+  --color-primary-foreground: var(--color-term-bg);
+  --color-secondary: var(--color-ansi-8);
+  --color-secondary-foreground: var(--color-term-fg);
+  --color-border: var(--color-ansi-8);
+
+  /* Component-specific colors for compatibility */
   --color-lumon-dark: var(--color-term-bg);
   --color-lumon-bg: #0a0a0a;
   --color-lumon-border: var(--color-ansi-8);
+  --color-lumon-text: var(--color-term-fg);
+  --color-neon-blue: var(--color-ansi-6);
   --color-cyan-bright: var(--color-ansi-6);
   --color-cyan-soft: var(--color-ansi-5);
-  --color-neon-blue: var(--color-ansi-6);
   --color-text-cyan: var(--color-term-fg);
   --color-text-soft: #b3e6e6;
   --color-terminal-green: var(--color-ansi-3);
@@ -44,16 +56,6 @@
   --color-magenta-bright: var(--color-ansi-13);
   --color-magenta-soft: var(--color-ansi-2);
   --color-magenta-glow: #ffccf2;
-
-  --color-background: var(--color-term-bg);
-  --color-foreground: var(--color-term-fg);
-  --color-card: var(--color-lumon-bg);
-  --color-card-foreground: var(--color-term-fg);
-  --color-primary: var(--color-ansi-6);
-  --color-primary-foreground: var(--color-term-bg);
-  --color-secondary: var(--color-ansi-8);
-  --color-secondary-foreground: var(--color-term-fg);
-  --color-border: var(--color-ansi-8);
 
   --radius: 0.5rem;
   --font-mono: 'JetBrains Mono', 'Courier New', monospace;
@@ -70,7 +72,7 @@
    * - Blue slot (4) → Teal (#08bdba)
    * This creates a harmonious, modern terminal aesthetic.
    */
-  
+
   /* Base Terminal Colors */
   --term-bg: #000000;
   --term-fg: #f2f4f8;
@@ -78,32 +80,28 @@
   --term-selection-fg: #f2f4f8;
   --term-cursor: #ffffff;
   --term-cursor-text: #000000;
-  
+
   /* ANSI 16-Color Palette */
-  --ansi-0:  #161616; /* black */
-  --ansi-1:  #78a9ff; /* red slot (mapped to light blue) */
-  --ansi-2:  #ff7eb6; /* green slot (mapped to pink) */
-  --ansi-3:  #42be65; /* yellow slot (mapped to green) */
-  --ansi-4:  #08bdba; /* blue slot (mapped to teal) */
-  --ansi-5:  #82cfff; /* magenta (light cyan) */
-  --ansi-6:  #33b1ff; /* cyan (blue) */
-  --ansi-7:  #dde1e6; /* white */
-  --ansi-8:  #393939; /* bright black */
-  --ansi-9:  #78a9ff; /* bright red (same as normal) */
+  --ansi-0: #161616; /* black */
+  --ansi-1: #78a9ff; /* red slot (mapped to light blue) */
+  --ansi-2: #ff7eb6; /* green slot (mapped to pink) */
+  --ansi-3: #42be65; /* yellow slot (mapped to green) */
+  --ansi-4: #08bdba; /* blue slot (mapped to teal) */
+  --ansi-5: #82cfff; /* magenta (light cyan) */
+  --ansi-6: #33b1ff; /* cyan (blue) */
+  --ansi-7: #dde1e6; /* white */
+  --ansi-8: #393939; /* bright black */
+  --ansi-9: #78a9ff; /* bright red (same as normal) */
   --ansi-10: #ff7eb6; /* bright green (same as normal) */
   --ansi-11: #42be65; /* bright yellow (same as normal) */
   --ansi-12: #08bdba; /* bright blue (same as normal) */
   --ansi-13: #be95ff; /* bright magenta (purple) */
   --ansi-14: #33b1ff; /* bright cyan (same as normal) */
   --ansi-15: #ffffff; /* bright white */
-  
-  /* Legacy Cyberpunk Theme Colors (mapped to new palette) */
-  --lumon-dark: var(--term-bg);
-  --lumon-bg: #0a0a0a;
-  --lumon-border: var(--ansi-8);
+
+  /* Oxocarbon theme colors */
   --cyan-bright: var(--ansi-6);
   --cyan-soft: var(--ansi-5);
-  --neon-blue: var(--ansi-6);
   --text-cyan: var(--term-fg);
   --text-soft: #b3e6e6;
   --terminal-green: var(--ansi-3);
@@ -113,25 +111,12 @@
   --magenta-soft: var(--ansi-2);
   --magenta-glow: #ffccf2;
 
-  /* Neon Theme Colors (mapped to ANSI palette) */
-  --neon-bg: var(--term-bg);
-  --neon-border: var(--ansi-8);
-  --neon-pink: var(--ansi-2);
-  --neon-purple: var(--ansi-13);
-  --neon-cyan: var(--ansi-6);
-
-  /* Mono Theme Colors (mapped to ANSI palette) */
-  --mono-bg: var(--term-bg);
-  --mono-border: var(--ansi-3);
-  --mono-green: var(--ansi-3);
-  --mono-text: var(--ansi-10);
-
   /* Base tokens */
   --background: var(--term-bg);
   --foreground: var(--term-fg);
-  --card: var(--lumon-bg);
+  --card: #0a0a0a;
   --card-foreground: var(--term-fg);
-  --popover: var(--lumon-bg);
+  --popover: #0a0a0a;
   --popover-foreground: var(--term-fg);
   --primary: var(--ansi-6);
   --primary-foreground: var(--term-bg);
@@ -144,11 +129,11 @@
   --destructive: var(--ansi-2);
   --destructive-foreground: var(--term-fg);
   --border: var(--ansi-8);
-  --input: var(--lumon-bg);
+  --input: #0a0a0a;
   --ring: var(--ansi-6);
   --radius: 0.5rem;
   --font-mono: 'JetBrains Mono', 'Courier New', monospace;
-  
+
   /* Color scheme declaration for proper dark mode */
   color-scheme: dark;
 }
@@ -158,7 +143,7 @@
   --foreground: var(--term-fg);
 }
 
-/* Theme variants pruned: dark-only app uses default tokens (lumon) */
+/* Oxocarbon theme: dark-only app uses oxocarbon tokens */
 
 @layer base {
   * {
@@ -176,7 +161,7 @@
   body {
     font-family: var(--font-mono);
     -webkit-font-smoothing: antialiased;
-    background-color: var(--lumon-dark) !important;
+    background-color: var(--term-bg) !important;
     color: var(--text-cyan);
     overflow: hidden;
   }
@@ -187,7 +172,7 @@
   }
 
   #root {
-    background-color: var(--lumon-dark);
+    background-color: var(--term-bg);
     color: var(--text-cyan);
   }
 }
@@ -195,7 +180,7 @@
 @layer components {
   /* Terminal Pane Component Styles */
   .terminal-pane {
-    background-color: var(--lumon-bg);
+    background-color: #0a0a0a;
     border: 1px solid var(--magenta-soft);
     border-radius: var(--radius);
     box-shadow:
@@ -215,7 +200,7 @@
 /* CRT Screen Effects */
 .crt-screen {
   position: relative;
-  background: var(--lumon-dark);
+  background: var(--term-bg);
 }
 
 .crt-screen::before {
@@ -337,7 +322,7 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--lumon-bg);
+  background: #0a0a0a;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -704,11 +689,13 @@ select:focus-visible {
 }
 
 /* Terminal cursor and caret styling */
-.terminal, .terminal * {
+.terminal,
+.terminal * {
   caret-color: var(--term-cursor);
 }
 
-.terminal .cursor, .cursor-block {
+.terminal .cursor,
+.cursor-block {
   background-color: var(--term-cursor);
   color: var(--term-cursor-text);
 }

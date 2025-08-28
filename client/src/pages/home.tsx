@@ -52,7 +52,7 @@ export default function Home() {
         {!terminalVisible && (
           <button
             onClick={handleRestoreTerminal}
-            className='fixed bottom-4 left-4 px-4 py-2 bg-lumon-bg border border-magenta-soft rounded-lg text-magenta-bright hover:bg-magenta-soft hover:bg-opacity-20 transition-colors animate-in fade-in focus:outline-none focus:ring-2 focus:ring-magenta-bright focus:ring-opacity-50'
+            className='fixed bottom-4 left-4 px-4 py-2 bg-[#0a0a0a] border border-magenta-soft rounded-lg text-magenta-bright hover:bg-magenta-soft hover:bg-opacity-20 transition-colors animate-in fade-in focus:outline-none focus:ring-2 focus:ring-magenta-bright focus:ring-opacity-50'
             aria-label='Open Terminal'
           >
             Open Terminal

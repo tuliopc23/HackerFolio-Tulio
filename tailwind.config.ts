@@ -13,12 +13,8 @@ export default {
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
-        'lumon-dark': 'var(--lumon-dark)',
-        'lumon-bg': 'var(--lumon-bg)',
-        'lumon-border': 'var(--lumon-border)',
         'cyan-bright': 'var(--cyan-bright)',
         'cyan-soft': 'var(--cyan-soft)',
-        'neon-blue': 'var(--neon-blue)',
         'text-cyan': 'var(--text-cyan)',
         'text-soft': 'var(--text-soft)',
         'terminal-green': 'var(--terminal-green)',

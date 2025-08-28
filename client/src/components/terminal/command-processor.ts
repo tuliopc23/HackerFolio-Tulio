@@ -100,7 +100,7 @@ grep stack          - Show technology stack
 projects [filter]   - List projects with optional filter
 printd contact      - Display contact information
 open <route|url>    - Navigate to route or external URL
-theme <name>        - Switch theme (lumon|neon|mono)
+  theme <name>        - Switch theme (oxocarbon)
 clear               - Clear terminal output
 ls                  - List available content
 cat <file>          - Display file content
@@ -165,7 +165,7 @@ Status: ${profileData.status}`,
   }
 
   private theme(themeName: string): CommandResult {
-    const validThemes = ['lumon', 'neon', 'mono']
+    const validThemes = ['oxocarbon']
     if (!validThemes.includes(themeName)) {
       return {
         output: `Invalid theme '${themeName}'\nAvailable themes: ${validThemes.join(', ')}`,
@@ -224,7 +224,7 @@ projects/
     const merged = Array.from(new Set([...commands, ...Array.from(this.serverCommands)]))
 
     const routes = ['/projects', '/about', '/contact', '/resume']
-    const themes = ['lumon', 'neon', 'mono']
+    const themes = ['oxocarbon']
 
     if (input.startsWith('open ')) {
       const partial = input.substring(5)

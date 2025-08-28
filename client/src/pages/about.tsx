@@ -70,7 +70,7 @@ export default function About() {
   }
 
   return (
-    <div className='min-h-screen bg-lumon-dark text-text-cyan p-6'>
+    <div className='min-h-screen bg-black text-text-cyan p-6'>
       <div className='max-w-3xl mx-auto'>
         {/* Header */}
         <div className='mb-8'>
@@ -84,7 +84,7 @@ export default function About() {
         </div>
 
         {/* Content */}
-        <div className='pane-border rounded-lg p-8 bg-lumon-bg'>
+        <div className='pane-border rounded-lg p-8 bg-[#0a0a0a]'>
           <div className='prose prose-invert max-w-none'>{formatMarkdown(aboutContent)}</div>
         </div>
 
@@ -92,7 +92,7 @@ export default function About() {
         <div className='mt-8 text-center'>
           <Link
             to='/contact'
-            className='inline-block px-6 py-2 bg-neon-blue text-lumon-dark rounded hover:bg-cyan-bright transition-colors font-medium'
+            className='inline-block px-6 py-2 bg-[#33b1ff] text-[#f2f4f8] rounded hover:bg-cyan-bright transition-colors font-medium'
           >
             Get In Touch
           </Link>

@@ -56,7 +56,7 @@ export default function Projects() {
   }, [])
 
   return (
-    <div className='min-h-screen bg-lumon-dark text-text-cyan p-6'>
+    <div className='min-h-screen bg-black text-text-cyan p-6'>
       <div className='max-w-4xl mx-auto'>
         {/* Header */}
         <div className='mb-8'>
@@ -82,7 +82,7 @@ export default function Projects() {
           {projectsData.map(project => (
             <div
               key={project.id}
-              className='pane-border rounded-lg p-6 bg-lumon-bg hover:border-cyan-bright transition-colors'
+              className='pane-border rounded-lg p-6 bg-[#0a0a0a] hover:border-cyan-bright transition-colors'
             >
               {/* Project Header */}
               <div className='flex items-start justify-between mb-4'>
@@ -104,7 +104,7 @@ export default function Projects() {
                   {(project.stack ?? []).map(tech => (
                     <span
                       key={tech}
-                      className='px-2 py-1 bg-lumon-dark border border-cyan-soft rounded text-xs text-cyan-bright'
+                      className='px-2 py-1 bg-black border border-cyan-soft rounded text-xs text-cyan-bright'
                     >
                       {tech}
                     </span>
@@ -126,8 +126,8 @@ export default function Projects() {
               {/* Stats */}
               {project.stats && (
                 <div className='grid grid-cols-2 gap-2 mb-4'>
-                  <div className='text-center p-2 bg-lumon-dark border border-cyan-soft rounded'>
-                    <div className='text-neon-blue font-medium'>
+                  <div className='text-center p-2 bg-black border border-cyan-soft rounded'>
+                    <div className='text-[#33b1ff] font-medium'>
                       {typeof project.stats.performance === 'string' ||
                       typeof project.stats.performance === 'number'
                         ? String(project.stats.performance)
@@ -135,7 +135,7 @@ export default function Projects() {
                     </div>
                     <div className='text-text-soft text-xs'>Performance</div>
                   </div>
-                  <div className='text-center p-2 bg-lumon-dark border border-cyan-soft rounded'>
+                  <div className='text-center p-2 bg-black border border-cyan-soft rounded'>
                     <div className='text-terminal-green font-medium'>
                       {typeof project.stats.accessibility === 'string' ||
                       typeof project.stats.accessibility === 'number'
@@ -154,7 +154,7 @@ export default function Projects() {
                     href={project.links.demo}
                     target='_blank'
                     rel='noopener noreferrer'
-                    className='flex-1 px-4 py-2 bg-neon-blue text-lumon-dark rounded hover:bg-cyan-bright transition-colors flex items-center justify-center gap-2 text-sm font-medium'
+                    className='flex-1 px-4 py-2 bg-[#33b1ff] text-[#f2f4f8] rounded hover:bg-cyan-bright transition-colors flex items-center justify-center gap-2 text-sm font-medium'
                   >
                     <ExternalLink className='w-4 h-4' />
                     View Demo
@@ -165,7 +165,7 @@ export default function Projects() {
                     href={project.links.github}
                     target='_blank'
                     rel='noopener noreferrer'
-                    className='px-4 py-2 border border-cyan-soft text-cyan-soft rounded hover:bg-cyan-soft hover:text-lumon-dark transition-colors flex items-center justify-center'
+                    className='px-4 py-2 border border-cyan-soft text-cyan-soft rounded hover:bg-cyan-soft hover:text-[#f2f4f8] transition-colors flex items-center justify-center'
                   >
                     <Code2 className='w-4 h-4' />
                   </a>
@@ -175,7 +175,7 @@ export default function Projects() {
                     href={project.links.appstore}
                     target='_blank'
                     rel='noopener noreferrer'
-                    className='px-4 py-2 border border-cyan-soft text-cyan-soft rounded hover:bg-cyan-soft hover:text-lumon-dark transition-colors text-sm'
+                    className='px-4 py-2 border border-cyan-soft text-cyan-soft rounded hover:bg-cyan-soft hover:text-[#f2f4f8] transition-colors text-sm'
                   >
                     App Store
                   </a>
@@ -190,7 +190,7 @@ export default function Projects() {
           <p className='text-text-soft'>More projects coming soon...</p>
           <Link
             to='/'
-            className='inline-block mt-4 px-6 py-2 border border-cyan-soft text-cyan-soft rounded hover:bg-cyan-soft hover:text-lumon-dark transition-colors'
+            className='inline-block mt-4 px-6 py-2 border border-cyan-soft text-cyan-soft rounded hover:bg-cyan-soft hover:text-[#f2f4f8] transition-colors'
           >
             Return to Terminal
           </Link>

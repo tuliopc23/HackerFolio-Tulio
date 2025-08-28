@@ -43,7 +43,7 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
       label: 'Theme',
       action: () => {
         // Dark-only theme; no cycling
-        setTheme('lumon')
+        setTheme('oxocarbon')
       },
     },
   ]
@@ -73,7 +73,7 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
     <div className='fixed top-4 right-4 z-50 hidden md:block'>
       {/* Traffic Lights */}
       <div
-        className='flex items-center gap-2 mb-2 bg-lumon-bg border border-magenta-soft rounded-lg p-2'
+        className='flex items-center gap-2 mb-2 bg-[#0a0a0a] border border-[#393939] rounded-lg p-2'
         role='toolbar'
         aria-label='Window controls'
       >
@@ -94,13 +94,13 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
       {/* Dock Container */}
       {!isMinimized && (
         <div
-          className='bg-lumon-bg border border-magenta-soft rounded-lg p-2 space-y-2'
+          className='bg-[#0a0a0a] border border-[#393939] rounded-lg p-2 space-y-2'
           role='navigation'
           aria-label='Main navigation dock'
         >
           {/* Navigation Section */}
           <div className='space-y-1' role='group' aria-labelledby='nav-heading'>
-            <div id='nav-heading' className='text-xs text-magenta-soft px-2 mb-1'>
+            <div id='nav-heading' className='text-xs text-[#be95ff] px-2 mb-1'>
               Navigation
             </div>
             {navigationItems.map(item => (
@@ -110,7 +110,7 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
                   void navigate({ to: item.path })
                   announceNavigation(item.label)
                 }}
-                className='w-full flex items-center gap-2 px-3 py-2 rounded text-sm text-cyan-bright hover:bg-magenta-soft hover:bg-opacity-20 transition-colors group focus:outline-none focus:ring-2 focus:ring-magenta-bright focus:ring-opacity-50'
+                className='w-full flex items-center gap-2 px-3 py-2 rounded text-sm text-[#33b1ff] hover:bg-[#393939] hover:bg-opacity-60 transition-colors group focus:outline-none focus:ring-2 focus:ring-[#33b1ff] focus:ring-opacity-50'
                 title={item.label}
                 aria-label={`Navigate to ${item.label}`}
               >
@@ -121,18 +121,18 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
           </div>
 
           {/* Divider */}
-          <div className='h-px bg-magenta-soft bg-opacity-30' role='separator' aria-hidden='true' />
+          <div className='h-px bg-[#393939] bg-opacity-60' role='separator' aria-hidden='true' />
 
           {/* System Section */}
           <div className='space-y-1' role='group' aria-labelledby='system-heading'>
-            <div id='system-heading' className='text-xs text-magenta-soft px-2 mb-1'>
+            <div id='system-heading' className='text-xs text-[#be95ff] px-2 mb-1'>
               System
             </div>
             {systemItems.map(item => (
               <button
                 key={item.id}
                 onClick={item.action}
-                className='w-full flex items-center gap-2 px-3 py-2 rounded text-sm text-cyan-bright hover:bg-magenta-soft hover:bg-opacity-20 transition-colors focus:outline-none focus:ring-2 focus:ring-magenta-bright focus:ring-opacity-50'
+                className='w-full flex items-center gap-2 px-3 py-2 rounded text-sm text-[#33b1ff] hover:bg-[#393939] hover:bg-opacity-60 transition-colors focus:outline-none focus:ring-2 focus:ring-[#33b1ff] focus:ring-opacity-50'
                 title={item.label}
                 aria-label={`System: ${item.label}`}
               >

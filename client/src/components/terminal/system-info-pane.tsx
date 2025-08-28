@@ -115,11 +115,11 @@ GPU: Apple M4 Pro`
     })
   }
 
-  const formatTime = (time: Date) => {
+  const formatTime = (time: Date, timezone: string) => {
     try {
       return time.toLocaleTimeString('en-US', {
         hour12: false,
-        timeZone: 'America/Sao_Paulo',
+        timeZone: timezone,
       })
     } catch {
       // Fallback to basic time format on error
@@ -127,31 +127,41 @@ GPU: Apple M4 Pro`
     }
   }
 
+  const timezones = [
+    { name: 'RIO', timezone: 'America/Sao_Paulo', city: 'Rio de Janeiro' },
+    { name: 'SF', timezone: 'America/Los_Angeles', city: 'San Francisco' },
+    { name: 'LON', timezone: 'Europe/London', city: 'London' },
+    { name: 'TYO', timezone: 'Asia/Tokyo', city: 'Tokyo' },
+  ]
+
   return (
     <div
       className='h-full flex flex-col font-mono text-[12.5px] leading-[1.5] text-[#f2f4f8]'
       aria-label='System Information'
     >
       <div className='flex-1 overflow-y-auto'>
-        {/* Current Time */}
+        {/* World Clock */}
         <div className='space-y-2 mb-4'>
-          <div className='text-[#be95ff] text-xs font-medium tracking-wide'>LOCAL TIME</div>
-          <div className='text-[#33b1ff] text-lg font-mono font-semibold'>
-            {formatTime(currentTime)}
+          <div className='text-pink-400 text-[10px] font-medium tracking-wide uppercase'>
+            WORLD CLOCK
           </div>
-          <div className='text-[#dde1e6] text-xs opacity-70'>
-            {currentTime.toLocaleDateString('en-US', {
-              timeZoneName: 'short',
-              timeZone: 'America/Sao_Paulo',
-            })}{' '}
-            | São Paulo
+          <div className='grid grid-cols-2 gap-x-4 gap-y-2 text-xs'>
+            {timezones.map(tz => (
+              <div key={tz.name} className='flex items-center justify-between'>
+                <div className='text-[#dde1e6] opacity-80 text-[10px] uppercase tracking-wide font-medium'>
+                  {tz.city}
+                </div>
+                <div className='text-green-400 font-mono font-semibold text-sm'>
+                  {formatTime(currentTime, tz.timezone)}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-
         {/* Fastfetch Output */}
         {showFastfetch && (
           <div className='space-y-2'>
-            <div className='text-[#be95ff] text-xs font-medium tracking-wide'>SYSTEM INFO</div>
+            <div className='text-pink-400 text-xs font-medium tracking-wide'>SYSTEM INFO</div>
             <div className='flex gap-3'>
               {/* Main System Info Card */}
               <div className='flex-1 bg-black/30 border border-[#393939] rounded-lg p-3 text-xs text-[#dde1e6] font-mono'>

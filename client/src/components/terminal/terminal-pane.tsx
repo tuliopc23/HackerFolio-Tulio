@@ -428,7 +428,11 @@ export default function TerminalPane() {
           {history.map((entry, index) => (
             <div key={`history-${String(index)}-${entry.command}`}>
               <div className='flex'>
-                <span className='text-[rgba(122,0,255,0.9)] font-semibold'>user@portfolio:~$</span>
+                <span className='font-semibold'>
+                  <span className='text-green-400'>user@</span>
+                  <span className='text-pink-400'>portfolio</span>
+                  <span className='text-green-400'>:~$</span>
+                </span>
                 <span className='ml-2 text-cyan-bright'>{entry.command}</span>
               </div>
               {entry.output && (
@@ -444,8 +448,10 @@ export default function TerminalPane() {
 
         {/* Current Command Line */}
         <div className='flex items-center' role='group' aria-label='Command input'>
-          <span className='text-[rgba(122,0,255,0.9)] font-semibold' aria-hidden='true'>
-            user@portfolio:~$
+          <span className='font-semibold' aria-hidden='true'>
+            <span className='text-green-400'>user@</span>
+            <span className='text-pink-400'>portfolio</span>
+            <span className='text-green-400'>:~$</span>
           </span>
           <label htmlFor='terminal-input' className='sr-only'>
             Terminal command input. Use Tab for autocomplete, up and down arrows for command
@@ -480,7 +486,7 @@ export default function TerminalPane() {
       {/* Command Help Footer */}
       <div
         id='terminal-help'
-        className='px-3 py-2 border-t border-[rgba(122,0,255,0.25)] text-xs text-text-soft bg-black/20'
+        className='px-3 py-2 border-t border-[rgba(128,255,128,0.25)] text-xs text-text-soft bg-black/20'
         role='complementary'
         aria-label='Terminal keyboard shortcuts'
       >

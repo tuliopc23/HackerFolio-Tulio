@@ -162,8 +162,12 @@ export default function TerminalPane() {
       serverResult = await executeServerCommand(cmd, args)
       finalOutput = serverResult.output
       finalError = serverResult.error
-    } catch (_err) {
-      finalOutput = 'Server error executing command'
+    } catch (err) {
+      if (err instanceof Error) {
+        finalOutput = err.message
+      } else {
+        finalOutput = 'An unknown error occurred'
+      }
       finalError = true
     }
 

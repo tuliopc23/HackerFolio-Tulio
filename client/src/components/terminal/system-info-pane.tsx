@@ -92,12 +92,7 @@ export default function SystemInfoPane() {
         {/* World Clock */}
         <div className='space-y-2 mb-4'>
           <div className='text-pink-400 text-[10px] font-medium tracking-wide uppercase'>
-            <TypedText
-              strings={['WORLD CLOCK']}
-              typeSpeed={400}
-              showCursor={true}
-              startDelay={1000}
-            />
+            <TypedText strings={['WORLD CLOCK']} typeSpeed={400} showCursor startDelay={1000} />
           </div>
           <div className='grid grid-cols-2 gap-x-4 gap-y-2 text-xs'>
             {timezones.map((tz, index) => (
@@ -106,7 +101,7 @@ export default function SystemInfoPane() {
                   <TypedText
                     strings={[tz.city]}
                     typeSpeed={300}
-                    showCursor={true}
+                    showCursor
                     startDelay={2000 + index * 1000}
                   />
                 </div>
@@ -121,12 +116,7 @@ export default function SystemInfoPane() {
         {showFastfetch && (
           <div className='space-y-2'>
             <div className='text-pink-400 text-xs font-medium tracking-wide'>
-              <TypedText
-                strings={['SYSTEM INFO']}
-                typeSpeed={350}
-                showCursor={true}
-                startDelay={6000}
-              />
+              <TypedText strings={['SYSTEM INFO']} typeSpeed={350} showCursor startDelay={6000} />
             </div>
             <div className='flex gap-3'>
               {/* Main System Info Card */}
@@ -162,7 +152,7 @@ export default function SystemInfoPane() {
                           <TypedText
                             strings={['tuliopinheirocunha']}
                             typeSpeed={200}
-                            showCursor={true}
+                            showCursor
                             startDelay={7000}
                           />
                         </span>
@@ -171,7 +161,7 @@ export default function SystemInfoPane() {
                           <TypedText
                             strings={['MacBook-Pro']}
                             typeSpeed={200}
-                            showCursor={true}
+                            showCursor
                             startDelay={9000}
                           />
                         </span>
@@ -193,7 +183,7 @@ export default function SystemInfoPane() {
                           <TypedText
                             strings={['OS:']}
                             typeSpeed={300}
-                            showCursor={true}
+                            showCursor
                             startDelay={12000}
                           />
                         </span>
@@ -201,7 +191,7 @@ export default function SystemInfoPane() {
                           <TypedText
                             strings={['macOS Tahoe 26.0 ARM64']}
                             typeSpeed={150}
-                            showCursor={true}
+                            showCursor
                             startDelay={13000}
                           />
                         </span>
@@ -213,7 +203,7 @@ export default function SystemInfoPane() {
                           <TypedText
                             strings={['Host:']}
                             typeSpeed={300}
-                            showCursor={true}
+                            showCursor
                             startDelay={15000}
                           />
                         </span>
@@ -221,7 +211,7 @@ export default function SystemInfoPane() {
                           <TypedText
                             strings={['MacBook Pro (14-inch, 2023)']}
                             typeSpeed={150}
-                            showCursor={true}
+                            showCursor
                             startDelay={16000}
                           />
                         </span>
@@ -233,7 +223,7 @@ export default function SystemInfoPane() {
                           <TypedText
                             strings={['CPU:']}
                             typeSpeed={300}
-                            showCursor={true}
+                            showCursor
                             startDelay={18000}
                           />
                         </span>
@@ -241,7 +231,7 @@ export default function SystemInfoPane() {
                           <TypedText
                             strings={['Apple M4 Pro (12) @ 3.50 GHz']}
                             typeSpeed={150}
-                            showCursor={true}
+                            showCursor
                             startDelay={19000}
                           />
                         </span>
@@ -253,7 +243,7 @@ export default function SystemInfoPane() {
                           <TypedText
                             strings={['GPU:']}
                             typeSpeed={300}
-                            showCursor={true}
+                            showCursor
                             startDelay={21000}
                           />
                         </span>
@@ -261,7 +251,7 @@ export default function SystemInfoPane() {
                           <TypedText
                             strings={['Apple M4 Pro']}
                             typeSpeed={150}
-                            showCursor={true}
+                            showCursor
                             startDelay={22000}
                           />
                         </span>
@@ -279,7 +269,7 @@ export default function SystemInfoPane() {
                     <TypedText
                       strings={['CONNECTION']}
                       typeSpeed={200}
-                      showCursor={true}
+                      showCursor
                       startDelay={24000}
                     />
                   </span>
@@ -289,7 +279,7 @@ export default function SystemInfoPane() {
                       <TypedText
                         strings={['SECURE']}
                         typeSpeed={200}
-                        showCursor={true}
+                        showCursor
                         startDelay={26000}
                       />
                     </span>
@@ -303,7 +293,7 @@ export default function SystemInfoPane() {
                       <TypedText
                         strings={['Protocol:']}
                         typeSpeed={250}
-                        showCursor={true}
+                        showCursor
                         startDelay={28000}
                       />
                     </span>
@@ -311,7 +301,7 @@ export default function SystemInfoPane() {
                       <TypedText
                         strings={['SSH-2.0']}
                         typeSpeed={200}
-                        showCursor={true}
+                        showCursor
                         startDelay={30000}
                       />
                     </span>
@@ -321,7 +311,7 @@ export default function SystemInfoPane() {
                       <TypedText
                         strings={['Cipher:']}
                         typeSpeed={250}
-                        showCursor={true}
+                        showCursor
                         startDelay={32000}
                       />
                     </span>
@@ -329,7 +319,7 @@ export default function SystemInfoPane() {
                       <TypedText
                         strings={['AES-256']}
                         typeSpeed={200}
-                        showCursor={true}
+                        showCursor
                         startDelay={34000}
                       />
                     </span>
@@ -339,17 +329,12 @@ export default function SystemInfoPane() {
                       <TypedText
                         strings={['Latency:']}
                         typeSpeed={250}
-                        showCursor={true}
+                        showCursor
                         startDelay={36000}
                       />
                     </span>
                     <span className='text-green-400 font-mono'>
-                      <TypedText
-                        strings={['12ms']}
-                        typeSpeed={200}
-                        showCursor={true}
-                        startDelay={38000}
-                      />
+                      <TypedText strings={['12ms']} typeSpeed={200} showCursor startDelay={38000} />
                     </span>
                   </div>
                   <div className='flex justify-between text-[9px]'>
@@ -357,7 +342,7 @@ export default function SystemInfoPane() {
                       <TypedText
                         strings={['Uptime:']}
                         typeSpeed={250}
-                        showCursor={true}
+                        showCursor
                         startDelay={40000}
                       />
                     </span>
@@ -367,7 +352,7 @@ export default function SystemInfoPane() {
                           `${Math.floor((Date.now() - 1704067200000) / 86400000).toString()}d`,
                         ]}
                         typeSpeed={200}
-                        showCursor={true}
+                        showCursor
                         startDelay={42000}
                       />
                     </span>
@@ -383,7 +368,7 @@ export default function SystemInfoPane() {
                         <TypedText
                           strings={['TX:']}
                           typeSpeed={250}
-                          showCursor={true}
+                          showCursor
                           startDelay={44000}
                         />
                       </span>
@@ -391,7 +376,7 @@ export default function SystemInfoPane() {
                         <TypedText
                           strings={['1.2GB']}
                           typeSpeed={200}
-                          showCursor={true}
+                          showCursor
                           startDelay={46000}
                         />
                       </span>
@@ -401,7 +386,7 @@ export default function SystemInfoPane() {
                         <TypedText
                           strings={['RX:']}
                           typeSpeed={250}
-                          showCursor={true}
+                          showCursor
                           startDelay={48000}
                         />
                       </span>
@@ -409,7 +394,7 @@ export default function SystemInfoPane() {
                         <TypedText
                           strings={['3.4GB']}
                           typeSpeed={200}
-                          showCursor={true}
+                          showCursor
                           startDelay={50000}
                         />
                       </span>
@@ -419,17 +404,12 @@ export default function SystemInfoPane() {
                         <TypedText
                           strings={['Sessions:']}
                           typeSpeed={250}
-                          showCursor={true}
+                          showCursor
                           startDelay={52000}
                         />
                       </span>
                       <span className='text-pink-400 font-mono'>
-                        <TypedText
-                          strings={['4']}
-                          typeSpeed={200}
-                          showCursor={true}
-                          startDelay={54000}
-                        />
+                        <TypedText strings={['4']} typeSpeed={200} showCursor startDelay={54000} />
                       </span>
                     </div>
                   </div>
@@ -447,7 +427,7 @@ export default function SystemInfoPane() {
               <TypedText
                 strings={['RECENT PROJECTS']}
                 typeSpeed={300}
-                showCursor={true}
+                showCursor
                 startDelay={8000}
               />
             </div>
@@ -461,7 +441,7 @@ export default function SystemInfoPane() {
                       <TypedText
                         strings={[project.name]}
                         typeSpeed={150}
-                        showCursor={true}
+                        showCursor
                         startDelay={56000 + projectIndex * 3000}
                       />
                     </div>
@@ -469,7 +449,7 @@ export default function SystemInfoPane() {
                       <TypedText
                         strings={[project.description ?? 'No description']}
                         typeSpeed={100}
-                        showCursor={true}
+                        showCursor
                         startDelay={57000 + projectIndex * 3000}
                       />
                     </div>
@@ -487,7 +467,7 @@ export default function SystemInfoPane() {
                           <TypedText
                             strings={[project.status]}
                             typeSpeed={150}
-                            showCursor={true}
+                            showCursor
                             startDelay={58000 + projectIndex * 3000}
                           />
                         </span>
@@ -497,7 +477,7 @@ export default function SystemInfoPane() {
                           <TypedText
                             strings={[project.tech_stack.slice(0, 2).join(', ')]}
                             typeSpeed={100}
-                            showCursor={true}
+                            showCursor
                             startDelay={59000 + projectIndex * 3000}
                           />
                         </span>
@@ -522,7 +502,7 @@ export default function SystemInfoPane() {
               <TypedText
                 strings={['PROJECT STATS']}
                 typeSpeed={300}
-                showCursor={true}
+                showCursor
                 startDelay={10000}
               />
             </div>

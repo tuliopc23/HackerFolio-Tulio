@@ -63,9 +63,23 @@ export async function executeCommand(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(requestData),
   })
-  if (!res.ok) throw new Error('Command failed')
 
   const data = await res.json()
+
+  if (!res.ok) {
+    // Try to extract error message from server response
+    interface ErrorResponse {
+      error?: { message?: string }
+      message?: string
+    }
+    const errorData = data as ErrorResponse
+    const errorMessage =
+      errorData.error?.message ??
+      errorData.message ??
+      `HTTP ${res.status.toString()}: ${res.statusText}`
+    throw new Error(errorMessage)
+  }
+
   return validateResponse(serverCommandResultSchema, data)
 }
 

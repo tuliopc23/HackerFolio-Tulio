@@ -260,31 +260,49 @@ ${ansi.green('Download full resume')}: https://tuliopinheirocunha.dev/resume.pdf
     let result = template
 
     // Replace simple variables: {{variableName}}
-    result = result.replace(/{{(\w+)}}/g, (match, varName) => {
-      const value = this.context[varName]
-      return typeof value === 'string' || typeof value === 'number' ? String(value) : match
+    result = result.replace(/{{(\w+)}}/g, (match, varName: string) => {
+      if (varName in this.context) {
+        const value = this.context[varName]
+        return typeof value === 'string' || typeof value === 'number' ? String(value) : match
+      }
+      return match
     })
 
     // Replace ANSI function calls: {{ansi.color("text")}}
-    result = result.replace(/{{ansi\.(\w+)\("([^"]+)"\)}}/g, (match, colorName, text) => {
-      const colorFn = (ansi as Record<string, unknown>)[colorName]
-      return typeof colorFn === 'function' ? (colorFn as (text: string) => string)(text) : match
-    })
+    result = result.replace(
+      /{{ansi\.(\w+)\("([^"]+)"\)}}/g,
+      (match, colorName: string, text: string) => {
+        if (
+          colorName in ansi &&
+          typeof (ansi as Record<string, unknown>)[colorName] === 'function'
+        ) {
+          const colorFn = (ansi as Record<string, (text: string) => string>)[colorName]
+          if (colorFn) {
+            return colorFn(text)
+          }
+        }
+        return match
+      }
+    )
 
     // Replace handler function calls: {{handlerName(args[0])}}
-    result = result.replace(/{{(\w+)\(([^)]+)\)}}/g, (match, handlerName, argsStr) => {
-      const handler = this.handlers[handlerName]
-      if (typeof handler !== 'function') return match
-
-      // Parse arguments - handle args[0], args[1], etc.
-      if (typeof argsStr === 'string' && argsStr.startsWith('args[') && argsStr.endsWith(']')) {
-        const index = parseInt(argsStr.slice(5, -1))
-        const arg = this.context.args[index]
-        return handler(arg)
+    result = result.replace(
+      /{{(\w+)\(([^)]+)\)}}/g,
+      (match, handlerName: string, argsStr: string) => {
+        if (handlerName in this.handlers) {
+          const handler = this.handlers[handlerName]
+          if (typeof handler === 'function') {
+            // Parse arguments - handle args[0], args[1], etc.
+            if (argsStr.startsWith('args[') && argsStr.endsWith(']')) {
+              const index = parseInt(argsStr.slice(5, -1))
+              const arg = this.context.args[index]
+              return arg ? handler(arg) : handler()
+            }
+          }
+        }
+        return match
       }
-
-      return match
-    })
+    )
 
     return result
   }

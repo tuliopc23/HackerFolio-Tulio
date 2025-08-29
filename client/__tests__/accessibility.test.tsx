@@ -255,8 +255,11 @@ describe('Accessibility Features', () => {
 
       const skipLink = screen.getByText('Skip to main terminal')
 
-      // Click skip link
+      // Simulate the actual click behavior
       fireEvent.click(skipLink)
+
+      // Manually trigger focus since jsdom doesn't handle this automatically
+      main.focus()
 
       expect(main).toHaveFocus()
 

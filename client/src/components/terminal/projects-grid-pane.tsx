@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 
 import { TerminalLoadingSpinner } from '@/components/loading-spinner'
 import { LayoutGrid } from '@/components/ui/layout-grid'
+import { TypedText } from '@/components/ui/typed-text'
 import { fetchProjects } from '@/lib/api'
 
 interface Project {
@@ -48,15 +49,34 @@ export default function ProjectsGridPane() {
     id: index,
     content: (
       <div className='bg-[#0a0a0a] p-3 sm:p-4 h-full'>
-        <h3 className='text-cyan-bright font-medium text-base sm:text-lg mb-2'>{project.name}</h3>
-        <p className='text-text-soft text-sm mb-3'>{project.description}</p>
+        <h3 className='text-cyan-bright font-medium text-base sm:text-lg mb-2'>
+          <TypedText
+            strings={[project.name]}
+            typeSpeed={60}
+            showCursor={false}
+            startDelay={index * 200}
+          />
+        </h3>
+        <p className='text-text-soft text-sm mb-3'>
+          <TypedText
+            strings={[project.description ?? '']}
+            typeSpeed={40}
+            showCursor={false}
+            startDelay={index * 200 + 300}
+          />
+        </p>
 
         {/* Tech Stack */}
         <div className='flex flex-wrap gap-1 mb-3'>
-          {(project.tech_stack ?? []).slice(0, 3).map(tech => (
+          {(project.tech_stack ?? []).slice(0, 3).map((tech, techIndex) => (
             <span
               key={tech}
               className='px-2 py-1 bg-magenta-soft bg-opacity-20 border border-magenta-soft rounded text-xs text-magenta-bright'
+              style={{
+                animationDelay: `${(index * 200 + 600 + techIndex * 100).toString()}ms`,
+                opacity: 0,
+                animation: 'fadeInUp 0.6s ease-out forwards',
+              }}
             >
               {tech}
             </span>
@@ -79,6 +99,11 @@ export default function ProjectsGridPane() {
               }}
               className='px-3 py-1 bg-cyan-bright text-[#f2f4f8] rounded text-xs hover:bg-cyan-soft transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-bright focus:ring-opacity-50'
               aria-label={`View live demo of ${project.name}`}
+              style={{
+                animationDelay: `${(index * 200 + 1000).toString()}ms`,
+                opacity: 0,
+                animation: 'fadeInUp 0.6s ease-out forwards',
+              }}
             >
               Demo
             </button>
@@ -97,6 +122,11 @@ export default function ProjectsGridPane() {
               }}
               className='px-3 py-1 border border-magenta-soft text-magenta-soft rounded text-xs hover:bg-magenta-soft hover:text-[#f2f4f8] transition-colors focus:outline-none focus:ring-2 focus:ring-magenta-soft focus:ring-opacity-50'
               aria-label={`View source code of ${project.name} on GitHub`}
+              style={{
+                animationDelay: `${(index * 200 + 1200).toString()}ms`,
+                opacity: 0,
+                animation: 'fadeInUp 0.6s ease-out forwards',
+              }}
             >
               Code
             </button>
@@ -118,10 +148,21 @@ export default function ProjectsGridPane() {
       {/* Pane Header */}
       <div className='bg-[#393939] px-4 py-2 border-b border-magenta-soft flex items-center justify-between'>
         <div className='flex items-center gap-2'>
-          <span className='text-magenta-bright font-medium'>[pane-03]</span>
-          <span className='text-text-soft'>projects</span>
+          <span className='text-magenta-bright font-medium'>
+            <TypedText strings={['[pane-03]']} typeSpeed={80} showCursor={false} startDelay={100} />
+          </span>
+          <span className='text-text-soft'>
+            <TypedText strings={['projects']} typeSpeed={60} showCursor={false} startDelay={400} />
+          </span>
         </div>
-        <div className='text-xs text-text-soft'>{projects.length} items</div>
+        <div className='text-xs text-text-soft'>
+          <TypedText
+            strings={[`${projects.length.toString()} items`]}
+            typeSpeed={40}
+            showCursor={false}
+            startDelay={800}
+          />
+        </div>
       </div>
 
       <div className='flex-1 bg-[#0a0a0a] overflow-hidden'>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 
+import { TypedText } from '@/components/ui/typed-text'
 import { fetchProjects } from '@/lib/api'
 
 interface Project {
@@ -182,13 +183,23 @@ GPU: Apple M4 Pro`
         {/* World Clock */}
         <div className='space-y-2 mb-4'>
           <div className='text-pink-400 text-[10px] font-medium tracking-wide uppercase'>
-            WORLD CLOCK
+            <TypedText
+              strings={['WORLD CLOCK']}
+              typeSpeed={80}
+              showCursor={false}
+              startDelay={100}
+            />
           </div>
           <div className='grid grid-cols-2 gap-x-4 gap-y-2 text-xs'>
-            {timezones.map(tz => (
+            {timezones.map((tz, index) => (
               <div key={tz.name} className='flex items-center justify-between'>
                 <div className='text-[#dde1e6] opacity-80 text-[10px] uppercase tracking-wide font-medium'>
-                  {tz.city}
+                  <TypedText
+                    strings={[tz.city]}
+                    typeSpeed={60}
+                    showCursor={false}
+                    startDelay={300 + index * 100}
+                  />
                 </div>
                 <div className='text-green-400 font-mono font-semibold text-sm'>
                   {formatTime(currentTime, tz.timezone)}
@@ -200,7 +211,14 @@ GPU: Apple M4 Pro`
         {/* Fastfetch Output */}
         {showFastfetch && (
           <div className='space-y-2'>
-            <div className='text-pink-400 text-xs font-medium tracking-wide'>SYSTEM INFO</div>
+            <div className='text-pink-400 text-xs font-medium tracking-wide'>
+              <TypedText
+                strings={['SYSTEM INFO']}
+                typeSpeed={80}
+                showCursor={false}
+                startDelay={700}
+              />
+            </div>
             <div className='flex gap-3'>
               {/* Main System Info Card */}
               <div className='flex-1 bg-black/30 border border-[#393939] rounded-lg p-3 text-xs text-[#dde1e6] font-mono'>
@@ -214,14 +232,14 @@ GPU: Apple M4 Pro`
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⢀⣠⣤⣤⣤⣀⣀⠈⠋⠉⣁⣠⣤⣤⣤⣀⡀⠀⠀
 ⠀⢠⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀
-⣠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠋⠀
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⠀⠀⠀
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠀⠀⠀
-⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣤⣀
-⠀⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁
-⠀⠀⠙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠁⠀
-⠀⠀⠀⠈⠙⢿⣿⣿⣿⠿⠟⠛⠻⠿⣿⣿⣿⡿⠋⠀⠀⠀`}
+⣠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠋⠀
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⠀⠀⠀
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠀⠀⠀
+⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣤⣀
+⠀⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁
+⠀⠀⠙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠁⠀
+⠀⠀⠀⠈⠙⢿⣿⣿⣿⠿⠟⠛⠻⠿⣿⣿⣿⣿⡿⠋⠀⠀⠀`}
                       </pre>
                     </div>
                   </div>
@@ -296,7 +314,12 @@ GPU: Apple M4 Pro`
           {/* Recent Projects Card */}
           <div className='flex-1 bg-black/30 border border-[#393939] rounded-lg p-3 text-xs font-mono'>
             <div className='text-[#be95ff] text-xs font-semibold tracking-wide uppercase mb-2'>
-              RECENT PROJECTS
+              <TypedText
+                strings={['RECENT PROJECTS']}
+                typeSpeed={70}
+                showCursor={false}
+                startDelay={1200}
+              />
             </div>
             {projectsLoading ? (
               <div className='text-[#dde1e6] opacity-60 text-[9px]'>Loading...</div>
@@ -346,7 +369,12 @@ GPU: Apple M4 Pro`
           {/* Project Stats Card */}
           <div className='flex-1 bg-black/30 border border-[#393939] rounded-lg p-3 text-xs font-mono'>
             <div className='text-[#be95ff] text-xs font-semibold tracking-wide uppercase mb-2'>
-              PROJECT STATS
+              <TypedText
+                strings={['PROJECT STATS']}
+                typeSpeed={70}
+                showCursor={false}
+                startDelay={1200}
+              />
             </div>
             {projectsLoading ? (
               <div className='text-[#dde1e6] opacity-60 text-[9px]'>Loading...</div>

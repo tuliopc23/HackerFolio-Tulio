@@ -699,3 +699,35 @@ select:focus-visible {
   background-color: var(--term-cursor);
   color: var(--term-cursor-text);
 }
+
+/* Typewriter and animation effects */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes typewriter {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.typing-effect {
+  animation: typewriter 2s steps(20, end);
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid var(--color-cyan-bright);
+}

@@ -1,5 +1,4 @@
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render, screen, fireEvent } from '@testing-library/react'
 import React from 'react'
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest'
 
@@ -51,8 +50,6 @@ describe('Terminal Components - Basic Functionality', () => {
 
   describe('Terminal Interface Interactions', () => {
     test('terminal input handles keyboard interactions', async () => {
-      const user = userEvent.setup()
-
       // Simple terminal input component for testing
       function TestTerminalInput() {
         const [input, setInput] = React.useState('')
@@ -94,23 +91,21 @@ describe('Terminal Components - Basic Functionality', () => {
 
       render(<TestTerminalInput />)
 
-      const input = screen.getByTestId('terminal-input')
+      const input = screen.getByTestId('terminal-input') as HTMLInputElement
 
-      // Type a command
-      await user.type(input, 'test command')
+      // Type a command using fireEvent
+      fireEvent.change(input, { target: { value: 'test command' } })
 
       // Check the input value after typing
       expect(input).toHaveValue('test command')
 
       // Press Enter to execute
-      await user.keyboard('{Enter}')
+      fireEvent.keyDown(input, { key: 'Enter' })
       expect(input).toHaveValue('')
       expect(screen.getByTestId('history')).toHaveTextContent('test command')
     })
 
-    test('command autocomplete functionality', async () => {
-      const user = userEvent.setup()
-
+    test('command autocomplete functionality', () => {
       function TestAutocomplete() {
         const [input, setInput] = React.useState('')
         const [suggestions, setSuggestions] = React.useState<string[]>([])
@@ -148,11 +143,11 @@ describe('Terminal Components - Basic Functionality', () => {
 
       render(<TestAutocomplete />)
 
-      const input = screen.getByTestId('autocomplete-input')
+      const input = screen.getByTestId('autocomplete-input') as HTMLInputElement
 
       // Type partial command and press Tab
-      await user.type(input, 'he')
-      await user.keyboard('{Tab}')
+      fireEvent.change(input, { target: { value: 'he' } })
+      fireEvent.keyDown(input, { key: 'Tab' })
 
       expect(input).toHaveValue('help')
     })
@@ -199,7 +194,7 @@ describe('Terminal Components - Basic Functionality', () => {
 
       // Trigger error scenario
       const errorButton = screen.getByTestId('trigger-error')
-      errorButton.click()
+      fireEvent.click(errorButton)
 
       // Should now show error fallback
       expect(screen.getByTestId('error-fallback')).toBeInTheDocument()
@@ -240,9 +235,7 @@ describe('Terminal Components - Basic Functionality', () => {
       expect(input).toHaveAttribute('placeholder', 'Terminal ready')
     })
 
-    test('command history navigation', async () => {
-      const user = userEvent.setup()
-
+    test('command history navigation', () => {
       function TestHistoryNavigation() {
         const [input, setInput] = React.useState('')
         const [history, setHistory] = React.useState<string[]>([])
@@ -300,31 +293,31 @@ describe('Terminal Components - Basic Functionality', () => {
 
       render(<TestHistoryNavigation />)
 
-      const input = screen.getByTestId('history-input')
+      const input = screen.getByTestId('history-input') as HTMLInputElement
 
       // Add some commands to history
-      await user.type(input, 'first command')
-      await user.keyboard('{Enter}')
+      fireEvent.change(input, { target: { value: 'first command' } })
+      fireEvent.keyDown(input, { key: 'Enter' })
 
-      await user.type(input, 'second command')
-      await user.keyboard('{Enter}')
+      fireEvent.change(input, { target: { value: 'second command' } })
+      fireEvent.keyDown(input, { key: 'Enter' })
 
       // Verify commands were added to history
       expect(screen.getByTestId('history-list')).toHaveTextContent('first command')
       expect(screen.getByTestId('history-list')).toHaveTextContent('second command')
 
       // Navigate up through history
-      await user.keyboard('{ArrowUp}')
+      fireEvent.keyDown(input, { key: 'ArrowUp' })
       expect(input).toHaveValue('second command')
 
-      await user.keyboard('{ArrowUp}')
+      fireEvent.keyDown(input, { key: 'ArrowUp' })
       expect(input).toHaveValue('first command')
 
       // Navigate down through history
-      await user.keyboard('{ArrowDown}')
+      fireEvent.keyDown(input, { key: 'ArrowDown' })
       expect(input).toHaveValue('second command')
 
-      await user.keyboard('{ArrowDown}')
+      fireEvent.keyDown(input, { key: 'ArrowDown' })
       expect(input).toHaveValue('')
     })
   })

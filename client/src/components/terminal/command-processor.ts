@@ -15,6 +15,7 @@ export class CommandProcessor {
     const savedHistory = localStorage.getItem('terminal-history')
     if (savedHistory) {
       this.history = JSON.parse(savedHistory) as string[]
+      this.historyIndex = this.history.length
     }
   }
 
@@ -90,25 +91,29 @@ export class CommandProcessor {
     const themes = ['oxocarbon']
 
     if (input.startsWith('open ')) {
-      const partial = input.substring(5)
-      return routes.filter(route => route.startsWith(partial)).map(route => `open ${route}`)
+      const partial = input.substring(5).toLowerCase()
+      return routes
+        .filter(route => route.toLowerCase().startsWith(partial))
+        .map(route => `open ${route}`)
     }
 
     if (input.startsWith('theme ')) {
-      const partial = input.substring(6)
-      return themes.filter(theme => theme.startsWith(partial)).map(theme => `theme ${theme}`)
+      const partial = input.substring(6).toLowerCase()
+      return themes
+        .filter(theme => theme.toLowerCase().startsWith(partial))
+        .map(theme => `theme ${theme}`)
     }
 
     if (input.startsWith('cat ')) {
       const files = ['about.md', 'contact.md', 'resume.md']
-      const partial = input.substring(4)
-      return files.filter(file => file.startsWith(partial)).map(file => `cat ${file}`)
+      const partial = input.substring(4).toLowerCase()
+      return files.filter(file => file.toLowerCase().startsWith(partial)).map(file => `cat ${file}`)
     }
 
     if (input.startsWith('projects ')) {
       const opts = ['--limit ', '--per ', '--page ', '--status ', '--stack ']
-      const partial = input.substring('projects '.length)
-      return opts.filter(o => o.startsWith(partial)).map(o => `projects ${o}`)
+      const partial = input.substring('projects '.length).toLowerCase()
+      return opts.filter(o => o.toLowerCase().startsWith(partial)).map(o => `projects ${o}`)
     }
 
     if (input.startsWith('help ')) {
@@ -119,7 +124,7 @@ export class CommandProcessor {
         .map(n => `help ${n}`)
     }
 
-    return merged.filter(cmd => cmd.startsWith(input))
+    return merged.filter(cmd => cmd.toLowerCase().startsWith(input.toLowerCase()))
   }
   setServerCommands = (cmds: string[]) => {
     for (const c of cmds) this.serverCommands.add(c)

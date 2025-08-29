@@ -138,53 +138,6 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
             .where(eq(tCommands.isActive, true))
             .orderBy(tCommands.command)
 
-          const argsArr = Array.isArray(args) ? args : []
-          const target = (argsArr[0] ?? '').toLowerCase()
-
-          // Detailed help per command
-          if (target) {
-            const usage: Record<string, { desc: string; usage: string; examples?: string[] }> = {
-              help: {
-                desc: 'Show general or command-specific help',
-                usage: 'help [command]',
-                examples: ['help', 'help projects'],
-              },
-              projects: {
-                desc: 'List projects with optional filter/flags',
-                usage:
-                  'projects [filter] [--limit N|--per N] [--page N] [--status STATUS] [--stack TECH]',
-                examples: [
-                  'projects',
-                  'projects react --limit 5',
-                  'projects --status active',
-                  'projects --per 5 --page 2',
-                ],
-              },
-              whoami: { desc: 'Display profile information', usage: 'whoami' },
-              stack: { desc: 'Display technical skills list', usage: 'stack' },
-              grep: { desc: 'Search helpers (stack supported)', usage: 'grep stack' },
-              about: { desc: 'Show about content', usage: 'about' },
-              skills: { desc: 'Show skills content', usage: 'skills' },
-              contact: { desc: 'Show contact information', usage: 'contact' },
-              github: { desc: 'Show GitHub profile link', usage: 'github' },
-              resume: { desc: 'Show resume URL', usage: 'resume' },
-              time: { desc: 'Show current time', usage: 'time' },
-              clear: { desc: 'Clear terminal', usage: 'clear' },
-            }
-            const u = usage[target]
-            if (!u) return createTerminalError(ansi.red(`No help for '${target}'`))
-            const lines = [
-              `${ansi.magenta(ansi.bold('Command'))}: ${ansi.cyan(target)}`,
-              `${ansi.magenta('Description')}: ${u.desc}`,
-              `${ansi.magenta('Usage')}: ${ansi.cyan(u.usage)}`,
-            ]
-            if (u.examples?.length) {
-              lines.push(ansi.magenta('Examples') + ':')
-              for (const ex of u.examples) lines.push('  ' + ansi.cyan(ex))
-            }
-            return { output: lines.join('\\n') }
-          }
-
           // General grouped help
           const byCat: Record<string, Array<{ command: string; description: string | null }>> = {}
           for (const c of cmds) {
@@ -207,13 +160,13 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
               }
             }
             if (line) lines.push(line)
-            return lines.map((l, i) => (i === 0 ? l : indent + l)).join('\\n')
+            return lines.map((l, i) => (i === 0 ? l : indent + l)).join('\n')
           }
           for (const [cat, rows] of Object.entries(byCat)) {
             const col = Math.max(12, Math.min(22, ...rows.map(r => r.command.length)))
             const header =
               ansi.magenta(ansi.bold(cat.toUpperCase())) +
-              '\\n' +
+              '\n' +
               ansi.cyan('COMMAND'.padEnd(col)) +
               '  ' +
               ansi.cyan('DESCRIPTION')
@@ -222,13 +175,13 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
               .map(r => {
                 const left = ansi.cyan(r.command.padEnd(col))
                 const right = wrap(r.description ?? '', 80, ' '.repeat(col + 2))
-                const [first, ...rest] = right.split('\\n')
-                return [left + '  ' + (first ?? ''), ...rest].join('\\n')
+                const [first, ...rest] = right.split('\n')
+                return [left + '  ' + (first ?? ''), ...rest].join('\n')
               })
-              .join('\\n')
-            sections.push(`${header}\\n${ansi.dim(line)}\\n${body}`)
+              .join('\n')
+            sections.push(`${header}\n${ansi.dim(line)}\n${body}`)
           }
-          return { output: sections.join('\\n\\n') }
+          return { output: sections.join('\n\n') }
         }
 
         case 'projects': {
@@ -376,18 +329,14 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
 
           const text = pageItems
             .map((p: ProjectRow) => {
-              const stack = (p.tech_stack ? JSON.parse(p.tech_stack) : []) as string[]
               const parts = [
                 `${ansi.magenta('•')} ${ansi.cyan(ansi.bold(String(p.name)))}`,
                 p.description ? `  ${p.description}` : undefined,
-                `  ${ansi.magenta('Stack')}: ${stack.length ? ansi.cyan(stack.join(', ')) : '-'}`,
-                `  ${ansi.magenta('GitHub')}: ${p.github_url ? ansi.underline(ansi.cyan(p.github_url)) : '-'}`,
-                `  ${ansi.magenta('Live')}: ${p.live_url ? ansi.underline(ansi.cyan(p.live_url)) : '-'}`,
-                `  ${ansi.magenta('Status')}: ${ansi.cyan(p.status ?? '-')}`,
+                `  ${ansi.dim('Type')} ${ansi.cyan(`cat ${String(p.name).toLowerCase()}`)} ${ansi.dim('for details')}`,
               ].filter(Boolean)
-              return parts.join('\\n')
+              return parts.join('\n')
             })
-            .join('\\n\\n')
+            .join('\n\n')
           const baseFlags = [
             filter ? filter : '',
             status ? `--status ${status}` : '',
@@ -408,14 +357,61 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
             hints.push(
               `${ansi.magenta('Next')}: ${ansi.cyan(`projects ${baseFlags} --page ${String(effPage + 1)}`)}`
             )
-          const footer = hints.length ? `\\n\\n${hints.join('\\n')}` : ''
-          return { output: `${header}\\n\\n${text}${footer}` }
+          const footer = hints.length ? `\n\n${hints.join('\n')}` : ''
+          return { output: `${header}\n\n${text}${footer}` }
         }
 
         // Add other command cases here...
         case 'clear':
           // Frontend interprets CLEAR specially
           return { output: 'CLEAR' }
+
+        case 'cat': {
+          // Handle cat command for project details
+          if (sanitizedArgs.length === 0) {
+            return createTerminalError(ansi.red('cat: missing file operand'))
+          }
+
+          const projectName = sanitizedArgs[0]?.toLowerCase()
+          if (!projectName) {
+            return createTerminalError(ansi.red('cat: missing file operand'))
+          }
+
+          // Fetch the specific project
+          const projects = await orm
+            .select({
+              name: tProjects.name,
+              description: tProjects.description,
+              tech_stack: tProjects.techStack,
+              github_url: tProjects.githubUrl,
+              live_url: tProjects.liveUrl,
+              status: tProjects.status,
+            })
+            .from(tProjects)
+            .orderBy(desc(tProjects.createdAt))
+
+          const project = projects.find(p => p.name && p.name.toLowerCase() === projectName)
+
+          if (!project) {
+            return createTerminalError(ansi.red(`cat: ${projectName}: No such file or directory`))
+          }
+
+          // Display detailed project information
+          const stack = (project.tech_stack ? JSON.parse(project.tech_stack) : []) as string[]
+          const parts = [
+            ansi.cyan(ansi.bold(`=== ${project.name} ===`)),
+            '',
+            project.description
+              ? `${ansi.magenta('Description')}: ${project.description}`
+              : undefined,
+            `${ansi.magenta('Tech Stack')}: ${stack.length ? ansi.cyan(stack.join(', ')) : ansi.dim('None specified')}`,
+            `${ansi.magenta('GitHub')}: ${project.github_url ? ansi.underline(ansi.cyan(project.github_url)) : ansi.dim('Not available')}`,
+            `${ansi.magenta('Live URL')}: ${project.live_url ? ansi.underline(ansi.cyan(project.live_url)) : ansi.dim('Not available')}`,
+            `${ansi.magenta('Status')}: ${ansi.cyan(project.status ?? 'Unknown')}`,
+          ].filter(Boolean)
+
+          return { output: parts.join('\n') }
+        }
 
         default: {
           // Use template processor for database-driven commands

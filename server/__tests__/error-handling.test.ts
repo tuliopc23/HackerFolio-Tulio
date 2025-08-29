@@ -128,6 +128,16 @@ describe('Error Handling System', () => {
   })
 
   describe('handleApiError', () => {
+    let consoleSpy: any
+
+    beforeEach(() => {
+      consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    })
+
+    afterEach(() => {
+      consoleSpy.mockRestore()
+    })
+
     test('handles ApiError correctly', () => {
       const error = new ApiError(ApiErrorCode.VALIDATION_ERROR, 'Invalid data', 400)
       const response = handleApiError(error)

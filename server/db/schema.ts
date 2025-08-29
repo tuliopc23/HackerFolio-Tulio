@@ -22,6 +22,15 @@ export const terminalCommands = sqliteTable('terminal_commands', {
   category: text('category'),
   responseTemplate: text('response_template'),
   isActive: integer('is_active', { mode: 'boolean' }).default(true),
+  // Enhanced fields for rich command templates
+  templateVariables: text('template_variables'), // JSON: available template variables
+  argumentSchema: text('argument_schema'), // JSON: expected arguments structure
+  examples: text('examples'), // JSON: usage examples array
+  aliases: text('aliases'), // JSON: command aliases array
+  metadata: text('metadata'), // JSON: additional command metadata
+  permissions: text('permissions'), // JSON: access control settings
+  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text('updated_at').default(sql`CURRENT_TIMESTAMP`),
 })
 
 export const portfolioContent = sqliteTable('portfolio_content', {
@@ -49,6 +58,12 @@ export const insertTerminalCommandSchema = createInsertSchema(terminalCommands, 
   category: z.string().optional(),
   responseTemplate: z.string().optional(),
   isActive: z.boolean().default(true),
+  templateVariables: z.string().optional(), // JSON string validation
+  argumentSchema: z.string().optional(), // JSON string validation
+  examples: z.string().optional(), // JSON string validation
+  aliases: z.string().optional(), // JSON string validation
+  metadata: z.string().optional(), // JSON string validation
+  permissions: z.string().optional(), // JSON string validation
 })
 
 export const selectTerminalCommandSchema = createSelectSchema(terminalCommands)

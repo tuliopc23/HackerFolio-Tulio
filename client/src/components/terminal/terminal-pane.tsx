@@ -149,31 +149,18 @@ export default function TerminalPane() {
 
     // Prefer server for dynamic commands
     const [rootCmd, ...rest] = command.split(' ')
-    const shouldAskServer = [
-      'help',
-      'projects',
-      'about',
-      'skills',
-      'contact',
-      'github',
-      'resume',
-      'clear',
-      'whoami',
-      'stack',
-    ].includes(rootCmd ?? '')
+    // All commands now go to server (database-driven)
 
-    // Fallback to server for unknown commands or specific dynamic ones
-    if (shouldAskServer || (result.error && result.output.startsWith('Command not found'))) {
-      try {
-        const cmd = rootCmd ?? ''
-        const args = rest
-        serverResult = await executeServerCommand(cmd, args)
-        finalOutput = serverResult.output
-        finalError = serverResult.error
-      } catch (_err) {
-        finalOutput = 'Server error executing command'
-        finalError = true
-      }
+    // Execute server command
+    try {
+      const cmd = rootCmd ?? ''
+      const args = rest
+      serverResult = await executeServerCommand(cmd, args)
+      finalOutput = serverResult.output
+      finalError = serverResult.error
+    } catch (_err) {
+      finalOutput = 'Server error executing command'
+      finalError = true
     }
 
     // Execute action from server if provided

@@ -25,8 +25,8 @@ import {
   getClientId,
 } from '../lib/security'
 import { validateData, executeCommandSchema } from '../lib/validation'
-import { createTemplateProcessor } from '../utils/template-processor'
 import { ansi, parseStringArray } from '../utils/terminal'
+import { createTemplateProcessor } from '../utils/template-processor'
 
 // Terminal rate limiting middleware
 const terminalRateLimit = (context: Context) => {
@@ -117,121 +117,219 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
         })
       }
 
-      // Basic command lookup (allows toggling via is_active)
+      // Database command lookup with enhanced schema
       const found = (
-        await orm.select().from(tCommands).where(eq(tCommands.command, sanitizedCommand)).limit(1)
+        await orm
+          .select({
+            command: tCommands.command,
+            description: tCommands.description,
+            category: tCommands.category,
+            responseTemplate: tCommands.responseTemplate,
+            isActive: tCommands.isActive,
+            templateVariables: tCommands.templateVariables,
+            argumentSchema: tCommands.argumentSchema,
+            examples: tCommands.examples,
+            aliases: tCommands.aliases,
+            metadata: tCommands.metadata,
+          })
+          .from(tCommands)
+          .where(and(eq(tCommands.command, sanitizedCommand), eq(tCommands.isActive, true)))
+          .limit(1)
       ).at(0)
 
       if (!found) {
         return createTerminalError(ansi.red(`Command not found: ${sanitizedCommand}`))
       }
 
+      // Special handling for complex commands that need custom logic
       switch (sanitizedCommand) {
         case 'help': {
-          const cmds = await orm
-            .select({
-              command: tCommands.command,
-              description: tCommands.description,
-              category: tCommands.category,
-            })
-            .from(tCommands)
-            .where(eq(tCommands.isActive, true))
-            .orderBy(tCommands.command)
-
-          const argsArr = Array.isArray(args) ? args : []
-          const target = (argsArr[0] ?? '').toLowerCase()
-
-          // Detailed help per command
-          if (target) {
-            const usage: Record<string, { desc: string; usage: string; examples?: string[] }> = {
-              help: {
-                desc: 'Show general or command-specific help',
-                usage: 'help [command]',
-                examples: ['help', 'help projects'],
-              },
-              projects: {
-                desc: 'List projects with optional filter/flags',
-                usage:
-                  'projects [filter] [--limit N|--per N] [--page N] [--status STATUS] [--stack TECH]',
-                examples: [
-                  'projects',
-                  'projects react --limit 5',
-                  'projects --status active',
-                  'projects --per 5 --page 2',
-                ],
-              },
-              whoami: { desc: 'Display profile information', usage: 'whoami' },
-              stack: { desc: 'Display technical skills list', usage: 'stack' },
-              grep: { desc: 'Search helpers (stack supported)', usage: 'grep stack' },
-              about: { desc: 'Show about content', usage: 'about' },
-              skills: { desc: 'Show skills content', usage: 'skills' },
-              contact: { desc: 'Show contact information', usage: 'contact' },
-              github: { desc: 'Show GitHub profile link', usage: 'github' },
-              resume: { desc: 'Show resume URL', usage: 'resume' },
-              time: { desc: 'Show current time', usage: 'time' },
-              clear: { desc: 'Clear terminal', usage: 'clear' },
-            }
-            const u = usage[target]
-            if (!u) return createTerminalError(ansi.red(`No help for '${target}'`))
-            const lines = [
-              `${ansi.magenta(ansi.bold('Command'))}: ${ansi.cyan(target)}`,
-              `${ansi.magenta('Description')}: ${u.desc}`,
-              `${ansi.magenta('Usage')}: ${ansi.cyan(u.usage)}`,
-            ]
-            if (u.examples?.length) {
-              lines.push(ansi.magenta('Examples') + ':')
-              for (const ex of u.examples) lines.push('  ' + ansi.cyan(ex))
-            }
-            return { output: lines.join('\\n') }
-          }
-
-          // General grouped help
-          const byCat: Record<string, Array<{ command: string; description: string | null }>> = {}
-          for (const c of cmds) {
-            const cat = c.category ?? 'misc'
-            byCat[cat] ??= []
-            byCat[cat].push({ command: c.command, description: c.description })
-          }
-          const sections: string[] = []
-          const wrap = (txt: string, width: number, indent: string) => {
-            const words = (txt || '').split(/\s+/)
-            const lines: string[] = []
-            let line = ''
-            for (const word of words) {
-              const next = line ? line + ' ' + word : word
-              if (indent.length + next.length > width) {
-                if (line) lines.push(line)
-                line = word
-              } else {
-                line = next
-              }
-            }
-            if (line) lines.push(line)
-            return lines.map((l, i) => (i === 0 ? l : indent + l)).join('\\n')
-          }
-          for (const [cat, rows] of Object.entries(byCat)) {
-            const col = Math.max(12, Math.min(22, ...rows.map(r => r.command.length)))
-            const header =
-              ansi.magenta(ansi.bold(cat.toUpperCase())) +
-              '\\n' +
-              ansi.cyan('COMMAND'.padEnd(col)) +
-              '  ' +
-              ansi.cyan('DESCRIPTION')
-            const line = '-'.repeat(('COMMAND'.padEnd(col) + '  DESCRIPTION').length)
-            const body = rows
-              .map(r => {
-                const left = ansi.cyan(r.command.padEnd(col))
-                const right = wrap(r.description ?? '', 80, ' '.repeat(col + 2))
-                const [first, ...rest] = right.split('\\n')
-                return [left + '  ' + (first ?? ''), ...rest].join('\\n')
-              })
-              .join('\\n')
-            sections.push(`${header}\\n${ansi.dim(line)}\\n${body}`)
-          }
-          return { output: sections.join('\\n\\n') }
+          return await handleHelpCommand(sanitizedArgs)
         }
 
         case 'projects': {
+          return await handleProjectsCommand(sanitizedArgs)
+        }
+
+        case 'clear': {
+          // Special system command
+          return { output: 'CLEAR' }
+        }
+
+        default: {
+          // Use template processor for all other commands
+          const processor = createTemplateProcessor(sanitizedArgs)
+          
+          // Add dynamic context based on command metadata
+          if (found.metadata) {
+            try {
+              const metadata = JSON.parse(found.metadata)
+              if (metadata.dynamic) {
+                // Add real-time context for dynamic commands
+                processor.addContext('timestamp', new Date().toISOString())
+              }
+            } catch {
+              // Invalid JSON metadata - ignore
+            }
+          }
+
+          const output = processor.processTemplate(found.responseTemplate || '')
+          
+          // Handle special navigation/actions from template processing
+          if (sanitizedCommand === 'open' && output.includes('Navigating to /')) {
+            const match = output.match(/Navigating to (\/[^\s.]+)/)
+            if (match?.[1]) {
+              return {
+                output,
+                action: { type: 'navigate', path: match[1] }
+              }
+            }
+          }
+
+          if (sanitizedCommand === 'theme' && output.includes('Switching to')) {
+            const match = output.match(/Switching to (\w+) theme/)
+            if (match?.[1]) {
+              return {
+                output,
+                action: { type: 'theme_change', theme: match[1] }
+              }
+            }
+          }
+
+          return { output }
+        }
+      }
+    } catch (error) {
+      SecurityLogger.log({
+        type: 'invalid_input',
+        clientId: getClientId(context),
+        timestamp: Date.now(),
+        details: {
+          error: error instanceof Error ? error.message : 'Unknown error',
+        },
+      })
+
+      return createTerminalError('Invalid command or arguments')
+    }
+  })
+
+  // Helper method for help command
+  private async handleHelpCommand(args: string[]) {
+    const cmds = await orm
+      .select({
+        command: tCommands.command,
+        description: tCommands.description,
+        category: tCommands.category,
+      })
+      .from(tCommands)
+      .where(eq(tCommands.isActive, true))
+      .orderBy(tCommands.command)
+
+    const target = (args[0] ?? '').toLowerCase()
+
+    // Detailed help per command
+    if (target) {
+      const usage: Record<string, { desc: string; usage: string; examples?: string[] }> = {
+        help: {
+          desc: 'Show general or command-specific help',
+          usage: 'help [command]',
+          examples: ['help', 'help projects'],
+        },
+        projects: {
+          desc: 'List projects with optional filter/flags',
+          usage:
+            'projects [filter] [--limit N|--per N] [--page N] [--status STATUS] [--stack TECH]',
+          examples: [
+            'projects',
+            'projects react --limit 5',
+            'projects --status active',
+            'projects --per 5 --page 2',
+          ],
+        },
+        whoami: { desc: 'Display profile information', usage: 'whoami' },
+        stack: { desc: 'Display technical skills list', usage: 'stack' },
+        grep: { desc: 'Search helpers (stack supported)', usage: 'grep stack' },
+        about: { desc: 'Show about content', usage: 'about' },
+        skills: { desc: 'Show skills content', usage: 'skills' },
+        contact: { desc: 'Show contact information', usage: 'contact' },
+        github: { desc: 'Show GitHub profile link', usage: 'github' },
+        resume: { desc: 'Show resume URL', usage: 'resume' },
+        time: { desc: 'Show current time', usage: 'time' },
+        clear: { desc: 'Clear terminal', usage: 'clear' },
+        ls: { desc: 'List available files', usage: 'ls' },
+        cat: { desc: 'Display file content', usage: 'cat <filename>' },
+        open: { desc: 'Navigate to route or open URL', usage: 'open <route|url>' },
+        theme: { desc: 'Switch terminal theme', usage: 'theme <name>' },
+      }
+      
+      const u = usage[target]
+      if (!u) return createTerminalError(ansi.red(`No help for '${target}'`))
+      
+      const lines = [
+        `${ansi.magenta(ansi.bold('Command'))}: ${ansi.cyan(target)}`,
+        `${ansi.magenta('Description')}: ${u.desc}`,
+        `${ansi.magenta('Usage')}: ${ansi.cyan(u.usage)}`,
+      ]
+      
+      if (u.examples?.length) {
+        lines.push(ansi.magenta('Examples') + ':')
+        for (const ex of u.examples) lines.push('  ' + ansi.cyan(ex))
+      }
+      
+      return { output: lines.join('\n') }
+    }
+
+    // General grouped help
+    const byCat: Record<string, Array<{ command: string; description: string | null }>> = {}
+    for (const c of cmds) {
+      const cat = c.category ?? 'misc'
+      byCat[cat] ??= []
+      byCat[cat].push({ command: c.command, description: c.description })
+    }
+    
+    const sections: string[] = []
+    const wrap = (txt: string, width: number, indent: string) => {
+      const words = (txt || '').split(/\s+/)
+      const lines: string[] = []
+      let line = ''
+      for (const word of words) {
+        const next = line ? line + ' ' + word : word
+        if (indent.length + next.length > width) {
+          if (line) lines.push(line)
+          line = word
+        } else {
+          line = next
+        }
+      }
+      if (line) lines.push(line)
+      return lines.map((l, i) => (i === 0 ? l : indent + l)).join('\n')
+    }
+    
+    for (const [cat, rows] of Object.entries(byCat)) {
+      const col = Math.max(12, Math.min(22, ...rows.map(r => r.command.length)))
+      const header =
+        ansi.magenta(ansi.bold(cat.toUpperCase())) +
+        '\n' +
+        ansi.cyan('COMMAND'.padEnd(col)) +
+        '  ' +
+        ansi.cyan('DESCRIPTION')
+      const line = '-'.repeat(('COMMAND'.padEnd(col) + '  DESCRIPTION').length)
+      const body = rows
+        .map(r => {
+          const left = ansi.cyan(r.command.padEnd(col))
+          const right = wrap(r.description ?? '', 80, ' '.repeat(col + 2))
+          const [first, ...rest] = right.split('\n')
+          return [left + '  ' + (first ?? ''), ...rest].join('\n')
+        })
+        .join('\n')
+      sections.push(`${header}\n${ansi.dim(line)}\n${body}`)
+    }
+    
+    return { output: sections.join('\n\n') }
+  }
+
+  // Helper method for projects command (keeping existing logic)
+  private async handleProjectsCommand(args: string[]) {
           // Parse flags and free-text filter
           let filter = ''
           let per: number | null = null
@@ -418,17 +516,10 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
           return { output: 'CLEAR' }
 
         default: {
-          // Use template processor for database-driven commands
-          const processor = createTemplateProcessor(sanitizedArgs)
           const foundCommand = found as { responseTemplate?: string }
-
-          // Process template or use fallback
-          const template = foundCommand.responseTemplate
-          const output = template
-            ? processor.processTemplate(template)
-            : ansi.green(`${sanitizedCommand} executed`)
-
-          return { output }
+          return {
+            output: foundCommand.responseTemplate ?? ansi.green(`${sanitizedCommand} executed`),
+          }
         }
       }
     } catch (error) {

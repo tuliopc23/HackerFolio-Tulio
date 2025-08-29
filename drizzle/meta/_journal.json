@@ -8,6 +8,20 @@
       "when": 1755789333211,
       "tag": "0000_keen_squadron_supreme",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1756416959526,
+      "tag": "0001_rare_stone_men",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1756417008333,
+      "tag": "0002_sparkling_reptil",
+      "breakpoints": true
     }
   ]
 }

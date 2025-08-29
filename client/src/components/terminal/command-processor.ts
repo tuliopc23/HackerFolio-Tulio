@@ -1,15 +1,8 @@
-import {
-  profileData,
-  projectsData,
-  aboutContent,
-  contactContent,
-  resumeContent,
-} from '@/data/portfolio-data'
-
 export interface CommandResult {
   output: string
   error?: boolean
   navigate?: string
+  serverCommand?: boolean // Flag to indicate command should go to server
 }
 
 export class CommandProcessor {
@@ -63,145 +56,16 @@ export class CommandProcessor {
     const trimmed = input.trim()
     if (!trimmed) return { output: '' }
 
-    const [command, ...args] = trimmed.split(' ')
-    const arg = args.join(' ')
-
-    switch (command?.toLowerCase()) {
-      case 'open':
-        return this.open(arg)
-      case 'theme':
-        return this.theme(arg)
-      case 'clear':
-        return { output: 'CLEAR' }
-      case 'ls':
-        return this.ls()
-      case 'cat':
-        return this.cat(arg)
-      case 'cams':
-        return { output: 'ACCESS DENIED.', error: true }
-      default:
-        return {
-          output: `Command not found: ${command ?? 'unknown'}\nType 'help' for available commands.`,
-          error: true,
-        }
-    }
-  }
-
-  // kept for reference; currently unused
-  /* @__PURE__ */
-  // @ts-expect-error kept for reference
-  private _help(): CommandResult {
+    // All commands now go to server - database-driven approach
+    // Only handle history locally, everything else is server-side
     return {
-      output: `Available Commands:
-
-help                 - Show this help message
-whoami              - Display user information  
-grep stack          - Show technology stack
-projects [filter]   - List projects with optional filter
-printd contact      - Display contact information
-open <route|url>    - Navigate to route or external URL
-  theme <name>        - Switch theme (oxocarbon)
-clear               - Clear terminal output
-ls                  - List available content
-cat <file>          - Display file content
-time                - Show current time
-
-Navigation:
-/projects           - Portfolio projects
-/about              - About me  
-/contact            - Contact information
-/resume             - Resume/CV
-
-Keyboard Shortcuts:
-Tab                 - Autocomplete command
-↑↓                  - Command history
-Ctrl+C              - Clear current input`,
+      output: '',
+      serverCommand: true, // Signal to send to server
     }
   }
 
-  // kept for reference; currently unused
-  /* @__PURE__ */
-
-  // @ts-ignore - kept for reference, currently unused
-
-  private _whoami(): CommandResult {
-    return {
-      output: `Name: ${profileData.name}
-Role: ${profileData.title}
-Location: ${profileData.location}
-Status: ${profileData.status}`,
-    }
-  }
-
-  private open(target: string): CommandResult {
-    if (!target) {
-      return { output: 'Usage: open <route|url>', error: true }
-    }
-
-    // Check if it's an internal route
-    const internalRoutes = ['/projects', '/about', '/contact', '/resume']
-    if (internalRoutes.includes(target)) {
-      return { output: `Navigating to ${target}...`, navigate: target }
-    }
-
-    // Check if it's a URL
-    if (target.startsWith('http://') || target.startsWith('https://')) {
-      window.open(target, '_blank')
-      return { output: `Opening ${target} in new tab...` }
-    }
-
-    // Check if it's a project link
-    const project = projectsData.find(p => p.name.toLowerCase().includes(target.toLowerCase()))
-    if (project?.links) {
-      const links = Object.values(project.links)
-      const firstLink = links[0]
-      if (firstLink) {
-        window.open(firstLink, '_blank')
-        return { output: `Opening ${project.name}...` }
-      }
-    }
-
-    return { output: `Cannot open '${target}' - not found`, error: true }
-  }
-
-  private theme(themeName: string): CommandResult {
-    const validThemes = ['oxocarbon']
-    if (!validThemes.includes(themeName)) {
-      return {
-        output: `Invalid theme '${themeName}'\nAvailable themes: ${validThemes.join(', ')}`,
-        error: true,
-      }
-    }
-
-    // Theme switching will be handled by the component
-    return { output: `Switching to ${themeName} theme...`, navigate: `theme:${themeName}` }
-  }
-
-  private ls(): CommandResult {
-    return {
-      output: `about.md
-contact.md  
-resume.md
-projects/
-  terminal-portfolio/
-  ecommerce-platform/
-  rust-cli-tool/
-  mobile-trading-app/`,
-    }
-  }
-
-  private cat(filename: string): CommandResult {
-    switch (filename) {
-      case 'about.md':
-        return { output: aboutContent }
-      case 'contact.md':
-        return { output: contactContent }
-      case 'resume.md':
-        return { output: resumeContent }
-      default:
-        return { output: `cat: ${filename}: No such file or directory`, error: true }
-    }
-  }
+  // All methods below are now handled server-side
+  // Keeping for potential future client-side optimizations
 
   getAutocomplete(input: string): string[] {
     const commands = [
@@ -215,7 +79,6 @@ projects/
       'ls',
       'cat',
       'time',
-      'grep stack',
       'contact',
       'about',
       'github',

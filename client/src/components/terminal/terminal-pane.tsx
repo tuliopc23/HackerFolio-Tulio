@@ -273,7 +273,7 @@ export default function TerminalPane() {
                 <span className='ml-2 text-cyan-bright'>
                   <TypedText
                     strings={[entry.command]}
-                    typeSpeed={40}
+                    typeSpeed={12}
                     showCursor={false}
                     startDelay={index === 0 ? 500 : index * 100}
                   />
@@ -283,7 +283,7 @@ export default function TerminalPane() {
                 <TypedTerminalOutput
                   output={entry.output}
                   isError={entry.error ?? false}
-                  typeSpeed={25}
+                  typeSpeed={8}
                   animate={index < 5} // Only animate first 5 entries to avoid performance issues
                 />
               )}

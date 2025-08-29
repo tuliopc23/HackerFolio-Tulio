@@ -1,7 +1,5 @@
 import { useState, useEffect, type ReactNode } from 'react'
 
-import { TypedText } from '@/components/ui/typed-text'
-
 interface TypedTerminalOutputProps {
   output: string
   isError?: boolean
@@ -14,10 +12,12 @@ export function TypedTerminalOutput({
   output,
   isError = false,
   onComplete,
-  typeSpeed = 30,
+  typeSpeed = 8,
   animate = true,
 }: TypedTerminalOutputProps) {
   const [shouldAnimate, setShouldAnimate] = useState(animate)
+  const [displayedOutput, setDisplayedOutput] = useState('')
+  const [isTyping, setIsTyping] = useState(false)
 
   useEffect(() => {
     setShouldAnimate(animate)
@@ -180,10 +180,36 @@ export function TypedTerminalOutput({
     return output.split('\n').map((line, i) => renderLine(line, i))
   }
 
-  const handleComplete = () => {
-    setShouldAnimate(false)
-    onComplete?.()
-  }
+  // Custom typing animation for ANSI content
+  useEffect(() => {
+    if (!shouldAnimate || !output) {
+      setDisplayedOutput(output)
+      onComplete?.()
+      return
+    }
+
+    setIsTyping(true)
+    setDisplayedOutput('')
+
+    let currentIndex = 0
+    const effectiveTypeSpeed = output.includes('\x1b[') ? Math.max(typeSpeed, 5) : typeSpeed
+
+    const timer = setInterval(() => {
+      if (currentIndex <= output.length) {
+        setDisplayedOutput(output.slice(0, currentIndex))
+        currentIndex++
+      } else {
+        clearInterval(timer)
+        setIsTyping(false)
+        onComplete?.()
+      }
+    }, effectiveTypeSpeed)
+
+    return () => {
+      clearInterval(timer)
+      setIsTyping(false)
+    }
+  }, [output, shouldAnimate, typeSpeed, onComplete])
 
   // If animation is disabled, render directly
   if (!shouldAnimate) {
@@ -196,17 +222,10 @@ export function TypedTerminalOutput({
     )
   }
 
-  // For complex ANSI-formatted outputs, use slower typing speed
-  const effectiveTypeSpeed = output.includes('\x1b[') ? Math.max(typeSpeed, 15) : typeSpeed
-
   return (
     <div className={`ml-4 mb-2 ${isError ? 'text-terminal-red' : 'text-[rgba(235,241,255,0.9)]'}`}>
-      <TypedText
-        strings={[output]}
-        typeSpeed={effectiveTypeSpeed}
-        showCursor={false}
-        onComplete={handleComplete}
-      />
+      {formatOutput(displayedOutput)}
+      {isTyping && <span className='animate-pulse'>|</span>}
     </div>
   )
 }

@@ -64,97 +64,6 @@ export default function SystemInfoPane() {
       })
   }, [])
 
-  const fastfetchOutput = `tuliopinheirocunha@MacBook-Pro
-────────────────────────────────────────
-OS: macOS Tahoe 26.0 ARM64
-Host: MacBook Pro (14-inch, 2023)
-Kernel: Darwin 25.0.0
-Packages: 228 (brew), 101 (brew-cask)
-Shell: fish 4.0.2
-Terminal: Ghostty v1.0.0
-CPU: Apple M4 Pro (12) @ 3.50 GHz
-GPU: Apple M4 Pro`
-
-  const formatSystemInfo = (text: string) => {
-    return text.split('\n').map((line, index) => {
-      const key = `${String(index)}-${line}`
-
-      // Separator line
-      if (line.includes('────')) {
-        return (
-          <div key={key} className='text-[#393939] opacity-60'>
-            {line}
-          </div>
-        )
-      }
-
-      const colonIndex = line.indexOf(':')
-      if (colonIndex > 0) {
-        const label = line.substring(0, colonIndex + 1)
-        const value = line.substring(colonIndex + 1).trim()
-
-        // Syntax highlighting for different types of values
-        let valueClass = 'text-[#33b1ff]' // Default cyan
-
-        // Operating System - Green
-        if (label.includes('OS') || label.includes('Host') || label.includes('Kernel')) {
-          valueClass = 'text-[#42be65]'
-        }
-        // Memory/Storage/Performance - Magenta
-        else if (
-          label.includes('Memory') ||
-          label.includes('Disk') ||
-          label.includes('CPU') ||
-          label.includes('GPU') ||
-          label.includes('Swap')
-        ) {
-          valueClass = 'text-[#be95ff]'
-        }
-        // Numbers/Percentages - Light Blue
-        else if (/\d+%|\d+\.\d+|\d+ \w+/.exec(value)) {
-          valueClass = 'text-[#78a9ff]'
-        }
-        // Applications/Software - Pink
-        else if (
-          label.includes('Shell') ||
-          label.includes('Terminal') ||
-          label.includes('Font') ||
-          label.includes('Packages')
-        ) {
-          valueClass = 'text-[#ff7eb6]'
-        }
-
-        return (
-          <div key={key}>
-            <span className='text-[#82cfff] font-medium'>{label}</span>
-            <span className={`${valueClass} ml-1 font-mono`}>{value}</span>
-          </div>
-        )
-      }
-
-      // Header line - user@hackerfolio with proper colors
-      if (index === 0 && line.includes('@')) {
-        const atIndex = line.indexOf('@')
-        const username = line.substring(0, atIndex)
-        const hostname = line.substring(atIndex + 1) // Remove the @ symbol
-        return (
-          <div key={key} className='font-normal text-xs mb-1'>
-            <span className='text-[#33b1ff]'>{username}</span>
-            <span className='text-[#393939]'>@</span>
-            <span className='text-[#be95ff]'>{hostname}</span>
-          </div>
-        )
-      }
-
-      // Other lines
-      return (
-        <div key={key} className='text-[#dde1e6]'>
-          {line}
-        </div>
-      )
-    })
-  }
-
   const formatTime = (time: Date, timezone: string) => {
     try {
       return time.toLocaleTimeString('en-US', {
@@ -185,9 +94,9 @@ GPU: Apple M4 Pro`
           <div className='text-pink-400 text-[10px] font-medium tracking-wide uppercase'>
             <TypedText
               strings={['WORLD CLOCK']}
-              typeSpeed={80}
-              showCursor={false}
-              startDelay={100}
+              typeSpeed={400}
+              showCursor={true}
+              startDelay={1000}
             />
           </div>
           <div className='grid grid-cols-2 gap-x-4 gap-y-2 text-xs'>
@@ -196,9 +105,9 @@ GPU: Apple M4 Pro`
                 <div className='text-[#dde1e6] opacity-80 text-[10px] uppercase tracking-wide font-medium'>
                   <TypedText
                     strings={[tz.city]}
-                    typeSpeed={60}
-                    showCursor={false}
-                    startDelay={300 + index * 100}
+                    typeSpeed={300}
+                    showCursor={true}
+                    startDelay={2000 + index * 1000}
                   />
                 </div>
                 <div className='text-green-400 font-mono font-semibold text-sm'>
@@ -214,9 +123,9 @@ GPU: Apple M4 Pro`
             <div className='text-pink-400 text-xs font-medium tracking-wide'>
               <TypedText
                 strings={['SYSTEM INFO']}
-                typeSpeed={80}
-                showCursor={false}
-                startDelay={700}
+                typeSpeed={350}
+                showCursor={true}
+                startDelay={6000}
               />
             </div>
             <div className='flex gap-3'>
@@ -246,7 +155,118 @@ GPU: Apple M4 Pro`
 
                   {/* System Info - Right Side */}
                   <div className='flex-1'>
-                    <div className='space-y-1'>{formatSystemInfo(fastfetchOutput)}</div>
+                    <div className='space-y-1'>
+                      {/* Username@hostname */}
+                      <div className='font-normal text-xs mb-1'>
+                        <span className='text-[#33b1ff]'>
+                          <TypedText
+                            strings={['tuliopinheirocunha']}
+                            typeSpeed={200}
+                            showCursor={true}
+                            startDelay={7000}
+                          />
+                        </span>
+                        <span className='text-[#393939]'>@</span>
+                        <span className='text-[#be95ff]'>
+                          <TypedText
+                            strings={['MacBook-Pro']}
+                            typeSpeed={200}
+                            showCursor={true}
+                            startDelay={9000}
+                          />
+                        </span>
+                      </div>
+
+                      {/* Separator */}
+                      <div className='text-[#393939] opacity-60'>
+                        <TypedText
+                          strings={['────────────────────────────────────────']}
+                          typeSpeed={50}
+                          showCursor={false}
+                          startDelay={11000}
+                        />
+                      </div>
+
+                      {/* OS Info */}
+                      <div>
+                        <span className='text-[#82cfff] font-medium'>
+                          <TypedText
+                            strings={['OS:']}
+                            typeSpeed={300}
+                            showCursor={true}
+                            startDelay={12000}
+                          />
+                        </span>
+                        <span className='text-[#42be65] ml-1 font-mono'>
+                          <TypedText
+                            strings={['macOS Tahoe 26.0 ARM64']}
+                            typeSpeed={150}
+                            showCursor={true}
+                            startDelay={13000}
+                          />
+                        </span>
+                      </div>
+
+                      {/* Host Info */}
+                      <div>
+                        <span className='text-[#82cfff] font-medium'>
+                          <TypedText
+                            strings={['Host:']}
+                            typeSpeed={300}
+                            showCursor={true}
+                            startDelay={15000}
+                          />
+                        </span>
+                        <span className='text-[#42be65] ml-1 font-mono'>
+                          <TypedText
+                            strings={['MacBook Pro (14-inch, 2023)']}
+                            typeSpeed={150}
+                            showCursor={true}
+                            startDelay={16000}
+                          />
+                        </span>
+                      </div>
+
+                      {/* CPU Info */}
+                      <div>
+                        <span className='text-[#82cfff] font-medium'>
+                          <TypedText
+                            strings={['CPU:']}
+                            typeSpeed={300}
+                            showCursor={true}
+                            startDelay={18000}
+                          />
+                        </span>
+                        <span className='text-[#be95ff] ml-1 font-mono'>
+                          <TypedText
+                            strings={['Apple M4 Pro (12) @ 3.50 GHz']}
+                            typeSpeed={150}
+                            showCursor={true}
+                            startDelay={19000}
+                          />
+                        </span>
+                      </div>
+
+                      {/* GPU Info */}
+                      <div>
+                        <span className='text-[#82cfff] font-medium'>
+                          <TypedText
+                            strings={['GPU:']}
+                            typeSpeed={300}
+                            showCursor={true}
+                            startDelay={21000}
+                          />
+                        </span>
+                        <span className='text-[#be95ff] ml-1 font-mono'>
+                          <TypedText
+                            strings={['Apple M4 Pro']}
+                            typeSpeed={150}
+                            showCursor={true}
+                            startDelay={22000}
+                          />
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -256,32 +276,100 @@ GPU: Apple M4 Pro`
                 {/* Header with Status */}
                 <div className='flex items-center justify-between mb-2'>
                   <span className='text-pink-400 text-[10px] font-semibold uppercase tracking-wide'>
-                    CONNECTION
+                    <TypedText
+                      strings={['CONNECTION']}
+                      typeSpeed={200}
+                      showCursor={true}
+                      startDelay={24000}
+                    />
                   </span>
                   <div className='flex items-center gap-1'>
                     <div className='w-2 h-2 rounded-full bg-green-400 animate-pulse' />
-                    <span className='text-green-400 text-[9px] font-bold'>SECURE</span>
+                    <span className='text-green-400 text-[9px] font-bold'>
+                      <TypedText
+                        strings={['SECURE']}
+                        typeSpeed={200}
+                        showCursor={true}
+                        startDelay={26000}
+                      />
+                    </span>
                   </div>
                 </div>
 
                 {/* Connection Info */}
                 <div className='space-y-1.5'>
                   <div className='flex justify-between text-[9px]'>
-                    <span className='text-[#dde1e6] opacity-70'>Protocol:</span>
-                    <span className='text-green-400 font-mono'>SSH-2.0</span>
+                    <span className='text-[#dde1e6] opacity-70'>
+                      <TypedText
+                        strings={['Protocol:']}
+                        typeSpeed={250}
+                        showCursor={true}
+                        startDelay={28000}
+                      />
+                    </span>
+                    <span className='text-green-400 font-mono'>
+                      <TypedText
+                        strings={['SSH-2.0']}
+                        typeSpeed={200}
+                        showCursor={true}
+                        startDelay={30000}
+                      />
+                    </span>
                   </div>
                   <div className='flex justify-between text-[9px]'>
-                    <span className='text-[#dde1e6] opacity-70'>Cipher:</span>
-                    <span className='text-pink-400 font-mono'>AES-256</span>
-                  </div>
-                  <div className='flex justify-between text-[9px]'>
-                    <span className='text-[#dde1e6] opacity-70'>Latency:</span>
-                    <span className='text-green-400 font-mono'>12ms</span>
-                  </div>
-                  <div className='flex justify-between text-[9px]'>
-                    <span className='text-[#dde1e6] opacity-70'>Uptime:</span>
+                    <span className='text-[#dde1e6] opacity-70'>
+                      <TypedText
+                        strings={['Cipher:']}
+                        typeSpeed={250}
+                        showCursor={true}
+                        startDelay={32000}
+                      />
+                    </span>
                     <span className='text-pink-400 font-mono'>
-                      {Math.floor((Date.now() - 1704067200000) / 86400000)}d
+                      <TypedText
+                        strings={['AES-256']}
+                        typeSpeed={200}
+                        showCursor={true}
+                        startDelay={34000}
+                      />
+                    </span>
+                  </div>
+                  <div className='flex justify-between text-[9px]'>
+                    <span className='text-[#dde1e6] opacity-70'>
+                      <TypedText
+                        strings={['Latency:']}
+                        typeSpeed={250}
+                        showCursor={true}
+                        startDelay={36000}
+                      />
+                    </span>
+                    <span className='text-green-400 font-mono'>
+                      <TypedText
+                        strings={['12ms']}
+                        typeSpeed={200}
+                        showCursor={true}
+                        startDelay={38000}
+                      />
+                    </span>
+                  </div>
+                  <div className='flex justify-between text-[9px]'>
+                    <span className='text-[#dde1e6] opacity-70'>
+                      <TypedText
+                        strings={['Uptime:']}
+                        typeSpeed={250}
+                        showCursor={true}
+                        startDelay={40000}
+                      />
+                    </span>
+                    <span className='text-pink-400 font-mono'>
+                      <TypedText
+                        strings={[
+                          `${Math.floor((Date.now() - 1704067200000) / 86400000).toString()}d`,
+                        ]}
+                        typeSpeed={200}
+                        showCursor={true}
+                        startDelay={42000}
+                      />
                     </span>
                   </div>
 
@@ -291,16 +379,58 @@ GPU: Apple M4 Pro`
                   {/* Network Stats */}
                   <div className='space-y-1'>
                     <div className='flex justify-between text-[9px]'>
-                      <span className='text-[#dde1e6] opacity-70'>TX:</span>
-                      <span className='text-green-400 font-mono'>1.2GB</span>
+                      <span className='text-[#dde1e6] opacity-70'>
+                        <TypedText
+                          strings={['TX:']}
+                          typeSpeed={250}
+                          showCursor={true}
+                          startDelay={44000}
+                        />
+                      </span>
+                      <span className='text-green-400 font-mono'>
+                        <TypedText
+                          strings={['1.2GB']}
+                          typeSpeed={200}
+                          showCursor={true}
+                          startDelay={46000}
+                        />
+                      </span>
                     </div>
                     <div className='flex justify-between text-[9px]'>
-                      <span className='text-[#dde1e6] opacity-70'>RX:</span>
-                      <span className='text-green-400 font-mono'>3.4GB</span>
+                      <span className='text-[#dde1e6] opacity-70'>
+                        <TypedText
+                          strings={['RX:']}
+                          typeSpeed={250}
+                          showCursor={true}
+                          startDelay={48000}
+                        />
+                      </span>
+                      <span className='text-green-400 font-mono'>
+                        <TypedText
+                          strings={['3.4GB']}
+                          typeSpeed={200}
+                          showCursor={true}
+                          startDelay={50000}
+                        />
+                      </span>
                     </div>
                     <div className='flex justify-between text-[9px]'>
-                      <span className='text-[#dde1e6] opacity-70'>Sessions:</span>
-                      <span className='text-pink-400 font-mono'>4</span>
+                      <span className='text-[#dde1e6] opacity-70'>
+                        <TypedText
+                          strings={['Sessions:']}
+                          typeSpeed={250}
+                          showCursor={true}
+                          startDelay={52000}
+                        />
+                      </span>
+                      <span className='text-pink-400 font-mono'>
+                        <TypedText
+                          strings={['4']}
+                          typeSpeed={200}
+                          showCursor={true}
+                          startDelay={54000}
+                        />
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -316,22 +446,32 @@ GPU: Apple M4 Pro`
             <div className='text-[#be95ff] text-xs font-semibold tracking-wide uppercase mb-2'>
               <TypedText
                 strings={['RECENT PROJECTS']}
-                typeSpeed={70}
-                showCursor={false}
-                startDelay={1200}
+                typeSpeed={300}
+                showCursor={true}
+                startDelay={8000}
               />
             </div>
             {projectsLoading ? (
               <div className='text-[#dde1e6] opacity-60 text-[9px]'>Loading...</div>
             ) : projects.length > 0 ? (
               <div className='space-y-2'>
-                {projects.slice(0, 2).map(project => (
+                {projects.slice(0, 2).map((project, projectIndex) => (
                   <div key={project.id} className='border-l-2 border-[#33b1ff] pl-2'>
                     <div className='text-[#33b1ff] text-[10px] font-medium truncate'>
-                      {project.name}
+                      <TypedText
+                        strings={[project.name]}
+                        typeSpeed={150}
+                        showCursor={true}
+                        startDelay={56000 + projectIndex * 3000}
+                      />
                     </div>
                     <div className='text-[#dde1e6] opacity-70 text-[8px] truncate'>
-                      {project.description ?? 'No description'}
+                      <TypedText
+                        strings={[project.description ?? 'No description']}
+                        typeSpeed={100}
+                        showCursor={true}
+                        startDelay={57000 + projectIndex * 3000}
+                      />
                     </div>
                     <div className='flex items-center gap-2 mt-1'>
                       {project.status && (
@@ -344,12 +484,22 @@ GPU: Apple M4 Pro`
                                 : 'bg-yellow-400/20 text-yellow-400'
                           }`}
                         >
-                          {project.status}
+                          <TypedText
+                            strings={[project.status]}
+                            typeSpeed={150}
+                            showCursor={true}
+                            startDelay={58000 + projectIndex * 3000}
+                          />
                         </span>
                       )}
                       {project.tech_stack && project.tech_stack.length > 0 && (
                         <span className='text-[8px] text-[#be95ff] opacity-70'>
-                          {project.tech_stack.slice(0, 2).join(', ')}
+                          <TypedText
+                            strings={[project.tech_stack.slice(0, 2).join(', ')]}
+                            typeSpeed={100}
+                            showCursor={true}
+                            startDelay={59000 + projectIndex * 3000}
+                          />
                         </span>
                       )}
                     </div>
@@ -371,9 +521,9 @@ GPU: Apple M4 Pro`
             <div className='text-[#be95ff] text-xs font-semibold tracking-wide uppercase mb-2'>
               <TypedText
                 strings={['PROJECT STATS']}
-                typeSpeed={70}
-                showCursor={false}
-                startDelay={1200}
+                typeSpeed={300}
+                showCursor={true}
+                startDelay={10000}
               />
             </div>
             {projectsLoading ? (

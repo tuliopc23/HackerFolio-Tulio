@@ -52,7 +52,7 @@ export default function ProjectsGridPane() {
         <h3 className='text-cyan-bright font-medium text-base sm:text-lg mb-2'>
           <TypedText
             strings={[project.name]}
-            typeSpeed={60}
+            typeSpeed={8}
             showCursor={false}
             startDelay={index * 200}
           />
@@ -60,7 +60,7 @@ export default function ProjectsGridPane() {
         <p className='text-text-soft text-sm mb-3'>
           <TypedText
             strings={[project.description ?? '']}
-            typeSpeed={40}
+            typeSpeed={6}
             showCursor={false}
             startDelay={index * 200 + 300}
           />
@@ -149,16 +149,16 @@ export default function ProjectsGridPane() {
       <div className='bg-[#393939] px-4 py-2 border-b border-magenta-soft flex items-center justify-between'>
         <div className='flex items-center gap-2'>
           <span className='text-magenta-bright font-medium'>
-            <TypedText strings={['[pane-03]']} typeSpeed={80} showCursor={false} startDelay={100} />
+            <TypedText strings={['[pane-03]']} typeSpeed={6} showCursor={false} startDelay={100} />
           </span>
           <span className='text-text-soft'>
-            <TypedText strings={['projects']} typeSpeed={60} showCursor={false} startDelay={400} />
+            <TypedText strings={['projects']} typeSpeed={8} showCursor={false} startDelay={400} />
           </span>
         </div>
         <div className='text-xs text-text-soft'>
           <TypedText
             strings={[`${projects.length.toString()} items`]}
-            typeSpeed={40}
+            typeSpeed={6}
             showCursor={false}
             startDelay={800}
           />

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 
 import { TypedText } from '@/components/ui/typed-text'
-import { fetchProjects } from '@/lib/api'
+import { useProjects } from '@/lib/queries'
 
 interface Project {
   id: number | string
@@ -18,8 +18,22 @@ interface Project {
 export default function SystemInfoPane() {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [showFastfetch, setShowFastfetch] = useState(false)
-  const [projects, setProjects] = useState<Project[]>([])
-  const [projectsLoading, setProjectsLoading] = useState(true)
+
+  // Use TanStack Query for projects data
+  const { data: projectsData = [], isLoading: projectsLoading } = useProjects()
+
+  // Process projects data for display
+  const projects: Project[] = projectsData.slice(0, 3).map(project => ({
+    id: project.id,
+    name: project.name,
+    description: project.description ?? undefined,
+    tech_stack: project.tech_stack ?? [],
+    github_url: project.github_url,
+    live_url: project.live_url,
+    status: project.status ?? undefined,
+    created_at: project.created_at,
+    updated_at: project.updated_at,
+  }))
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -39,29 +53,6 @@ export default function SystemInfoPane() {
     return () => {
       clearTimeout(timeout)
     }
-  }, [])
-
-  useEffect(() => {
-    // Fetch projects for dynamic cards
-    fetchProjects()
-      .then(data => {
-        const processedProjects = data.slice(0, 3).map(project => ({
-          id: project.id,
-          name: project.name,
-          description: project.description ?? undefined,
-          tech_stack: project.tech_stack ?? [],
-          github_url: project.github_url,
-          live_url: project.live_url,
-          status: project.status ?? undefined,
-          created_at: project.created_at,
-          updated_at: project.updated_at,
-        }))
-        setProjects(processedProjects)
-        setProjectsLoading(false)
-      })
-      .catch(() => {
-        setProjectsLoading(false)
-      })
   }, [])
 
   const formatTime = (time: Date, timezone: string) => {

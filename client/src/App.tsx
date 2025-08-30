@@ -2,7 +2,7 @@ import { AnimatePresence } from 'motion/react'
 import { useState } from 'react'
 
 import LoadingScreen from '@/components/LoadingScreen'
-import { createAppRouter, AppRouterProvider } from '@/router'
+import { createAppRouter, AppRouterProvider } from '@/router-enhanced'
 
 function App() {
   const [isLoading, setIsLoading] = useState(true)

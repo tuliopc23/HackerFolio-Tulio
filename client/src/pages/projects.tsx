@@ -1,59 +1,34 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowLeft, Code2, ExternalLink, Star } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 
-import { fetchProjects } from '@/lib/api'
+import { useProjects } from '@/lib/queries'
 
 export default function Projects() {
-  const [projectsData, setProjectsData] = useState<
-    Array<{
-      id: number | string
-      name: string
-      description?: string
-      stack?: string[]
-      tech_stack?: string[]
-      links?: Record<string, string>
-      featured?: boolean
-      role?: string
-      image?: string
-      stats?: Record<string, unknown>
-    }>
-  >([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { data: projectsData, isLoading: loading, error } = useProjects()
 
-  useEffect(() => {
-    fetchProjects()
-      .then(items => {
-        // Map API shape to UI shape
-        setProjectsData(
-          items.map(p => ({
-            id: p.id,
-            name: p.name,
-            description: p.description ?? '',
-            stack: p.tech_stack ?? [],
-            featured: p.status === 'active',
-            role: 'Full Stack Developer', // Default role
-            ...(p.image && { image: p.image }),
-            ...(p.stats && { stats: p.stats }),
-            links: Object.fromEntries(
-              Object.entries({
-                github: p.github_url,
-                demo: p.live_url,
-                appstore: p.appstore_url,
-              }).filter(([, value]) => value !== undefined)
-            ) as Record<string, string>,
-          }))
-        )
-      })
-      .catch((e: unknown) => {
-        const message = e instanceof Error ? e.message : 'Failed to load projects'
-        setError(message)
-      })
-      .finally(() => {
-        setLoading(false)
-      })
-  }, [])
+  // Transform API data to UI shape with useMemo for performance
+  const transformedProjects = useMemo(() => {
+    if (!projectsData) return []
+
+    return projectsData.map(p => ({
+      id: p.id,
+      name: p.name,
+      description: p.description ?? '',
+      stack: p.tech_stack ?? [],
+      featured: p.status === 'active',
+      role: 'Full Stack Developer', // Default role
+      ...(p.image && { image: p.image }),
+      ...(p.stats && { stats: p.stats }),
+      links: Object.fromEntries(
+        Object.entries({
+          github: p.github_url,
+          demo: p.live_url,
+          appstore: p.appstore_url,
+        }).filter(([, value]) => value !== undefined)
+      ) as Record<string, string>,
+    }))
+  }, [projectsData])
 
   return (
     <div className='min-h-screen bg-black text-text-cyan p-6'>
@@ -75,11 +50,11 @@ export default function Projects() {
 
         {/* State */}
         {loading && <div className='text-text-soft'>Loading projects...</div>}
-        {error && <div className='text-terminal-red'>{error}</div>}
+        {error && <div className='text-terminal-red'>{error.message}</div>}
 
         {/* Projects Grid */}
         <div className='grid gap-6 md:grid-cols-2'>
-          {projectsData.map(project => (
+          {transformedProjects.map(project => (
             <div
               key={project.id}
               className='pane-border rounded-lg p-6 bg-[#0a0a0a] hover:border-cyan-bright transition-colors'
@@ -101,7 +76,7 @@ export default function Projects() {
               {/* Tech Stack */}
               <div className='mb-4'>
                 <div className='flex flex-wrap gap-2'>
-                  {(project.stack ?? []).map(tech => (
+                  {project.stack.map(tech => (
                     <span
                       key={tech}
                       className='px-2 py-1 bg-black border border-cyan-soft rounded text-xs text-cyan-bright'
@@ -130,7 +105,7 @@ export default function Projects() {
                     <div className='text-[#33b1ff] font-medium'>
                       {typeof project.stats.performance === 'string' ||
                       typeof project.stats.performance === 'number'
-                        ? String(project.stats.performance)
+                        ? project.stats.performance
                         : ''}
                     </div>
                     <div className='text-text-soft text-xs'>Performance</div>
@@ -139,7 +114,7 @@ export default function Projects() {
                     <div className='text-terminal-green font-medium'>
                       {typeof project.stats.accessibility === 'string' ||
                       typeof project.stats.accessibility === 'number'
-                        ? String(project.stats.accessibility)
+                        ? project.stats.accessibility
                         : ''}
                     </div>
                     <div className='text-text-soft text-xs'>Accessibility</div>
@@ -149,7 +124,7 @@ export default function Projects() {
 
               {/* Action Links */}
               <div className='flex gap-2'>
-                {project.links?.demo && (
+                {project.links.demo && (
                   <a
                     href={project.links.demo}
                     target='_blank'
@@ -160,7 +135,7 @@ export default function Projects() {
                     View Demo
                   </a>
                 )}
-                {project.links?.github && (
+                {project.links.github && (
                   <a
                     href={project.links.github}
                     target='_blank'
@@ -170,7 +145,7 @@ export default function Projects() {
                     <Code2 className='w-4 h-4' />
                   </a>
                 )}
-                {project.links?.appstore && (
+                {project.links.appstore && (
                   <a
                     href={project.links.appstore}
                     target='_blank'

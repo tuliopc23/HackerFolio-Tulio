@@ -9,8 +9,8 @@ import {
 } from '@tanstack/react-router'
 import React, { lazy } from 'react'
 
-import { ThemeProvider } from '@/components/terminal/theme-context'
-import { fetchProjects, fetchContent } from '@/lib/api'
+import { AppProviders } from '@/components/providers'
+import { fetchProjects, fetchContent } from '@/lib/queries'
 import Home from '@/pages/home'
 
 // Lazy load heavy components to reduce initial bundle size
@@ -23,11 +23,11 @@ const TerminalThemePreview = lazy(() => import('@/components/TerminalThemePrevie
 
 const rootRoute = createRootRoute({
   component: () => (
-    <ThemeProvider>
+    <AppProviders>
       <div className='crt-screen'>
         <Outlet />
       </div>
-    </ThemeProvider>
+    </AppProviders>
   ),
 })
 

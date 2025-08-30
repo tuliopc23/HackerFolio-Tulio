@@ -1,9 +1,7 @@
-import { useState, useEffect } from 'react'
-
 import { TerminalLoadingSpinner } from '@/components/loading-spinner'
 import { LayoutGrid } from '@/components/ui/layout-grid'
 import { TypedText } from '@/components/ui/typed-text'
-import { fetchProjects } from '@/lib/api'
+import { useProjects } from '@/lib/queries'
 
 interface Project {
   id: number | string
@@ -17,33 +15,20 @@ interface Project {
 }
 
 export default function ProjectsGridPane() {
-  const [projects, setProjects] = useState<Project[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  // Use TanStack Query for projects data
+  const { data: projectsData = [], isLoading: loading, error } = useProjects()
 
-  useEffect(() => {
-    fetchProjects()
-      .then(data => {
-        const processedData: Project[] = data.slice(0, 6).map(project => ({
-          id: project.id,
-          name: project.name,
-          description: project.description ?? undefined,
-          tech_stack: Array.isArray(project.tech_stack) ? project.tech_stack : [],
-          github_url: project.github_url,
-          live_url: project.live_url,
-          status: project.status ?? undefined,
-          image: project.image,
-        }))
-        setProjects(processedData)
-      })
-      .catch(() => {
-        // Handle fetch error silently
-        setError('Failed to load projects')
-      })
-      .finally(() => {
-        setLoading(false)
-      })
-  }, [])
+  // Process projects data for display
+  const projects: Project[] = projectsData.slice(0, 6).map(project => ({
+    id: project.id,
+    name: project.name,
+    description: project.description ?? undefined,
+    tech_stack: Array.isArray(project.tech_stack) ? project.tech_stack : [],
+    github_url: project.github_url,
+    live_url: project.live_url,
+    status: project.status ?? undefined,
+    image: project.image,
+  }))
 
   const cards = projects.map((project, index) => ({
     id: index,
@@ -172,7 +157,7 @@ export default function ProjectsGridPane() {
           </div>
         ) : error ? (
           <div className='p-4 text-center'>
-            <div className='text-terminal-red text-sm mb-2'>⚠️ {error}</div>
+            <div className='text-terminal-red text-sm mb-2'>⚠️ Failed to load projects</div>
             <button
               onClick={() => {
                 if (typeof window !== 'undefined') {

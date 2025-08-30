@@ -1,4 +1,4 @@
-// client/src/lib/api.ts
+import { useQuery, useMutation, useQueryClient, type QueryClient } from '@tanstack/react-query'
 import { z } from 'zod'
 
 import {
@@ -32,6 +32,7 @@ function validateResponse<T>(schema: z.ZodType<T>, data: unknown): T {
   return result.data
 }
 
+// Base fetch functions (for use in server-side and non-hook contexts)
 export async function fetchProjects(): Promise<ApiProject[]> {
   const base = getBaseUrl()
   const res = await fetch(`${base}/api/projects`)
@@ -90,6 +91,84 @@ export async function fetchContent(section: string): Promise<PortfolioContent> {
 
   const data = await res.json()
   return validateResponse(portfolioContentSchema, data)
+}
+
+// Query Keys - centralized for easy invalidation and caching
+export const queryKeys = {
+  projects: ['projects'] as const,
+  commands: ['commands'] as const,
+  content: (section: string) => ['content', section] as const,
+  all: ['api'] as const,
+} as const
+
+// TanStack Query Hooks
+export function useProjects() {
+  return useQuery({
+    queryKey: queryKeys.projects,
+    queryFn: fetchProjects,
+    staleTime: 5 * 60 * 1000, // Consider fresh for 5 minutes
+    gcTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
+  })
+}
+
+export function useCommands() {
+  return useQuery({
+    queryKey: queryKeys.commands,
+    queryFn: fetchCommands,
+    staleTime: 10 * 60 * 1000, // Commands rarely change
+    gcTime: 60 * 60 * 1000, // Keep for 1 hour
+  })
+}
+
+export function useContent(section: string) {
+  return useQuery({
+    queryKey: queryKeys.content(section),
+    queryFn: () => fetchContent(section),
+    staleTime: 10 * 60 * 1000, // Content changes infrequently
+    gcTime: 30 * 60 * 1000,
+    enabled: Boolean(section), // Only fetch if section is provided
+  })
+}
+
+export function useExecuteCommand() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ command, args = [] }: { command: string; args?: string[] }) =>
+      executeCommand(command, args),
+    onSuccess: () => {
+      // Invalidate and refetch commands list in case new commands were added
+      void queryClient.invalidateQueries({ queryKey: queryKeys.commands })
+    },
+    // Retry failed commands once (some commands might be flaky)
+    retry: 1,
+    retryDelay: 1000,
+  })
+}
+
+// Prefetch helpers for SSR and route preloading
+export function prefetchProjects(queryClient: QueryClient) {
+  return queryClient.prefetchQuery({
+    queryKey: queryKeys.projects,
+    queryFn: fetchProjects,
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
+export function prefetchContent(queryClient: QueryClient, section: string) {
+  return queryClient.prefetchQuery({
+    queryKey: queryKeys.content(section),
+    queryFn: () => fetchContent(section),
+    staleTime: 10 * 60 * 1000,
+  })
+}
+
+export function prefetchCommands(queryClient: QueryClient) {
+  return queryClient.prefetchQuery({
+    queryKey: queryKeys.commands,
+    queryFn: fetchCommands,
+    staleTime: 10 * 60 * 1000,
+  })
 }
 
 // Re-export types for convenience

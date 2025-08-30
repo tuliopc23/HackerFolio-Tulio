@@ -1,7 +1,7 @@
 import { createMemoryHistory } from '@tanstack/history'
 import { renderToString } from 'react-dom/server'
 
-import { createAppRouter, AppRouterProvider } from './router'
+import { createAppRouter, AppRouterProvider } from './router-enhanced'
 
 export function render(url: string): string {
   const history = createMemoryHistory({ initialEntries: [url] })

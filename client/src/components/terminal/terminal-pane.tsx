@@ -4,11 +4,7 @@ import { useState, useEffect, useRef, type KeyboardEvent } from 'react'
 import { useFocusRegistration } from '@/components/accessibility/focus-manager'
 import { TypedText } from '@/components/ui/typed-text'
 import { useTerminalAccessibility } from '@/hooks/use-accessibility'
-import {
-  executeCommand as executeServerCommand,
-  fetchCommands,
-  type ServerCommandResult,
-} from '@/lib/api'
+import { useExecuteCommand, useCommands, type ServerCommandResult } from '@/lib/queries'
 
 import { CommandProcessor, type CommandResult } from './command-processor'
 import { useTheme } from './theme-context'
@@ -34,6 +30,10 @@ export default function TerminalPane() {
   const inputRef = useRef<HTMLInputElement>(null)
   const outputRef = useRef<HTMLDivElement>(null)
   const terminalRef = useRef<HTMLDivElement>(null)
+
+  // TanStack Query hooks
+  const { data: commands } = useCommands()
+  const executeCommand = useExecuteCommand()
 
   // Accessibility hooks
   const { announce, announceCommand, announceError } = useTerminalAccessibility()
@@ -62,16 +62,11 @@ export default function TerminalPane() {
   }, [announce])
 
   useEffect(() => {
-    // Fetch server commands for autocomplete enrichment
-    void (async () => {
-      try {
-        const cmds = await fetchCommands()
-        processor.setServerCommands(cmds.map(c => c.command))
-      } catch {
-        /* intentional noop - server commands are optional */
-      }
-    })()
-  }, [processor])
+    // Set server commands for autocomplete enrichment when commands data loads
+    if (commands) {
+      processor.setServerCommands(commands.map(c => c.command))
+    }
+  }, [commands, processor])
 
   useEffect(() => {
     // Scroll to bottom when history updates
@@ -132,6 +127,7 @@ export default function TerminalPane() {
     if (result.output === 'CLEAR') {
       setHistory([])
       setInput('')
+      setIsExecuting(false)
       return
     }
 
@@ -151,15 +147,12 @@ export default function TerminalPane() {
     let finalError = result.error
     let serverResult: ServerCommandResult | null = null
 
-    // Prefer server for dynamic commands
+    // Execute server command using TanStack Query mutation
     const [rootCmd, ...rest] = command.split(' ')
-    // All commands now go to server (database-driven)
-
-    // Execute server command
     try {
       const cmd = rootCmd ?? ''
       const args = rest
-      serverResult = await executeServerCommand(cmd, args)
+      serverResult = await executeCommand.mutateAsync({ command: cmd, args })
       finalOutput = serverResult.output
       finalError = serverResult.error
     } catch (err) {

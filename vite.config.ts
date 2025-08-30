@@ -2,6 +2,10 @@ import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import path from 'node:path'
 import { config } from './shared/config'
+import {
+  TanStackStartViteServerFn,
+  TanStackStartViteDeadCodeElimination,
+} from '@tanstack/start-vite-plugin'
 
 export default defineConfig(({ command, mode }) => {
   const isSSR = process.argv.includes('--ssr')
@@ -14,6 +18,9 @@ export default defineConfig(({ command, mode }) => {
   return {
     root: path.resolve(__dirname, viteConfig.root),
     plugins: [
+      // TanStack Start plugins for server functions and dead code elimination
+      TanStackStartViteServerFn({ env: isSSR ? 'server' : 'client' }),
+      TanStackStartViteDeadCodeElimination({ env: isSSR ? 'server' : 'client' }),
       react({
         // Add React DevTools in development
         include: '**/*.{jsx,tsx}',
@@ -53,6 +60,7 @@ export default defineConfig(({ command, mode }) => {
               manualChunks: {
                 vendor: ['react', 'react-dom'],
                 router: ['@tanstack/react-router'],
+                query: ['@tanstack/react-query'],
                 icons: ['@tabler/icons-react', 'lucide-react'],
               },
             },
@@ -77,7 +85,15 @@ export default defineConfig(({ command, mode }) => {
       cors: true,
     },
     optimizeDeps: {
-      include: ['react', 'react-dom', '@tanstack/react-router', 'motion', 'clsx', 'tailwind-merge'],
+      include: [
+        'react',
+        'react-dom',
+        '@tanstack/react-router',
+        '@tanstack/react-query',
+        'motion',
+        'clsx',
+        'tailwind-merge',
+      ],
       exclude: ['@server'],
     },
     // Environment variable handling

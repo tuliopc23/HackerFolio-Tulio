@@ -1,10 +1,95 @@
+# =============================================================================
+# Docker ignore file for HackerFolio-Tulio
+# Optimizes build context and reduces image size
+# =============================================================================
+
+# Development files and directories
 node_modules
 .git
-.vite
+.gitignore
+.env*
+!.env.example
+
+# Build artifacts and cache
 dist
+.vite
+.cache
 coverage
+.nyc_output
+build
+
+# Development tools
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Logs
+logs
 *.log
-.env
-.env.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Temporary files
+tmp
+temp
+.tmp
+.temp
+
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+
+# Testing
+__tests__
+*.test.*
+*.spec.*
+test-config
+*.test.ts
+*.spec.ts
+
+# Documentation
+*.md
+!README.md
+docs
+
+# Deployment configs (keep only current ones)
+deployment/*
+!deployment/Dockerfile
+!deployment/docker-compose.yml
+!deployment/.dockerignore
+
+# Development scripts
+server/scripts/dev-*.ts
+server/scripts/hmr-*.ts
+
+# Package manager locks (keep bun.lock)
+package-lock.json
+yarn.lock
+
+# Drizzle generated files (migrations will be copied separately)
+drizzle/*.sql
+
+# Storybook
+.storybook
+storybook-static
+
+# Bundle analyzer output
+bundle-analyzer-report.html
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Production security reports
+*-security-report.json

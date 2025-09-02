@@ -59,11 +59,12 @@
     "prod:security": "bun run server/scripts/production-hardening.ts",
     "deploy:generate": "bun run server/scripts/generate-deployment-configs.ts",
     "deploy:setup": "bun run deploy:generate && echo 'Deployment configurations generated. Check deployment/ directory for platform-specific configs.'",
-    "health-check": "curl -f http://localhost:3001/health || exit 1"
+    "health-check": "curl -f http://localhost:3001/api/health || exit 1"
   },
   "dependencies": {
     "@elysiajs/cors": "^1.3.3",
     "@elysiajs/static": "^1.3.0",
+    "@rollup/rollup-linux-x64-gnu": "^4.50.0",
     "@tabler/icons-react": "^3.34.1",
     "@tanstack/history": "^1.131.2",
     "@tanstack/react-query": "^5.85.6",

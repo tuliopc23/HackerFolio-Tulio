@@ -180,8 +180,16 @@ export function TypedTerminalOutput({
     return output.split('\n').map((line, i) => renderLine(line, i))
   }
 
-  // Custom typing animation for ANSI content
+  // DISABLED: Custom typing animation for ANSI content
   useEffect(() => {
+    // Always show full output immediately
+    setDisplayedOutput(output)
+    setIsTyping(false)
+    onComplete?.()
+    return
+
+    // Original typing animation logic commented out
+    /*
     if (!shouldAnimate || !output) {
       setDisplayedOutput(output)
       onComplete?.()
@@ -209,7 +217,8 @@ export function TypedTerminalOutput({
       clearInterval(timer)
       setIsTyping(false)
     }
-  }, [output, shouldAnimate, typeSpeed, onComplete])
+    */
+  }, [output, onComplete]) // Simplified dependencies
 
   // If animation is disabled, render directly
   if (!shouldAnimate) {

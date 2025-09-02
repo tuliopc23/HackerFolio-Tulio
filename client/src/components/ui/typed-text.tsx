@@ -27,6 +27,15 @@ export function TypedText({
   useEffect(() => {
     if (strings.length === 0) return
 
+    // DISABLED: Show full text immediately
+    const message = strings[0] ?? ''
+    setCurrentMessage(message)
+    onStringTyped?.(0)
+    onComplete?.()
+    return
+
+    // Original typewriter logic commented out
+    /*
     const startTyping = () => {
       const message = strings[0] ?? ''
       let charIndex = 0
@@ -59,10 +68,16 @@ export function TypedText({
     } else {
       return startTyping()
     }
-  }, [strings, typeSpeed, startDelay, onStringTyped, onComplete])
+    */
+  }, [strings, onStringTyped, onComplete]) // Removed typeSpeed and startDelay
 
-  // Cursor blinking effect - EXACTLY like LoadingScreen
+  // DISABLED: Cursor blinking effect
   useEffect(() => {
+    setShowCursorState(true) // Always show cursor
+    return
+
+    // Original cursor blinking logic commented out
+    /*
     const cursorInterval = setInterval(() => {
       setShowCursorState(prev => !prev)
     }, 600)
@@ -70,6 +85,7 @@ export function TypedText({
     return () => {
       clearInterval(cursorInterval)
     }
+    */
   }, [])
 
   return (

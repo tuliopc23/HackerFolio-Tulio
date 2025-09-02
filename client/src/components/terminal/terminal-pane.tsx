@@ -268,12 +268,7 @@ export default function TerminalPane() {
                   <span className='text-green-400'>:~$</span>
                 </span>
                 <span className='ml-2 text-cyan-bright'>
-                  <TypedText
-                    strings={[entry.command]}
-                    typeSpeed={12}
-                    showCursor={false}
-                    startDelay={index === 0 ? 500 : index * 100}
-                  />
+                  {entry.command}
                 </span>
               </div>
               {entry.output && (

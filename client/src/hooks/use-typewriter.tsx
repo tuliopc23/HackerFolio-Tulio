@@ -20,6 +20,13 @@ function useTypewriter({
   const [isComplete, setIsComplete] = useState(false)
 
   useEffect(() => {
+    // DISABLED: Show full text immediately
+    setDisplayText(text)
+    setIsComplete(true)
+    return
+
+    // Original typewriter logic commented out
+    /*
     if (!enabled || text.length === 0) {
       setDisplayText(text)
       setIsComplete(true)
@@ -50,7 +57,8 @@ function useTypewriter({
     }
 
     return undefined
-  }, [currentIndex, text, speed, delay, loop, enabled])
+    */
+  }, [text]) // Simplified dependencies
 
   return { displayText, isComplete }
 }

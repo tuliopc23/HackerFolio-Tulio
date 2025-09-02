@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 
-import { TypedText } from '@/components/ui/typed-text'
 import { useProjects } from '@/lib/queries'
 
 interface Project {
@@ -83,18 +82,13 @@ export default function SystemInfoPane() {
         {/* World Clock */}
         <div className='space-y-2 mb-4'>
           <div className='text-pink-400 text-[10px] font-medium tracking-wide uppercase'>
-            <TypedText strings={['WORLD CLOCK']} typeSpeed={400} showCursor startDelay={1000} />
+            WORLD CLOCK
           </div>
           <div className='grid grid-cols-2 gap-x-4 gap-y-2 text-xs'>
-            {timezones.map((tz, index) => (
+            {timezones.map(tz => (
               <div key={tz.name} className='flex items-center justify-between'>
                 <div className='text-[#dde1e6] opacity-80 text-[10px] uppercase tracking-wide font-medium'>
-                  <TypedText
-                    strings={[tz.city]}
-                    typeSpeed={300}
-                    showCursor
-                    startDelay={2000 + index * 1000}
-                  />
+                  {tz.city}
                 </div>
                 <div className='text-green-400 font-mono font-semibold text-sm'>
                   {formatTime(currentTime, tz.timezone)}
@@ -106,9 +100,7 @@ export default function SystemInfoPane() {
         {/* Fastfetch Output */}
         {showFastfetch && (
           <div className='space-y-2'>
-            <div className='text-pink-400 text-xs font-medium tracking-wide'>
-              <TypedText strings={['SYSTEM INFO']} typeSpeed={350} showCursor startDelay={6000} />
-            </div>
+            <div className='text-pink-400 text-xs font-medium tracking-wide'>SYSTEM INFO</div>
             <div className='flex gap-3'>
               {/* Main System Info Card */}
               <div className='flex-1 bg-black/30 border border-[#393939] rounded-lg p-3 text-xs text-[#dde1e6] font-mono'>
@@ -139,113 +131,44 @@ export default function SystemInfoPane() {
                     <div className='space-y-1'>
                       {/* Username@hostname */}
                       <div className='font-normal text-xs mb-1'>
-                        <span className='text-[#33b1ff]'>
-                          <TypedText
-                            strings={['tuliopinheirocunha']}
-                            typeSpeed={200}
-                            showCursor
-                            startDelay={7000}
-                          />
-                        </span>
+                        <span className='text-[#33b1ff]'>tuliopinheirocunha</span>
                         <span className='text-[#393939]'>@</span>
-                        <span className='text-[#be95ff]'>
-                          <TypedText
-                            strings={['MacBook-Pro']}
-                            typeSpeed={200}
-                            showCursor
-                            startDelay={9000}
-                          />
-                        </span>
+                        <span className='text-[#be95ff]'>MacBook-Pro</span>
                       </div>
 
                       {/* Separator */}
                       <div className='text-[#393939] opacity-60'>
-                        <TypedText
-                          strings={['────────────────────────────────────────']}
-                          typeSpeed={50}
-                          showCursor={false}
-                          startDelay={11000}
-                        />
+                        ────────────────────────────────────────
                       </div>
 
                       {/* OS Info */}
                       <div>
-                        <span className='text-[#82cfff] font-medium'>
-                          <TypedText
-                            strings={['OS:']}
-                            typeSpeed={300}
-                            showCursor
-                            startDelay={12000}
-                          />
-                        </span>
+                        <span className='text-[#82cfff] font-medium'>OS:</span>
                         <span className='text-[#42be65] ml-1 font-mono'>
-                          <TypedText
-                            strings={['macOS Tahoe 26.0 ARM64']}
-                            typeSpeed={150}
-                            showCursor
-                            startDelay={13000}
-                          />
+                          macOS Tahoe 26.0 ARM64
                         </span>
                       </div>
 
                       {/* Host Info */}
                       <div>
-                        <span className='text-[#82cfff] font-medium'>
-                          <TypedText
-                            strings={['Host:']}
-                            typeSpeed={300}
-                            showCursor
-                            startDelay={15000}
-                          />
-                        </span>
+                        <span className='text-[#82cfff] font-medium'>Host:</span>
                         <span className='text-[#42be65] ml-1 font-mono'>
-                          <TypedText
-                            strings={['MacBook Pro (14-inch, 2023)']}
-                            typeSpeed={150}
-                            showCursor
-                            startDelay={16000}
-                          />
+                          MacBook Pro (14-inch, 2023)
                         </span>
                       </div>
 
                       {/* CPU Info */}
                       <div>
-                        <span className='text-[#82cfff] font-medium'>
-                          <TypedText
-                            strings={['CPU:']}
-                            typeSpeed={300}
-                            showCursor
-                            startDelay={18000}
-                          />
-                        </span>
+                        <span className='text-[#82cfff] font-medium'>CPU:</span>
                         <span className='text-[#be95ff] ml-1 font-mono'>
-                          <TypedText
-                            strings={['Apple M4 Pro (12) @ 3.50 GHz']}
-                            typeSpeed={150}
-                            showCursor
-                            startDelay={19000}
-                          />
+                          Apple M4 Pro (12) @ 3.50 GHz
                         </span>
                       </div>
 
                       {/* GPU Info */}
                       <div>
-                        <span className='text-[#82cfff] font-medium'>
-                          <TypedText
-                            strings={['GPU:']}
-                            typeSpeed={300}
-                            showCursor
-                            startDelay={21000}
-                          />
-                        </span>
-                        <span className='text-[#be95ff] ml-1 font-mono'>
-                          <TypedText
-                            strings={['Apple M4 Pro']}
-                            typeSpeed={150}
-                            showCursor
-                            startDelay={22000}
-                          />
-                        </span>
+                        <span className='text-[#82cfff] font-medium'>GPU:</span>
+                        <span className='text-[#be95ff] ml-1 font-mono'>Apple M4 Pro</span>
                       </div>
                     </div>
                   </div>
@@ -257,95 +180,32 @@ export default function SystemInfoPane() {
                 {/* Header with Status */}
                 <div className='flex items-center justify-between mb-2'>
                   <span className='text-pink-400 text-[10px] font-semibold uppercase tracking-wide'>
-                    <TypedText
-                      strings={['CONNECTION']}
-                      typeSpeed={200}
-                      showCursor
-                      startDelay={24000}
-                    />
+                    CONNECTION
                   </span>
                   <div className='flex items-center gap-1'>
                     <div className='w-2 h-2 rounded-full bg-green-400 animate-pulse' />
-                    <span className='text-green-400 text-[9px] font-bold'>
-                      <TypedText
-                        strings={['SECURE']}
-                        typeSpeed={200}
-                        showCursor
-                        startDelay={26000}
-                      />
-                    </span>
+                    <span className='text-green-400 text-[9px] font-bold'>SECURE</span>
                   </div>
                 </div>
 
                 {/* Connection Info */}
                 <div className='space-y-1.5'>
                   <div className='flex justify-between text-[9px]'>
-                    <span className='text-[#dde1e6] opacity-70'>
-                      <TypedText
-                        strings={['Protocol:']}
-                        typeSpeed={250}
-                        showCursor
-                        startDelay={28000}
-                      />
-                    </span>
-                    <span className='text-green-400 font-mono'>
-                      <TypedText
-                        strings={['SSH-2.0']}
-                        typeSpeed={200}
-                        showCursor
-                        startDelay={30000}
-                      />
-                    </span>
+                    <span className='text-[#dde1e6] opacity-70'>Protocol:</span>
+                    <span className='text-green-400 font-mono'>SSH-2.0</span>
                   </div>
                   <div className='flex justify-between text-[9px]'>
-                    <span className='text-[#dde1e6] opacity-70'>
-                      <TypedText
-                        strings={['Cipher:']}
-                        typeSpeed={250}
-                        showCursor
-                        startDelay={32000}
-                      />
-                    </span>
+                    <span className='text-[#dde1e6] opacity-70'>Cipher:</span>
+                    <span className='text-pink-400 font-mono'>AES-256</span>
+                  </div>
+                  <div className='flex justify-between text-[9px]'>
+                    <span className='text-[#dde1e6] opacity-70'>Latency:</span>
+                    <span className='text-green-400 font-mono'>12ms</span>
+                  </div>
+                  <div className='flex justify-between text-[9px]'>
+                    <span className='text-[#dde1e6] opacity-70'>Uptime:</span>
                     <span className='text-pink-400 font-mono'>
-                      <TypedText
-                        strings={['AES-256']}
-                        typeSpeed={200}
-                        showCursor
-                        startDelay={34000}
-                      />
-                    </span>
-                  </div>
-                  <div className='flex justify-between text-[9px]'>
-                    <span className='text-[#dde1e6] opacity-70'>
-                      <TypedText
-                        strings={['Latency:']}
-                        typeSpeed={250}
-                        showCursor
-                        startDelay={36000}
-                      />
-                    </span>
-                    <span className='text-green-400 font-mono'>
-                      <TypedText strings={['12ms']} typeSpeed={200} showCursor startDelay={38000} />
-                    </span>
-                  </div>
-                  <div className='flex justify-between text-[9px]'>
-                    <span className='text-[#dde1e6] opacity-70'>
-                      <TypedText
-                        strings={['Uptime:']}
-                        typeSpeed={250}
-                        showCursor
-                        startDelay={40000}
-                      />
-                    </span>
-                    <span className='text-pink-400 font-mono'>
-                      <TypedText
-                        strings={[
-                          `${Math.floor((Date.now() - 1704067200000) / 86400000).toString()}d`,
-                        ]}
-                        typeSpeed={200}
-                        showCursor
-                        startDelay={42000}
-                      />
+                      {Math.floor((Date.now() - 1704067200000) / 86400000).toString()}d
                     </span>
                   </div>
 
@@ -355,53 +215,16 @@ export default function SystemInfoPane() {
                   {/* Network Stats */}
                   <div className='space-y-1'>
                     <div className='flex justify-between text-[9px]'>
-                      <span className='text-[#dde1e6] opacity-70'>
-                        <TypedText
-                          strings={['TX:']}
-                          typeSpeed={250}
-                          showCursor
-                          startDelay={44000}
-                        />
-                      </span>
-                      <span className='text-green-400 font-mono'>
-                        <TypedText
-                          strings={['1.2GB']}
-                          typeSpeed={200}
-                          showCursor
-                          startDelay={46000}
-                        />
-                      </span>
+                      <span className='text-[#dde1e6] opacity-70'>TX:</span>
+                      <span className='text-green-400 font-mono'>1.2GB</span>
                     </div>
                     <div className='flex justify-between text-[9px]'>
-                      <span className='text-[#dde1e6] opacity-70'>
-                        <TypedText
-                          strings={['RX:']}
-                          typeSpeed={250}
-                          showCursor
-                          startDelay={48000}
-                        />
-                      </span>
-                      <span className='text-green-400 font-mono'>
-                        <TypedText
-                          strings={['3.4GB']}
-                          typeSpeed={200}
-                          showCursor
-                          startDelay={50000}
-                        />
-                      </span>
+                      <span className='text-[#dde1e6] opacity-70'>RX:</span>
+                      <span className='text-green-400 font-mono'>3.4GB</span>
                     </div>
                     <div className='flex justify-between text-[9px]'>
-                      <span className='text-[#dde1e6] opacity-70'>
-                        <TypedText
-                          strings={['Sessions:']}
-                          typeSpeed={250}
-                          showCursor
-                          startDelay={52000}
-                        />
-                      </span>
-                      <span className='text-pink-400 font-mono'>
-                        <TypedText strings={['4']} typeSpeed={200} showCursor startDelay={54000} />
-                      </span>
+                      <span className='text-[#dde1e6] opacity-70'>Sessions:</span>
+                      <span className='text-pink-400 font-mono'>4</span>
                     </div>
                   </div>
                 </div>
@@ -415,34 +238,19 @@ export default function SystemInfoPane() {
           {/* Recent Projects Card */}
           <div className='flex-1 bg-black/30 border border-[#393939] rounded-lg p-3 text-xs font-mono'>
             <div className='text-[#be95ff] text-xs font-semibold tracking-wide uppercase mb-2'>
-              <TypedText
-                strings={['RECENT PROJECTS']}
-                typeSpeed={300}
-                showCursor
-                startDelay={8000}
-              />
+              RECENT PROJECTS
             </div>
             {projectsLoading ? (
               <div className='text-[#dde1e6] opacity-60 text-[9px]'>Loading...</div>
             ) : projects.length > 0 ? (
               <div className='space-y-2'>
-                {projects.slice(0, 2).map((project, projectIndex) => (
+                {projects.slice(0, 2).map(project => (
                   <div key={project.id} className='border-l-2 border-[#33b1ff] pl-2'>
                     <div className='text-[#33b1ff] text-[10px] font-medium truncate'>
-                      <TypedText
-                        strings={[project.name]}
-                        typeSpeed={150}
-                        showCursor
-                        startDelay={56000 + projectIndex * 3000}
-                      />
+                      {project.name}
                     </div>
                     <div className='text-[#dde1e6] opacity-70 text-[8px] truncate'>
-                      <TypedText
-                        strings={[project.description ?? 'No description']}
-                        typeSpeed={100}
-                        showCursor
-                        startDelay={57000 + projectIndex * 3000}
-                      />
+                      {project.description ?? 'No description'}
                     </div>
                     <div className='flex items-center gap-2 mt-1'>
                       {project.status && (
@@ -455,22 +263,12 @@ export default function SystemInfoPane() {
                                 : 'bg-yellow-400/20 text-yellow-400'
                           }`}
                         >
-                          <TypedText
-                            strings={[project.status]}
-                            typeSpeed={150}
-                            showCursor
-                            startDelay={58000 + projectIndex * 3000}
-                          />
+                          {project.status}
                         </span>
                       )}
                       {project.tech_stack && project.tech_stack.length > 0 && (
                         <span className='text-[8px] text-[#be95ff] opacity-70'>
-                          <TypedText
-                            strings={[project.tech_stack.slice(0, 2).join(', ')]}
-                            typeSpeed={100}
-                            showCursor
-                            startDelay={59000 + projectIndex * 3000}
-                          />
+                          {project.tech_stack.slice(0, 2).join(', ')}
                         </span>
                       )}
                     </div>
@@ -490,12 +288,7 @@ export default function SystemInfoPane() {
           {/* Project Stats Card */}
           <div className='flex-1 bg-black/30 border border-[#393939] rounded-lg p-3 text-xs font-mono'>
             <div className='text-[#be95ff] text-xs font-semibold tracking-wide uppercase mb-2'>
-              <TypedText
-                strings={['PROJECT STATS']}
-                typeSpeed={300}
-                showCursor
-                startDelay={10000}
-              />
+              PROJECT STATS
             </div>
             {projectsLoading ? (
               <div className='text-[#dde1e6] opacity-60 text-[9px]'>Loading...</div>

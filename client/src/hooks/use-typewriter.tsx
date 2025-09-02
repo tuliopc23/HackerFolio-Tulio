@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 interface UseTypewriterOptions {
   text: string
@@ -19,40 +19,38 @@ function useTypewriter({
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isComplete, setIsComplete] = useState(false)
 
-  const memoizedText = useMemo(() => text, [text])
-
-  const updateText = useCallback(() => {
-    if (currentIndex < memoizedText.length) {
-      setDisplayText(prev => prev + (memoizedText[currentIndex] ?? ''))
-      setCurrentIndex(prev => prev + 1)
-    } else {
-      setIsComplete(true)
-
-      if (loop) {
-        setTimeout(() => {
-          setDisplayText('')
-          setCurrentIndex(0)
-          setIsComplete(false)
-        }, 2000)
-      }
-    }
-  }, [currentIndex, memoizedText, loop])
-
   useEffect(() => {
-    if (!enabled) {
+    if (!enabled || text.length === 0) {
       setDisplayText(text)
       setIsComplete(true)
       return
     }
 
-    if (currentIndex < memoizedText.length) {
-      const timeout = setTimeout(updateText, currentIndex === 0 ? delay : speed)
+    if (currentIndex < text.length) {
+      const timeout = setTimeout(() => {
+        setDisplayText(text.slice(0, currentIndex + 1))
+        setCurrentIndex(prev => prev + 1)
+      }, delay + speed)
+
       return () => {
         clearTimeout(timeout)
       }
+    } else {
+      setIsComplete(true)
+      if (loop) {
+        const timeout = setTimeout(() => {
+          setCurrentIndex(0)
+          setDisplayText('')
+          setIsComplete(false)
+        }, 1000)
+        return () => {
+          clearTimeout(timeout)
+        }
+      }
     }
+
     return undefined
-  }, [currentIndex, memoizedText, speed, delay, enabled, updateText, text])
+  }, [currentIndex, text, speed, delay, loop, enabled])
 
   return { displayText, isComplete }
 }

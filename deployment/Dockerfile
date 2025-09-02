@@ -31,7 +31,7 @@ COPY --from=builder /app/shared ./shared
 COPY --from=builder /app/package.json ./
 
 # Set ownership
-RUN chown -R nextjs:nodejs /app
+RUN chown -R tanstsck start: nodejs /app
 USER nextjs
 
 # Health check

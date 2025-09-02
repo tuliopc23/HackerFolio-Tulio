@@ -12,7 +12,7 @@ export function TypedTerminalOutput({
   output,
   isError = false,
   onComplete,
-  typeSpeed = 8,
+  typeSpeed = 2,
   animate = true,
 }: TypedTerminalOutputProps) {
   const [shouldAnimate, setShouldAnimate] = useState(animate)
@@ -192,7 +192,7 @@ export function TypedTerminalOutput({
     setDisplayedOutput('')
 
     let currentIndex = 0
-    const effectiveTypeSpeed = output.includes('\x1b[') ? Math.max(typeSpeed, 5) : typeSpeed
+    const effectiveTypeSpeed = output.includes('\x1b[') ? Math.max(typeSpeed, 1) : typeSpeed
 
     const timer = setInterval(() => {
       if (currentIndex <= output.length) {

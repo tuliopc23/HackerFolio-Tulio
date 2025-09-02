@@ -66,12 +66,12 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
             charIndex++
           } else {
             clearInterval(typeInterval)
-            // Show next message after a short delay
+            // Show next message after a shorter delay
             messageTimeout = window.setTimeout(() => {
               showMessage(index + 1)
-            }, 300)
+            }, 150)
           }
-        }, 40) // Typing speed
+        }, 15) // Faster typing speed
       }
 
       // Start first message after a brief delay

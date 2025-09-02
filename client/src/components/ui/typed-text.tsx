@@ -31,7 +31,7 @@ interface TypedTextProps {
 
 export function TypedText({
   strings,
-  typeSpeed = 8,
+  typeSpeed = 3,
   backSpeed = 25,
   backDelay = 500,
   startDelay = 0,

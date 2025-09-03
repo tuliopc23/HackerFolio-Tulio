@@ -55,6 +55,7 @@ export default tseslint.config(
       '*.config.ts',
       'drizzle/**',
       '.vite/**',
+      '.tanstack/**',
       'vite.config.ts',
       'tailwind.config.ts',
       'postcss.config.js',

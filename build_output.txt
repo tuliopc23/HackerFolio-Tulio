@@ -1,0 +1,65 @@
+$ bun run build:client && bun run build:server
+$ NODE_ENV=development vite build --config vite.config.ts
+▲ [WARNING] Duplicate key "rollupOptions" in object literal [duplicate-object-key]
+
+    vite.config.ts:83:6:
+      83 │       rollupOptions: isSSR
+         ╵       ~~~~~~~~~~~~~
+
+  The original key "rollupOptions" is here:
+
+    vite.config.ts:49:6:
+      49 │       rollupOptions: isSSR
+         ╵       ~~~~~~~~~~~~~
+
+vite v7.1.3 building for production...
+transforming...
+✓ 653 modules transformed.
+rendering chunks...
+computing gzip size...
+../dist/public/index.html                                   2.01 kB │ gzip:   0.82 kB
+../dist/public/assets/index-RlKer9Tz.css                   74.49 kB │ gzip:  12.58 kB
+../dist/public/assets/icons-BwgfW_K0.js                     0.08 kB │ gzip:   0.10 kB │ map:     0.10 kB
+../dist/public/assets/tanstack-start-BhQPYTzx.js            2.11 kB │ gzip:   0.96 kB │ map:     0.16 kB
+../dist/public/assets/portfolio-data-D4TwxPqY.js            4.03 kB │ gzip:   1.88 kB │ map:     6.80 kB
+../dist/public/assets/not-found-C_OjGFqN.js                 5.22 kB │ gzip:   1.15 kB │ map:     5.56 kB
+../dist/public/assets/about-BfYAGNHT.js                     7.37 kB │ gzip:   1.45 kB │ map:     6.91 kB
+../dist/public/assets/projects-DXJc7xNj.js                 16.05 kB │ gzip:   2.45 kB │ map:    14.12 kB
+../dist/public/assets/contact-9qcRUgzY.js                  16.79 kB │ gzip:   2.00 kB │ map:    12.78 kB
+../dist/public/assets/TerminalThemePreview-DM67aAEP.js     17.22 kB │ gzip:   1.89 kB │ map:    11.33 kB
+../dist/public/assets/resume-DhJ-QJ6e.js                   24.72 kB │ gzip:   2.64 kB │ map:    19.80 kB
+../dist/public/assets/react-core-DgOGRkIT.js               59.77 kB │ gzip:  13.07 kB │ map:    93.43 kB
+../dist/public/assets/ui-utils-DUk3mRzK.js                 89.00 kB │ gzip:  14.12 kB │ map:   141.97 kB
+../dist/public/assets/tanstack-query-BmMQiI9S.js           89.04 kB │ gzip:  17.77 kB │ map:   143.40 kB
+../dist/public/assets/data-libs-O41Deim8.js               102.02 kB │ gzip:  18.55 kB │ map:   292.65 kB
+../dist/public/assets/motion-lib-DNg90JJZ.js              147.17 kB │ gzip:  36.63 kB │ map:   349.94 kB
+../dist/public/assets/tanstack-router-CVRTA6pc.js         190.92 kB │ gzip:  40.71 kB │ map:   341.81 kB
+../dist/public/assets/EDEL3XIZ-CwGgoOMk.js                434.35 kB │ gzip:  86.31 kB │ map:   742.94 kB
+../dist/public/assets/index-Cop7anR9.js                 1,270.17 kB │ gzip: 231.58 kB │ map: 2,038.91 kB
+✓ built in 3.42s
+$ NODE_ENV=development vite build --config vite.config.ts --ssr
+▲ [WARNING] Duplicate key "rollupOptions" in object literal [duplicate-object-key]
+
+    vite.config.ts:83:6:
+      83 │       rollupOptions: isSSR
+         ╵       ~~~~~~~~~~~~~
+
+  The original key "rollupOptions" is here:
+
+    vite.config.ts:49:6:
+      49 │       rollupOptions: isSSR
+         ╵       ~~~~~~~~~~~~~
+
+vite v7.1.3 building SSR bundle for production...
+transforming...
+✓ 29 modules transformed.
+rendering chunks...
+../dist/server/assets/portfolio-data-D4TwxPqY.js          4.03 kB │ map:   6.80 kB
+../dist/server/assets/not-found-CavbteGg.js               4.89 kB │ map:   5.44 kB
+../dist/server/assets/about-CaUu8QpJ.js                   6.97 kB │ map:   6.78 kB
+../dist/server/assets/projects-CsH_RuAL.js               15.20 kB │ map:  13.90 kB
+../dist/server/assets/contact-CE3eTsgB.js                15.89 kB │ map:  12.58 kB
+../dist/server/assets/TerminalThemePreview-DMntyd1f.js   15.99 kB │ map:  11.18 kB
+../dist/server/assets/resume-Cuu8eSOi.js                 23.36 kB │ map:  19.46 kB
+../dist/server/entry-server.js                          155.52 kB │ map: 189.78 kB
+✓ built in 436ms

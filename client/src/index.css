@@ -725,8 +725,30 @@ select:focus-visible {
 }
 */
 
+/* OPTIMIZATION: Add CSS optimizations for better performance */
+
+/* Improve font loading performance */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-display: swap; /* Faster font loading */
+}
+
+/* Optimize animations for better performance */
 .fade-in-up {
   animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* Add will-change for animated elements */
+.animate-pulse,
+.animate-spin,
+.animate-in {
+  will-change: transform, opacity;
+}
+
+/* Optimize terminal rendering */
+.terminal-output {
+  contain: layout style;
+  transform: translateZ(0); /* Force GPU acceleration */
 }
 
 .typing-effect {

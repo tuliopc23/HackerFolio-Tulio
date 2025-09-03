@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, memo } from 'react'
 
 import { useProjects } from '@/lib/queries'
 
@@ -14,7 +14,7 @@ interface Project {
   updated_at?: string | undefined
 }
 
-export default function SystemInfoPane() {
+function SystemInfoPane() {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [showFastfetch, setShowFastfetch] = useState(false)
 
@@ -340,3 +340,6 @@ export default function SystemInfoPane() {
     </div>
   )
 }
+
+// OPTIMIZATION: Memoize component - only re-renders when projects data changes
+export default memo(SystemInfoPane)

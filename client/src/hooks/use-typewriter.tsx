@@ -2,28 +2,16 @@ import { useState, useEffect, useCallback } from 'react'
 
 interface UseTypewriterOptions {
   text: string
-  speed?: number
-  delay?: number
-  loop?: boolean
-  enabled?: boolean
 }
 
-function useTypewriter({
-  text,
-  speed = 50,
-  delay = 0,
-  loop = false,
-  enabled = true,
-}: UseTypewriterOptions) {
+function useTypewriter({ text }: UseTypewriterOptions) {
   const [displayText, setDisplayText] = useState('')
-  const [currentIndex, setCurrentIndex] = useState(0)
   const [isComplete, setIsComplete] = useState(false)
 
   useEffect(() => {
     // DISABLED: Show full text immediately
     setDisplayText(text)
     setIsComplete(true)
-    return
 
     // Original typewriter logic commented out
     /*
@@ -65,16 +53,13 @@ function useTypewriter({
 
 export function TypewriterText({
   text,
-  speed = 50,
-  delay = 0,
   className = '',
-  enabled = true,
   onComplete,
 }: UseTypewriterOptions & {
   className?: string
   onComplete?: () => void
 }) {
-  const { displayText, isComplete } = useTypewriter({ text, speed, delay, enabled })
+  const { displayText, isComplete } = useTypewriter({ text })
 
   const memoizedOnComplete = useCallback(() => {
     if (onComplete) onComplete()

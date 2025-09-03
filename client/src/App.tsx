@@ -1,25 +1,29 @@
-import { AnimatePresence } from 'motion/react'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 
 import LoadingScreen from '@/components/LoadingScreen'
 import { createAppRouter, AppRouterProvider } from '@/router-enhanced'
 
 function App() {
   const [isLoading, setIsLoading] = useState(true)
-  const router = createAppRouter()
+
+  // OPTIMIZATION: Memoize router creation to prevent recreation on every render
+  const router = useMemo(() => createAppRouter(), [])
 
   const handleLoadingComplete = () => {
     setIsLoading(false)
   }
 
   return (
-    <AnimatePresence mode='wait'>
+    // OPTIMIZATION: Replace AnimatePresence with CSS transitions (-50KB)
+    <div className='app-container'>
       {isLoading ? (
         <LoadingScreen key='loading' onComplete={handleLoadingComplete} />
       ) : (
-        <AppRouterProvider key='app' router={router} />
+        <div key='app' className='app-content animate-in fade-in duration-300'>
+          <AppRouterProvider router={router} />
+        </div>
       )}
-    </AnimatePresence>
+    </div>
   )
 }
 

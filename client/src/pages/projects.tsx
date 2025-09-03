@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
-import { ArrowLeft, Code2, ExternalLink, Star } from 'lucide-react'
 import { useMemo } from 'react'
 
+import { ArrowLeft, Code2, ExternalLink, Star } from '@/components/icons/custom-icons'
 import { useProjects } from '@/lib/queries'
 
 export default function Projects() {

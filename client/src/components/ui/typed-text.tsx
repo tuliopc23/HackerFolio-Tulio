@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react'
 
 interface TypedTextProps {
   strings: string[]
-  typeSpeed?: number
-  startDelay?: number
   showCursor?: boolean
   cursorChar?: string
   className?: string
@@ -13,8 +11,6 @@ interface TypedTextProps {
 
 export function TypedText({
   strings,
-  typeSpeed = 15,
-  startDelay = 0,
   showCursor = true,
   cursorChar = '|',
   className = '',
@@ -32,7 +28,6 @@ export function TypedText({
     setCurrentMessage(message)
     onStringTyped?.(0)
     onComplete?.()
-    return
 
     // Original typewriter logic commented out
     /*
@@ -74,7 +69,6 @@ export function TypedText({
   // DISABLED: Cursor blinking effect
   useEffect(() => {
     setShowCursorState(true) // Always show cursor
-    return
 
     // Original cursor blinking logic commented out
     /*

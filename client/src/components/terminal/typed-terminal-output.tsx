@@ -1,10 +1,9 @@
-import { useState, useEffect, type ReactNode } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 
 interface TypedTerminalOutputProps {
   output: string
   isError?: boolean
   onComplete?: () => void
-  typeSpeed?: number
   animate?: boolean
 }
 
@@ -12,24 +11,24 @@ export function TypedTerminalOutput({
   output,
   isError = false,
   onComplete,
-  typeSpeed = 2,
   animate = true,
 }: TypedTerminalOutputProps) {
   const [shouldAnimate, setShouldAnimate] = useState(animate)
-  const [displayedOutput, setDisplayedOutput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
 
   useEffect(() => {
     setShouldAnimate(animate)
   }, [animate])
 
-  const formatOutput = (output: string): ReactNode => {
+  // OPTIMIZATION: Memoize expensive ANSI parsing to avoid re-computation
+  const formatOutput = useMemo((): React.ReactNode => {
     if (!output) return null
 
     // Hard cap to avoid rendering extremely large outputs accidentally
     const MAX_CHARS = 50_000
-    if (output.length > MAX_CHARS) {
-      output = output.slice(0, MAX_CHARS) + '\n\x1b[33m[truncated]\x1b[39m'
+    let processedOutput = output
+    if (processedOutput.length > MAX_CHARS) {
+      processedOutput = processedOutput.slice(0, MAX_CHARS) + '\n\x1b[33m[truncated]\x1b[39m'
     }
 
     // ANSI parser for SGR codes (very small subset)
@@ -177,16 +176,14 @@ export function TypedTerminalOutput({
       )
     }
 
-    return output.split('\n').map((line, i) => renderLine(line, i))
-  }
+    return processedOutput.split('\n').map((line, i) => renderLine(line, i))
+  }, [output]) // Memoize based on output content
 
   // DISABLED: Custom typing animation for ANSI content
   useEffect(() => {
     // Always show full output immediately
-    setDisplayedOutput(output)
     setIsTyping(false)
     onComplete?.()
-    return
 
     // Original typing animation logic commented out
     /*
@@ -226,14 +223,14 @@ export function TypedTerminalOutput({
       <div
         className={`ml-4 mb-2 ${isError ? 'text-terminal-red' : 'text-[rgba(235,241,255,0.9)]'}`}
       >
-        {formatOutput(output)}
+        {formatOutput}
       </div>
     )
   }
 
   return (
     <div className={`ml-4 mb-2 ${isError ? 'text-terminal-red' : 'text-[rgba(235,241,255,0.9)]'}`}>
-      {formatOutput(displayedOutput)}
+      {formatOutput}
       {isTyping && <span className='animate-pulse'>|</span>}
     </div>
   )

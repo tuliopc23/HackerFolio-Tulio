@@ -1,5 +1,6 @@
-import { AlertTriangle, RefreshCw, Terminal, Code, Bug } from 'lucide-react'
 import React, { Component, type ErrorInfo, type ReactNode } from 'react'
+
+import { AlertTriangle, RefreshCw, Terminal, Code, Bug } from '@/components/icons/custom-icons'
 
 interface Props {
   children: ReactNode

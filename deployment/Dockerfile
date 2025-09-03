@@ -29,7 +29,7 @@ WORKDIR /app
 COPY package.json bun.lock* ./
 
 # Install all dependencies (including devDependencies for build)
-RUN bun install --frozen-lockfile --production=false
+RUN bun install --frozen-lockfile
 
 # =============================================================================
 # Builder stage - build the application

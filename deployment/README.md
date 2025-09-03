@@ -1,10 +1,13 @@
 # Docker Deployment Guide for HackerFolio-Tulio
 
-This directory contains optimized Docker configurations for deploying HackerFolio-Tulio, a modern full-stack application built with Bun + React 19 + Vite + Elysia + SQLite.
+This directory contains optimized Docker configurations for deploying
+HackerFolio-Tulio, a modern full-stack application built with Bun + React 19 +
+Vite + Elysia + SQLite.
 
 ## 🏗️ Architecture Overview
 
 **Tech Stack:**
+
 - **Runtime:** Bun (JavaScript/TypeScript runtime)
 - **Frontend:** React 19 + Vite
 - **Backend:** Elysia (Bun web framework)
@@ -12,6 +15,7 @@ This directory contains optimized Docker configurations for deploying HackerFoli
 - **Styling:** Tailwind CSS v4
 
 **Container Optimizations:**
+
 - Multi-stage Docker build for minimal image size
 - Efficient layer caching for faster rebuilds
 - SQLite database persistence via volumes
@@ -21,18 +25,19 @@ This directory contains optimized Docker configurations for deploying HackerFoli
 
 ## 📁 Files Overview
 
-| File | Purpose |
-|------|---------|
-| `Dockerfile` | Multi-stage production build optimized for Bun + React 19 + Elysia |
-| `docker-compose.yml` | Production deployment with SQLite persistence |
-| `docker-compose.dev.yml` | Development environment with live reload |
-| `production.env.template` | Environment variables template for production |
-| `.dockerignore` | Optimized build context exclusions |
-| `verify-docker.sh` | Comprehensive test script for Docker setup |
+| File                      | Purpose                                                            |
+| ------------------------- | ------------------------------------------------------------------ |
+| `Dockerfile`              | Multi-stage production build optimized for Bun + React 19 + Elysia |
+| `docker-compose.yml`      | Production deployment with SQLite persistence                      |
+| `docker-compose.dev.yml`  | Development environment with live reload                           |
+| `production.env.template` | Environment variables template for production                      |
+| `.dockerignore`           | Optimized build context exclusions                                 |
+| `verify-docker.sh`        | Comprehensive test script for Docker setup                         |
 
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Docker Engine 20.10+
 - Docker Compose 2.0+
 - 1GB+ available memory
@@ -41,21 +46,24 @@ This directory contains optimized Docker configurations for deploying HackerFoli
 ### Production Deployment
 
 1. **Configure Environment**
+
    ```bash
    cp production.env.template .env
    # Edit .env with your production values
    ```
 
 2. **Deploy with Docker Compose**
+
    ```bash
    docker-compose -f deployment/docker-compose.yml up -d
    ```
 
 3. **Verify Deployment**
+
    ```bash
    # Check application health
    curl http://localhost:3001/api/health
-   
+
    # View logs
    docker-compose -f deployment/docker-compose.yml logs -f
    ```
@@ -80,6 +88,7 @@ Run the comprehensive verification script:
 ```
 
 This script tests:
+
 - ✅ Docker installation and daemon
 - ✅ Project structure and required files
 - ✅ Docker build process
@@ -90,6 +99,7 @@ This script tests:
 ## 🌐 Platform Deployment
 
 ### Railway
+
 ```bash
 # Connect your GitHub repo to Railway
 # Railway will automatically detect and use the Dockerfile
@@ -97,6 +107,7 @@ railway deploy
 ```
 
 ### Heroku
+
 ```bash
 # Install Heroku CLI and login
 heroku create your-app-name
@@ -105,6 +116,7 @@ heroku container:release web --app your-app-name
 ```
 
 ### Fly.io
+
 ```bash
 # Install flyctl and create app
 fly launch --dockerfile deployment/Dockerfile
@@ -112,6 +124,7 @@ fly deploy
 ```
 
 ### Google Cloud Run
+
 ```bash
 # Build and push to Google Container Registry
 gcloud builds submit --tag gcr.io/PROJECT_ID/hackerfolio-tulio
@@ -119,6 +132,7 @@ gcloud run deploy --image gcr.io/PROJECT_ID/hackerfolio-tulio --port 3001
 ```
 
 ### AWS ECS/Fargate
+
 ```bash
 # Push to ECR and deploy with ECS CLI
 aws ecr get-login-password | docker login --username AWS --password-stdin ECR_URI
@@ -128,12 +142,14 @@ docker push ECR_URI/hackerfolio-tulio:latest
 ```
 
 ### DigitalOcean App Platform
+
 1. Connect your GitHub repository
 2. Set build command: `docker build -f deployment/Dockerfile`
 3. Set run command: `bun run start:production`
 4. Configure environment variables from `production.env.template`
 
 ### Render.com
+
 1. Connect GitHub repository
 2. Choose Docker as environment
 3. Set Dockerfile path: `deployment/Dockerfile`
@@ -142,6 +158,7 @@ docker push ECR_URI/hackerfolio-tulio:latest
 ## 🗄️ Database Management
 
 ### SQLite Persistence
+
 The application uses SQLite with Docker volumes for persistence:
 
 ```yaml
@@ -150,6 +167,7 @@ volumes:
 ```
 
 ### Database Operations
+
 ```bash
 # Access database CLI
 docker-compose exec app bun run db:cli
@@ -162,6 +180,7 @@ docker-compose exec app bun run db:studio
 ```
 
 ### Backup & Restore
+
 ```bash
 # Backup database
 docker cp $(docker-compose ps -q app):/app/database/portfolio.db ./backup.db
@@ -176,31 +195,34 @@ docker cp ./backup.db $(docker-compose ps -q app):/app/database/portfolio.db
 
 Key production variables (see `production.env.template` for complete list):
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `NODE_ENV` | Yes | Set to `production` |
-| `HOST` | Yes | Set to `0.0.0.0` for containers |
-| `PORT` | Yes | Application port (default: 3001) |
-| `APP_URL` | Yes | Your domain URL |
-| `SESSION_SECRET` | Yes | 32+ character secret key |
-| `CORS_ORIGINS` | Yes | Comma-separated allowed origins |
-| `DATABASE_URL` | No | SQLite path (default: `/app/database/portfolio.db`) |
+| Variable         | Required | Description                                         |
+| ---------------- | -------- | --------------------------------------------------- |
+| `NODE_ENV`       | Yes      | Set to `production`                                 |
+| `HOST`           | Yes      | Set to `0.0.0.0` for containers                     |
+| `PORT`           | Yes      | Application port (default: 3001)                    |
+| `APP_URL`        | Yes      | Your domain URL                                     |
+| `SESSION_SECRET` | Yes      | 32+ character secret key                            |
+| `CORS_ORIGINS`   | Yes      | Comma-separated allowed origins                     |
+| `DATABASE_URL`   | No       | SQLite path (default: `/app/database/portfolio.db`) |
 
 ### Resource Limits
 
 Default resource limits (adjust in docker-compose.yml):
+
 - CPU: 1.0 cores (max), 0.25 cores (reserved)
 - Memory: 512MB (max), 256MB (reserved)
 
 ## 🔍 Monitoring & Troubleshooting
 
 ### Health Checks
+
 - **Endpoint:** `GET /api/health`
 - **Interval:** 30 seconds
 - **Timeout:** 10 seconds
 - **Retries:** 3
 
 ### Logging
+
 ```bash
 # View application logs
 docker-compose logs -f app
@@ -215,16 +237,19 @@ docker-compose logs -f -t app
 ### Common Issues
 
 **Build Failures:**
+
 - Ensure 2GB+ available disk space
 - Check Docker daemon is running
 - Verify network connectivity for package downloads
 
 **Container Won't Start:**
+
 - Check environment variables
 - Verify port 3001 isn't already in use
 - Check database volume permissions
 
 **Database Issues:**
+
 - Ensure database volume is properly mounted
 - Check file permissions on host system
 - Verify SQLite file isn't corrupted
@@ -250,6 +275,7 @@ docker-compose logs -f -t app
 ## 🆘 Support
 
 For issues specific to Docker deployment:
+
 1. Run `./deployment/verify-docker.sh` to diagnose problems
 2. Check container logs: `docker-compose logs -f`
 3. Verify environment configuration

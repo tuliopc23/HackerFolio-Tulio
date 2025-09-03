@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
-import { ArrowLeft } from 'lucide-react'
 
+import { ArrowLeft } from '@/components/icons/custom-icons'
 import { aboutContent as fallbackAbout } from '@/data/portfolio-data'
 
 export default function About() {

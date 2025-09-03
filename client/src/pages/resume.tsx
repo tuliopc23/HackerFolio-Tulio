@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
-import { ArrowLeft, Download, Mail, Code2, Users } from 'lucide-react'
 
+import { ArrowLeft, Download, Mail, Code2, Users } from '@/components/icons/custom-icons'
 import { resumeContent as fallbackResume, profileData } from '@/data/portfolio-data'
 
 export default function Resume() {

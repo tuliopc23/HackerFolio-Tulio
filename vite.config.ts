@@ -57,17 +57,53 @@ export default defineConfig(({ command, mode }) => {
           }
         : {
             output: {
+              // OPTIMIZATION: Better vendor chunk splitting for performance
               manualChunks: {
-                vendor: ['react', 'react-dom'],
-                router: ['@tanstack/react-router'],
-                query: ['@tanstack/react-query'],
-                icons: ['@tabler/icons-react', 'lucide-react'],
+                // Core React (most stable, best caching)
+                'react-core': ['react', 'react-dom'],
+                // TanStack ecosystem (frequently updated together)
+                'tanstack-router': ['@tanstack/react-router', '@tanstack/history'],
+                'tanstack-query': ['@tanstack/react-query'],
+                'tanstack-start': ['@tanstack/start'],
+                // Animation library (large, rarely changes)
+                'motion-lib': ['motion'],
+                // Database & validation (stable)
+                'data-libs': ['drizzle-orm', 'drizzle-zod', 'zod'],
+                // UI utilities (small, stable)
+                'ui-utils': ['clsx', 'tailwind-merge', 'class-variance-authority'],
+                // Icons (now custom, very stable)
+                icons: ['@tabler/icons-react'],
               },
             },
           },
-      // Production optimizations
+      // Production optimizations - CONSERVATIVE
       chunkSizeWarningLimit: 1000,
       assetsInlineLimit: 4096,
+      // OPTIMIZATION: Safe performance improvements only
+      rollupOptions: isSSR
+        ? {
+            input: path.resolve(__dirname, pathsConfig.client, 'src/entry-server.tsx'),
+            output: {
+              format: 'es' as const,
+              entryFileNames: 'entry-server.js',
+            },
+            external: ['react', 'react-dom/server'],
+          }
+        : {
+            output: {
+              // Keep existing chunk strategy (proven to work)
+              manualChunks: {
+                'react-core': ['react', 'react-dom'],
+                'tanstack-router': ['@tanstack/react-router', '@tanstack/history'],
+                'tanstack-query': ['@tanstack/react-query'],
+                'tanstack-start': ['@tanstack/start'],
+                'motion-lib': ['motion'],
+                'data-libs': ['drizzle-orm', 'drizzle-zod', 'zod'],
+                'ui-utils': ['clsx', 'tailwind-merge', 'class-variance-authority'],
+                icons: ['@tabler/icons-react'],
+              },
+            },
+          },
     },
     server: {
       ...viteConfig.server,
@@ -85,6 +121,7 @@ export default defineConfig(({ command, mode }) => {
       cors: true,
     },
     optimizeDeps: {
+      // OPTIMIZATION: Pre-bundle heavy dependencies for faster dev startup
       include: [
         'react',
         'react-dom',
@@ -93,8 +130,12 @@ export default defineConfig(({ command, mode }) => {
         'motion',
         'clsx',
         'tailwind-merge',
+        'drizzle-orm',
+        'zod',
       ],
       exclude: ['@server'],
+      // OPTIMIZATION: Force optimization of problematic packages
+      force: true,
     },
     // Environment variable handling
     define: {

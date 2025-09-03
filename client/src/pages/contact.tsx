@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
-import { ArrowLeft, Mail, Code2, MessageCircle, Users } from 'lucide-react'
 
+import { ArrowLeft, Mail, Code2, MessageCircle, Users } from '@/components/icons/custom-icons'
 import { contactContent as fallbackContact, profileData } from '@/data/portfolio-data'
 
 export default function Contact() {

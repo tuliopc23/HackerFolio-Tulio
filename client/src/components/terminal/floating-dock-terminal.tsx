@@ -1,7 +1,7 @@
 import { useNavigate } from '@tanstack/react-router'
-import { Home, FolderOpen, User, Mail, Palette } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 
+import { Home, FolderOpen, User, Mail, Palette } from '@/components/icons/custom-icons'
 import { useTerminalAccessibility } from '@/hooks/use-accessibility'
 
 import { useTheme } from './theme-context'
@@ -21,32 +21,40 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
   const [isMinimized, setIsMinimized] = useState(false)
   const { announceNavigation } = useTerminalAccessibility()
 
-  const navigationItems = [
-    { id: 'home', icon: Home, label: 'Home', path: '/' },
-    { id: 'projects', icon: FolderOpen, label: 'Projects', path: '/projects' },
-    { id: 'about', icon: User, label: 'About', path: '/about' },
-    { id: 'contact', icon: Mail, label: 'Contact', path: '/contact' },
-  ]
+  // OPTIMIZATION: Memoize navigation items to prevent recreation on every render
+  const navigationItems = useMemo(
+    () => [
+      { id: 'home', icon: Home, label: 'Home', path: '/' },
+      { id: 'projects', icon: FolderOpen, label: 'Projects', path: '/projects' },
+      { id: 'about', icon: User, label: 'About', path: '/about' },
+      { id: 'contact', icon: Mail, label: 'Contact', path: '/contact' },
+    ],
+    []
+  )
 
-  const systemItems = [
-    {
-      id: 'terminal',
-      icon: TerminalIcon,
-      label: 'Terminal',
-      action: () => {
-        if (onRestoreTerminal) onRestoreTerminal()
+  // OPTIMIZATION: Memoize system items to prevent recreation on every render
+  const systemItems = useMemo(
+    () => [
+      {
+        id: 'terminal',
+        icon: TerminalIcon,
+        label: 'Terminal',
+        action: () => {
+          if (onRestoreTerminal) onRestoreTerminal()
+        },
       },
-    },
-    {
-      id: 'theme',
-      icon: Palette,
-      label: 'Theme',
-      action: () => {
-        // Dark-only theme; no cycling
-        setTheme('oxocarbon')
+      {
+        id: 'theme',
+        icon: Palette,
+        label: 'Theme',
+        action: () => {
+          // Dark-only theme; no cycling
+          setTheme('oxocarbon')
+        },
       },
-    },
-  ]
+    ],
+    [onRestoreTerminal, setTheme]
+  )
 
   const trafficLights = [
     {

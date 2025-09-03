@@ -1,8 +1,7 @@
 import { useNavigate } from '@tanstack/react-router'
-import { useState, useEffect, useRef, type KeyboardEvent } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo, type KeyboardEvent } from 'react'
 
 import { useFocusRegistration } from '@/components/accessibility/focus-manager'
-import { TypedText } from '@/components/ui/typed-text'
 import { useTerminalAccessibility } from '@/hooks/use-accessibility'
 import { useExecuteCommand, useCommands, type ServerCommandResult } from '@/lib/queries'
 
@@ -115,93 +114,112 @@ export default function TerminalPane() {
     }
   }
 
-  const runCommand = async (command: string) => {
-    if (!command.trim()) return
+  // OPTIMIZATION: Memoize runCommand to prevent unnecessary re-renders
+  const runCommand = useCallback(
+    async (command: string) => {
+      if (!command.trim()) return
 
-    setIsExecuting(true)
-    announceCommand(command)
-    processor.addToHistory(command)
-    const result: CommandResult = processor.processCommand(command)
+      setIsExecuting(true)
+      announceCommand(command)
+      processor.addToHistory(command)
+      const result: CommandResult = processor.processCommand(command)
 
-    // Handle special commands
-    if (result.output === 'CLEAR') {
-      setHistory([])
+      // Handle special commands
+      if (result.output === 'CLEAR') {
+        setHistory([])
+        setInput('')
+        setIsExecuting(false)
+        return
+      }
+
+      // Handle navigation
+      if (result.navigate) {
+        if (result.navigate.startsWith('theme:')) {
+          const themeName = result.navigate.substring(6)
+          if (themeName === 'oxocarbon') {
+            setTheme(themeName)
+          }
+        } else {
+          void navigate({ to: result.navigate })
+        }
+      }
+
+      let finalOutput = result.output
+      let finalError = result.error
+      let serverResult: ServerCommandResult | null = null
+
+      // Execute server command using TanStack Query mutation
+      const [rootCmd, ...rest] = command.split(' ')
+      try {
+        const cmd = rootCmd ?? ''
+        const args = rest
+        serverResult = await executeCommand.mutateAsync({ command: cmd, args })
+        finalOutput = serverResult.output
+        finalError = serverResult.error
+      } catch (err) {
+        if (err instanceof Error) {
+          finalOutput = err.message
+        } else {
+          finalOutput = 'An unknown error occurred'
+        }
+        finalError = true
+      }
+
+      // Execute action from server if provided
+      if (serverResult?.action?.type === 'open_url' && serverResult.action.url) {
+        const { url } = serverResult.action
+        if (url.startsWith('http') && typeof window !== 'undefined') {
+          try {
+            window.open(url, '_blank')
+          } catch (_error) {
+            // Failed to open URL - silently ignore
+          }
+        }
+      }
+
+      // Add to history with final output
+      const isError = finalError
+
+      setHistory(prev => [
+        ...prev,
+        {
+          command,
+          output: finalOutput,
+          timestamp: new Date(),
+          error: isError,
+          id: `cmd-${Date.now().toString()}-${Math.random().toString(36).slice(2, 9)}`,
+        },
+      ])
+
+      // Announce command completion
+      setLastCommandStatus(isError ? 'error' : 'success')
+      if (isError) {
+        announceError(finalOutput)
+      } else {
+        const outputLine = finalOutput ? (finalOutput.split('\n')[0] ?? '') : ''
+        announce(`Command completed: ${outputLine}`, 'polite')
+      }
+
       setInput('')
       setIsExecuting(false)
-      return
-    }
+    },
+    [
+      isExecuting,
+      processor,
+      navigate,
+      setTheme,
+      executeCommand,
+      announceCommand,
+      announceError,
+      announce,
+    ]
+  )
 
-    // Handle navigation
-    if (result.navigate) {
-      if (result.navigate.startsWith('theme:')) {
-        const themeName = result.navigate.substring(6)
-        if (themeName === 'oxocarbon') {
-          setTheme(themeName)
-        }
-      } else {
-        void navigate({ to: result.navigate })
-      }
-    }
-
-    let finalOutput = result.output
-    let finalError = result.error
-    let serverResult: ServerCommandResult | null = null
-
-    // Execute server command using TanStack Query mutation
-    const [rootCmd, ...rest] = command.split(' ')
-    try {
-      const cmd = rootCmd ?? ''
-      const args = rest
-      serverResult = await executeCommand.mutateAsync({ command: cmd, args })
-      finalOutput = serverResult.output
-      finalError = serverResult.error
-    } catch (err) {
-      if (err instanceof Error) {
-        finalOutput = err.message
-      } else {
-        finalOutput = 'An unknown error occurred'
-      }
-      finalError = true
-    }
-
-    // Execute action from server if provided
-    if (serverResult?.action?.type === 'open_url' && serverResult.action.url) {
-      const { url } = serverResult.action
-      if (url.startsWith('http') && typeof window !== 'undefined') {
-        try {
-          window.open(url, '_blank')
-        } catch (_error) {
-          // Failed to open URL - silently ignore
-        }
-      }
-    }
-
-    // Add to history with final output
-    const isError = finalError
-
-    setHistory(prev => [
-      ...prev,
-      {
-        command,
-        output: finalOutput,
-        timestamp: new Date(),
-        error: isError,
-        id: `cmd-${Date.now().toString()}-${Math.random().toString(36).slice(2, 9)}`,
-      },
-    ])
-
-    // Announce command completion
-    setLastCommandStatus(isError ? 'error' : 'success')
-    if (isError) {
-      announceError(finalOutput)
-    } else {
-      const outputLine = finalOutput ? (finalOutput.split('\n')[0] ?? '') : ''
-      announce(`Command completed: ${outputLine}`, 'polite')
-    }
-
-    setInput('')
-    setIsExecuting(false)
-  }
+  // OPTIMIZATION: Virtualize history to show only recent entries for performance
+  const visibleHistory = useMemo(() => {
+    // Show last 50 entries to prevent performance issues with large histories
+    return history.slice(Math.max(0, history.length - 50))
+  }, [history])
 
   const handleAutocomplete = () => {
     const suggestions = processor.getAutocomplete(input)
@@ -257,9 +275,9 @@ export default function TerminalPane() {
         aria-describedby='terminal-help'
         tabIndex={-1}
       >
-        {/* Command History */}
+        {/* Command History - OPTIMIZED: Only render recent entries */}
         <div className='terminal-output space-y-2'>
-          {history.map((entry, index) => (
+          {visibleHistory.map((entry, index) => (
             <div key={`history-${entry.id}`}>
               <div className='flex'>
                 <span className='font-semibold'>
@@ -267,15 +285,12 @@ export default function TerminalPane() {
                   <span className='text-pink-400'>portfolio</span>
                   <span className='text-green-400'>:~$</span>
                 </span>
-                <span className='ml-2 text-cyan-bright'>
-                  {entry.command}
-                </span>
+                <span className='ml-2 text-cyan-bright'>{entry.command}</span>
               </div>
               {entry.output && (
                 <TypedTerminalOutput
                   output={entry.output}
                   isError={entry.error ?? false}
-                  typeSpeed={8}
                   animate={index < 5} // Only animate first 5 entries to avoid performance issues
                 />
               )}

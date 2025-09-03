@@ -12,6 +12,7 @@ RUN apk add --no-cache \
     python3 \
     make \
     g++ \
+    npm \
     && rm -rf /var/cache/apk/*
 
 # Set environment variables for better performance
@@ -44,6 +45,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Build client (React 19 + Vite) and server (Elysia)
+# Force rebuild of native dependencies in container environment
+RUN npm rebuild esbuild --verbose
 RUN bun run build:production
 
 # =============================================================================

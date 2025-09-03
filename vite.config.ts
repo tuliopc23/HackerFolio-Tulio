@@ -54,10 +54,15 @@ export default defineConfig(({ command, mode }) => {
               entryFileNames: 'entry-server.js',
             },
             external: ['react', 'react-dom/server'],
+            treeshake: {
+              moduleSideEffects: false,
+              propertyReadSideEffects: false,
+              trySideEffects: false,
+            },
           }
         : {
             output: {
-              // OPTIMIZATION: Better vendor chunk splitting for performance
+              // Optimized vendor chunk splitting for better caching
               manualChunks: {
                 // Core React (most stable, best caching)
                 'react-core': ['react', 'react-dom'],
@@ -71,39 +76,19 @@ export default defineConfig(({ command, mode }) => {
                 'data-libs': ['drizzle-orm', 'drizzle-zod', 'zod'],
                 // UI utilities (small, stable)
                 'ui-utils': ['clsx', 'tailwind-merge', 'class-variance-authority'],
-                // Icons (now custom, very stable)
-                icons: ['@tabler/icons-react'],
+                // Icons (custom, very stable)
+                icons: ['lucide-react'],
               },
             },
+            treeshake: {
+              moduleSideEffects: false,
+              propertyReadSideEffects: false,
+              trySideEffects: false,
+            },
           },
-      // Production optimizations - CONSERVATIVE
+      // Production optimizations
       chunkSizeWarningLimit: 1000,
       assetsInlineLimit: 4096,
-      // OPTIMIZATION: Safe performance improvements only
-      rollupOptions: isSSR
-        ? {
-            input: path.resolve(__dirname, pathsConfig.client, 'src/entry-server.tsx'),
-            output: {
-              format: 'es' as const,
-              entryFileNames: 'entry-server.js',
-            },
-            external: ['react', 'react-dom/server'],
-          }
-        : {
-            output: {
-              // Keep existing chunk strategy (proven to work)
-              manualChunks: {
-                'react-core': ['react', 'react-dom'],
-                'tanstack-router': ['@tanstack/react-router', '@tanstack/history'],
-                'tanstack-query': ['@tanstack/react-query'],
-                'tanstack-start': ['@tanstack/start'],
-                'motion-lib': ['motion'],
-                'data-libs': ['drizzle-orm', 'drizzle-zod', 'zod'],
-                'ui-utils': ['clsx', 'tailwind-merge', 'class-variance-authority'],
-                icons: ['@tabler/icons-react'],
-              },
-            },
-          },
     },
     server: {
       ...viteConfig.server,

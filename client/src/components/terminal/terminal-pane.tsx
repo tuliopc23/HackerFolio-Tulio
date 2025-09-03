@@ -203,16 +203,7 @@ export default function TerminalPane() {
       setInput('')
       setIsExecuting(false)
     },
-    [
-      isExecuting,
-      processor,
-      navigate,
-      setTheme,
-      executeCommand,
-      announceCommand,
-      announceError,
-      announce,
-    ]
+    [processor, navigate, setTheme, executeCommand, announceCommand, announceError, announce]
   )
 
   // OPTIMIZATION: Virtualize history to show only recent entries for performance

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": [
+        "client/src/entry-client.tsx",
+        "client/src/entry-server.tsx",
+        "server/app.ts",
+        "server/db/migrate.ts",
+        "server/scripts/**/*.ts",
+        "vitest.config.ts",
+        "vite.config.ts",
+        "drizzle.config.ts"
+      ],
+      "project": ["**/*.{js,jsx,ts,tsx}", "!**/*.test.{js,jsx,ts,tsx}"],
+      "ignore": ["node_modules/**", "dist/**", "build/**", "coverage/**", "drizzle/**", ".vite/**"]
+    }
+  },
+  "include": ["files", "dependencies", "devDependencies"],
+  "exclude": ["binaries"],
+  "ignoreExportsUsedInFile": true,
+  "ignoreBinaries": ["vite-bundle-analyzer", "lhci", "sqlite3"]
+}

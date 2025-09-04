@@ -3,18 +3,24 @@ FROM oven/bun:1 AS build
 
 WORKDIR /app
 
-# Install build dependencies for native modules
+# Install build dependencies including Node.js for compatibility
 RUN apt-get update && apt-get install -y \
     python3 \
     make \
     g++ \
+    nodejs \
+    npm \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy dependency manifests first for better caching
 COPY package.json bun.lock ./
 
-# Install all dependencies
+# Install dependencies with Bun
 RUN bun install --frozen-lockfile
+
+# Reinstall Rollup to ensure platform-specific binaries are correct
+RUN bun remove @rollup/rollup-linux-x64-gnu @rollup/rollup-linux-arm64-gnu rollup && \
+    bun add -D rollup
 
 # Copy source code
 COPY . .

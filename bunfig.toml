@@ -8,5 +8,12 @@ exact = true
 # Cache configuration
 cache = true
 
+# Production optimizations
+production = false
+
 [install.scopes]
 # Optional: configure scoped packages if needed
+
+[run]
+# Bun runtime configuration
+bun = true

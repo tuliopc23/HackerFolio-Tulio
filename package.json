@@ -16,6 +16,7 @@
     "start:production": "NODE_ENV=production bun run start",
     "preview": "bun run build && bun run start:production",
     "deploy:koyeb": "echo 'Deploy to Koyeb using koyeb.yaml or GitHub integration'",
+    "postinstall": "echo 'Using Bun package manager'",
     "test": "vitest",
     "test:run": "vitest run",
     "test:watch": "vitest --watch",

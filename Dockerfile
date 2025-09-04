@@ -21,9 +21,9 @@ COPY package.json bun.lock ./
 # Install dependencies with Bun
 RUN bun install --frozen-lockfile
 
-# Fix platform-specific binaries for build tools
-RUN bun remove rollup esbuild && \
-    bun add -D rollup esbuild
+# Fix platform-specific binaries - clean and reinstall
+RUN rm -rf node_modules/.cache node_modules/esbuild node_modules/rollup && \
+    bun install --force
 
 # Copy source code
 COPY . .

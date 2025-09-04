@@ -99,5 +99,10 @@
     "@tailwindcss/oxide",
     "better-sqlite3",
     "unrs-resolver"
-  ]
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "bun": ">=1.0.0"
+  },
+  "packageManager": "bun@1.2.21"
 }

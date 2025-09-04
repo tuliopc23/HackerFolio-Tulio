@@ -1,0 +1,12 @@
+# Bun configuration file
+# This file ensures Bun buildpack detection on Koyeb
+
+[install]
+# Use exact versions from lockfile
+exact = true
+
+# Cache configuration
+cache = true
+
+[install.scopes]
+# Optional: configure scoped packages if needed

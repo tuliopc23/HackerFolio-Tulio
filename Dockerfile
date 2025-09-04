@@ -3,14 +3,17 @@ FROM oven/bun:1 AS build
 
 WORKDIR /app
 
-# Install build dependencies including Node.js for compatibility
+# Install build dependencies
 RUN apt-get update && apt-get install -y \
     python3 \
     make \
     g++ \
-    nodejs \
-    npm \
+    curl \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js 22.x LTS (required by Vite, closest to local Node 24)
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+    apt-get install -y nodejs
 
 # Copy dependency manifests first for better caching
 COPY package.json bun.lock ./

@@ -16,7 +16,7 @@ services:
     # Bun runtime configuration
     build:
       type: buildpack
-      buildpack: bun
+      buildpack: https://github.com/jakeg/heroku-buildpack-bun
 
     # Build configuration
     build_command: bun run build:production

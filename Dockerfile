@@ -1,66 +1,67 @@
-# Dockerfile for HackerFolio-Tulio (Bun + React) on Koyeb
-#
-# Overview:
-# This multi-stage Dockerfile builds both the client and server portions of
-# the HackerFolio-Tulio project using the Bun runtime. It follows
-# Koyeb's recommendation of building from a Dockerfile rather than relying
-# on buildpacks. The first stage installs dependencies and compiles the
-# front-end and server for production. The final stage installs only
-# production dependencies and copies the built assets and necessary source
-# files. The resulting image exposes the application on the port provided
-# by the PORT environment variable (or defaults to 8000) and starts the
-# server using the production script.
+# Stage 1: Build
+FROM oven/bun:1 AS build
 
-# -------- Stage 1: Build --------
-FROM oven/bun:1 as build
-
-# Set working directory
 WORKDIR /app
 
-# Copy dependency manifests first. Bun will detect and use `bun.lock`
-# automatically. If other lockfiles are present (e.g. bun.lockb), adjust
-# this list accordingly.
-COPY bun.lock package.json ./
+# Install build dependencies for native modules
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install dependencies with a frozen lockfile to ensure reproducible builds
+# Copy dependency manifests first for better caching
+COPY package.json bun.lock ./
+
+# Install all dependencies
 RUN bun install --frozen-lockfile
 
-# Copy the rest of the repository
+# Copy source code
 COPY . .
 
-# Set production environment for build commands
+# Set production environment for build
 ENV NODE_ENV=production
 
-# Build both client and server. The `build` script defined in the root
-# package.json runs `build:client` and `build:server` to generate the
-# compiled assets in the `dist` folder.
-RUN bun run build
+# Build the application
+RUN bun run build:production
 
-# -------- Stage 2: Runtime --------
-FROM oven/bun:1 AS runtime
+# Stage 2: Runtime
+FROM oven/bun:1-slim AS runtime
 
 WORKDIR /app
 
-# Copy dependency manifests to install only production dependencies
-COPY bun.lock package.json ./
-RUN bun install --production --frozen-lockfile
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy only the built output and necessary source files from the build stage.
-# The application reads from the server source code at runtime (e.g.
-# `server/app.ts`) and also serves prebuilt assets from `dist`.
+# Copy package files
+COPY package.json bun.lock ./
+
+# Copy built application from build stage
+COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/server ./server
 COPY --from=build /app/shared ./shared
 COPY --from=build /app/drizzle ./drizzle
-COPY --from=build /app/database ./database
 
-# Expose the port configured at runtime. Koyeb will set the `PORT`
-# environment variable automatically, but we provide a default of 8000.
-ARG PORT
+# Create database directory with proper permissions
+RUN mkdir -p /app/database && \
+    chown -R bun:bun /app
+
+# Set runtime environment
 ENV NODE_ENV=production
-EXPOSE ${PORT:-8000}
+ENV PORT=8000
 
-# Start the server in production mode. The `start:production` script
-# sets `NODE_ENV=production` and runs `bun run start`, which validates the
-# environment and launches `server/app.ts`.
+# Switch to non-root user
+USER bun
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD curl -f http://localhost:${PORT}/api/health || exit 1
+
+# Expose port (Koyeb will override with PORT env var)
+EXPOSE ${PORT}
+
+# Start the application
 CMD ["bun", "run", "start:production"]

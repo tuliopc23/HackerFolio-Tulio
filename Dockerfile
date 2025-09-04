@@ -21,9 +21,9 @@ COPY package.json bun.lock ./
 # Install dependencies with Bun
 RUN bun install --frozen-lockfile
 
-# Reinstall Rollup to ensure platform-specific binaries are correct
-RUN bun remove @rollup/rollup-linux-x64-gnu @rollup/rollup-linux-arm64-gnu rollup && \
-    bun add -D rollup
+# Fix platform-specific binaries for build tools
+RUN bun remove rollup esbuild && \
+    bun add -D rollup esbuild
 
 # Copy source code
 COPY . .

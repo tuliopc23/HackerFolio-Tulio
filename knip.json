@@ -2,16 +2,7 @@
   "$schema": "https://unpkg.com/knip@latest/schema.json",
   "workspaces": {
     ".": {
-      "entry": [
-        "client/src/entry-client.tsx",
-        "client/src/entry-server.tsx",
-        "server/app.ts",
-        "server/db/migrate.ts",
-        "server/scripts/**/*.ts",
-        "vitest.config.ts",
-        "vite.config.ts",
-        "drizzle.config.ts"
-      ],
+      "entry": ["client/src/entry-client.tsx", "client/src/entry-server.tsx", "server/scripts/**/*.ts"],
       "project": ["**/*.{js,jsx,ts,tsx}", "!**/*.test.{js,jsx,ts,tsx}"],
       "ignore": ["node_modules/**", "dist/**", "build/**", "coverage/**", "drizzle/**", ".vite/**"]
     }

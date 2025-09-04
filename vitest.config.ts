@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: 'jsdom',
-    setupFiles: ['./test-config/setup-tests.ts'],
+    setupFiles: ['@testing-library/jest-dom'],
     globals: true,
     css: true,
     clearMocks: true,
@@ -105,9 +105,6 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'client/src'),
       '@shared': path.resolve(__dirname, 'shared'),
       '@server': path.resolve(__dirname, 'server'),
-      // Additional test-specific aliases
-      '@test-utils': path.resolve(__dirname, 'client/src/test-utils'),
-      '@test-config': path.resolve(__dirname, 'test-config'),
     },
   },
 

@@ -2,10 +2,6 @@ import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import path from 'node:path'
 import { config } from './shared/config'
-import {
-  TanStackStartViteServerFn,
-  TanStackStartViteDeadCodeElimination,
-} from '@tanstack/start-vite-plugin'
 
 export default defineConfig(({ command, mode }) => {
   const isSSR = process.argv.includes('--ssr')
@@ -18,9 +14,6 @@ export default defineConfig(({ command, mode }) => {
   return {
     root: path.resolve(__dirname, viteConfig.root),
     plugins: [
-      // TanStack Start plugins for server functions and dead code elimination
-      TanStackStartViteServerFn({ env: isSSR ? 'server' : 'client' }),
-      TanStackStartViteDeadCodeElimination({ env: isSSR ? 'server' : 'client' }),
       react({
         // Add React DevTools in development
         include: '**/*.{jsx,tsx}',
@@ -69,15 +62,12 @@ export default defineConfig(({ command, mode }) => {
                 // TanStack ecosystem (frequently updated together)
                 'tanstack-router': ['@tanstack/react-router', '@tanstack/history'],
                 'tanstack-query': ['@tanstack/react-query'],
-                'tanstack-start': ['@tanstack/start'],
                 // Animation library (large, rarely changes)
                 'motion-lib': ['motion'],
                 // Database & validation (stable)
                 'data-libs': ['drizzle-orm', 'drizzle-zod', 'zod'],
                 // UI utilities (small, stable)
-                'ui-utils': ['clsx', 'tailwind-merge', 'class-variance-authority'],
-                // Icons (custom, very stable)
-                icons: ['lucide-react'],
+                'ui-utils': ['clsx', 'tailwind-merge'],
               },
             },
             treeshake: {

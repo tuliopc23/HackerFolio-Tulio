@@ -29,7 +29,7 @@
 ## Architecture
 
 - **Stack**: React + TypeScript + Vite + Elysia + Drizzle + SQLite + TanStack
-  Start + TanStack Query
+  Router + TanStack Query
 - **Patterns**: SSR production builds, API routes (`/api/`), terminal routes
   (`/terminal/`)
 - **Database**: Drizzle ORM, migrations (`bun run db:generate`), Zod integration

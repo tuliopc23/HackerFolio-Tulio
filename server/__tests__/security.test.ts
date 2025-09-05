@@ -1,5 +1,5 @@
 import { Elysia } from 'elysia'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+// vitest globals are available - no import needed
 
 import {
   InputSanitizer,

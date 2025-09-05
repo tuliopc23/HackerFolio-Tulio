@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - '8000:8000'
+    volumes:
+      - ./database:/app/database
+    environment:
+      - NODE_ENV=production
+      - PORT=8000
+      - APP_URL=http://localhost:8000
+      - API_URL=http://localhost:8000
+      - CORS_ORIGINS=http://localhost:8000
+      - SESSION_SECRET=your-secret-key-here
+      - DATABASE_URL=file:./database/portfolio.db
+    restart: unless-stopped

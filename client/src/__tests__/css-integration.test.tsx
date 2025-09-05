@@ -1,4 +1,4 @@
-import { describe, test, expect } from 'vitest'
+// vitest globals are available - no import needed
 
 import { useTheme } from '@/components/terminal/theme-context'
 import { render, screen } from '@/test-utils/render-with-providers'

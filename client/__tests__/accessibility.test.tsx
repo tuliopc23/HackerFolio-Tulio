@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import React from 'react'
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+// vitest globals are available - no import needed
 
 import FocusManager from '@/components/accessibility/focus-manager'
 import SkipLinks from '@/components/accessibility/skip-links'

@@ -1,5 +1,5 @@
 import { Elysia } from 'elysia'
-import { describe, test, expect, beforeEach, vi } from 'vitest'
+// vitest globals are available - no import needed
 
 // Simple API route tests focusing on basic functionality
 describe('API Routes - Basic Functionality', () => {

@@ -5,7 +5,8 @@
     "shared/**/*",
     "server/**/*",
     "test-config/**/*",
-    "reset.d.ts"
+    "reset.d.ts",
+    "vitest.d.ts"
   ],
   "exclude": ["node_modules", "build", "dist", "drizzle/**/*", "coverage"],
   "compilerOptions": {
@@ -79,7 +80,7 @@
     },
 
     // Type definitions
-    "types": ["node", "vite/client", "bun", "@total-typescript/ts-reset"]
+    "types": ["node", "vite/client", "bun", "@total-typescript/ts-reset", "@testing-library/jest-dom", "vitest/globals"]
   },
   "ts-node": {
     "esm": true

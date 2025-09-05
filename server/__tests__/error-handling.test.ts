@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest'
+// vitest globals are available - no import needed
 
 import {
   ApiError,

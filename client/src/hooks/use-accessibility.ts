@@ -223,7 +223,10 @@ export function useSkipLinks() {
 
     if (mainContent) {
       mainContent.focus()
-      mainContent.scrollIntoView({ behavior: 'smooth' })
+      // Only call scrollIntoView if it exists (not available in jsdom)
+      if (typeof mainContent.scrollIntoView === 'function') {
+        mainContent.scrollIntoView({ behavior: 'smooth' })
+      }
     }
   }, [])
 
@@ -233,7 +236,10 @@ export function useSkipLinks() {
 
     if (navigation) {
       ;(navigation as HTMLElement).focus()
-      navigation.scrollIntoView({ behavior: 'smooth' })
+      // Only call scrollIntoView if it exists (not available in jsdom)
+      if (typeof navigation.scrollIntoView === 'function') {
+        navigation.scrollIntoView({ behavior: 'smooth' })
+      }
     }
   }, [])
 

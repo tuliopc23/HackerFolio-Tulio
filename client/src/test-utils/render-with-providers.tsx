@@ -1,6 +1,6 @@
 import { render, type RenderOptions } from '@testing-library/react'
 import React, { type ReactElement } from 'react'
-import { expect, vi } from 'vitest'
+// vitest globals are available - no import needed
 
 import { ThemeProvider } from '@/components/terminal/theme-context'
 

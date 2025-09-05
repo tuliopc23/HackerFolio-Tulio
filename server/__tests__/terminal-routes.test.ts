@@ -1,5 +1,5 @@
 import { Elysia } from 'elysia'
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+// vitest globals are available - no import needed
 
 // Simple terminal route tests focusing on basic functionality
 describe('Terminal Routes - Basic Functionality', () => {

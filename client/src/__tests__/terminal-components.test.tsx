@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import React from 'react'
-import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest'
+// vitest globals are available - no import needed
 
 import { TerminalLoadingSpinner } from '@/components/loading-spinner'
 

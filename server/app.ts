@@ -83,7 +83,8 @@ if (process.env.NODE_ENV === 'production') {
     null
   try {
     // @ts-ignore - SSR bundle may not exist during development
-    const ssr = (await import('../dist/server/entry-server.js')) as SSRModule
+    // eslint-disable-next-line import/no-unresolved
+    const ssr = (await import('../dist/entry-server.js')) as SSRModule
     ssrRender = ssr.render
     ssrRenderWithData = ssr.renderWithData
     // SSR renderer loaded successfully

@@ -90,15 +90,54 @@ if (process.env.NODE_ENV === 'production') {
     staticDir = './dist/public' // explicit fallback
   }
 
-  // Add static plugin - try simple configuration first
+  // Add static plugin and manual fallback
   console.log('Configuring static plugin with:', { assets: staticDir })
   
-  // Try without prefix to see if that works
   app.use(
     staticPlugin({
-      assets: staticDir
+      assets: staticDir,
+      prefix: '/'
     })
   )
+
+  // Manual static file handler as fallback
+  app.get('/assets/*', async ({ params, set }) => {
+    try {
+      const filePath = `${staticDir}/assets/${params['*']}`
+      console.log('Manual static handler for:', filePath)
+      
+      const file = Bun.file(filePath)
+      const exists = await file.exists()
+      
+      if (!exists) {
+        console.log('File not found:', filePath)
+        set.status = 404
+        return 'File not found'
+      }
+
+      const fileExtension = filePath.split('.').pop()?.toLowerCase()
+      const mimeTypes: Record<string, string> = {
+        'js': 'application/javascript',
+        'css': 'text/css',
+        'png': 'image/png',
+        'jpg': 'image/jpeg',
+        'jpeg': 'image/jpeg',
+        'svg': 'image/svg+xml',
+        'ico': 'image/x-icon'
+      }
+
+      set.headers = {
+        'Content-Type': mimeTypes[fileExtension || ''] || 'application/octet-stream',
+        'Cache-Control': 'public, max-age=31536000'
+      }
+
+      return file
+    } catch (error) {
+      console.error('Static file serve error:', error)
+      set.status = 500
+      return 'Internal server error'
+    }
+  })
 
   // SSR render if server bundle exists; fallback to static index.html
   const indexHtml = Bun.file(`${staticDir}/index.html`)

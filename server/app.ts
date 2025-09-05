@@ -75,7 +75,10 @@ if (process.env.NODE_ENV === 'production') {
         break
       }
     }
-  } catch {}
+  } catch {
+    // no-op: static dir auto-detection fallback handled below
+    void 0
+  }
 
   app.use(
     staticPlugin({
@@ -104,12 +107,14 @@ if (process.env.NODE_ENV === 'production') {
   for (const p of SSR_CANDIDATES) {
     try {
       // @ts-ignore - SSR bundle may not exist during development
-      // eslint-disable-next-line import/no-unresolved
       const ssr = (await import(p)) as SSRModule
       ssrRender = ssr.render
       ssrRenderWithData = ssr.renderWithData
       break
-    } catch {}
+    } catch {
+      // no-op: try next SSR candidate
+      void 0
+    }
   }
 
   app.get('*', async ({ request, set }: Context) => {

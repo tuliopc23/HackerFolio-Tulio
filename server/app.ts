@@ -82,8 +82,11 @@ if (process.env.NODE_ENV === 'production') {
 
   app.use(
     staticPlugin({
-      prefix: '/', // serve at root
       assets: `./${staticDir}`, // Vite build output (relative to project root)
+      prefix: '/', // serve at root
+      staticLimits: {
+        maxAge: process.env.NODE_ENV === 'production' ? '1y' : '0', // Cache assets in production
+      },
     })
   )
 
@@ -119,7 +122,21 @@ if (process.env.NODE_ENV === 'production') {
 
   app.get('*', async ({ request, set }: Context) => {
     const url = new URL(request.url)
+    
+    // Don't handle API routes
     if (url.pathname.startsWith('/api')) return
+    
+    // Don't handle asset routes - let static plugin handle them
+    if (url.pathname.startsWith('/assets/') || 
+        url.pathname.endsWith('.js') || 
+        url.pathname.endsWith('.css') || 
+        url.pathname.endsWith('.png') || 
+        url.pathname.endsWith('.jpg') || 
+        url.pathname.endsWith('.svg') || 
+        url.pathname.endsWith('.ico')) {
+      return // Let static plugin handle these
+    }
+    
     try {
       const htmlText = await indexHtml.text()
       if (ssrRenderWithData || ssrRender) {
@@ -143,6 +160,9 @@ if (process.env.NODE_ENV === 'production') {
         }
         return rendered
       } else {
+        set.headers = {
+          'Content-Type': 'text/html; charset=utf-8',
+        }
         return new Response(indexHtml)
       }
     } catch {

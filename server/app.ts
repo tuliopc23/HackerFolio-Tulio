@@ -73,6 +73,15 @@ if (process.env.NODE_ENV === 'production') {
       if (await f.exists()) {
         staticDir = d
         console.log(`Using static directory: ${staticDir}`)
+
+        // Check for assets directory
+        try {
+          const fs = await import('node:fs')
+          const assetExists = fs.existsSync(`${d}/assets`)
+          console.log(`Assets directory exists: ${assetExists}, path: ${d}/assets`)
+        } catch (e) {
+          console.log('Could not check assets directory:', e)
+        }
         break
       }
     }
@@ -81,13 +90,13 @@ if (process.env.NODE_ENV === 'production') {
     staticDir = './dist/public' // explicit fallback
   }
 
+  // Add static plugin - try simple configuration first
+  console.log('Configuring static plugin with:', { assets: staticDir })
+  
+  // Try without prefix to see if that works
   app.use(
     staticPlugin({
-      assets: staticDir, // Vite build output (relative to project root)
-      prefix: '/', // serve at root
-      staticLimits: {
-        maxAge: process.env.NODE_ENV === 'production' ? '1y' : '0', // Cache assets in production
-      },
+      assets: staticDir
     })
   )
 

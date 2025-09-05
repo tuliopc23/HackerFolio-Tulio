@@ -46,13 +46,32 @@ const apiRateLimit = (context: Context) => {
 export const apiRoutes = new Elysia({ prefix: '/api' })
   .onError(({ error }) => handleApiError(error))
   .derive(apiRateLimit)
-  .get('/health', () =>
-    createSuccessResponse({
+  .get('/health', async () => {
+    // Check if static files exist
+    const staticChecks = {
+      indexHtml: false,
+      assetsDir: false,
+    }
+
+    try {
+      const indexFile = Bun.file('./dist/public/index.html')
+      staticChecks.indexHtml = await indexFile.exists()
+
+      const fs = await import('node:fs')
+      staticChecks.assetsDir = fs.existsSync('./dist/public/assets')
+    } catch (error) {
+      console.error('Health check static file error:', error)
+    }
+
+    return createSuccessResponse({
       status: 'ok',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
+      environment: process.env.NODE_ENV,
+      port: process.env.PORT,
+      staticFiles: staticChecks,
     })
-  )
+  })
   .get('/profile', () =>
     createSuccessResponse({
       name: 'Tulio Cunha',

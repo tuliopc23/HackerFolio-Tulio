@@ -50,7 +50,26 @@ const securityMiddleware = (context: Record<string, unknown>) => {
 const app = new Elysia()
   .use(
     cors({
-      origin: getCorsOrigins(),
+      origin: (origin) => {
+        // Dynamic CORS - allow same origin and configured origins
+        const allowedOrigins = getCorsOrigins()
+
+        // If no origin (same-origin requests), allow
+        if (!origin) return true
+
+        // Check against configured origins
+        if (allowedOrigins.includes('*')) return true
+        if (allowedOrigins.includes(origin)) return true
+
+        // For PaaS deployments, be more permissive with HTTPS origins
+        if (process.env.NODE_ENV === 'production' && origin.startsWith('https://')) {
+          console.log(`🔍 Allowing HTTPS origin: ${origin}`)
+          return true
+        }
+
+        console.log(`❌ Blocked origin: ${origin}`)
+        return false
+      },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
@@ -66,37 +85,47 @@ if (process.env.NODE_ENV === 'production') {
   // Auto-detect static dir (dist/public preferred, fallback to dist)
   const STATIC_DIRS = ['./dist/public', './dist'] as const
   let staticDir: (typeof STATIC_DIRS)[number] = './dist/public'
+
+  console.log('🔍 Detecting static directory...')
+  console.log('Current working directory:', process.cwd())
+
   try {
     for (const d of STATIC_DIRS) {
       const f = Bun.file(`${d}/index.html`)
       // deno-lint-ignore no-await-in-loop
       if (await f.exists()) {
         staticDir = d
-        console.log(`Using static directory: ${staticDir}`)
+        console.log(`✅ Using static directory: ${staticDir}`)
 
         // Check for assets directory
         try {
           const fs = await import('node:fs')
           const assetExists = fs.existsSync(`${d}/assets`)
-          console.log(`Assets directory exists: ${assetExists}, path: ${d}/assets`)
+          console.log(`📁 Assets directory exists: ${assetExists}, path: ${d}/assets`)
+
+          // List files in assets directory for debugging
+          if (assetExists) {
+            const assetFiles = fs.readdirSync(`${d}/assets`)
+            console.log(`📄 Asset files (${assetFiles.length}):`, assetFiles.slice(0, 5).join(', '))
+          }
         } catch (e) {
-          console.log('Could not check assets directory:', e)
+          console.log('⚠️ Could not check assets directory:', e)
         }
         break
       }
     }
   } catch (error) {
-    console.error('Static directory detection error:', error)
+    console.error('❌ Static directory detection error:', error)
     staticDir = './dist/public' // explicit fallback
   }
 
   // Add static plugin and manual fallback
   console.log('Configuring static plugin with:', { assets: staticDir })
-  
+
   app.use(
     staticPlugin({
       assets: staticDir,
-      prefix: '/'
+      prefix: '/',
     })
   )
 
@@ -105,10 +134,10 @@ if (process.env.NODE_ENV === 'production') {
     try {
       const filePath = `${staticDir}/assets/${params['*']}`
       console.log('Manual static handler for:', filePath)
-      
+
       const file = Bun.file(filePath)
       const exists = await file.exists()
-      
+
       if (!exists) {
         console.log('File not found:', filePath)
         set.status = 404
@@ -117,18 +146,18 @@ if (process.env.NODE_ENV === 'production') {
 
       const fileExtension = filePath.split('.').pop()?.toLowerCase()
       const mimeTypes: Record<string, string> = {
-        'js': 'application/javascript',
-        'css': 'text/css',
-        'png': 'image/png',
-        'jpg': 'image/jpeg',
-        'jpeg': 'image/jpeg',
-        'svg': 'image/svg+xml',
-        'ico': 'image/x-icon'
+        js: 'application/javascript',
+        css: 'text/css',
+        png: 'image/png',
+        jpg: 'image/jpeg',
+        jpeg: 'image/jpeg',
+        svg: 'image/svg+xml',
+        ico: 'image/x-icon',
       }
 
       set.headers = {
         'Content-Type': mimeTypes[fileExtension || ''] || 'application/octet-stream',
-        'Cache-Control': 'public, max-age=31536000'
+        'Cache-Control': 'public, max-age=31536000',
       }
 
       return file
@@ -171,24 +200,34 @@ if (process.env.NODE_ENV === 'production') {
 
   app.get('*', async ({ request, set }: Context) => {
     const url = new URL(request.url)
-    
+    console.log(`🌐 Request: ${url.pathname}`)
+
     // Don't handle API routes
-    if (url.pathname.startsWith('/api')) return
-    
+    if (url.pathname.startsWith('/api')) {
+      console.log(`🔄 Skipping API route: ${url.pathname}`)
+      return
+    }
+
     // Don't handle asset routes - let static plugin handle them
-    if (url.pathname.startsWith('/assets/') || 
-        url.pathname.endsWith('.js') || 
-        url.pathname.endsWith('.css') || 
-        url.pathname.endsWith('.png') || 
-        url.pathname.endsWith('.jpg') || 
-        url.pathname.endsWith('.svg') || 
-        url.pathname.endsWith('.ico')) {
+    if (
+      url.pathname.startsWith('/assets/') ||
+      url.pathname.endsWith('.js') ||
+      url.pathname.endsWith('.css') ||
+      url.pathname.endsWith('.png') ||
+      url.pathname.endsWith('.jpg') ||
+      url.pathname.endsWith('.svg') ||
+      url.pathname.endsWith('.ico')
+    ) {
+      console.log(`📁 Skipping asset route: ${url.pathname}`)
       return // Let static plugin handle these
     }
-    
+
     try {
       const htmlText = await indexHtml.text()
+      console.log(`📄 Serving HTML for: ${url.pathname}`)
+
       if (ssrRenderWithData || ssrRender) {
+        console.log(`⚡ Using SSR for: ${url.pathname}`)
         let appHtml = ''
         let data: Record<string, unknown> | undefined
         const { pathname } = url
@@ -209,19 +248,67 @@ if (process.env.NODE_ENV === 'production') {
         }
         return rendered
       } else {
+        console.log(`📄 Using static HTML for: ${url.pathname}`)
         set.headers = {
           'Content-Type': 'text/html; charset=utf-8',
         }
         return new Response(indexHtml)
       }
-    } catch {
+    } catch (error) {
+      console.error(`❌ SSR error for ${url.pathname}:`, error)
       set.status = 500
       return 'SSR error'
     }
   })
 }
 
-app.listen({ port: PORT, hostname: '0.0.0.0' })
+// Platform-friendly server startup with comprehensive detection
+const startServer = async () => {
+  try {
+    // Import platform detection
+    const { logPlatformInfo, getPlatformBaseUrl } = await import('./lib/platform-detection')
 
-// eslint-disable-next-line no-console
-console.log(`Server listening on port ${String(PORT)}`)
+    console.log(`🚀 Starting HackerFolio Server`)
+    console.log(`📍 Environment: ${env.NODE_ENV}`)
+    console.log(`🔌 Port: ${PORT}`)
+    console.log('')
+
+    // Log detailed platform information
+    logPlatformInfo()
+    console.log('')
+
+    // Log base URL if detected
+    const baseUrl = getPlatformBaseUrl()
+    if (baseUrl) {
+      console.log(`🌐 Base URL: ${baseUrl}`)
+    }
+
+    // Start the server
+    app.listen({
+      port: PORT,
+      hostname: '0.0.0.0' // Essential for containerized deployments
+    })
+
+    console.log(`✅ Server successfully started on port ${PORT}`)
+
+    // Log CORS origins for debugging
+    const corsOrigins = getCorsOrigins()
+    console.log(`🔒 CORS Origins: ${corsOrigins.join(', ')}`)
+
+    // Log important URLs
+    console.log('')
+    console.log(`📋 Important URLs:`)
+    console.log(`   Health Check: http://localhost:${PORT}/api/health`)
+    if (baseUrl) {
+      console.log(`   Public Health: ${baseUrl}/api/health`)
+      console.log(`   Public App: ${baseUrl}/`)
+    }
+
+  } catch (error) {
+    console.error('❌ Failed to start server:', error)
+    console.error('Stack trace:', error instanceof Error ? error.stack : 'Unknown error')
+    process.exit(1)
+  }
+}
+
+startServer()

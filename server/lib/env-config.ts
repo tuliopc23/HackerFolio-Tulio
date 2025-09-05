@@ -74,13 +74,13 @@ const developmentEnvSchema = baseEnvSchema.extend({
   NODE_ENV: z.literal('development'),
 })
 
-// Production-specific requirements
+// Production-specific requirements (relaxed for PaaS)
 const productionEnvSchema = baseEnvSchema.extend({
   NODE_ENV: z.literal('production'),
-  APP_URL: z.url(),
-  API_URL: z.url(),
+  APP_URL: z.url().optional(), // Optional - will be auto-detected
+  API_URL: z.url().optional(), // Optional - will be auto-detected
   SESSION_SECRET: z.string().min(32),
-  CORS_ORIGINS: z.string().min(1),
+  CORS_ORIGINS: z.string().optional(), // Optional - will be auto-detected
 })
 
 // Test-specific requirements

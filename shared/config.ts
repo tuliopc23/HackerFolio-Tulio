@@ -324,18 +324,19 @@ export class ConfigurationManager {
       errors.push('Vite aliases and TypeScript paths must be consistent')
     }
 
-    // Production-specific validations
+    // Production-specific validations (relaxed for PaaS)
     if (this.config.app.environment === 'production') {
       if (!this.config.security.sessionSecret) {
         errors.push('Session secret is required for production environment')
       }
 
+      // CORS and URLs are now optional - will be auto-detected
       if (this.config.security.corsOrigins.length === 0) {
-        errors.push('CORS origins must be specified for production environment')
+        console.log('⚠️ No CORS origins configured - will use auto-detection')
       }
 
       if (!this.config.app.baseUrl) {
-        errors.push('Base URL is required for production environment')
+        console.log('⚠️ No base URL configured - will use auto-detection')
       }
     }
 

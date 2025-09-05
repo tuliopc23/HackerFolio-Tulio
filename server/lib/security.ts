@@ -308,20 +308,12 @@ export const InputSanitizer = {
 }
 
 /**
- * CORS configuration
+ * CORS configuration - PaaS-friendly with comprehensive platform detection
  */
 export function getCorsOrigins(): string[] {
-  if (env.NODE_ENV === 'development') {
-    return [
-      'http://localhost:3000',
-      'http://localhost:5173',
-      'http://127.0.0.1:3000',
-      'http://127.0.0.1:5173',
-    ]
-  }
-
-  // In production, only allow your actual domain
-  return ['https://yourdomain.com'] // Replace with actual domain
+  // Import platform detection (dynamic import to avoid circular dependencies)
+  const { getPlatformCorsOrigins } = require('./platform-detection')
+  return getPlatformCorsOrigins()
 }
 
 /**

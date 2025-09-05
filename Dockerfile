@@ -1,34 +1,63 @@
 # syntax=docker/dockerfile:1
 
-# Base image: stick to linux/amd64 so Bun pulls the correct native optional deps
+# Multi-platform support with explicit platform for consistency
 FROM --platform=linux/amd64 oven/bun:1.2 AS base
+
+# Set working directory
 WORKDIR /app
+
+# Install system dependencies needed for native modules
+RUN apt-get update && apt-get install -y \
+    --no-install-recommends \
+    python3 \
+    make \
+    g++ \
+    git \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
 
 # -------------------------------------------------------------------
 # Stage: deps – install only production dependencies
 # -------------------------------------------------------------------
 FROM base AS deps
-# Build tools for native modules like better-sqlite3
-RUN apt-get update \
- && apt-get install -y --no-install-recommends python3 make g++ \
- && rm -rf /var/lib/apt/lists/*
-# Copy only package manifest so Bun resolves the proper platform-specific
-# optional dependencies (e.g., @rollup/rollup-linux-x64-gnu)
-COPY package.json ./
-RUN bun install --production
+
+# Copy package files for dependency resolution
+COPY package.json bun.lockb* ./
+
+# Install production dependencies with platform-specific optimizations
+RUN bun install --production --frozen-lockfile \
+    && bun pm cache clean
 
 # -------------------------------------------------------------------
 # Stage: build – install dev deps and build the app
 # -------------------------------------------------------------------
 FROM base AS build
-RUN apt-get update \
- && apt-get install -y --no-install-recommends python3 make g++ \
- && rm -rf /var/lib/apt/lists/*
-COPY package.json ./
-RUN bun install
-# Copy application code and run the production build (runs vite, SSR, etc.)
+
+# Copy package files first for better caching
+COPY package.json bun.lockb* ./
+
+# Install all dependencies (including dev dependencies)
+RUN bun install --frozen-lockfile
+
+# Copy source code (use .dockerignore to exclude unnecessary files)
 COPY . .
-RUN bun run build:production
+
+# Build the application for production
+RUN NODE_ENV=production bun run build:production
+
+# Verify build artifacts exist
+RUN test -f dist/public/index.html || (echo "❌ Build failed: index.html not found" && exit 1)
+RUN test -d dist/public/assets || (echo "❌ Build failed: assets directory not found" && exit 1)
+RUN test -f dist/server/entry-server.js || (echo "❌ Build failed: SSR bundle not found" && exit 1)
+
+# List build artifacts for debugging
+RUN echo "✅ Build artifacts:" && \
+    ls -la dist/ && \
+    echo "📁 Public files:" && \
+    ls -la dist/public/ && \
+    echo "📁 Assets:" && \
+    ls -la dist/public/assets/ | head -10
 
 # -------------------------------------------------------------------
 # Stage: runtime – minimal image to run the server
@@ -36,32 +65,51 @@ RUN bun run build:production
 FROM base AS runtime
 WORKDIR /app
 
-# Set production environment variables. These defaults satisfy the
-# environment validation; override them via Koyeb/Kubernetes/App config as needed.
+# Platform-friendly environment variables
 ENV NODE_ENV=production
+# PORT will be set by PaaS platform (Koyeb, Railway, etc.)
 ENV PORT=8000
-ENV APP_URL=http://localhost:8000
-ENV API_URL=http://localhost:8000
-ENV CORS_ORIGINS=http://localhost:8000
-# Replace this with a secure 32+ character secret in real deployments
-ENV SESSION_SECRET=change_this_to_a_secure_session_secret_32chars
+# Minimal session secret - should be overridden by platform secrets
+ENV SESSION_SECRET=change_this_to_a_secure_session_secret_32chars_minimum_length
 
-# Copy production dependencies and built artifacts
+# Performance and reliability settings
+ENV BUN_ENV=production
+ENV NODE_OPTIONS="--max-old-space-size=512"
+
+# Copy production dependencies
 COPY --from=deps /app/node_modules ./node_modules
+
+# Copy package.json for runtime
 COPY package.json ./
+
+# Copy built application
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/server ./server
 COPY --from=build /app/shared ./shared
 COPY --from=build /app/drizzle ./drizzle
 
-# Copy an example env file so Bun loads variables from it if present.
-# If you provide your own .env at deploy time, it will override these defaults.
+# Copy environment template (will be overridden by platform)
 COPY .env.example .env
 
-# Create the database directory and fix ownership
-RUN mkdir -p database && chown -R bun:bun /app
+# Create necessary directories with proper permissions
+RUN mkdir -p database logs tmp && \
+    chown -R bun:bun /app && \
+    chmod -R 755 /app
+
+# Verify runtime artifacts
+RUN test -f dist/public/index.html || (echo "❌ Runtime error: index.html missing" && exit 1)
+RUN test -d dist/public/assets || (echo "❌ Runtime error: assets missing" && exit 1)
+RUN test -f server/app.ts || (echo "❌ Runtime error: server app missing" && exit 1)
+
+# Switch to non-root user for security
 USER bun
 
+# Health check for container orchestration
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD bun run health-check || exit 1
+
+# Expose port (will be overridden by PaaS)
 EXPOSE 8000
-# Start the server (will run env:validate then server/app.ts)
-CMD ["bun", "run", "start:production"]
+
+# Start the application with proper error handling
+CMD ["sh", "-c", "bun run start:production || (echo '❌ Server failed to start' && exit 1)"]

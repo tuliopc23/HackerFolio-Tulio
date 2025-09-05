@@ -38,16 +38,15 @@ services:
       - port: 8000
         protocol: http
 
-    # Environment variables
+    # Environment variables (PaaS-friendly - no hardcoded URLs)
     env:
       - name: NODE_ENV
         value: production
       - name: PORT
         value: '8000'
+      # URLs will be auto-detected by the app
       - name: SESSION_SECRET
         secret: session-secret
-      - name: CORS_ORIGINS
-        value: https://hackerfolio-tulio-your-org.koyeb.app
       - name: LOG_LEVEL
         value: info
       - name: GITHUB_TOKEN

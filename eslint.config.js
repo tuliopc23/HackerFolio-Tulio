@@ -240,6 +240,22 @@ export default tseslint.config(
     },
   },
 
+  // Override: allow console in server and shared code
+  {
+    files: ['server/**/*.{ts,js}', 'shared/**/*.{ts,js}'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+
+  // Override: allow console in SSR entry (dev-only logging)
+  {
+    files: ['client/src/entry-server.tsx'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+
   // Prettier integration
   prettierConfig,
   {

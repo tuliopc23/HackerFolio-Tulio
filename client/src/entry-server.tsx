@@ -3,11 +3,20 @@ import { renderToString } from 'react-dom/server'
 
 import { createAppRouter, AppRouterProvider } from './router-enhanced'
 
-export function render(url: string): string {
-  const history = createMemoryHistory({ initialEntries: [url] })
-  const router = createAppRouter({ history })
+export async function render(url: string): Promise<string> {
+  try {
+    const history = createMemoryHistory({ initialEntries: [url] })
+    const router = createAppRouter({ history })
 
-  return renderToString(<AppRouterProvider router={router} />)
+    // Wait for router to be ready
+    await router.load()
+
+    const html = renderToString(<AppRouterProvider router={router} />)
+    return html
+  } catch (error) {
+    console.error('[SSR] Render error:', error)
+    return '<div>SSR Error</div>'
+  }
 }
 
 export function renderWithData(url: string, data?: Record<string, unknown>) {

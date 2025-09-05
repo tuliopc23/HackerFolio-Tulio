@@ -338,7 +338,6 @@ export const SecurityLogger = {
 
     // In production, send to external logging service
     if (env.NODE_ENV === 'production') {
-      // eslint-disable-next-line no-console
       console.error('[SECURITY]', JSON.stringify(event))
     }
   },

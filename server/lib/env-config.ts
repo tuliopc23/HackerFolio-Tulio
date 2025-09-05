@@ -74,12 +74,12 @@ const developmentEnvSchema = baseEnvSchema.extend({
   NODE_ENV: z.literal('development'),
 })
 
-// Production-specific requirements (relaxed for PaaS)
+// Production-specific requirements (relaxed for PaaS and build time)
 const productionEnvSchema = baseEnvSchema.extend({
   NODE_ENV: z.literal('production'),
   APP_URL: z.url().optional(), // Optional - will be auto-detected
   API_URL: z.url().optional(), // Optional - will be auto-detected
-  SESSION_SECRET: z.string().min(32),
+  SESSION_SECRET: z.string().min(32).optional(), // Optional during build, required at runtime
   CORS_ORIGINS: z.string().optional(), // Optional - will be auto-detected
 })
 
@@ -118,7 +118,23 @@ export function validateEnvironment(
     )
   }
 
-  return result.data
+  // Additional runtime validation for production
+  const { data } = result
+  if (data.NODE_ENV === 'production') {
+    // Check if we're in a build context (Vite sets this)
+    const isBuildTime =
+      (process.env.npm_lifecycle_event?.includes('build') ?? false) ||
+      process.argv.some(arg => arg.includes('vite') && arg.includes('build'))
+
+    if (!isBuildTime && !data.SESSION_SECRET) {
+      throw new Error(
+        'SESSION_SECRET is required for production runtime.\\n\\n' +
+          'Please set SESSION_SECRET in your environment variables.'
+      )
+    }
+  }
+
+  return data
 }
 
 // Helper functions for environment-specific configurations

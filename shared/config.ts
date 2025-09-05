@@ -324,10 +324,15 @@ export class ConfigurationManager {
       errors.push('Vite aliases and TypeScript paths must be consistent')
     }
 
-    // Production-specific validations (relaxed for PaaS)
+    // Production-specific validations (relaxed for PaaS and build time)
     if (this.config.app.environment === 'production') {
-      if (!this.config.security.sessionSecret) {
-        errors.push('Session secret is required for production environment')
+      // Check if we're in a build context
+      const isBuildTime =
+        (process.env.npm_lifecycle_event?.includes('build') ?? false) ||
+        process.argv.some(arg => arg.includes('vite') && arg.includes('build'))
+
+      if (!isBuildTime && !this.config.security.sessionSecret) {
+        errors.push('Session secret is required for production runtime')
       }
 
       // CORS and URLs are now optional - will be auto-detected

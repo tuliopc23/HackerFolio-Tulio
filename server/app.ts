@@ -1,6 +1,5 @@
 // server/app.ts - Simplified main server file
 import { cors } from '@elysiajs/cors'
-import { staticPlugin } from '@elysiajs/static'
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import { Elysia, type Context } from 'elysia'
 
@@ -30,8 +29,11 @@ const securityMiddleware = (context: Record<string, unknown>) => {
   // Apply security headers
   applySecurityHeaders(context as Context)
 
-  // Apply rate limiting for all requests
-  const rateLimitPassed = rateLimit(defaultRateLimitOptions)(context as Context)
+  // Apply rate limiting only for API requests to reduce overhead on SSR/HTML
+  const req = (context as Context).request
+  const { pathname } = new URL(req.url)
+  const isApi = pathname.startsWith('/api')
+  const rateLimitPassed = isApi ? rateLimit(defaultRateLimitOptions)(context as Context) : true
 
   if (!rateLimitPassed) {
     ;(context as Context).set.status = 429
@@ -48,9 +50,13 @@ const securityMiddleware = (context: Record<string, unknown>) => {
 }
 
 const app = new Elysia()
+
+// We'll add static file serving manually later
+
+app
   .use(
     cors({
-      origin: (origin: string | undefined | unknown) => {
+      origin: (origin: unknown) => {
         // Dynamic CORS - allow same origin and configured origins
         const allowedOrigins = getCorsOrigins()
 
@@ -60,7 +66,9 @@ const app = new Elysia()
           originString = origin
         } else if (origin && typeof origin === 'object' && 'headers' in origin) {
           // Extract origin from request headers
-          const headers = (origin as { headers: { get?: (key: string) => string | null; origin?: string } }).headers
+          const { headers } = origin as {
+            headers: { get?: (key: string) => string | null; origin?: string }
+          }
           originString = headers.get?.('origin') ?? headers.origin ?? undefined
         } else {
           originString = undefined
@@ -98,14 +106,70 @@ const app = new Elysia()
   .use(apiRoutes)
   .use(terminalRoutes)
 
+// Static file serving for production
+app.get('/assets/*', async ({ params, set }) => {
+  if (process.env.NODE_ENV !== 'production') {
+    set.status = 404
+    return 'Not found'
+  }
+
+  try {
+    // Get static directory
+    const STATIC_DIRS = ['./dist/public', './dist'] as const
+    let staticDir: (typeof STATIC_DIRS)[number] = './dist/public'
+
+    for (const d of STATIC_DIRS) {
+      const f = Bun.file(`${d}/index.html`)
+      if (await f.exists()) {
+        staticDir = d
+        break
+      }
+    }
+
+    const fileName = params['*']
+    const filePath = `${staticDir}/assets/${fileName}`
+    const file = Bun.file(filePath)
+
+    if (!(await file.exists())) {
+      set.status = 404
+      return 'File not found'
+    }
+
+    const ext = fileName.split('.').pop()?.toLowerCase()
+    const mimeTypes: Record<string, string> = {
+      js: 'application/javascript',
+      css: 'text/css',
+      png: 'image/png',
+      jpg: 'image/jpeg',
+      jpeg: 'image/jpeg',
+      svg: 'image/svg+xml',
+      ico: 'image/x-icon',
+      woff: 'font/woff',
+      woff2: 'font/woff2',
+      ttf: 'font/ttf',
+      eot: 'application/vnd.ms-fontobject',
+    }
+
+    const contentType = mimeTypes[ext ?? ''] ?? 'application/octet-stream'
+
+    set.headers = {
+      'Content-Type': contentType,
+      'Cache-Control': 'public, max-age=31536000, immutable',
+    }
+
+    return file
+  } catch (error) {
+    console.error('Static file error:', error)
+    set.status = 500
+    return 'Internal server error'
+  }
+})
+
 // Serve the built client in production
 if (process.env.NODE_ENV === 'production') {
-  // Auto-detect static dir (dist/public preferred, fallback to dist)
+  // Get the static directory that was configured earlier
   const STATIC_DIRS = ['./dist/public', './dist'] as const
   let staticDir: (typeof STATIC_DIRS)[number] = './dist/public'
-
-  console.log('🔍 Detecting static directory...')
-  console.log('Current working directory:', process.cwd())
 
   try {
     for (const d of STATIC_DIRS) {
@@ -113,25 +177,6 @@ if (process.env.NODE_ENV === 'production') {
       // deno-lint-ignore no-await-in-loop
       if (await f.exists()) {
         staticDir = d
-        console.log(`✅ Using static directory: ${staticDir}`)
-
-        // Check for assets directory
-        try {
-          const fs = await import('node:fs')
-          const assetExists = fs.existsSync(`${d}/assets`)
-          console.log(`📁 Assets directory exists: ${String(assetExists)}, path: ${d}/assets`)
-
-          // List files in assets directory for debugging
-          if (assetExists) {
-            const assetFiles = fs.readdirSync(`${d}/assets`)
-            console.log(
-              `📄 Asset files (${String(assetFiles.length)}):`,
-              assetFiles.slice(0, 5).join(', ')
-            )
-          }
-        } catch (e) {
-          console.log('⚠️ Could not check assets directory:', e)
-        }
         break
       }
     }
@@ -140,71 +185,26 @@ if (process.env.NODE_ENV === 'production') {
     staticDir = './dist/public' // explicit fallback
   }
 
-  // Add static plugin and manual fallback
-  console.log('Configuring static plugin with:', { assets: staticDir })
-
-  app.use(
-    staticPlugin({
-      assets: staticDir,
-      prefix: '/',
-    })
-  )
-
-  // Manual static file handler as fallback
-  app.get('/assets/*', async ({ params, set }) => {
-    try {
-      const filePath = `${staticDir}/assets/${params['*']}`
-      console.log('Manual static handler for:', filePath)
-
-      const file = Bun.file(filePath)
-      const exists = await file.exists()
-
-      if (!exists) {
-        console.log('File not found:', filePath)
-        set.status = 404
-        return 'File not found'
-      }
-
-      const fileExtension = filePath.split('.').pop()?.toLowerCase()
-      const mimeTypes: Record<string, string> = {
-        js: 'application/javascript',
-        css: 'text/css',
-        png: 'image/png',
-        jpg: 'image/jpeg',
-        jpeg: 'image/jpeg',
-        svg: 'image/svg+xml',
-        ico: 'image/x-icon',
-      }
-
-      set.headers = {
-        'Content-Type': mimeTypes[fileExtension ?? ''] ?? 'application/octet-stream',
-        'Cache-Control': 'public, max-age=31536000',
-      }
-
-      return file
-    } catch (error) {
-      console.error('Static file serve error:', error)
-      set.status = 500
-      return 'Internal server error'
-    }
-  })
-
   // SSR render if server bundle exists; fallback to static index.html
   const indexHtml = Bun.file(`${staticDir}/index.html`)
+  // Cache HTML content in memory to avoid disk reads per request
+  let cachedIndexHtml: string | null = null
   // Type definitions for SSR module
   interface SSRModule {
-    render: (url: string) => string
+    render: (url: string) => Promise<string>
     renderWithData: (url: string) => { html: string; data: Record<string, unknown> }
   }
 
-  let ssrRender: null | ((url: string) => string) = null
+  let ssrRender: null | ((url: string) => Promise<string>) = null
   let ssrRenderWithData: null | ((url: string) => { html: string; data: Record<string, unknown> }) =
     null
   // Try common SSR output locations (prefer dist/server)
   const SSR_CANDIDATES = [
+    './dist/server/entry-server.js',
     '../dist/server/entry-server.js',
+    './dist/entry-server.js',
     '../dist/entry-server.js',
-    '../dist/ssr/entry-server.js',
+    './dist/ssr/entry-server.js',
   ] as const
   for (const p of SSR_CANDIDATES) {
     try {
@@ -221,11 +221,13 @@ if (process.env.NODE_ENV === 'production') {
 
   app.get('*', async ({ request, set }: Context) => {
     const url = new URL(request.url)
-    console.log(`🌐 Request: ${url.pathname}`)
+    if (process.env.DEBUG === 'true' || process.env.NODE_ENV === 'development') {
+      console.log(`🌐 Request: ${url.pathname}`)
+    }
 
     // Don't handle API routes
     if (url.pathname.startsWith('/api')) {
-      console.log(`🔄 Skipping API route: ${url.pathname}`)
+      if (process.env.DEBUG === 'true') console.log(`🔄 Skipping API route: ${url.pathname}`)
       return
     }
 
@@ -239,25 +241,32 @@ if (process.env.NODE_ENV === 'production') {
       url.pathname.endsWith('.svg') ||
       url.pathname.endsWith('.ico')
     ) {
-      console.log(`📁 Skipping asset route: ${url.pathname}`)
+      if (process.env.DEBUG === 'true') console.log(`📁 Skipping asset route: ${url.pathname}`)
       return // Let static plugin handle these
     }
 
     try {
-      const htmlText = await indexHtml.text()
-      console.log(`📄 Serving HTML for: ${url.pathname}`)
+      cachedIndexHtml ??= await indexHtml.text()
+      const htmlText = cachedIndexHtml
+      if (process.env.DEBUG === 'true') console.log(`📄 Serving HTML for: ${url.pathname}`)
 
       if (ssrRenderWithData || ssrRender) {
-        console.log(`⚡ Using SSR for: ${url.pathname}`)
+        if (process.env.DEBUG === 'true') console.log(`⚡ Using SSR for: ${url.pathname}`)
         let appHtml = ''
         let data: Record<string, unknown> | undefined
         const { pathname } = url
-        if (ssrRenderWithData) {
+        // Try render function first (simpler)
+        if (ssrRender) {
+          try {
+            appHtml = await ssrRender(pathname)
+          } catch (error) {
+            console.error(`❌ SSR render error:`, error)
+            appHtml = '<div>SSR Error</div>'
+          }
+        } else if (ssrRenderWithData) {
           const { html, data: responseData } = ssrRenderWithData(request.url)
           appHtml = html
           data = responseData
-        } else if (ssrRender) {
-          appHtml = ssrRender(pathname)
         }
         let rendered = htmlText.replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`)
         if (data && Object.keys(data).length) {

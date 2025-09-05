@@ -64,25 +64,26 @@ const app = new Elysia()
 // Serve the built client in production
 if (process.env.NODE_ENV === 'production') {
   // Auto-detect static dir (dist/public preferred, fallback to dist)
-  const STATIC_DIRS = ['dist/public', 'dist'] as const
-  let staticDir: (typeof STATIC_DIRS)[number] = 'dist/public'
+  const STATIC_DIRS = ['./dist/public', './dist'] as const
+  let staticDir: (typeof STATIC_DIRS)[number] = './dist/public'
   try {
     for (const d of STATIC_DIRS) {
       const f = Bun.file(`${d}/index.html`)
       // deno-lint-ignore no-await-in-loop
       if (await f.exists()) {
         staticDir = d
+        console.log(`Using static directory: ${staticDir}`)
         break
       }
     }
-  } catch {
-    // no-op: static dir auto-detection fallback handled below
-    void 0
+  } catch (error) {
+    console.error('Static directory detection error:', error)
+    staticDir = './dist/public' // explicit fallback
   }
 
   app.use(
     staticPlugin({
-      assets: `./${staticDir}`, // Vite build output (relative to project root)
+      assets: staticDir, // Vite build output (relative to project root)
       prefix: '/', // serve at root
       staticLimits: {
         maxAge: process.env.NODE_ENV === 'production' ? '1y' : '0', // Cache assets in production

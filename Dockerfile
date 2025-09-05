@@ -1,39 +1,52 @@
 # syntax=docker/dockerfile:1
 
-# Force linux/amd64 since Koyeb logs show "Linux x64 baseline"
+# Base image: stick to linux/amd64 so Bun pulls the correct native optional deps
 FROM --platform=linux/amd64 oven/bun:1.2 AS base
 WORKDIR /app
 
-# ---------------- Deps stage (prod deps, compilers only here) ----------------
+# -------------------------------------------------------------------
+# Stage: deps – install only production dependencies
+# -------------------------------------------------------------------
 FROM base AS deps
-RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ \
-  && rm -rf /var/lib/apt/lists/*
-
-# Copy ONLY manifest (NO lockfile) so Bun resolves platform-specific optional deps (Rollup, esbuild) for x64
+# Build tools for native modules like better-sqlite3
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends python3 make g++ \
+ && rm -rf /var/lib/apt/lists/*
+# Copy only package manifest so Bun resolves the proper platform-specific
+# optional dependencies (e.g., @rollup/rollup-linux-x64-gnu)
 COPY package.json ./
 RUN bun install --production
 
-# ---------------- Build stage (dev deps for Vite/Rollup) ----------------
+# -------------------------------------------------------------------
+# Stage: build – install dev deps and build the app
+# -------------------------------------------------------------------
 FROM base AS build
-RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ \
-  && rm -rf /var/lib/apt/lists/*
-
-# Again: copy ONLY manifest so the build gets x64-correct devDeps (rollup native binding)
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends python3 make g++ \
+ && rm -rf /var/lib/apt/lists/*
 COPY package.json ./
 RUN bun install
-
-# Bring in the rest of the source and build
+# Copy application code and run the production build (runs vite, SSR, etc.)
 COPY . .
-# Keep NODE_ENV unset so devDeps are available to Vite
 RUN bun run build:production
 
-# ---------------- Runtime stage (slim, no toolchain) ----------------
+# -------------------------------------------------------------------
+# Stage: runtime – minimal image to run the server
+# -------------------------------------------------------------------
 FROM base AS runtime
-ENV NODE_ENV=production \
-    PORT=8000
 WORKDIR /app
 
-# Copy precompiled production deps and built artifacts
+# Set production environment variables. These defaults satisfy the
+# environment validation; override them via Koyeb/Kubernetes/App config as needed.
+ENV NODE_ENV=production
+ENV PORT=8000
+ENV APP_URL=http://localhost:8000
+ENV API_URL=http://localhost:8000
+ENV CORS_ORIGINS=http://localhost:8000
+# Replace this with a secure 32+ character secret in real deployments
+ENV SESSION_SECRET=change_this_to_a_secure_session_secret_32chars
+
+# Copy production dependencies and built artifacts
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json ./
 COPY --from=build /app/dist ./dist
@@ -41,9 +54,14 @@ COPY --from=build /app/server ./server
 COPY --from=build /app/shared ./shared
 COPY --from=build /app/drizzle ./drizzle
 
-# App data dir (e.g., SQLite) and ownership
+# Copy an example env file so Bun loads variables from it if present.
+# If you provide your own .env at deploy time, it will override these defaults.
+COPY .env.example .env
+
+# Create the database directory and fix ownership
 RUN mkdir -p database && chown -R bun:bun /app
 USER bun
 
 EXPOSE 8000
+# Start the server (will run env:validate then server/app.ts)
 CMD ["bun", "run", "start:production"]

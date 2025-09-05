@@ -63,15 +63,29 @@ const app = new Elysia()
 
 // Serve the built client in production
 if (process.env.NODE_ENV === 'production') {
+  // Auto-detect static dir (dist/public preferred, fallback to dist)
+  const STATIC_DIRS = ['dist/public', 'dist'] as const
+  let staticDir: (typeof STATIC_DIRS)[number] = 'dist/public'
+  try {
+    for (const d of STATIC_DIRS) {
+      const f = Bun.file(`${d}/index.html`)
+      // deno-lint-ignore no-await-in-loop
+      if (await f.exists()) {
+        staticDir = d
+        break
+      }
+    }
+  } catch {}
+
   app.use(
     staticPlugin({
       prefix: '/', // serve at root
-      assets: './dist/public', // Vite build output (relative to project root)
+      assets: `./${staticDir}`, // Vite build output (relative to project root)
     })
   )
 
   // SSR render if server bundle exists; fallback to static index.html
-  const indexHtml = Bun.file('dist/public/index.html')
+  const indexHtml = Bun.file(`${staticDir}/index.html`)
   // Type definitions for SSR module
   interface SSRModule {
     render: (url: string) => string
@@ -81,15 +95,21 @@ if (process.env.NODE_ENV === 'production') {
   let ssrRender: null | ((url: string) => string) = null
   let ssrRenderWithData: null | ((url: string) => { html: string; data: Record<string, unknown> }) =
     null
-  try {
-    // @ts-ignore - SSR bundle may not exist during development
-    // eslint-disable-next-line import/no-unresolved
-    const ssr = (await import('../dist/entry-server.js')) as SSRModule
-    ssrRender = ssr.render
-    ssrRenderWithData = ssr.renderWithData
-    // SSR renderer loaded successfully
-  } catch {
-    // SSR renderer not found, serving static HTML
+  // Try common SSR output locations (prefer dist/server)
+  const SSR_CANDIDATES = [
+    '../dist/server/entry-server.js',
+    '../dist/entry-server.js',
+    '../dist/ssr/entry-server.js',
+  ] as const
+  for (const p of SSR_CANDIDATES) {
+    try {
+      // @ts-ignore - SSR bundle may not exist during development
+      // eslint-disable-next-line import/no-unresolved
+      const ssr = (await import(p)) as SSRModule
+      ssrRender = ssr.render
+      ssrRenderWithData = ssr.renderWithData
+      break
+    } catch {}
   }
 
   app.get('*', async ({ request, set }: Context) => {

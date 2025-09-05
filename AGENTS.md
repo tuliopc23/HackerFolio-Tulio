@@ -1,40 +1,44 @@
-# AGENTS.md - Essential Guide for Coding Assistants
+# Repository Guidelines
 
-## Commands
+## Project Structure & Module Organization
 
-- **Build**: `bun run build` (dev) | `bun run build:production` |
-  `bun run preview`
-- **Lint**: `bun run check:lint` | `bun run fix:lint` | `bun run fix:all`
-- **Test**: `bun run test:run` | `vitest run <file-path>` (single test) |
-  `bun run test:coverage`
-- **Types**: `bun run check:types` | `bun run check:all` (complete validation)
-- **Database**: `bun run db:generate` | `bun run db:migrate` |
-  `bun run db:studio`
+- `client/`: React app (routes, components, assets) under `client/src/`. Entrypoints: `entry-client.tsx`, `entry-server.tsx`.
+- `server/`: Elysia server (`app.ts`), API routes in `server/routes/`, DB code in `server/db/`, utilities in `server/lib/`.
+- `shared/`: Cross‑shared TypeScript (`@shared/*`).
+- `database/`: SQLite data files (e.g., `portfolio.db`). Migrations in `drizzle/`.
+- `__tests__/`: Unit/integration tests under `client/__tests__/` and `server/__tests__/`.
+- Build output: `dist/`; config: `tsconfig.json`, `vite.config.ts`, `vitest.config.ts`.
 
-## Code Style
+## Build, Test, and Development Commands
 
-- **TypeScript**: Strict mode, ES2022, path aliases (`@/` → `client/src/`,
-  `@shared/`, `@server/`)
-- **Formatting**: No semicolons, single quotes, 100 char width, 2 spaces,
-  trailing commas
-- **Imports**: Type imports (`import type`), grouped/sorted, newlines between
-  groups
-- **React**: No prop-types, new JSX transform, self-closing tags, fragments
-  (`<>`), named exports
-- **Naming**: PascalCase components, kebab-case files, interfaces over types
-- **Error Handling**: Try/catch for async, error boundaries, Zod validation
-- **Testing**: Vitest + Testing Library, `*.test.{ts,tsx}`, `describe`/`test`
-  structure
+- Develop: `bun run dev` — runs server and client concurrently with hot reload.
+- Build (dev/SSR): `bun run build` | Production: `bun run build:production`.
+- Preview: `bun run preview` — builds then starts prod server.
+- Lint/Types/Format: `bun run check:lint` | `bun run check:types` | `bun run check:format` | All: `bun run check:all`.
+- Fix: `bun run fix:all` (Prettier + ESLint).
+- Tests: `bun run test:run` (CI) | watch: `bun run test:watch` | coverage example: `vitest run --coverage`.
+- Database: `bun run db:generate` (migrations) | `bun run db:migrate` | `bun run db:studio`.
 
-## Architecture
+## Coding Style & Naming Conventions
 
-- **Stack**: React + TypeScript + Vite + Elysia + Drizzle + SQLite + TanStack
-  Router + TanStack Query
-- **Patterns**: SSR production builds, API routes (`/api/`), terminal routes
-  (`/terminal/`)
-- **Database**: Drizzle ORM, migrations (`bun run db:generate`), Zod integration
-- **Data Layer**: TanStack Query for caching, background sync, optimistic
-  updates
-- **Development**: `bun run dev` (client + server), `bun run check:all` before
-  commits</content> </xai:function_call/> </xai:function_call name="run">
-  <parameter name="command">bun run check:all
+- TypeScript strict mode (ES2022). Aliases: `@/*`, `@shared/*`, `@server/*`.
+- Prettier: no semicolons, single quotes, 100‑char width, 2‑space indent, trailing commas.
+- ESLint: React + TS rules, import resolution via TS paths; prefer type‑only imports.
+- React: PascalCase components, named exports, self‑closing tags, fragments (`<>`). Files: kebab‑case.
+
+## Testing Guidelines
+
+- Framework: Vitest + Testing Library (jsdom). Place tests as `*.test.{ts,tsx}` or in `__tests__/`.
+- Run: `bun run test:run` locally and in CI. Coverage target: ≥80% global (see `vitest.config.ts`).
+- Use `client/src/test-utils/` helpers where applicable; mock external boundaries.
+
+## Commit & Pull Request Guidelines
+
+- Commits: Prefer Conventional Commits (e.g., `feat:`, `fix:`, `chore:`). Keep messages imperative and scoped.
+- PRs: Include summary, linked issues, steps to test, and UI screenshots if applicable. Run `bun run check:all` before submitting.
+
+## Security & Configuration Tips
+
+- Environment: copy `.env.example` → `.env` with `bun run env:example`, then validate via `bun run env:validate`.
+- Database: for schema changes, `db:generate` then `db:migrate`. Local DB at `database/`.
+

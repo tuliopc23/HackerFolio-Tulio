@@ -1,6 +1,7 @@
 import type { Context } from 'elysia'
 
 import { env } from './env-config'
+import { getPlatformCorsOrigins } from './platform-detection'
 
 // Rate limiting store - in production, use Redis or similar
 interface RateLimitEntry {
@@ -311,8 +312,6 @@ export const InputSanitizer = {
  * CORS configuration - PaaS-friendly with comprehensive platform detection
  */
 export function getCorsOrigins(): string[] {
-  // Import platform detection (dynamic import to avoid circular dependencies)
-  const { getPlatformCorsOrigins } = require('./platform-detection')
   return getPlatformCorsOrigins()
 }
 

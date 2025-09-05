@@ -50,24 +50,42 @@ const securityMiddleware = (context: Record<string, unknown>) => {
 const app = new Elysia()
   .use(
     cors({
-      origin: (origin) => {
+      origin: (origin: string | undefined | unknown) => {
         // Dynamic CORS - allow same origin and configured origins
         const allowedOrigins = getCorsOrigins()
 
+        // Handle case where CORS library passes request object instead of string
+        let originString: string | undefined
+        if (typeof origin === 'string') {
+          originString = origin
+        } else if (origin && typeof origin === 'object' && 'headers' in origin) {
+          // Extract origin from request headers
+          const headers = (origin as { headers: { get?: (key: string) => string | null; origin?: string } }).headers
+          originString = headers.get?.('origin') ?? headers.origin ?? undefined
+        } else {
+          originString = undefined
+        }
+
         // If no origin (same-origin requests), allow
-        if (!origin) return true
-
-        // Check against configured origins
-        if (allowedOrigins.includes('*')) return true
-        if (allowedOrigins.includes(origin)) return true
-
-        // For PaaS deployments, be more permissive with HTTPS origins
-        if (process.env.NODE_ENV === 'production' && origin.startsWith('https://')) {
-          console.log(`🔍 Allowing HTTPS origin: ${origin}`)
+        if (!originString) {
           return true
         }
 
-        console.log(`❌ Blocked origin: ${origin}`)
+        // Check against configured origins
+        if (allowedOrigins.includes('*')) {
+          return true
+        }
+        if (allowedOrigins.includes(originString)) {
+          return true
+        }
+
+        // For PaaS deployments, be more permissive with HTTPS origins
+        if (process.env.NODE_ENV === 'production' && originString.startsWith('https://')) {
+          console.log(`🔍 Allowing HTTPS origin: ${originString}`)
+          return true
+        }
+
+        console.log(`❌ Blocked origin: ${originString}`)
         return false
       },
       credentials: true,
@@ -101,12 +119,15 @@ if (process.env.NODE_ENV === 'production') {
         try {
           const fs = await import('node:fs')
           const assetExists = fs.existsSync(`${d}/assets`)
-          console.log(`📁 Assets directory exists: ${assetExists}, path: ${d}/assets`)
+          console.log(`📁 Assets directory exists: ${String(assetExists)}, path: ${d}/assets`)
 
           // List files in assets directory for debugging
           if (assetExists) {
             const assetFiles = fs.readdirSync(`${d}/assets`)
-            console.log(`📄 Asset files (${assetFiles.length}):`, assetFiles.slice(0, 5).join(', '))
+            console.log(
+              `📄 Asset files (${String(assetFiles.length)}):`,
+              assetFiles.slice(0, 5).join(', ')
+            )
           }
         } catch (e) {
           console.log('⚠️ Could not check assets directory:', e)
@@ -156,7 +177,7 @@ if (process.env.NODE_ENV === 'production') {
       }
 
       set.headers = {
-        'Content-Type': mimeTypes[fileExtension || ''] || 'application/octet-stream',
+        'Content-Type': mimeTypes[fileExtension ?? ''] ?? 'application/octet-stream',
         'Cache-Control': 'public, max-age=31536000',
       }
 
@@ -270,7 +291,7 @@ const startServer = async () => {
 
     console.log(`🚀 Starting HackerFolio Server`)
     console.log(`📍 Environment: ${env.NODE_ENV}`)
-    console.log(`🔌 Port: ${PORT}`)
+    console.log(`🔌 Port: ${String(PORT)}`)
     console.log('')
 
     // Log detailed platform information
@@ -286,10 +307,10 @@ const startServer = async () => {
     // Start the server
     app.listen({
       port: PORT,
-      hostname: '0.0.0.0' // Essential for containerized deployments
+      hostname: '0.0.0.0', // Essential for containerized deployments
     })
 
-    console.log(`✅ Server successfully started on port ${PORT}`)
+    console.log(`✅ Server successfully started on port ${String(PORT)}`)
 
     // Log CORS origins for debugging
     const corsOrigins = getCorsOrigins()
@@ -298,12 +319,11 @@ const startServer = async () => {
     // Log important URLs
     console.log('')
     console.log(`📋 Important URLs:`)
-    console.log(`   Health Check: http://localhost:${PORT}/api/health`)
+    console.log(`   Health Check: http://localhost:${String(PORT)}/api/health`)
     if (baseUrl) {
       console.log(`   Public Health: ${baseUrl}/api/health`)
       console.log(`   Public App: ${baseUrl}/`)
     }
-
   } catch (error) {
     console.error('❌ Failed to start server:', error)
     console.error('Stack trace:', error instanceof Error ? error.stack : 'Unknown error')
@@ -311,4 +331,4 @@ const startServer = async () => {
   }
 }
 
-startServer()
+void startServer()

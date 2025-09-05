@@ -6,7 +6,7 @@
 export interface PlatformInfo {
   name: string
   detected: boolean
-  url?: string
+  url?: string | undefined
   environment: Record<string, string | undefined>
   features: {
     autoScale: boolean
@@ -20,7 +20,7 @@ export interface PlatformInfo {
  * Detect the current deployment platform
  */
 export function detectPlatform(): PlatformInfo {
-  const env = process.env
+  const { env } = process
 
   // Koyeb detection
   if (env.KOYEB_APP_NAME || env.KOYEB_SERVICE_NAME) {
@@ -197,7 +197,7 @@ export function getPlatformCorsOrigins(): string[] {
  */
 export function getPlatformBaseUrl(): string | undefined {
   const platform = detectPlatform()
-  
+
   // Use manually configured URL first
   if (process.env.APP_URL) {
     return process.env.APP_URL
@@ -212,14 +212,14 @@ export function getPlatformBaseUrl(): string | undefined {
  */
 export function logPlatformInfo(): void {
   const platform = detectPlatform()
-  
+
   console.log(`🏗️  Platform: ${platform.name}`)
   console.log(`🔍 Detected: ${platform.detected ? 'Yes' : 'No'}`)
-  
+
   if (platform.url) {
     console.log(`🌐 URL: ${platform.url}`)
   }
-  
+
   if (Object.keys(platform.environment).length > 0) {
     console.log(`📋 Environment:`)
     Object.entries(platform.environment).forEach(([key, value]) => {
@@ -228,7 +228,7 @@ export function logPlatformInfo(): void {
       }
     })
   }
-  
+
   console.log(`✨ Features:`)
   Object.entries(platform.features).forEach(([key, value]) => {
     console.log(`   ${key}: ${value ? '✅' : '❌'}`)

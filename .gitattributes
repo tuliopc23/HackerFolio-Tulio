@@ -1,0 +1,40 @@
+# Normalize line endings and mark binaries to avoid noisy diffs
+
+# Normalize all text files to LF in the repo
+* text=auto eol=lf
+
+# Common text files
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+*.css text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.sh text eol=lf
+
+# Lockfiles
+bun.lock text eol=lf
+package-lock.json text eol=lf
+
+# Database artifacts should be treated as binary
+*.db binary
+*.db-journal binary
+*.db-shm binary
+*.db-wal binary
+*.sqlite binary
+*.sqlite-shm binary
+*.sqlite-wal binary
+
+# Fonts and images are binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+

@@ -9,20 +9,15 @@ services:
 
     # Git configuration
     git:
-      repository: github.com/your-username/hackerfolio-tulio
+      repository: github.com/tuliopinheirocunha/HackerFolio-Tulio
       branch: main
       auto_deploy: true
 
-    # Bun runtime configuration
+    # Use Docker to guarantee the exact same build as local
     build:
-      type: buildpack
-      buildpack: https://github.com/jakeg/heroku-buildpack-bun
-
-    # Build configuration
-    build_command: bun run build:production
-
-    # Start command - uses bundled database
-    run_command: bun run start:production
+      type: docker
+      dockerfile: Dockerfile
+      context: .
 
     # Instance configuration (minimal for cost optimization)
     instance:
@@ -33,19 +28,18 @@ services:
       min: 0 # Scale to zero when not used
       max: 1 # Single instance for small app
 
-    # Port configuration
+    # Port configuration (container listens on 8000)
     ports:
       - port: 8000
         protocol: http
 
-    # Environment variables (PaaS-friendly - uses bundled database)
+    # Environment variables (uses bundled SQLite DB, no external storage)
     env:
       - name: NODE_ENV
         value: production
       - name: PORT
         value: '8000'
-      # URLs will be auto-detected by the app
-      # DATABASE_URL not set - uses bundled database in Docker image
+      # DATABASE_URL not set - uses bundled DB in the Docker image
       - name: SESSION_SECRET
         secret: session-secret
       - name: LOG_LEVEL

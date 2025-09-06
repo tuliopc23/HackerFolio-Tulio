@@ -155,7 +155,7 @@ export default function TerminalPane() {
         const args = rest
         serverResult = await executeCommand.mutateAsync({ command: cmd, args })
         finalOutput = serverResult.output
-        finalError = serverResult.error
+        finalError = !!serverResult.error
       } catch (err) {
         if (err instanceof Error) {
           finalOutput = err.message
@@ -163,18 +163,6 @@ export default function TerminalPane() {
           finalOutput = 'An unknown error occurred'
         }
         finalError = true
-      }
-
-      // Execute action from server if provided
-      if (serverResult?.action?.type === 'open_url' && serverResult.action.url) {
-        const { url } = serverResult.action
-        if (url.startsWith('http') && typeof window !== 'undefined') {
-          try {
-            window.open(url, '_blank')
-          } catch (_error) {
-            // Failed to open URL - silently ignore
-          }
-        }
       }
 
       // Add to history with final output

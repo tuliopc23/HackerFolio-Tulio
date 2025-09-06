@@ -14,5 +14,5 @@ services:
       - API_URL=http://localhost:8000
       - CORS_ORIGINS=http://localhost:8000
       - SESSION_SECRET=your-secret-key-here
-      - DATABASE_URL=file:./database/portfolio.db
+      - DATABASE_URL=./database/portfolio.db
     restart: unless-stopped

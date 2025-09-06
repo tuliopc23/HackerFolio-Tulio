@@ -7,11 +7,11 @@ interface Project {
   name: string
   description?: string | null | undefined
   tech_stack?: string[] | undefined
-  github_url?: string | undefined
-  live_url?: string | undefined
+  github_url?: string | null | undefined
+  live_url?: string | null | undefined
   status?: string | null | undefined
-  created_at?: string | undefined
-  updated_at?: string | undefined
+  created_at?: string | null | undefined
+  updated_at?: string | null | undefined
 }
 
 function SystemInfoPane() {
@@ -26,12 +26,12 @@ function SystemInfoPane() {
     id: project.id,
     name: project.name,
     description: project.description ?? undefined,
-    tech_stack: project.tech_stack ?? [],
-    github_url: project.github_url,
-    live_url: project.live_url,
+    tech_stack: project.techStack ? (JSON.parse(project.techStack) as string[]) : [],
+    github_url: project.githubUrl,
+    live_url: project.liveUrl,
     status: project.status ?? undefined,
-    created_at: project.created_at,
-    updated_at: project.updated_at,
+    created_at: project.createdAt,
+    updated_at: project.updatedAt,
   }))
 
   useEffect(() => {

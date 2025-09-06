@@ -2,13 +2,7 @@
 import { cors } from '@elysiajs/cors'
 import { Elysia, type Context } from 'elysia'
 
-import {
-  applySecurityHeaders,
-  getCorsOrigins,
-  rateLimit,
-  defaultRateLimitOptions,
-} from './lib/security'
-import { env } from './lib/validation'
+import { env } from './lib/env'
 import { apiLogger } from './middleware/logging'
 import { apiRoutes } from './routes/api'
 import { terminalRoutes } from './routes/terminal'
@@ -18,84 +12,17 @@ const { PORT } = env
 // Database is already set up, no migrations needed
 console.log('✅ Using existing database')
 
-// Security middleware using derive pattern
-const securityMiddleware = (context: Record<string, unknown>) => {
-  // Apply security headers
-  applySecurityHeaders(context as Context)
-
-  // Apply rate limiting only for API requests to reduce overhead on SSR/HTML
-  const req = (context as Context).request
-  const { pathname } = new URL(req.url)
-  const isApi = pathname.startsWith('/api')
-  const rateLimitPassed = isApi ? rateLimit(defaultRateLimitOptions)(context as Context) : true
-
-  if (!rateLimitPassed) {
-    ;(context as Context).set.status = 429
-    return {
-      success: false,
-      error: {
-        code: 'RATE_LIMIT_EXCEEDED',
-        message: 'Too many requests, please try again later',
-      },
-    }
-  }
-
-  return {}
-}
-
 const app = new Elysia()
-
-// We'll add static file serving manually later
 
 app
   .use(
     cors({
-      origin: (origin: unknown) => {
-        // Dynamic CORS - allow same origin and configured origins
-        const allowedOrigins = getCorsOrigins()
-
-        // Handle case where CORS library passes request object instead of string
-        let originString: string | undefined
-        if (typeof origin === 'string') {
-          originString = origin
-        } else if (origin && typeof origin === 'object' && 'headers' in origin) {
-          // Extract origin from request headers
-          const { headers } = origin as {
-            headers: { get?: (key: string) => string | null; origin?: string }
-          }
-          originString = headers.get?.('origin') ?? headers.origin ?? undefined
-        } else {
-          originString = undefined
-        }
-
-        // If no origin (same-origin requests), allow
-        if (!originString) {
-          return true
-        }
-
-        // Check against configured origins
-        if (allowedOrigins.includes('*')) {
-          return true
-        }
-        if (allowedOrigins.includes(originString)) {
-          return true
-        }
-
-        // For PaaS deployments, be more permissive with HTTPS origins
-        if (process.env.NODE_ENV === 'production' && originString.startsWith('https://')) {
-          console.log(`🔍 Allowing HTTPS origin: ${originString}`)
-          return true
-        }
-
-        console.log(`❌ Blocked origin: ${originString}`)
-        return false
-      },
+      origin: true, // Allow all origins for a portfolio
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
     })
   )
-  .derive(securityMiddleware)
   .use(apiLogger)
   .use(apiRoutes)
   .use(terminalRoutes)
@@ -314,10 +241,6 @@ const startServer = async () => {
     })
 
     console.log(`✅ Server successfully started on port ${String(PORT)}`)
-
-    // Log CORS origins for debugging
-    const corsOrigins = getCorsOrigins()
-    console.log(`🔒 CORS Origins: ${corsOrigins.join(', ')}`)
 
     // Log important URLs
     console.log('')

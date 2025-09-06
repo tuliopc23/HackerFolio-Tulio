@@ -9,49 +9,31 @@ import {
   terminalCommandQuerySchema,
   type TerminalCommand,
 } from '../db/schema'
-import {
-  createTerminalError,
-  createDatabaseError,
-  handleApiError,
-  validateApiQuery,
-  validateApiBody,
-  ApiError,
-} from '../lib/error-handling'
-import {
-  rateLimit,
-  terminalRateLimitOptions,
-  InputSanitizer,
-  SecurityLogger,
-  getClientId,
-} from '../lib/security'
+import { createDatabaseError, handleApiError, validateApiQuery, validateApiBody, ApiError } from '../lib/error-handling'
 import { validateData, executeCommandSchema } from '../lib/validation'
 import { createTemplateProcessor } from '../utils/template-processor'
 import { ansi, parseStringArray } from '../utils/terminal'
 
-// Terminal rate limiting middleware
-const terminalRateLimit = (context: Context) => {
-  const rateLimitPassed = rateLimit(terminalRateLimitOptions)(context)
-
-  if (!rateLimitPassed) {
-    SecurityLogger.log({
-      type: 'rate_limit',
-      clientId: getClientId(context),
-      timestamp: Date.now(),
-      details: {
-        endpoint: 'terminal',
-        command: 'rate_limited',
-      },
-    })
-
-    throw new Error('Command rate limit exceeded, please slow down')
+const makeResult = (
+  ok: boolean,
+  command: string,
+  output: string,
+  opts: { startedAt?: number; errorText?: string } = {}
+) => {
+  const now = Date.now()
+  const executionTime = opts.startedAt ? Math.max(0, now - opts.startedAt) : undefined
+  return {
+    success: ok,
+    output,
+    command,
+    timestamp: now,
+    ...(executionTime !== undefined ? { executionTime } : {}),
+    ...(opts.errorText ? { error: opts.errorText } : {}),
   }
-
-  return {} // Elysia derive expects object or void
 }
 
 export const terminalRoutes = new Elysia({ prefix: '/api' })
   .onError(({ error }) => handleApiError(error))
-  .derive(terminalRateLimit)
   .get('/commands', async (context: Context) => {
     try {
       const query = validateApiQuery(terminalCommandQuerySchema, context)
@@ -82,15 +64,16 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
     }
   })
   .post('/commands/execute', async (context: Context) => {
+    let currentCommand = ''
     try {
+      const startedAt = Date.now()
       const { command, args } = validateApiBody(executeCommandSchema, context)
 
-      // Sanitize command input for security
-      const sanitizedCommand = InputSanitizer.sanitizeCommand(command)
+      // Basic input validation
+      const sanitizedCommand = command.trim()
+      currentCommand = sanitizedCommand
       const sanitizedArgs = Array.isArray(args)
-        ? args.map(arg =>
-            typeof arg === 'string' ? InputSanitizer.sanitizeString(arg, 100) : String(arg)
-          )
+        ? args.map(arg => (typeof arg === 'string' ? arg.trim() : String(arg)))
         : []
 
       // Log suspicious commands
@@ -106,15 +89,8 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
       ]
 
       if (suspiciousPatterns.some(pattern => pattern.test(command))) {
-        SecurityLogger.log({
-          type: 'suspicious_request',
-          clientId: getClientId(context),
-          timestamp: Date.now(),
-          details: {
-            command: sanitizedCommand,
-            originalCommand: command.slice(0, 100),
-          },
-        })
+        console.log(`⚠️ Suspicious command blocked: ${command.slice(0, 50)}`)
+        throw new Error('Command not allowed')
       }
 
       // Basic command lookup (allows toggling via is_active)
@@ -123,7 +99,10 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
       ).at(0)
 
       if (!found) {
-        return createTerminalError(ansi.red(`Command not found: ${sanitizedCommand}`))
+        return makeResult(false, sanitizedCommand, ansi.red(`Command not found: ${sanitizedCommand}`), {
+          startedAt,
+          errorText: 'NOT_FOUND',
+        })
       }
 
       switch (sanitizedCommand) {
@@ -181,7 +160,7 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
               .join('\n')
             sections.push(`${header}\n${ansi.dim(line)}\n${body}`)
           }
-          return { output: sections.join('\n\n') }
+          return makeResult(true, sanitizedCommand, sections.join('\n\n'), { startedAt })
         }
 
         case 'projects': {
@@ -312,11 +291,14 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
             })
           }
           if (list.length === 0)
-            return {
-              output: filter
+            return makeResult(
+              true,
+              sanitizedCommand,
+              filter
                 ? ansi.yellow(`No projects found matching '${filter}'`)
                 : ansi.yellow('No projects found'),
-            }
+              { startedAt }
+            )
 
           // Pagination calculations
           const total = list.length
@@ -358,23 +340,29 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
               `${ansi.magenta('Next')}: ${ansi.cyan(`projects ${baseFlags} --page ${String(effPage + 1)}`)}`
             )
           const footer = hints.length ? `\n\n${hints.join('\n')}` : ''
-          return { output: `${header}\n\n${text}${footer}` }
+          return makeResult(true, sanitizedCommand, `${header}\n\n${text}${footer}`, { startedAt })
         }
 
         // Add other command cases here...
         case 'clear':
           // Frontend interprets CLEAR specially
-          return { output: 'CLEAR' }
+          return makeResult(true, sanitizedCommand, 'CLEAR', { startedAt })
 
         case 'cat': {
           // Handle cat command for project details
           if (sanitizedArgs.length === 0) {
-            return createTerminalError(ansi.red('cat: missing file operand'))
+            return makeResult(false, sanitizedCommand, ansi.red('cat: missing file operand'), {
+              startedAt,
+              errorText: 'INVALID_ARGUMENTS',
+            })
           }
 
           const projectName = sanitizedArgs[0]?.toLowerCase()
           if (!projectName) {
-            return createTerminalError(ansi.red('cat: missing file operand'))
+            return makeResult(false, sanitizedCommand, ansi.red('cat: missing file operand'), {
+              startedAt,
+              errorText: 'INVALID_ARGUMENTS',
+            })
           }
 
           // Fetch the specific project
@@ -393,7 +381,12 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
           const project = projects.find(p => p.name && p.name.toLowerCase() === projectName)
 
           if (!project) {
-            return createTerminalError(ansi.red(`cat: ${projectName}: No such file or directory`))
+            return makeResult(
+              false,
+              sanitizedCommand,
+              ansi.red(`cat: ${projectName}: No such file or directory`),
+              { startedAt, errorText: 'NOT_FOUND' }
+            )
           }
 
           // Display detailed project information
@@ -410,7 +403,7 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
             `${ansi.magenta('Status')}: ${ansi.cyan(project.status ?? 'Unknown')}`,
           ].filter(Boolean)
 
-          return { output: parts.join('\n') }
+          return makeResult(true, sanitizedCommand, parts.join('\n'), { startedAt })
         }
 
         default: {
@@ -424,20 +417,12 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
             ? processor.processTemplate(template)
             : ansi.green(`${sanitizedCommand} executed`)
 
-          return { output }
+          return makeResult(true, sanitizedCommand, output, { startedAt })
         }
       }
     } catch (error) {
       console.error('Terminal command execution error:', error)
-      SecurityLogger.log({
-        type: 'invalid_input',
-        clientId: getClientId(context),
-        timestamp: Date.now(),
-        details: {
-          error: error instanceof Error ? error.message : 'Unknown error',
-        },
-      })
-
-      return createTerminalError('Invalid command or arguments')
+      const message = error instanceof Error ? error.message : 'Invalid command or arguments'
+      return makeResult(false, currentCommand, ansi.red(message))
     }
   })

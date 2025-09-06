@@ -12,7 +12,7 @@
 ## Code Style
 
 - **TypeScript**: Strict mode, ES2022, path aliases (`@/` → `client/src/`,
-  `@shared/`, `@server/`)
+  `@server/`)
 - **Formatting**: No semicolons, single quotes, 100 char width, 2 spaces,
   trailing commas
 - **Imports**: Type imports (`import type`), grouped/sorted, newlines between
@@ -28,11 +28,19 @@
 
 - **Stack**: React + TypeScript + Vite + Elysia + Drizzle + SQLite + TanStack
   Router + TanStack Query
-- **Patterns**: SSR production builds, API routes (`/api/`), terminal routes
-  (`/terminal/`)
 - **Database**: SQLite at `database/portfolio.db` (bundled with app, no
   migrations needed)
+- **Patterns**: SSR production builds, API routes (`/api/`), terminal routes
+  (`/terminal/`)
 - **Data Layer**: TanStack Query for caching, background sync, optimistic
   updates
 - **Development**: `bun run dev` (client + server), `bun run check:all` before
   commits
+
+## Simplified Structure
+
+- **No rate limiting** - Portfolio doesn't need API throttling
+- **Simple CORS** - Allows all origins for public portfolio
+- **Minimal security** - Basic headers only in production
+- **Direct database** - No complex migrations or seeding
+- **Clean imports** - Removed duplicate configuration files

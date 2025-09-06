@@ -1,16 +1,7 @@
 {
-  "include": [
-    "client/src/**/*",
-    "client/__tests__/**/*",
-    "shared/**/*",
-    "server/**/*",
-    "test-config/**/*",
-    "reset.d.ts",
-    "vitest.d.ts"
-  ],
+  "include": ["client/src/**/*", "client/__tests__/**/*", "server/**/*", "reset.d.ts", "vitest.d.ts"],
   "exclude": ["node_modules", "build", "dist", "drizzle/**/*", "coverage"],
   "compilerOptions": {
-    // Build options
     "incremental": true,
     "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",
     "noEmit": true,
@@ -22,20 +13,14 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "moduleDetection": "force",
-
-    // Bundler mode
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "verbatimModuleSyntax": false,
-
-    // Language and Environment
     "jsx": "preserve",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "useDefineForClassFields": true,
-
-    // Type Checking - Strict Mode
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -45,8 +30,6 @@
     "noImplicitThis": true,
     "useUnknownInCatchVariables": true,
     "alwaysStrict": true,
-
-    // Additional Checks
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "exactOptionalPropertyTypes": true,
@@ -55,8 +38,6 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": false,
-
-    // Emit
     "declaration": false,
     "declarationMap": false,
     "sourceMap": true,
@@ -64,22 +45,13 @@
     "removeComments": false,
     "downlevelIteration": true,
     "importHelpers": true,
-
-    // Interop Constraints
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-
-    // Completeness
-
-    // Path mapping
     "baseUrl": ".",
     "paths": {
       "@/*": ["./client/src/*"],
-      "@shared/*": ["./shared/*"],
       "@server/*": ["./server/*"]
     },
-
-    // Type definitions
     "types": ["node", "vite/client", "bun", "@total-typescript/ts-reset", "@testing-library/jest-dom", "vitest/globals"]
   },
   "ts-node": {

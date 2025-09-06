@@ -11,13 +11,9 @@ export default defineConfig({
     css: true,
     clearMocks: true,
     restoreMocks: true,
-
-    // Test execution configuration
-    testTimeout: 30000, // 30 seconds per test
-    hookTimeout: 10000, // 10 seconds for hooks
+    testTimeout: 30000,
+    hookTimeout: 10000,
     teardownTimeout: 10000,
-
-    // Test isolation and performance
     isolate: true,
     pool: 'forks',
     poolOptions: {
@@ -27,8 +23,6 @@ export default defineConfig({
         maxForks: 4,
       },
     },
-
-    // File patterns
     include: ['**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     exclude: [
       '**/node_modules/**',
@@ -37,15 +31,12 @@ export default defineConfig({
       '**/.{idea,git,cache,output,temp}/**',
       '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
     ],
-
-    // Coverage configuration
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'json', 'lcov'],
       reportsDirectory: './coverage',
       clean: true,
       skipFull: false,
-
       exclude: [
         'node_modules/',
         'dist/',
@@ -60,12 +51,9 @@ export default defineConfig({
         '**/__mocks__/**',
         'coverage/**',
         'drizzle/**',
-        'server/db/migrate.ts', // Migration script
-        'client/src/entry-*', // Entry points
-        'server/scripts/**', // Build and development scripts
-        'deployment/**', // Deployment configurations
+        'server/db/migrate.ts',
+        'client/src/entry-*',
       ],
-
       thresholds: {
         global: {
           branches: 80,
@@ -73,7 +61,6 @@ export default defineConfig({
           lines: 80,
           statements: 80,
         },
-        // Per-file thresholds for critical modules
         'client/src/components/**/*.{ts,tsx}': {
           branches: 85,
           functions: 85,
@@ -82,33 +69,21 @@ export default defineConfig({
           branches: 90,
           functions: 90,
         },
-        'shared/**/*.ts': {
-          branches: 85,
-          functions: 85,
-        },
       },
     },
-
-    // Reporter configuration
     reporters: ['default', 'junit', 'json'],
     outputFile: {
       junit: './coverage/junit-report.xml',
       json: './coverage/test-results.json',
     },
-
-    // Watch mode configuration
-    watch: false, // Disabled by default for CI
+    watch: false,
   },
-
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'client/src'),
-      '@shared': path.resolve(__dirname, 'shared'),
       '@server': path.resolve(__dirname, 'server'),
     },
   },
-
-  // Optimize deps for testing
   optimizeDeps: {
     include: [
       'react',

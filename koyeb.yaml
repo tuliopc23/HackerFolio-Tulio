@@ -22,7 +22,7 @@ services:
     build_command: bun run build:production
 
     # Start command - uses bundled database
-    run_command: bun run start:bundled
+    run_command: bun run start:production
 
     # Instance configuration (minimal for cost optimization)
     instance:

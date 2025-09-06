@@ -15,17 +15,14 @@ export default function Projects() {
       id: p.id,
       name: p.name,
       description: p.description ?? '',
-      stack: p.tech_stack ?? [],
+      stack: p.techStack ? (JSON.parse(p.techStack) as string[]) : [],
       featured: p.status === 'active',
-      role: 'Full Stack Developer', // Default role
-      ...(p.image && { image: p.image }),
-      ...(p.stats && { stats: p.stats }),
+      role: 'Full Stack Developer',
       links: Object.fromEntries(
         Object.entries({
-          github: p.github_url,
-          demo: p.live_url,
-          appstore: p.appstore_url,
-        }).filter(([, value]) => value !== undefined)
+          github: p.githubUrl,
+          demo: p.liveUrl,
+        }).filter(([, value]) => value != null)
       ) as Record<string, string>,
     }))
   }, [projectsData])
@@ -33,7 +30,6 @@ export default function Projects() {
   return (
     <div className='min-h-screen bg-black text-text-cyan p-6'>
       <div className='max-w-4xl mx-auto'>
-        {/* Header */}
         <div className='mb-8'>
           <Link
             to='/'
@@ -48,18 +44,15 @@ export default function Projects() {
           </p>
         </div>
 
-        {/* State */}
         {loading && <div className='text-text-soft'>Loading projects...</div>}
         {error && <div className='text-terminal-red'>{error.message}</div>}
 
-        {/* Projects Grid */}
         <div className='grid gap-6 md:grid-cols-2'>
           {transformedProjects.map(project => (
             <div
               key={project.id}
               className='pane-border rounded-lg p-6 bg-[#0a0a0a] hover:border-cyan-bright transition-colors'
             >
-              {/* Project Header */}
               <div className='flex items-start justify-between mb-4'>
                 <div>
                   <div className='flex items-center gap-2 mb-2'>
@@ -70,13 +63,11 @@ export default function Projects() {
                 </div>
               </div>
 
-              {/* Description */}
               <p className='text-text-soft mb-4'>{project.description}</p>
 
-              {/* Tech Stack */}
               <div className='mb-4'>
                 <div className='flex flex-wrap gap-2'>
-                  {project.stack.map(tech => (
+                  {project.stack.map((tech: string) => (
                     <span
                       key={tech}
                       className='px-2 py-1 bg-black border border-cyan-soft rounded text-xs text-cyan-bright'
@@ -87,42 +78,6 @@ export default function Projects() {
                 </div>
               </div>
 
-              {/* Project Image */}
-              {project.image && (
-                <div className='mb-4'>
-                  <img
-                    src={project.image}
-                    alt={`${project.name} preview`}
-                    className='w-full h-48 object-cover rounded border border-cyan-soft opacity-80'
-                  />
-                </div>
-              )}
-
-              {/* Stats */}
-              {project.stats && (
-                <div className='grid grid-cols-2 gap-2 mb-4'>
-                  <div className='text-center p-2 bg-black border border-cyan-soft rounded'>
-                    <div className='text-[#33b1ff] font-medium'>
-                      {typeof project.stats.performance === 'string' ||
-                      typeof project.stats.performance === 'number'
-                        ? project.stats.performance
-                        : ''}
-                    </div>
-                    <div className='text-text-soft text-xs'>Performance</div>
-                  </div>
-                  <div className='text-center p-2 bg-black border border-cyan-soft rounded'>
-                    <div className='text-terminal-green font-medium'>
-                      {typeof project.stats.accessibility === 'string' ||
-                      typeof project.stats.accessibility === 'number'
-                        ? project.stats.accessibility
-                        : ''}
-                    </div>
-                    <div className='text-text-soft text-xs'>Accessibility</div>
-                  </div>
-                </div>
-              )}
-
-              {/* Action Links */}
               <div className='flex gap-2'>
                 {project.links.demo && (
                   <a
@@ -145,22 +100,11 @@ export default function Projects() {
                     <Code2 className='w-4 h-4' />
                   </a>
                 )}
-                {project.links.appstore && (
-                  <a
-                    href={project.links.appstore}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='px-4 py-2 border border-cyan-soft text-cyan-soft rounded hover:bg-cyan-soft hover:text-[#f2f4f8] transition-colors text-sm'
-                  >
-                    App Store
-                  </a>
-                )}
               </div>
             </div>
           ))}
         </div>
 
-        {/* Footer */}
         <div className='mt-12 text-center'>
           <p className='text-text-soft'>More projects coming soon...</p>
           <Link

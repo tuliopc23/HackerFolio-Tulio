@@ -52,8 +52,12 @@ tmp/
 .tmp/
 
 # Database files (development)
+# Ignore all sqlite artifacts except the main seeded DB file
 database/*.db
 database/*.db-journal
+database/*.db-shm
+database/*.db-wal
+!database/portfolio.db
 
 # Build configuration cache
 vite.config.ts.*

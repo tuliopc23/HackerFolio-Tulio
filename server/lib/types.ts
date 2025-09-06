@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
-// Re-export server types for client use
-export const projectSchema = z.object({
+// API Response types
+export const apiProjectSchema = z.object({
   id: z.number(),
   name: z.string(),
   description: z.string().nullable(),
@@ -19,7 +19,15 @@ export const terminalCommandSchema = z.object({
   description: z.string().nullable(),
   category: z.string().nullable(),
   responseTemplate: z.string().nullable(),
-  isActive: z.boolean(),
+  isActive: z.boolean().nullable(),
+  templateVariables: z.string().nullable(),
+  argumentSchema: z.string().nullable(),
+  examples: z.string().nullable(),
+  aliases: z.string().nullable(),
+  metadata: z.string().nullable(),
+  permissions: z.string().nullable(),
+  createdAt: z.string().nullable(),
+  updatedAt: z.string().nullable(),
 })
 
 export const portfolioContentSchema = z.object({
@@ -29,47 +37,23 @@ export const portfolioContentSchema = z.object({
   updatedAt: z.string().nullable(),
 })
 
-// API response schemas
-export const commandActionSchema = z.object({
-  type: z.literal('open_url'),
-  url: z.url(),
-})
-
 export const serverCommandResultSchema = z.object({
+  success: z.boolean(),
   output: z.string(),
-  error: z.boolean().optional(),
-  action: commandActionSchema.optional(),
+  command: z.string(),
+  timestamp: z.number(),
+  executionTime: z.number().optional(),
+  error: z.string().optional(),
 })
 
 export const executeCommandRequestSchema = z.object({
-  command: z.string().min(1),
+  command: z.string(),
   args: z.array(z.string()).default([]),
 })
 
-// Client-side API project schema (with transformed fields)
-export const apiProjectSchema = projectSchema
-  .extend({
-    tech_stack: z.array(z.string()).optional(),
-    github_url: z.string().optional(),
-    live_url: z.string().optional(),
-    appstore_url: z.string().optional(),
-    image: z.string().optional(),
-    stats: z
-      .object({
-        performance: z.string().optional(),
-        accessibility: z.string().optional(),
-      })
-      .optional(),
-    created_at: z.string().optional(),
-    updated_at: z.string().optional(),
-  })
-  .omit({ techStack: true, githubUrl: true, liveUrl: true, createdAt: true, updatedAt: true })
-
 // Type exports
-export type Project = z.infer<typeof projectSchema>
+export type ApiProject = z.infer<typeof apiProjectSchema>
 export type TerminalCommand = z.infer<typeof terminalCommandSchema>
 export type PortfolioContent = z.infer<typeof portfolioContentSchema>
-export type CommandAction = z.infer<typeof commandActionSchema>
 export type ServerCommandResult = z.infer<typeof serverCommandResultSchema>
 export type ExecuteCommandRequest = z.infer<typeof executeCommandRequestSchema>
-export type ApiProject = z.infer<typeof apiProjectSchema>

@@ -11,7 +11,7 @@ import {
   serverCommandResultSchema,
   portfolioContentSchema,
   executeCommandRequestSchema,
-} from '../../../shared/types'
+} from '@server/lib/types'
 
 function getBaseUrl(): string {
   if (typeof window === 'undefined') {
@@ -173,4 +173,3 @@ export function prefetchCommands(queryClient: QueryClient) {
 
 // Re-export types for convenience
 export type { ApiProject, TerminalCommand, ServerCommandResult, PortfolioContent }
-export type { CommandAction } from '../../../shared/types'

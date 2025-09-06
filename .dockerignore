@@ -30,12 +30,13 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Database files (will be created fresh in container)
+# Database files (default ignore), but keep the bundled seed DB
 database/*.db
 database/*.sqlite
 database/*.sqlite3
 database/*.sqlite-shm
 database/*.sqlite-wal
+!database/portfolio.db
 
 # Editor directories and files
 .vscode

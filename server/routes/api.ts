@@ -20,33 +20,10 @@ import {
   validateApiQuery,
   ApiError,
 } from '../lib/error-handling'
-import { rateLimit, apiRateLimitOptions, SecurityLogger, getClientId } from '../lib/security'
 import { validateData } from '../lib/validation'
-
-// API rate limiting middleware
-const apiRateLimit = (context: Context) => {
-  const rateLimitPassed = rateLimit(apiRateLimitOptions)(context)
-
-  if (!rateLimitPassed) {
-    SecurityLogger.log({
-      type: 'rate_limit',
-      clientId: getClientId(context),
-      timestamp: Date.now(),
-      details: {
-        endpoint: context.request.url,
-        method: context.request.method,
-      },
-    })
-
-    throw new Error('API rate limit exceeded')
-  }
-
-  return {} // Elysia derive expects object or void
-}
 
 export const apiRoutes = new Elysia({ prefix: '/api' })
   .onError(({ error }) => handleApiError(error))
-  .derive(apiRateLimit)
   .get('/health', async () => {
     // Check if static files exist
     const staticChecks = {

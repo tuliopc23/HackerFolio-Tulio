@@ -72,7 +72,9 @@
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-musl": "4.46.3",
-    "@rollup/rollup-linux-arm64-musl": "4.46.3"
+    "@rollup/rollup-linux-arm64-musl": "4.46.3",
+    "@esbuild/linux-arm64": "0.25.9",
+    "@esbuild/linux-x64": "0.25.9"
   },
   "trustedDependencies": [
     "@getgrit/cli",

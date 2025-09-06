@@ -1,9 +1,7 @@
 // server/app.ts - Simplified main server file
 import { cors } from '@elysiajs/cors'
-import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import { Elysia, type Context } from 'elysia'
 
-import { orm } from './db/drizzle'
 import {
   applySecurityHeaders,
   getCorsOrigins,
@@ -17,14 +15,8 @@ import { terminalRoutes } from './routes/terminal'
 
 const { PORT } = env
 
-// Apply migrations with explicit logging (don’t swallow errors silently)
-try {
-  console.log('🗄️  Running database migrations...')
-  migrate(orm, { migrationsFolder: 'drizzle' })
-  console.log('✅ Database migrations complete')
-} catch (error) {
-  console.error('❌ Database migration error:', error)
-}
+// Database is already set up, no migrations needed
+console.log('✅ Using existing database')
 
 // Security middleware using derive pattern
 const securityMiddleware = (context: Record<string, unknown>) => {

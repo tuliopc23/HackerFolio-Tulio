@@ -1,5 +1,3 @@
-import { existsSync } from 'fs'
-
 import { z } from 'zod'
 
 // Environment-specific schemas
@@ -173,26 +171,11 @@ export function isFeatureEnabled(
 }
 
 // Database configuration helper
-export function getDatabaseConfig(env: EnvConfig) {
-  // In production, prefer bundled database unless explicitly overridden
-  let defaultUrl = 'file:./portfolio.db'
-  if (env.NODE_ENV === 'production' && !env.DATABASE_URL) {
-    // Check if bundled database exists
-    try {
-      const bundledDbPath = './portfolio.db'
-      if (existsSync(bundledDbPath)) {
-        defaultUrl = 'file:./portfolio.db'
-        console.log('📦 Using bundled database for production')
-      }
-    } catch {
-      // Fallback to default if fs check fails
-    }
-  }
-
+export function getDatabaseConfig() {
   return {
-    url: env.DATABASE_URL ?? defaultUrl,
-    poolMin: env.DB_POOL_MIN ?? 2,
-    poolMax: env.DB_POOL_MAX ?? 10,
+    url: './database/portfolio.db',
+    poolMin: 2,
+    poolMax: 10,
   }
 }
 
@@ -251,7 +234,7 @@ export function getExternalApiConfig(env: EnvConfig) {
 export const env = validateEnvironment()
 
 // Export individual configurations for easy use
-export const dbConfig = getDatabaseConfig(env)
+export const dbConfig = getDatabaseConfig()
 export const logConfig = getLogConfig(env)
 export const securityConfig = getSecurityConfig(env)
 export const cacheConfig = getCacheConfig(env)

@@ -193,15 +193,15 @@ export class ConfigurationManager {
       },
 
       database: {
-        url: this.envConfig.DATABASE_URL ?? './database/portfolio.db',
+        url: './database/portfolio.db',
         dialect: 'sqlite',
         migrations: {
           directory: './drizzle',
           tableName: '__drizzle_migrations',
         },
         pool: {
-          min: this.envConfig.DB_POOL_MIN ?? 2,
-          max: this.envConfig.DB_POOL_MAX ?? 10,
+          min: 2,
+          max: 10,
         },
       },
 

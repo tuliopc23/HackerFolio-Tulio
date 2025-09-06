@@ -2,14 +2,12 @@
 
 ## Commands
 
-- **Build**: `bun run build` (dev) | `bun run build:production` |
-  `bun run preview`
+- **Development**: `bun run dev` (client + server with hot reload)
+- **Build**: `bun run build:production` (production build)
+- **Start**: `bun run start:production` (production server)
+- **Test**: `bun run test` | `bun run check:all` (complete validation)
 - **Lint**: `bun run check:lint` | `bun run fix:lint` | `bun run fix:all`
-- **Test**: `bun run test:run` | `vitest run <file-path>` (single test) |
-  `bun run test:coverage`
-- **Types**: `bun run check:types` | `bun run check:all` (complete validation)
-- **Database**: `bun run db:generate` | `bun run db:migrate` |
-  `bun run db:studio`
+- **Types**: `bun run check:types`
 
 ## Code Style
 
@@ -32,7 +30,8 @@
   Router + TanStack Query
 - **Patterns**: SSR production builds, API routes (`/api/`), terminal routes
   (`/terminal/`)
-- **Database**: Drizzle ORM, migrations (`bun run db:generate`), Zod integration
+- **Database**: SQLite at `database/portfolio.db` (bundled with app, no
+  migrations needed)
 - **Data Layer**: TanStack Query for caching, background sync, optimistic
   updates
 - **Development**: `bun run dev` (client + server), `bun run check:all` before

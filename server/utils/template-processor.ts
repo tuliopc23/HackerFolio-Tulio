@@ -268,7 +268,27 @@ ${ansi.green('Download full resume')}: https://tuliopinheirocunha.dev/resume.pdf
       return match
     })
 
-    // Replace ANSI function calls: {{ansi.color("text")}}
+    // Replace nested ANSI function calls: {{ansi.color(ansi.bold("text"))}}
+    result = result.replace(
+      /{{ansi\.(\w+)\(ansi\.(\w+)\("([^"]+)"\)\)}}/g,
+      (match, outerFn: string, innerFn: string, text: string) => {
+        if (
+          outerFn in ansi &&
+          innerFn in ansi &&
+          typeof (ansi as Record<string, unknown>)[outerFn] === 'function' &&
+          typeof (ansi as Record<string, unknown>)[innerFn] === 'function'
+        ) {
+          const outerColorFn = (ansi as Record<string, (text: string) => string>)[outerFn]
+          const innerColorFn = (ansi as Record<string, (text: string) => string>)[innerFn]
+          if (outerColorFn && innerColorFn) {
+            return outerColorFn(innerColorFn(text))
+          }
+        }
+        return match
+      }
+    )
+
+    // Replace simple ANSI function calls: {{ansi.color("text")}}
     result = result.replace(
       /{{ansi\.(\w+)\("([^"]+)"\)}}/g,
       (match, colorName: string, text: string) => {
@@ -303,6 +323,61 @@ ${ansi.green('Download full resume')}: https://tuliopinheirocunha.dev/resume.pdf
         return match
       }
     )
+
+    // Replace method calls on context objects: {{args.join(" ")}}
+    result = result.replace(
+      /{{(\w+)\.(\w+)\("([^"]*)"\)}}/g,
+      (match, objName: string, methodName: string, arg: string) => {
+        if (objName in this.context) {
+          const obj = this.context[objName]
+          if (obj && typeof obj === 'object' && methodName in obj) {
+            const method = (obj as Record<string, unknown>)[methodName]
+            if (typeof method === 'function') {
+              try {
+                return (method as (arg: string) => string).call(obj, arg)
+              } catch {
+                return match
+              }
+            }
+          }
+        }
+        return match
+      }
+    )
+
+    // Replace method calls without quotes: {{args.join(" ")}}
+    result = result.replace(
+      /{{(\w+)\.(\w+)\(([^)]*)\)}}/g,
+      (match, objName: string, methodName: string, argsStr: string) => {
+        if (objName in this.context) {
+          const obj = this.context[objName]
+          if (obj && typeof obj === 'object' && methodName in obj) {
+            const method = (obj as Record<string, unknown>)[methodName]
+            if (typeof method === 'function') {
+              try {
+                // Parse the argument - handle quoted strings
+                let arg: string = argsStr.trim()
+                if (arg.startsWith('"') && arg.endsWith('"')) {
+                  arg = arg.slice(1, -1) // Remove quotes
+                }
+                return (method as (arg: string) => string).call(obj, arg)
+              } catch {
+                return match
+              }
+            }
+          }
+        }
+        return match
+      }
+    )
+
+    // Replace Date constructor calls: {{new Date().toLocaleString()}}
+    result = result.replace(/{{new Date\(\)\.toLocaleString\(\)}}/g, () => {
+      return new Date().toLocaleString()
+    })
+
+    // Handle escaped newlines
+    result = result.replace(/\\n/g, '\n')
 
     return result
   }

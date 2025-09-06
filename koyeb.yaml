@@ -21,8 +21,8 @@ services:
     # Build configuration
     build_command: bun run build:production
 
-    # Start command
-    run_command: bun run start:production
+    # Start command - uses bundled database
+    run_command: bun run start:bundled
 
     # Instance configuration (minimal for cost optimization)
     instance:
@@ -38,13 +38,14 @@ services:
       - port: 8000
         protocol: http
 
-    # Environment variables (PaaS-friendly - no hardcoded URLs)
+    # Environment variables (PaaS-friendly - uses bundled database)
     env:
       - name: NODE_ENV
         value: production
       - name: PORT
         value: '8000'
       # URLs will be auto-detected by the app
+      # DATABASE_URL not set - uses bundled database in Docker image
       - name: SESSION_SECRET
         secret: session-secret
       - name: LOG_LEVEL

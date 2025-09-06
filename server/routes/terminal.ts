@@ -428,6 +428,7 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
         }
       }
     } catch (error) {
+      console.error('Terminal command execution error:', error)
       SecurityLogger.log({
         type: 'invalid_input',
         clientId: getClientId(context),

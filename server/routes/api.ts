@@ -4,6 +4,7 @@ import { Elysia, type Context } from 'elysia'
 import { orm } from '../db/drizzle'
 import {
   projects as tProjects,
+  terminalCommands as tCommands,
   portfolioContent as tContent,
   selectProjectSchema,
   projectQuerySchema,
@@ -63,6 +64,32 @@ export const apiRoutes = new Elysia({ prefix: '/api' })
       console.error('Health check static file error:', error)
     }
 
+    // DB status: table presence and basic counts
+    const db = {
+      ok: false as boolean,
+      counts: { terminal_commands: 0, projects: 0 },
+      error: undefined as string | undefined,
+    }
+
+    try {
+      // Light-weight count queries; if tables are missing, this will throw
+      const tc = await orm
+        .select({ c: sql`count(*)`.mapWith(Number) })
+        .from(tCommands)
+        .limit(1)
+      const pj = await orm
+        .select({ c: sql`count(*)`.mapWith(Number) })
+        .from(tProjects)
+        .limit(1)
+
+      db.counts.terminal_commands = tc.at(0)?.c ?? 0
+      db.counts.projects = pj.at(0)?.c ?? 0
+      db.ok = true
+    } catch (error) {
+      db.ok = false
+      db.error = error instanceof Error ? error.message : 'Unknown DB error'
+    }
+
     return createSuccessResponse({
       status: 'ok',
       timestamp: new Date().toISOString(),
@@ -70,6 +97,7 @@ export const apiRoutes = new Elysia({ prefix: '/api' })
       environment: process.env.NODE_ENV,
       port: process.env.PORT,
       staticFiles: staticChecks,
+      db,
     })
   })
   .get('/profile', () =>

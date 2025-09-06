@@ -1,2 +1,2 @@
-web: bun run start:production
+web: bun run start:bundled
 

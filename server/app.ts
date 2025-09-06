@@ -17,11 +17,13 @@ import { terminalRoutes } from './routes/terminal'
 
 const { PORT } = env
 
-// Apply migrations and seed initial data (ignore if table exists)
+// Apply migrations with explicit logging (don’t swallow errors silently)
 try {
+  console.log('🗄️  Running database migrations...')
   migrate(orm, { migrationsFolder: 'drizzle' })
-} catch {
-  // Migration already applied or table exists
+  console.log('✅ Database migrations complete')
+} catch (error) {
+  console.error('❌ Database migration error:', error)
 }
 
 // Security middleware using derive pattern

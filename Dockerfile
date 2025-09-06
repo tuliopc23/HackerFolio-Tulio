@@ -46,10 +46,17 @@ COPY . .
 # Build the application for production
 RUN NODE_ENV=production bun run build:production
 
+# Prepare bundled database with application data
+RUN echo "🗄️ Preparing bundled database..." && \
+    bun run db:migrate && \
+    bun run db:seed && \
+    echo "✅ Database prepared with application data"
+
 # Verify build artifacts exist
 RUN test -f dist/public/index.html || (echo "❌ Build failed: index.html not found" && exit 1)
 RUN test -d dist/public/assets || (echo "❌ Build failed: assets directory not found" && exit 1)
 RUN test -f dist/server/entry-server.js || (echo "❌ Build failed: SSR bundle not found" && exit 1)
+RUN test -f portfolio.db || (echo "❌ Build failed: bundled database not found" && exit 1)
 
 # List build artifacts for debugging
 RUN echo "✅ Build artifacts:" && \
@@ -82,24 +89,27 @@ COPY --from=deps /app/node_modules ./node_modules
 # Copy package.json for runtime
 COPY package.json ./
 
-# Copy built application
+# Copy built application and bundled database
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/server ./server
 COPY --from=build /app/shared ./shared
 COPY --from=build /app/drizzle ./drizzle
+COPY --from=build /app/portfolio.db ./portfolio.db
 
 # Copy environment template (will be overridden by platform)
 COPY .env.example .env
 
 # Create necessary directories with proper permissions
-RUN mkdir -p database logs tmp && \
+RUN mkdir -p logs tmp && \
     chown -R bun:bun /app && \
-    chmod -R 755 /app
+    chmod -R 755 /app && \
+    chmod 644 /app/portfolio.db
 
 # Verify runtime artifacts
 RUN test -f dist/public/index.html || (echo "❌ Runtime error: index.html missing" && exit 1)
 RUN test -d dist/public/assets || (echo "❌ Runtime error: assets missing" && exit 1)
 RUN test -f server/app.ts || (echo "❌ Runtime error: server app missing" && exit 1)
+RUN test -f portfolio.db || (echo "❌ Runtime error: bundled database missing" && exit 1)
 
 # Switch to non-root user for security
 USER bun
@@ -111,5 +121,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
 # Expose port (will be overridden by PaaS)
 EXPOSE 8000
 
-# Start the application with proper error handling
-CMD ["sh", "-c", "bun run start:production || (echo '❌ Server failed to start' && exit 1)"]
+# Start the application with bundled database
+CMD ["sh", "-c", "bun run start:bundled || (echo '❌ Server failed to start' && exit 1)"]

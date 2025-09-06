@@ -1,6 +1,6 @@
 import { Database } from 'bun:sqlite'
-import { resolve, isAbsolute, dirname, join } from 'path'
 import { existsSync } from 'fs'
+import { resolve, isAbsolute, dirname, join } from 'path'
 
 import { drizzle, type BunSQLiteDatabase } from 'drizzle-orm/bun-sqlite'
 

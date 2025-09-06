@@ -1,15 +1,16 @@
 # Simple Dockerfile for portfolio app with bundled SQLite database
+# Alpine base as requested
 FROM oven/bun:1.2-alpine AS base
 WORKDIR /app
 
 # Install build dependencies for native modules (better-sqlite3)
-RUN apk add --no-cache python3 make g++ py3-pip
+RUN apk add --no-cache python3 py3-pip make g++
 
-# Install dependencies using the correct Bun lock file
+# Install dependencies using the Bun lock file
 COPY package.json bun.lock* ./
 RUN bun install --frozen-lockfile
 
-# Copy source code and database
+# Copy source code and database (the SQLite file is bundled with the app)
 COPY . .
 
 # Build the application (includes database bundling)

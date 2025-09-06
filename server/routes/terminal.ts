@@ -9,7 +9,13 @@ import {
   terminalCommandQuerySchema,
   type TerminalCommand,
 } from '../db/schema'
-import { createDatabaseError, handleApiError, validateApiQuery, validateApiBody, ApiError } from '../lib/error-handling'
+import {
+  createDatabaseError,
+  handleApiError,
+  validateApiQuery,
+  validateApiBody,
+  ApiError,
+} from '../lib/error-handling'
 import { validateData, executeCommandSchema } from '../lib/validation'
 import { createTemplateProcessor } from '../utils/template-processor'
 import { ansi, parseStringArray } from '../utils/terminal'
@@ -99,10 +105,15 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
       ).at(0)
 
       if (!found) {
-        return makeResult(false, sanitizedCommand, ansi.red(`Command not found: ${sanitizedCommand}`), {
-          startedAt,
-          errorText: 'NOT_FOUND',
-        })
+        return makeResult(
+          false,
+          sanitizedCommand,
+          ansi.red(`Command not found: ${sanitizedCommand}`),
+          {
+            startedAt,
+            errorText: 'NOT_FOUND',
+          }
+        )
       }
 
       switch (sanitizedCommand) {

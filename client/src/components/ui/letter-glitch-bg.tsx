@@ -21,7 +21,7 @@ const LetterGlitchBackground = ({
   smooth?: boolean
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const animationRef = useRef<number | null>(null)
+  const animationRef = useRef<number | NodeJS.Timeout | null>(null)
   const letters = useRef<
     Array<{
       char: string
@@ -195,17 +195,20 @@ const LetterGlitchBackground = ({
     const { width, height } = canvas.getBoundingClientRect()
 
     ctx.clearRect(0, 0, width, height)
+
+    // Set font once, outside the loop for slight optimization
     ctx.font = `${String(fontSize)}px 'JetBrains Mono', 'Courier New', monospace`
     ctx.textBaseline = 'top'
 
+    // Pre-calculate cols to avoid redundant calculations
+    const cols = Math.max(1, grid.current.columns)
     letters.current.forEach((letter, index) => {
-      const cols = Math.max(1, grid.current.columns)
       const x = (index % cols) * charWidth
       const y = Math.floor(index / cols) * charHeight
       ctx.fillStyle = letter.color || '#666666'
       ctx.fillText(letter.char || ' ', x, y)
     })
-  }, [fontSize])
+  }, [fontSize, charWidth, charHeight])
 
   const resizeCanvas = useCallback(() => {
     const canvas = canvasRef.current
@@ -289,7 +292,8 @@ const LetterGlitchBackground = ({
       handleSmoothTransitions()
     }
 
-    animationRef.current = requestAnimationFrame(animate)
+    // Use setTimeout for controlled updates, better for WebKit
+    animationRef.current = setTimeout(animate, Math.max(16, glitchSpeed))
   }, [glitchSpeed, smooth, updateLetters, handleSmoothTransitions, drawLetters])
 
   useEffect(() => {
@@ -306,7 +310,7 @@ const LetterGlitchBackground = ({
       clearTimeout(resizeTimeout)
       resizeTimeout = setTimeout(() => {
         if (animationRef.current) {
-          cancelAnimationFrame(animationRef.current)
+          clearTimeout(animationRef.current)
         }
         resizeCanvas()
         animate()
@@ -319,7 +323,7 @@ const LetterGlitchBackground = ({
 
     return () => {
       if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current)
+        clearTimeout(animationRef.current)
       }
       if (typeof window !== 'undefined') {
         window.removeEventListener('resize', handleResize)

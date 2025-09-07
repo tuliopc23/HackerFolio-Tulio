@@ -201,6 +201,8 @@
 .crt-screen {
   position: relative;
   background: var(--term-bg);
+  /* Add will-change hint for hardware acceleration */
+  will-change: transform;
 }
 
 .crt-screen::before {
@@ -220,6 +222,10 @@
     transparent 4px
   );
   z-index: 10;
+  /* Add transform3d for WebKit GPU acceleration */
+  transform: translateZ(0);
+  /* Use CSS animation instead of opacity changes */
+  animation: scanlines 2s ease-in-out infinite;
 }
 
 .crt-screen::after {
@@ -232,13 +238,30 @@
   pointer-events: none;
   background: radial-gradient(ellipse at center, transparent 60%, rgba(10, 15, 28, 0.3) 100%);
   z-index: 11;
+  /* Promote to GPU layer */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Replace opacity-based scanlines with transform */
+@keyframes scanlines {
+  0% {
+    transform: translateZ(0) translateY(0px);
+  }
+  50% {
+    transform: translateZ(0) translateY(2px);
+  }
+  100% {
+    transform: translateZ(0) translateY(0px);
+  }
 }
 
 .phosphor-glow {
-  text-shadow:
-    0 0 5px currentColor,
-    0 0 10px currentColor,
-    0 0 15px currentColor;
+  /* Use single text-shadow layer instead of multiple for WebKit performance */
+  text-shadow: 0 0 10px currentColor;
+  /* Add transform hint for GPU acceleration */
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .terminal-output {

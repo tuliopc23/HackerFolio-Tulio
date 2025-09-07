@@ -1,6 +1,15 @@
 import { motion, useMotionValue, useTransform, animate } from 'motion/react'
 import React, { useEffect, useRef, useState } from 'react'
 
+// WebKit detection for performance optimizations
+const isWebkit = () => {
+  return (
+    typeof window !== 'undefined' &&
+    /WebKit/.test(navigator.userAgent) &&
+    !/Chrome/.test(navigator.userAgent)
+  )
+}
+
 import './loading-screen.css'
 import { MACINTOSH_ASCII } from '../assets/ascii/macintosh'
 
@@ -39,6 +48,10 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
   const doneRef = useRef(false)
   const timeoutRef = useRef<number | null>(null)
 
+  // Adjust animation speeds for WebKit performance
+  const typewriterSpeed = isWebkit() ? 25 : 15
+  const blinkSpeed = isWebkit() ? 800 : 600
+
   useEffect(() => {
     // Animate progress from 0 to 100 linearly over exactly 4 seconds
     const controls = animate(progress, 100, {
@@ -71,7 +84,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
               showMessage(index + 1)
             }, 150)
           }
-        }, 15) // Faster typing speed
+        }, typewriterSpeed)
       }
 
       // Start first message after a brief delay
@@ -82,10 +95,10 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
 
     startMessageSequence()
 
-    // Cursor blinking effect
+    // Cursor blinking effect - reduced frequency for WebKit
     const cursorInterval = setInterval(() => {
       setShowCursor(prev => !prev)
-    }, 600)
+    }, blinkSpeed)
 
     // Trigger completion exactly at 4000ms - this guarantees timing
     timeoutRef.current = window.setTimeout(() => {

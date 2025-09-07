@@ -38,17 +38,20 @@
   );
   z-index: 1;
   animation: scanlines 2s linear infinite;
+  /* Add GPU acceleration for WebKit */
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 @keyframes scanlines {
   0% {
-    opacity: 0.8;
+    transform: translateZ(0) translateY(0px);
   }
   50% {
-    opacity: 0.6;
+    transform: translateZ(0) translateY(2px);
   }
   100% {
-    opacity: 0.8;
+    transform: translateZ(0) translateY(0px);
   }
 }
 
@@ -85,20 +88,15 @@
   animation: phosphor-pulse 3s ease-in-out infinite alternate;
 }
 
+/* Simplified phosphor-pulse for WebKit performance */
 @keyframes phosphor-pulse {
-  0% {
-    text-shadow:
-      0 0 5px currentColor,
-      0 0 10px currentColor,
-      0 0 15px currentColor,
-      0 0 20px rgba(66, 190, 101, 0.3);
-  }
+  0%,
   100% {
-    text-shadow:
-      0 0 8px currentColor,
-      0 0 15px currentColor,
-      0 0 25px currentColor,
-      0 0 35px rgba(66, 190, 101, 0.5);
+    /* Only animate the blur radius, not multiple layers */
+    text-shadow: 0 0 10px currentColor;
+  }
+  50% {
+    text-shadow: 0 0 15px currentColor;
   }
 }
 
@@ -383,17 +381,20 @@
   );
   z-index: 1;
   animation: scanlines 2s linear infinite;
+  /* Add GPU acceleration for WebKit */
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 @keyframes scanlines {
   0% {
-    opacity: 0.8;
+    transform: translateZ(0) translateY(0px);
   }
   50% {
-    opacity: 0.6;
+    transform: translateZ(0) translateY(2px);
   }
   100% {
-    opacity: 0.8;
+    transform: translateZ(0) translateY(0px);
   }
 }
 
@@ -430,20 +431,15 @@
   animation: phosphor-pulse 3s ease-in-out infinite alternate;
 }
 
+/* Simplified phosphor-pulse for WebKit performance */
 @keyframes phosphor-pulse {
-  0% {
-    text-shadow:
-      0 0 5px currentColor,
-      0 0 10px currentColor,
-      0 0 15px currentColor,
-      0 0 20px rgba(66, 190, 101, 0.3);
-  }
+  0%,
   100% {
-    text-shadow:
-      0 0 8px currentColor,
-      0 0 15px currentColor,
-      0 0 25px currentColor,
-      0 0 35px rgba(66, 190, 101, 0.5);
+    /* Only animate the blur radius, not multiple layers */
+    text-shadow: 0 0 10px currentColor;
+  }
+  50% {
+    text-shadow: 0 0 15px currentColor;
   }
 }
 
@@ -563,5 +559,39 @@
 
   .track {
     border: 2px solid #ff00ff;
+  }
+}
+
+/* WebKit-specific optimizations */
+@supports (-webkit-appearance: none) {
+  .crt-scanlines {
+    /* Disable scanlines animation on WebKit */
+    animation: none;
+    /* Reduce opacity to minimize composition overhead */
+    opacity: 0.3;
+  }
+
+  .phosphor-glow {
+    /* Simplify glow for WebKit */
+    text-shadow: 0 0 8px currentColor;
+    animation: none;
+  }
+
+  .ascii {
+    /* Disable complex animations */
+    animation: none;
+    will-change: auto;
+  }
+}
+
+/* Disable heavy effects on low-power devices */
+@media (max-resolution: 1.5dppx) and (-webkit-min-device-pixel-ratio: 0) {
+  .crt-screen::before,
+  .crt-screen::after {
+    display: none;
+  }
+
+  .phosphor-glow {
+    text-shadow: 0 0 3px currentColor;
   }
 }

@@ -21,7 +21,7 @@ const LetterGlitchBackground = ({
   smooth?: boolean
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const animationRef = useRef<number | NodeJS.Timeout | null>(null)
+  const animationRef = useRef<number | null>(null) // Use number for requestAnimationFrame ID
   const letters = useRef<
     Array<{
       char: string
@@ -281,6 +281,9 @@ const LetterGlitchBackground = ({
   }, [drawLetters])
 
   const animate = useCallback(() => {
+    // Schedule the next frame using requestAnimationFrame
+    animationRef.current = requestAnimationFrame(animate)
+
     const now = Date.now()
     if (now - lastGlitchTime.current >= glitchSpeed) {
       updateLetters()
@@ -291,9 +294,6 @@ const LetterGlitchBackground = ({
     if (smooth) {
       handleSmoothTransitions()
     }
-
-    // Use setTimeout for controlled updates, better for WebKit
-    animationRef.current = setTimeout(animate, Math.max(16, glitchSpeed))
   }, [glitchSpeed, smooth, updateLetters, handleSmoothTransitions, drawLetters])
 
   useEffect(() => {
@@ -310,7 +310,7 @@ const LetterGlitchBackground = ({
       clearTimeout(resizeTimeout)
       resizeTimeout = setTimeout(() => {
         if (animationRef.current) {
-          clearTimeout(animationRef.current)
+          cancelAnimationFrame(animationRef.current)
         }
         resizeCanvas()
         animate()
@@ -323,7 +323,7 @@ const LetterGlitchBackground = ({
 
     return () => {
       if (animationRef.current) {
-        clearTimeout(animationRef.current)
+        cancelAnimationFrame(animationRef.current)
       }
       if (typeof window !== 'undefined') {
         window.removeEventListener('resize', handleResize)

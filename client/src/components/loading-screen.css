@@ -80,23 +80,23 @@
 
 /* Phosphor Glow Effect */
 .phosphor-glow {
+  /* Use a more intense, static text-shadow */
   text-shadow:
-    0 0 5px currentColor,
-    0 0 10px currentColor,
-    0 0 15px currentColor,
-    0 0 20px rgba(66, 190, 101, 0.3);
+    0 0 8px currentColor,
+    0 0 16px rgba(66, 190, 101, 0.5);
+  /* Animate opacity for a performant pulse effect */
   animation: phosphor-pulse 3s ease-in-out infinite alternate;
+  will-change: opacity;
 }
 
 /* Simplified phosphor-pulse for WebKit performance */
 @keyframes phosphor-pulse {
   0%,
   100% {
-    /* Only animate the blur radius, not multiple layers */
-    text-shadow: 0 0 10px currentColor;
+    opacity: 0.8;
   }
   50% {
-    text-shadow: 0 0 15px currentColor;
+    opacity: 1;
   }
 }
 
@@ -423,23 +423,23 @@
 
 /* Phosphor Glow Effect */
 .phosphor-glow {
+  /* Use a more intense, static text-shadow */
   text-shadow:
-    0 0 5px currentColor,
-    0 0 10px currentColor,
-    0 0 15px currentColor,
-    0 0 20px rgba(66, 190, 101, 0.3);
+    0 0 8px currentColor,
+    0 0 16px rgba(66, 190, 101, 0.5);
+  /* Animate opacity for a performant pulse effect */
   animation: phosphor-pulse 3s ease-in-out infinite alternate;
+  will-change: opacity;
 }
 
 /* Simplified phosphor-pulse for WebKit performance */
 @keyframes phosphor-pulse {
   0%,
   100% {
-    /* Only animate the blur radius, not multiple layers */
-    text-shadow: 0 0 10px currentColor;
+    opacity: 0.8;
   }
   50% {
-    text-shadow: 0 0 15px currentColor;
+    opacity: 1;
   }
 }
 

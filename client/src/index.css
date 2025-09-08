@@ -594,6 +594,22 @@ select:focus-visible {
   background-image: radial-gradient(circle, var(--tw-gradient-stops));
 }
 
+/* WebKit-specific optimizations to reduce rendering overhead */
+@supports (-webkit-appearance: none) {
+  .crt-screen::before {
+    /* Disable expensive scanline animation on WebKit */
+    animation: none;
+    /* Use a static, simpler gradient */
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(190, 149, 255, 0.02) 0px,
+      rgba(190, 149, 255, 0.02) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  }
+}
+
 /* ANSI styling support */
 .ansi-bold {
   font-weight: 700;

@@ -1,5 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
-import { useState, useEffect, useRef, useCallback, useMemo, type KeyboardEvent } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo, type KeyboardEvent, memo } from 'react'
 
 import { useFocusRegistration } from '@/components/accessibility/focus-manager'
 import { useTerminalAccessibility } from '@/hooks/use-accessibility'
@@ -194,6 +194,37 @@ export default function TerminalPane() {
     [processor, navigate, setTheme, executeCommand, announceCommand, announceError, announce]
   )
 
+  // OPTIMIZATION: Memoized component to render a single history entry.
+  // This prevents re-rendering of the entire visible history on each new command.
+  const HistoryEntry = memo(function HistoryEntry({
+    entry,
+    isOldEntry,
+  }: {
+    entry: TerminalHistory
+    isOldEntry: boolean
+  }) {
+    return (
+      <div key={entry.id}>
+        <div className='flex'>
+          <span className='font-semibold'>
+            <span className='text-green-400'>user@</span>
+            <span className='text-pink-400'>portfolio</span>
+            <span className='text-green-400'>:~$</span>
+          </span>
+          <span className='ml-2 text-cyan-bright'>{entry.command}</span>
+        </div>
+        {entry.output && (
+          <TypedTerminalOutput
+            output={entry.output}
+            isError={entry.error ?? false}
+            animate={!isOldEntry} // Only animate the most recent entries
+          />
+        )}
+      </div>
+    )
+  })
+  HistoryEntry.displayName = 'HistoryEntry'
+
   // OPTIMIZATION: Virtualize history to show only recent entries for performance
   const visibleHistory = useMemo(() => {
     // Show last 50 entries to prevent performance issues with large histories
@@ -254,26 +285,14 @@ export default function TerminalPane() {
         aria-describedby='terminal-help'
         tabIndex={-1}
       >
-        {/* Command History - OPTIMIZED: Only render recent entries */}
+        {/* Command History - OPTIMIZED: Use memoized component */}
         <div className='terminal-output space-y-2'>
           {visibleHistory.map((entry, index) => (
-            <div key={`history-${entry.id}`}>
-              <div className='flex'>
-                <span className='font-semibold'>
-                  <span className='text-green-400'>user@</span>
-                  <span className='text-pink-400'>portfolio</span>
-                  <span className='text-green-400'>:~$</span>
-                </span>
-                <span className='ml-2 text-cyan-bright'>{entry.command}</span>
-              </div>
-              {entry.output && (
-                <TypedTerminalOutput
-                  output={entry.output}
-                  isError={entry.error ?? false}
-                  animate={index < 5} // Only animate first 5 entries to avoid performance issues
-                />
-              )}
-            </div>
+            <HistoryEntry
+              key={entry.id}
+              entry={entry}
+              isOldEntry={visibleHistory.length - 1 - index > 1} // Only animate the most recent entry
+            />
           ))}
         </div>
 

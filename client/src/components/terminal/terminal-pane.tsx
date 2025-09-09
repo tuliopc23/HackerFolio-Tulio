@@ -1,5 +1,6 @@
 import { useNavigate } from '@tanstack/react-router'
-import { useState, useEffect, useRef, useCallback, useMemo, type KeyboardEvent, memo } from 'react'
+import { useVirtualizer } from '@tanstack/react-virtual'
+import { useState, useEffect, useRef, useCallback, type KeyboardEvent, memo } from 'react'
 
 import { useFocusRegistration } from '@/components/accessibility/focus-manager'
 import { useTerminalAccessibility } from '@/hooks/use-accessibility'
@@ -56,6 +57,16 @@ export default function TerminalPane() {
   const outputRef = useRef<HTMLDivElement>(null)
   const terminalRef = useRef<HTMLDivElement>(null)
 
+  // Virtualizer for terminal history
+  const rowVirtualizer = useVirtualizer({
+    count: history.length,
+    getScrollElement: () => outputRef.current,
+    estimateSize: () => 64, // rough average height per entry
+    overscan: 8,
+    measureElement: (el: Element | null) =>
+      el ? (el as HTMLElement).getBoundingClientRect().height : 0,
+  })
+
   // TanStack Query hooks
   const { data: commands } = useCommands()
   const executeCommand = useExecuteCommand()
@@ -94,11 +105,17 @@ export default function TerminalPane() {
   }, [commands, processor])
 
   useEffect(() => {
-    // Scroll to bottom when history updates
-    if (outputRef.current) {
-      outputRef.current.scrollTop = outputRef.current.scrollHeight
+    // Scroll to bottom when history updates (ensure latest is visible)
+    if (history.length > 0) {
+      try {
+        rowVirtualizer.scrollToIndex(history.length - 1, { align: 'end' })
+      } catch {
+        if (outputRef.current) {
+          outputRef.current.scrollTop = outputRef.current.scrollHeight
+        }
+      }
     }
-  }, [history])
+  }, [history.length, rowVirtualizer])
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -222,11 +239,7 @@ export default function TerminalPane() {
 
   // Uses top-level HistoryEntry memoized component
 
-  // OPTIMIZATION: Virtualize history to show only recent entries for performance
-  const visibleHistory = useMemo(() => {
-    // Show last 50 entries to prevent performance issues with large histories
-    return history.slice(Math.max(0, history.length - 50))
-  }, [history])
+  // Virtualization replaces manual slicing of history
 
   const handleAutocomplete = () => {
     const suggestions = processor.getAutocomplete(input)
@@ -282,15 +295,37 @@ export default function TerminalPane() {
         aria-describedby='terminal-help'
         tabIndex={-1}
       >
-        {/* Command History - OPTIMIZED: Use memoized component */}
-        <div className='terminal-output space-y-2'>
-          {visibleHistory.map((entry, index) => (
-            <HistoryEntry
-              key={entry.id}
-              entry={entry}
-              isOldEntry={visibleHistory.length - 1 - index > 1} // Only animate the most recent entry
-            />
-          ))}
+        {/* Command History - Virtualized for performance */}
+        <div
+          style={{
+            height: `${rowVirtualizer.getTotalSize().toString()}px`,
+            position: 'relative',
+          }}
+        >
+          {rowVirtualizer.getVirtualItems().map(virtualRow => {
+            const idx = virtualRow.index
+            if (idx < 0 || idx >= history.length) return null
+            const entry = history[idx] ?? null
+            if (!entry) return null
+            return (
+              <div
+                key={entry.id}
+                data-index={idx}
+                ref={rowVirtualizer.measureElement}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  transform: `translateY(${virtualRow.start.toString()}px)`,
+                }}
+              >
+                <div className='terminal-output pb-2'>
+                  <HistoryEntry entry={entry} isOldEntry={history.length - 1 - idx > 1} />
+                </div>
+              </div>
+            )
+          })}
         </div>
 
         {/* Current Command Line */}

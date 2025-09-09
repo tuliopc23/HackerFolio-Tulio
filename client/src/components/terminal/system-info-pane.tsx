@@ -21,8 +21,8 @@ function SystemInfoPane() {
   // Use TanStack Query for projects data
   const { data: projectsData = [], isLoading: projectsLoading } = useProjects()
 
-  // Process projects data for display
-  const projects: Project[] = projectsData.slice(0, 3).map(project => ({
+  // Process projects data for display (use all projects; rotate in UI)
+  const projects: Project[] = projectsData.map(project => ({
     id: project.id,
     name: project.name,
     description: project.description ?? undefined,
@@ -33,6 +33,31 @@ function SystemInfoPane() {
     created_at: project.createdAt,
     updated_at: project.updatedAt,
   }))
+
+  // Rotate through projects one at a time
+  const [currentProjectIndex, setCurrentProjectIndex] = useState(0)
+
+  // Current project (safe selection with fallback)
+  const currentProject: Project | undefined =
+    projects.length > 0 ? projects[currentProjectIndex % projects.length] : undefined
+
+  // Reset to first project when data changes
+  useEffect(() => {
+    setCurrentProjectIndex(0)
+  }, [projectsData.length])
+
+  // Auto-advance the displayed project
+  useEffect(() => {
+    const total = projectsData.length
+    if (total <= 1) return
+    const intervalMs = 3000
+    const id = setInterval(() => {
+      setCurrentProjectIndex(idx => (idx + 1) % total)
+    }, intervalMs)
+    return () => {
+      clearInterval(id)
+    }
+  }, [projectsData.length])
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -239,49 +264,50 @@ function SystemInfoPane() {
         {/* Bottom Cards Section */}
         <div className='flex gap-3 mt-4'>
           {/* Recent Projects Card */}
-          <div className='flex-1 bg-black/30 border border-[#393939] rounded-lg p-3 text-xs font-mono'>
-            <div className='text-[#be95ff] text-xs font-semibold tracking-wide uppercase mb-2'>
+          <div className='flex-1 bg-black/30 border border-[#393939] rounded-lg p-3 text-xs font-mono pane-border'>
+            <div className='text-[#be95ff] text-xs font-semibold tracking-wide uppercase mb-2 phosphor-glow'>
               RECENT PROJECTS
             </div>
             {projectsLoading ? (
               <div className='text-[#dde1e6] opacity-60 text-[9px]'>Loading...</div>
-            ) : projects.length > 0 ? (
-              <div className='space-y-2'>
-                {projects.slice(0, 2).map(project => (
-                  <div key={project.id} className='border-l-2 border-[#33b1ff] pl-2'>
-                    <div className='text-[#33b1ff] text-[10px] font-medium truncate'>
-                      {project.name}
-                    </div>
-                    <div className='text-[#dde1e6] opacity-70 text-[8px] truncate'>
-                      {project.description ?? 'No description'}
-                    </div>
-                    <div className='flex items-center gap-2 mt-1'>
-                      {project.status && (
-                        <span
-                          className={`text-[8px] px-1 rounded ${
-                            project.status === 'active'
-                              ? 'bg-green-400/20 text-green-400'
-                              : project.status === 'completed'
-                                ? 'bg-blue-400/20 text-blue-400'
-                                : 'bg-yellow-400/20 text-yellow-400'
-                          }`}
-                        >
-                          {project.status}
-                        </span>
-                      )}
-                      {project.tech_stack && project.tech_stack.length > 0 && (
-                        <span className='text-[8px] text-[#be95ff] opacity-70'>
-                          {project.tech_stack.slice(0, 2).join(', ')}
-                        </span>
-                      )}
-                    </div>
+            ) : currentProject ? (
+              <div className='space-y-2 phosphor-glow'>
+                <div className='flex items-center justify-between text-[9px] text-[#dde1e6] opacity-60'>
+                  <span>
+                    Showing {currentProjectIndex + 1} / {projects.length}
+                  </span>
+                  <span className='h-1 w-12 bg-[#393939] rounded overflow-hidden'>
+                    <span className='block h-full w-1/3 bg-[#33b1ff] animate-pulse' />
+                  </span>
+                </div>
+                <div key={currentProject.id} className='border-l-2 border-[#33b1ff] pl-2'>
+                  <div className='text-[#33b1ff] text-[10px] font-medium whitespace-normal break-words multiline-ellipsis-2'>
+                    {currentProject.name}
                   </div>
-                ))}
-                {projects.length > 2 && (
-                  <div className='text-[8px] text-[#dde1e6] opacity-50 text-center pt-1'>
-                    +{projects.length - 2} more projects
+                  <div className='text-[#dde1e6] opacity-70 text-[8px] whitespace-normal break-words multiline-ellipsis-3'>
+                    {currentProject.description ?? 'No description'}
                   </div>
-                )}
+                  <div className='flex items-center gap-2 mt-1'>
+                    {currentProject.status && (
+                      <span
+                        className={`text-[8px] px-1 rounded ${
+                          currentProject.status === 'active'
+                            ? 'bg-green-400/20 text-green-400'
+                            : currentProject.status === 'completed'
+                              ? 'bg-blue-400/20 text-blue-400'
+                              : 'bg-yellow-400/20 text-yellow-400'
+                        }`}
+                      >
+                        {currentProject.status}
+                      </span>
+                    )}
+                    {currentProject.tech_stack && currentProject.tech_stack.length > 0 && (
+                      <span className='text-[8px] text-[#be95ff] opacity-70 whitespace-normal break-words multiline-ellipsis-2'>
+                        {currentProject.tech_stack.slice(0, 2).join(', ')}
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
             ) : (
               <div className='text-[#dde1e6] opacity-60 text-[9px]'>No projects found</div>

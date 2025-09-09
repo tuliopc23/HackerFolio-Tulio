@@ -40,7 +40,7 @@ export default function Projects() {
               Back to Terminal
             </Link>
             <h1 className='text-3xl font-bold text-cyan-bright phosphor-glow mb-2'>Projects</h1>
-            <p className='text-text-soft'>
+            <p className='text-text-soft phosphor-glow'>
               A collection of my work spanning web development, mobile apps, and systems
               programming.
             </p>
@@ -58,14 +58,18 @@ export default function Projects() {
                 <div className='flex items-start justify-between mb-4'>
                   <div>
                     <div className='flex items-center gap-2 mb-2'>
-                      <h3 className='text-xl font-semibold text-cyan-bright'>{project.name}</h3>
+                      <h3 className='text-xl font-semibold text-cyan-bright phosphor-glow whitespace-normal break-words multiline-ellipsis-2'>
+                        {project.name}
+                      </h3>
                       {project.featured && <Star className='w-4 h-4 text-terminal-orange' />}
                     </div>
-                    <p className='text-text-soft text-sm'>{project.role}</p>
+                    <p className='text-text-soft text-sm phosphor-glow'>{project.role}</p>
                   </div>
                 </div>
 
-                <p className='text-text-soft mb-4'>{project.description}</p>
+                <p className='text-text-soft mb-4 phosphor-glow whitespace-normal break-words multiline-ellipsis-3'>
+                  {project.description}
+                </p>
 
                 <div className='mb-4'>
                   <div className='flex flex-wrap gap-2'>

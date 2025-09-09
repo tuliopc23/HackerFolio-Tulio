@@ -38,7 +38,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         {children}
-        {/* React Query DevTools - only in development */}
+        {/* TanStack Query DevTools - only in development */}
         {import.meta.env.DEV && (
           <Suspense fallback={null}>
             <ReactQueryDevtoolsLazy

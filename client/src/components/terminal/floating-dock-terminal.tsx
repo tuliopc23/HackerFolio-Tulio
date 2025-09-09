@@ -1,7 +1,7 @@
 import { useNavigate } from '@tanstack/react-router'
 import { useState, useMemo } from 'react'
 
-import { Home, FolderOpen, User, Mail, Palette } from '@/components/icons/custom-icons'
+import { Home, FolderOpen, Palette } from '@/components/icons/custom-icons'
 import { useTerminalAccessibility } from '@/hooks/use-accessibility'
 
 import { useTheme } from './theme-context'
@@ -26,8 +26,6 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
     () => [
       { id: 'home', icon: Home, label: 'Home', path: '/' },
       { id: 'projects', icon: FolderOpen, label: 'Projects', path: '/projects' },
-      { id: 'about', icon: User, label: 'About', path: '/about' },
-      { id: 'contact', icon: Mail, label: 'Contact', path: '/contact' },
     ],
     []
   )

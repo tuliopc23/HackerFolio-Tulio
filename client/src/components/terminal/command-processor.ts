@@ -80,14 +80,11 @@ export class CommandProcessor {
       'ls',
       'cat',
       'time',
-      'contact',
-      'about',
       'github',
-      'resume',
     ]
     const merged = Array.from(new Set([...commands, ...Array.from(this.serverCommands)]))
 
-    const routes = ['/projects', '/about', '/contact', '/resume']
+    const routes = ['/projects']
     const themes = ['oxocarbon']
 
     if (input.startsWith('open ')) {
@@ -105,7 +102,7 @@ export class CommandProcessor {
     }
 
     if (input.startsWith('cat ')) {
-      const files = ['about.md', 'contact.md', 'resume.md']
+      const files = [] as string[]
       const partial = input.substring(4).toLowerCase()
       return files.filter(file => file.toLowerCase().startsWith(partial)).map(file => `cat ${file}`)
     }

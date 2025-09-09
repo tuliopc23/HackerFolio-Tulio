@@ -22,6 +22,7 @@ const LetterGlitchBackground = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const animationRef = useRef<number | null>(null) // Use number for requestAnimationFrame ID
+  const workerRef = useRef<Worker | null>(null)
   const letters = useRef<
     Array<{
       char: string
@@ -34,6 +35,7 @@ const LetterGlitchBackground = ({
   const context = useRef<CanvasRenderingContext2D | null>(null)
   const lastGlitchTime = useRef(Date.now())
   const cssSize = useRef<{ width: number; height: number }>({ width: 0, height: 0 })
+  const transferredRef = useRef(false)
 
   const fontSize = 14
   const charWidth = 9
@@ -193,8 +195,8 @@ const LetterGlitchBackground = ({
     const ctx = context.current
     const canvas = canvasRef.current
     if (!canvas) return
-    const width = cssSize.current.width
-    const height = cssSize.current.height
+    const { width } = cssSize.current
+    const { height } = cssSize.current
 
     ctx.clearRect(0, 0, width, height)
 
@@ -304,7 +306,75 @@ const LetterGlitchBackground = ({
     const canvas = canvasRef.current
     if (!canvas) return
 
-    context.current = canvas.getContext('2d')
+    // Try OffscreenCanvas + Worker path only in production to avoid React StrictMode double-invoke issues in dev
+    const supportsOffscreen = 'transferControlToOffscreen' in HTMLCanvasElement.prototype
+    const enableOffscreen = supportsOffscreen && import.meta.env.PROD
+    if (enableOffscreen) {
+      try {
+        const off = canvas.transferControlToOffscreen()
+        const worker = new Worker(new URL('./letter-glitch-worker.ts', import.meta.url), {
+          type: 'module',
+        })
+        workerRef.current = worker
+        transferredRef.current = true
+
+        const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1
+        const parent = canvas.parentElement
+        const rect = parent ? parent.getBoundingClientRect() : { width: 0, height: 0 }
+
+        worker.postMessage(
+          {
+            type: 'init',
+            canvas: off,
+            width: rect.width,
+            height: rect.height,
+            dpr,
+            glitchColors,
+            glitchSpeed,
+            smooth,
+            fontSize,
+            charWidth,
+            charHeight,
+          },
+          [off as unknown as Transferable]
+        )
+
+        let resizeTimeout: number | undefined
+        const handleResize = () => {
+          if (resizeTimeout) window.clearTimeout(resizeTimeout)
+          resizeTimeout = window.setTimeout(() => {
+            const parent = canvas.parentElement
+            if (!parent) return
+            const rect = parent.getBoundingClientRect()
+            const dpr = window.devicePixelRatio || 1
+            worker.postMessage({ type: 'resize', width: rect.width, height: rect.height, dpr })
+          }, 100)
+        }
+        window.addEventListener('resize', handleResize)
+
+        return () => {
+          window.removeEventListener('resize', handleResize)
+          worker.terminate()
+          workerRef.current = null
+          transferredRef.current = false
+        }
+      } catch {
+        // Fallback to main-thread path below
+      }
+    }
+
+    // Main-thread path
+    if (!transferredRef.current) {
+      context.current = canvas.getContext('2d')
+    } else {
+      // Canvas already transferred (e.g., dev StrictMode double-invoke). Skip main-thread path.
+      return () => {
+        if (workerRef.current) {
+          workerRef.current.terminate()
+          workerRef.current = null
+        }
+      }
+    }
     resizeCanvas()
     animate()
 
@@ -331,6 +401,10 @@ const LetterGlitchBackground = ({
       }
       if (typeof window !== 'undefined') {
         window.removeEventListener('resize', handleResize)
+      }
+      if (workerRef.current) {
+        workerRef.current.terminate()
+        workerRef.current = null
       }
     }
   }, [glitchSpeed, smooth, glitchColors, animate, resizeCanvas])

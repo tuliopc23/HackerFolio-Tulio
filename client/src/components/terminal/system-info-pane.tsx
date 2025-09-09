@@ -90,7 +90,10 @@ function SystemInfoPane() {
                 <div className='text-[#dde1e6] opacity-80 text-[10px] uppercase tracking-wide font-medium'>
                   {tz.city}
                 </div>
-                <div className='text-green-400 font-mono font-semibold text-sm'>
+                <div
+                  className='text-green-400 font-mono font-semibold text-sm'
+                  suppressHydrationWarning
+                >
                   {formatTime(currentTime, tz.timezone)}
                 </div>
               </div>
@@ -204,7 +207,7 @@ function SystemInfoPane() {
                   </div>
                   <div className='flex justify-between text-[9px]'>
                     <span className='text-[#dde1e6] opacity-70'>Uptime:</span>
-                    <span className='text-pink-400 font-mono'>
+                    <span className='text-pink-400 font-mono' suppressHydrationWarning>
                       {Math.floor((Date.now() - 1704067200000) / 86400000).toString()}d
                     </span>
                   </div>
@@ -323,10 +326,11 @@ function SystemInfoPane() {
                     <div className='border-t border-[#393939] my-2' />
                     <div className='flex justify-between text-[9px]'>
                       <span className='text-[#dde1e6] opacity-70'>Last Update:</span>
-                      <span className='text-pink-400 font-mono'>
+                      <span className='text-pink-400 font-mono' suppressHydrationWarning>
                         {new Date(projects[0].updated_at).toLocaleDateString('en-US', {
                           month: 'short',
                           day: 'numeric',
+                          timeZone: 'UTC',
                         })}
                       </span>
                     </div>

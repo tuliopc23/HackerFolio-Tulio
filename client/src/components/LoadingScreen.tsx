@@ -1,17 +1,17 @@
 import { motion, useMotionValue, useTransform, animate } from 'motion/react'
 import React, { useEffect, useRef, useState } from 'react'
 
+import './loading-screen.css'
+import { MACINTOSH_ASCII } from '../assets/ascii/macintosh'
+
 // WebKit detection for performance optimizations
 const isWebkit = () => {
   return (
     typeof window !== 'undefined' &&
-    /WebKit/.test(navigator.userAgent) &&
-    !/Chrome/.test(navigator.userAgent)
+    navigator.userAgent.includes('WebKit') &&
+    !navigator.userAgent.includes('Chrome')
   )
 }
-
-import './loading-screen.css'
-import { MACINTOSH_ASCII } from '../assets/ascii/macintosh'
 
 export interface LoadingScreenProps {
   onComplete: () => void
@@ -116,7 +116,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
         clearTimeout(timeoutRef.current)
       }
     }
-  }, [onComplete, progress])
+  }, [onComplete, progress, typewriterSpeed, blinkSpeed])
 
   return (
     <div className='loading-root crt-screen' data-testid='loading-root'>

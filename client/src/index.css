@@ -205,6 +205,8 @@
   position: relative;
   background: var(--term-bg);
   isolation: isolate; /* Contain blending/compositing in Safari */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .crt-screen::before {
@@ -227,6 +229,8 @@
   /* Use CSS animation instead of opacity changes */
   animation: scanlines 2s ease-in-out infinite;
   will-change: transform; /* Keep only this overlay promoted */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .crt-screen::after {
@@ -239,6 +243,8 @@
   pointer-events: none;
   background: radial-gradient(ellipse at center, transparent 60%, rgba(10, 15, 28, 0.3) 100%);
   z-index: 11;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 /* Replace opacity-based scanlines with transform */
@@ -796,4 +802,20 @@ select:focus-visible {
 /* iOS Safari inertial scrolling for overflow containers */
 .ios-inertia {
   -webkit-overflow-scrolling: touch;
+}
+
+/* Route page rendering containment for WebKit (and others that support it) */
+@supports (content-visibility: auto) {
+  .route-page {
+    content-visibility: auto;
+    contain-intrinsic-size: 1200px 800px;
+  }
+}
+
+/* Guarded Safari-only tweaks example (kept minimal) */
+@supports (-webkit-hyphens: none) and (not (hyphens: none)) {
+  /* WebKit-specific compositor nudge without affecting Blink/Gecko */
+  .crt-screen::before {
+    will-change: transform;
+  }
 }

@@ -1,7 +1,8 @@
 import { createMemoryHistory } from '@tanstack/history'
 import { renderToString } from 'react-dom/server'
 
-import { createAppRouter, AppRouterProvider } from './router-enhanced'
+import App from './App'
+import { createAppRouter } from './router-enhanced'
 
 export async function render(url: string): Promise<string> {
   try {
@@ -11,7 +12,7 @@ export async function render(url: string): Promise<string> {
     // Wait for router to be ready
     await router.load()
 
-    const html = renderToString(<AppRouterProvider router={router} />)
+    const html = renderToString(<App router={router} />)
     return html
   } catch (error) {
     console.error('[SSR] Render error:', error)
@@ -23,6 +24,6 @@ export function renderWithData(url: string, data?: Record<string, unknown>) {
   const history = createMemoryHistory({ initialEntries: [url] })
   const router = createAppRouter({ history })
 
-  const html = renderToString(<AppRouterProvider router={router} />)
+  const html = renderToString(<App router={router} />)
   return { html, data: data ?? {} }
 }

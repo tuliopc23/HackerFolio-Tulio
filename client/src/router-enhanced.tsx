@@ -31,25 +31,7 @@ const rootRoute = createRootRoute({
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  component: () => {
-    // Check if we're in the browser
-    if (typeof window === 'undefined') {
-      // SSR fallback
-      return (
-        <div className='min-h-screen bg-lumon-dark text-neon-green p-8'>
-          <div className='max-w-4xl mx-auto'>
-            <h1 className='text-4xl font-bold mb-4'>HackerFolio</h1>
-            <p className='text-xl mb-8'>Loading terminal interface...</p>
-            <div className='bg-lumon-darker p-4 rounded border border-neon-green/30'>
-              <p>Welcome to my portfolio. The interactive terminal is loading...</p>
-            </div>
-          </div>
-        </div>
-      )
-    }
-    // Client-side rendering
-    return <Home />
-  },
+  component: () => <Home />,
 })
 
 const projectsRoute = createRoute({

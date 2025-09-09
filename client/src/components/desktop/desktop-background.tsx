@@ -37,7 +37,7 @@ export default function DesktopBackground() {
       <div className='absolute top-2 left-2 space-y-4 z-50'>{/* Icons removed */}</div>
 
       {/* Desktop Status Bar */}
-      <div className='absolute bottom-0 left-0 right-0 bg-[#0a0a0a] bg-opacity-80 border-t border-magenta-soft backdrop-blur-sm contain-paint'>
+      <div className='absolute bottom-0 left-0 right-0 bg-[#0a0a0a] bg-opacity-80 border-t border-magenta-soft backdrop-blur-sm contain-paint overflow-hidden isolate'>
         <div className='px-6 py-2 flex items-center justify-between'>
           {/* Left side - System status */}
           <div className='flex items-center gap-4 text-xs'>
@@ -59,10 +59,13 @@ export default function DesktopBackground() {
 
           {/* Right side - Clock */}
           <div className='flex items-center gap-4 text-xs'>
-            <div className='text-cyan-soft font-mono font-semibold text-shadow-sm'>
+            <div
+              className='text-cyan-soft font-mono font-semibold text-shadow-sm'
+              suppressHydrationWarning
+            >
               {formatTime(currentTime)}
             </div>
-            <div className='text-magenta-soft'>
+            <div className='text-magenta-soft' suppressHydrationWarning>
               {currentTime.toLocaleDateString('en-US', {
                 month: 'short',
                 day: 'numeric',

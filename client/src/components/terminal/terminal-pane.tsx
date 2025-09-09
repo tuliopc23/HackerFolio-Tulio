@@ -18,6 +18,32 @@ interface TerminalHistory {
   isTyping?: boolean
 }
 
+// Extracted to top-level to satisfy react/no-unstable-nested-components
+const HistoryEntry = memo(
+  ({ entry, isOldEntry }: { entry: TerminalHistory; isOldEntry: boolean }) => {
+    return (
+      <div key={entry.id}>
+        <div className='flex'>
+          <span className='font-semibold'>
+            <span className='text-green-400'>user@</span>
+            <span className='text-pink-400'>portfolio</span>
+            <span className='text-green-400'>:~$</span>
+          </span>
+          <span className='ml-2 text-cyan-bright'>{entry.command}</span>
+        </div>
+        {entry.output && (
+          <TypedTerminalOutput
+            output={entry.output}
+            isError={entry.error ?? false}
+            animate={!isOldEntry}
+          />
+        )}
+      </div>
+    )
+  }
+)
+HistoryEntry.displayName = 'HistoryEntry'
+
 export default function TerminalPane() {
   const navigate = useNavigate()
   const { setTheme } = useTheme()
@@ -194,36 +220,7 @@ export default function TerminalPane() {
     [processor, navigate, setTheme, executeCommand, announceCommand, announceError, announce]
   )
 
-  // OPTIMIZATION: Memoized component to render a single history entry.
-  // This prevents re-rendering of the entire visible history on each new command.
-  const HistoryEntry = memo(function HistoryEntry({
-    entry,
-    isOldEntry,
-  }: {
-    entry: TerminalHistory
-    isOldEntry: boolean
-  }) {
-    return (
-      <div key={entry.id}>
-        <div className='flex'>
-          <span className='font-semibold'>
-            <span className='text-green-400'>user@</span>
-            <span className='text-pink-400'>portfolio</span>
-            <span className='text-green-400'>:~$</span>
-          </span>
-          <span className='ml-2 text-cyan-bright'>{entry.command}</span>
-        </div>
-        {entry.output && (
-          <TypedTerminalOutput
-            output={entry.output}
-            isError={entry.error ?? false}
-            animate={!isOldEntry} // Only animate the most recent entries
-          />
-        )}
-      </div>
-    )
-  })
-  HistoryEntry.displayName = 'HistoryEntry'
+  // Uses top-level HistoryEntry memoized component
 
   // OPTIMIZATION: Virtualize history to show only recent entries for performance
   const visibleHistory = useMemo(() => {

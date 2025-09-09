@@ -28,7 +28,7 @@ export default function Home() {
   return (
     <FocusManager initialTrapFocus={false}>
       <SkipLinks />
-      <div className='h-screen min-h-[100dvh] overflow-hidden'>
+      <div className='route-page h-screen min-h-[100dvh] overflow-hidden'>
         {/* Desktop Background */}
         <DesktopBackground />
 

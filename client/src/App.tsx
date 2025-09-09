@@ -3,11 +3,11 @@ import { useState, useMemo } from 'react'
 import LoadingScreen from '@/components/LoadingScreen'
 import { createAppRouter, AppRouterProvider } from '@/router-enhanced'
 
-function App() {
+function App({ router: providedRouter }: { router?: ReturnType<typeof createAppRouter> }) {
   const [isLoading, setIsLoading] = useState(true)
 
   // OPTIMIZATION: Memoize router creation to prevent recreation on every render
-  const router = useMemo(() => createAppRouter(), [])
+  const router = useMemo(() => providedRouter ?? createAppRouter(), [providedRouter])
 
   const handleLoadingComplete = () => {
     setIsLoading(false)

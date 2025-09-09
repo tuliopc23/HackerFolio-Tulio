@@ -42,10 +42,12 @@ export default function GhosttyTerminalWindow({
   }
 
   return (
-    <section
-      className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(95vw,1600px)] h-[min(90vh,1200px)] bg-[#0a0a0a] rounded-[20px] shadow-[0_20px_60px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.03),inset_0_0_0_1px_rgba(255,255,255,0.02)] overflow-hidden flex flex-col z-40 ${className}`}
-      aria-label='Terminal window'
-    >
+    <div className='fixed inset-0 grid place-items-center z-40'>
+      <section
+        className={`crt-screen w-[min(95vw,1600px)] h-[min(90vh,1200px)] bg-[#0a0a0a] rounded-[20px] shadow-[0_20px_60px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.03),inset_0_0_0_1px_rgba(255,255,255,0.02)] overflow-hidden flex flex-col contain-paint ${className}`}
+        aria-label='Terminal window'
+        style={{ backgroundColor: '#0a0a0a' }}
+      >
       {/* Titlebar with traffic lights on LEFT */}
       <div className='flex items-center justify-between h-9 px-4 py-2' aria-hidden='true'>
         <div className='flex gap-2 items-center'>
@@ -103,7 +105,7 @@ export default function GhosttyTerminalWindow({
                 aria-label='Terminal active'
               />
             </div>
-            <div className='flex-1 p-[14px] font-mono text-[12.5px] leading-[1.5] text-[#f2f4f8] overflow-y-auto overflow-x-hidden'>
+            <div className='flex-1 p-[14px] font-mono text-[12.5px] leading-[1.5] text-[#f2f4f8] overflow-y-auto overflow-x-hidden ios-inertia'>
               {leftPane}
             </div>
           </div>
@@ -135,12 +137,13 @@ export default function GhosttyTerminalWindow({
                 aria-label='System online'
               />
             </div>
-            <div className='flex-1 p-[14px] font-mono text-[12.5px] leading-[1.5] text-[#f2f4f8] overflow-y-auto overflow-x-hidden'>
+            <div className='flex-1 p-[14px] font-mono text-[12.5px] leading-[1.5] text-[#f2f4f8] overflow-y-auto overflow-x-hidden ios-inertia'>
               {rightPane}
             </div>
           </div>
         </div>
       </div>
-    </section>
+      </section>
+    </div>
   )
 }

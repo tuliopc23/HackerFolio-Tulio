@@ -33,6 +33,7 @@ const LetterGlitchBackground = ({
   const grid = useRef({ columns: 0, rows: 0 })
   const context = useRef<CanvasRenderingContext2D | null>(null)
   const lastGlitchTime = useRef(Date.now())
+  const cssSize = useRef<{ width: number; height: number }>({ width: 0, height: 0 })
 
   const fontSize = 14
   const charWidth = 9
@@ -192,7 +193,8 @@ const LetterGlitchBackground = ({
     const ctx = context.current
     const canvas = canvasRef.current
     if (!canvas) return
-    const { width, height } = canvas.getBoundingClientRect()
+    const width = cssSize.current.width
+    const height = cssSize.current.height
 
     ctx.clearRect(0, 0, width, height)
 
@@ -224,6 +226,8 @@ const LetterGlitchBackground = ({
 
     canvas.style.width = `${String(rect.width)}px`
     canvas.style.height = `${String(rect.height)}px`
+
+    cssSize.current = { width: rect.width, height: rect.height }
 
     if (context.current) {
       context.current.setTransform(dpr, 0, 0, dpr, 0, 0)

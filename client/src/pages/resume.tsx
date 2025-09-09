@@ -85,7 +85,8 @@ export default function Resume() {
   }
 
   return (
-    <div className='min-h-screen bg-black text-text-cyan p-6'>
+    <div className='crt-screen'>
+      <div className='min-h-screen bg-black text-text-cyan p-6'>
       <div className='max-w-4xl mx-auto'>
         {/* Header */}
         <div className='mb-8'>
@@ -224,6 +225,7 @@ export default function Resume() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   )

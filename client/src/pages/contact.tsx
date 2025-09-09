@@ -39,7 +39,8 @@ export default function Contact() {
   }
 
   return (
-    <div className='min-h-screen bg-black text-text-cyan p-6'>
+    <div className='crt-screen'>
+      <div className='min-h-screen bg-black text-text-cyan p-6'>
       <div className='max-w-3xl mx-auto'>
         {/* Header */}
         <div className='mb-8'>
@@ -138,6 +139,7 @@ export default function Contact() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   )

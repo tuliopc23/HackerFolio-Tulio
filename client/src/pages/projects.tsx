@@ -28,7 +28,8 @@ export default function Projects() {
   }, [projectsData])
 
   return (
-    <div className='min-h-screen bg-black text-text-cyan p-6'>
+    <div className='crt-screen'>
+      <div className='min-h-screen bg-black text-text-cyan p-6'>
       <div className='max-w-4xl mx-auto'>
         <div className='mb-8'>
           <Link
@@ -114,6 +115,7 @@ export default function Projects() {
             Return to Terminal
           </Link>
         </div>
+      </div>
       </div>
     </div>
   )

@@ -37,7 +37,7 @@ export default function DesktopBackground() {
       <div className='absolute top-2 left-2 space-y-4 z-50'>{/* Icons removed */}</div>
 
       {/* Desktop Status Bar */}
-      <div className='absolute bottom-0 left-0 right-0 bg-[#0a0a0a] bg-opacity-80 border-t border-magenta-soft backdrop-blur-sm'>
+      <div className='absolute bottom-0 left-0 right-0 bg-[#0a0a0a] bg-opacity-80 border-t border-magenta-soft backdrop-blur-sm contain-paint'>
         <div className='px-6 py-2 flex items-center justify-between'>
           {/* Left side - System status */}
           <div className='flex items-center gap-4 text-xs'>

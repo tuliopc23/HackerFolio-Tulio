@@ -24,11 +24,9 @@ const TerminalThemePreview = lazy(() => import('@/components/TerminalThemePrevie
 const rootRoute = createRootRoute({
   component: () => (
     <AppProviders>
-      <div className='crt-screen'>
-        <React.Suspense fallback={<div>Loading...</div>}>
-          <Outlet />
-        </React.Suspense>
-      </div>
+      <React.Suspense fallback={<div>Loading...</div>}>
+        <Outlet />
+      </React.Suspense>
     </AppProviders>
   ),
 })

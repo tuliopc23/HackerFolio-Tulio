@@ -80,10 +80,10 @@
 
 /* Phosphor Glow Effect */
 .phosphor-glow {
-  /* Use a more intense, static text-shadow */
+  /* Stronger phosphor glow for loading ASCII while keeping layers minimal */
   text-shadow:
-    0 0 8px currentColor,
-    0 0 16px rgba(66, 190, 101, 0.5);
+    0 0 12px currentColor,
+    0 0 24px rgba(66, 190, 101, 0.7);
   /* Animate opacity for a performant pulse effect */
   animation: phosphor-pulse 3s ease-in-out infinite alternate;
   will-change: opacity;
@@ -423,10 +423,10 @@
 
 /* Phosphor Glow Effect */
 .phosphor-glow {
-  /* Use a more intense, static text-shadow */
+  /* Stronger phosphor glow for loading ASCII while keeping layers minimal */
   text-shadow:
-    0 0 8px currentColor,
-    0 0 16px rgba(66, 190, 101, 0.5);
+    0 0 12px currentColor,
+    0 0 24px rgba(66, 190, 101, 0.7);
   /* Animate opacity for a performant pulse effect */
   animation: phosphor-pulse 3s ease-in-out infinite alternate;
   will-change: opacity;
@@ -572,8 +572,10 @@
   }
 
   .phosphor-glow {
-    /* Simplify glow for WebKit */
-    text-shadow: 0 0 8px currentColor;
+    /* Stronger yet simple glow for WebKit */
+    text-shadow:
+      0 0 14px currentColor,
+      0 0 22px rgba(66, 190, 101, 0.6);
     animation: none;
   }
 

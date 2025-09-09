@@ -24,10 +24,11 @@ export default function TerminalThemePreview() {
   const names = ['black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
 
   return (
-    <div
-      className='terminal min-h-screen p-6 font-mono'
-      style={{ background: 'var(--term-bg)', color: 'var(--term-fg)' }}
-    >
+    <div className='crt-screen'>
+      <div
+        className='terminal min-h-screen p-6 font-mono'
+        style={{ background: 'var(--term-bg)', color: 'var(--term-fg)' }}
+      >
       <h1 className='text-2xl mb-6 phosphor-glow'>ANSI Theme Preview - Ghostty Inspired</h1>
 
       <div className='mb-8'>
@@ -94,6 +95,7 @@ export default function TerminalThemePreview() {
             Link focus test
           </button>
         </div>
+      </div>
       </div>
     </div>
   )

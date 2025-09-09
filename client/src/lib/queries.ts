@@ -32,6 +32,25 @@ function validateResponse<T>(schema: z.ZodType<T>, data: unknown): T {
   return result.data
 }
 
+// Handle both wrapped { success, data } responses and bare data arrays/objects
+function parseApiResponse<T>(schema: z.ZodType<T>, raw: unknown): T {
+  const WrappedSuccess = z.object({ success: z.literal(true), data: schema, timestamp: z.string() })
+  const WrappedError = z.object({
+    success: z.literal(false),
+    error: z.object({ message: z.string() }).loose(),
+    timestamp: z.string(),
+  })
+
+  const ok = WrappedSuccess.safeParse(raw)
+  if (ok.success) return ok.data.data
+
+  const err = WrappedError.safeParse(raw)
+  if (err.success) throw new Error(err.data.error.message)
+
+  // Fallback: treat as bare data
+  return validateResponse(schema, raw)
+}
+
 // Base fetch functions (for use in server-side and non-hook contexts)
 export async function fetchProjects(): Promise<ApiProject[]> {
   const base = getBaseUrl()
@@ -39,7 +58,7 @@ export async function fetchProjects(): Promise<ApiProject[]> {
   if (!res.ok) throw new Error('Failed to fetch projects')
 
   const data = await res.json()
-  return validateResponse(z.array(apiProjectSchema), data)
+  return parseApiResponse(z.array(apiProjectSchema), data)
 }
 
 export async function fetchCommands(): Promise<TerminalCommand[]> {
@@ -48,7 +67,7 @@ export async function fetchCommands(): Promise<TerminalCommand[]> {
   if (!res.ok) throw new Error('Failed to fetch commands')
 
   const data = await res.json()
-  return validateResponse(z.array(terminalCommandSchema), data)
+  return parseApiResponse(z.array(terminalCommandSchema), data)
 }
 
 export async function executeCommand(

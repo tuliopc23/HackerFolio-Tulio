@@ -8,7 +8,7 @@ import {
   type RouterHistory,
   type ErrorComponentProps,
 } from '@tanstack/react-router'
-import React, { lazy, Suspense } from 'react'
+import { lazy, Suspense } from 'react'
 
 import { AppProviders } from '@/components/providers'
 import { fetchProjects } from '@/lib/queries'
@@ -186,9 +186,9 @@ export function AppRouterProvider({ router }: { router: ReturnType<typeof create
       <RouterProvider router={router} />
       {/* Router DevTools - only in development */}
       {import.meta.env.DEV && (
-        <React.Suspense fallback={null}>
+        <Suspense fallback={null}>
           <TanStackRouterDevtools router={router} />
-        </React.Suspense>
+        </Suspense>
       )}
     </>
   )

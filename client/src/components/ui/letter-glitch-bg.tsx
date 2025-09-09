@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback, useMemo } from 'react'
+import { useRef, useEffect, useCallback, useMemo } from 'react'
 
 const LetterGlitchBackground = ({
   glitchColors = [
@@ -306,62 +306,65 @@ const LetterGlitchBackground = ({
     const canvas = canvasRef.current
     if (!canvas) return
 
-    // Try OffscreenCanvas + Worker path only in production to avoid React StrictMode double-invoke issues in dev
-    const supportsOffscreen = 'transferControlToOffscreen' in HTMLCanvasElement.prototype
-    const enableOffscreen = supportsOffscreen && import.meta.env.PROD
-    if (enableOffscreen) {
-      try {
-        const off = canvas.transferControlToOffscreen()
-        const worker = new Worker(new URL('./letter-glitch-worker.ts', import.meta.url), {
-          type: 'module',
-        })
-        workerRef.current = worker
-        transferredRef.current = true
+    // Temporarily disable OffscreenCanvas due to intermittent getContext race
+    // conditions in some browsers when transferring control and re-rendering.
+    // Main-thread rendering is fast enough for this effect.
+    // const enableOffscreen = false
+    // if (enableOffscreen && supportsOffscreen && import.meta.env.PROD) {
+    //   try {
+    //     const off = canvas.transferControlToOffscreen()
+    //     // Mark as transferred immediately to prevent any main-thread fallback from
+    //     // calling getContext() on a transferred canvas in case of subsequent errors
+    //     transferredRef.current = true
+    //     const worker = new Worker(new URL('./letter-glitch-worker.ts', import.meta.url), {
+    //       type: 'module',
+    //     })
+    //     workerRef.current = worker
 
-        const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1
-        const parent = canvas.parentElement
-        const rect = parent ? parent.getBoundingClientRect() : { width: 0, height: 0 }
+    //     const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1
+    //     const parent = canvas.parentElement
+    //     const rect = parent ? parent.getBoundingClientRect() : { width: 0, height: 0 }
 
-        worker.postMessage(
-          {
-            type: 'init',
-            canvas: off,
-            width: rect.width,
-            height: rect.height,
-            dpr,
-            glitchColors,
-            glitchSpeed,
-            smooth,
-            fontSize,
-            charWidth,
-            charHeight,
-          },
-          [off as unknown as Transferable]
-        )
+    //     worker.postMessage(
+    //       {
+    //         type: 'init',
+    //         canvas: off,
+    //         width: rect.width,
+    //         height: rect.height,
+    //         dpr,
+    //         glitchColors,
+    //         glitchSpeed,
+    //         smooth,
+    //         fontSize,
+    //         charWidth,
+    //         charHeight,
+    //       },
+    //       [off as unknown as Transferable]
+    //     )
 
-        let resizeTimeout: number | undefined
-        const handleResize = () => {
-          if (resizeTimeout) window.clearTimeout(resizeTimeout)
-          resizeTimeout = window.setTimeout(() => {
-            const parent = canvas.parentElement
-            if (!parent) return
-            const rect = parent.getBoundingClientRect()
-            const dpr = window.devicePixelRatio || 1
-            worker.postMessage({ type: 'resize', width: rect.width, height: rect.height, dpr })
-          }, 100)
-        }
-        window.addEventListener('resize', handleResize)
+    //     let resizeTimeout: number | undefined
+    //     const handleResize = () => {
+    //       if (resizeTimeout) window.clearTimeout(resizeTimeout)
+    //       resizeTimeout = window.setTimeout(() => {
+    //         const parent = canvas.parentElement
+    //         if (!parent) return
+    //         const rect = parent.getBoundingClientRect()
+    //         const dpr = window.devicePixelRatio || 1
+    //         worker.postMessage({ type: 'resize', width: rect.width, height: rect.height, dpr })
+    //       }, 100)
+    //     }
+    //     window.addEventListener('resize', handleResize)
 
-        return () => {
-          window.removeEventListener('resize', handleResize)
-          worker.terminate()
-          workerRef.current = null
-          transferredRef.current = false
-        }
-      } catch {
-        // Fallback to main-thread path below
-      }
-    }
+    //     return () => {
+    //       window.removeEventListener('resize', handleResize)
+    //       worker.terminate()
+    //       workerRef.current = null
+    //       transferredRef.current = false
+    //     }
+    //   } catch {
+    //     // Fallback to main-thread path below
+    //   }
+    // }
 
     // Main-thread path
     if (!transferredRef.current) {

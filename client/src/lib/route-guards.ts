@@ -60,25 +60,13 @@ export const routeRateLimiter = new RouteRateLimiter()
 /**
  * Security headers middleware
  */
+// Note: Security headers must be set by the server, not via meta tags.
+// This function is intentionally a no-op to avoid client-side CSP/XFO injection
+// that conflicts with dev/prod policies and causes browser console warnings.
 export function addSecurityHeaders() {
-  if (typeof document !== 'undefined') {
-    // Add CSP meta tag if not present
-    if (!document.querySelector('meta[http-equiv="Content-Security-Policy"]')) {
-      const cspMeta = document.createElement('meta')
-      cspMeta.httpEquiv = 'Content-Security-Policy'
-      cspMeta.content =
-        "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:"
-      document.head.appendChild(cspMeta)
-    }
-
-    // Add X-Frame-Options
-    if (!document.querySelector('meta[http-equiv="X-Frame-Options"]')) {
-      const frameMeta = document.createElement('meta')
-      frameMeta.httpEquiv = 'X-Frame-Options'
-      frameMeta.content = 'DENY'
-      document.head.appendChild(frameMeta)
-    }
-  }
+  // Security headers must be set by the server, not via meta tags.
+  // This function is intentionally a no-op to avoid client-side CSP/XFO injection
+  // that conflicts with dev/prod policies and causes browser console warnings.
 }
 
 /**
@@ -212,8 +200,7 @@ export function createRouteGuard(guards: RouteGuard[]) {
     // Log route access
     logRouteAccess(location.pathname, context)
 
-    // Add security headers
-    addSecurityHeaders()
+    // Security headers are applied by the server; avoid client meta injection
 
     // Run guards
     const allowed = await runRouteGuards(guards, context)

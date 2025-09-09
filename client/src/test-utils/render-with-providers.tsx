@@ -1,5 +1,5 @@
 import { render, type RenderOptions } from '@testing-library/react'
-import React, { type ReactElement } from 'react'
+import type { ReactElement, ReactNode } from 'react'
 // vitest globals are available - no import needed
 
 import { ThemeProvider } from '@/components/terminal/theme-context'
@@ -9,7 +9,7 @@ interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   initialEntries?: string[]
 }
 
-function AllTheProviders({ children }: { children: React.ReactNode }) {
+function AllTheProviders({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider>
       <div className='crt-screen'>{children}</div>
@@ -18,7 +18,7 @@ function AllTheProviders({ children }: { children: React.ReactNode }) {
 }
 
 const customRender = (ui: ReactElement, options: CustomRenderOptions = {}) => {
-  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+  const Wrapper = ({ children }: { children: ReactNode }) => (
     <AllTheProviders>{children}</AllTheProviders>
   )
 

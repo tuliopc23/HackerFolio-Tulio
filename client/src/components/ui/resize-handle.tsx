@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, type MouseEvent as ReactMouseEvent } from 'react'
 
 interface ResizeHandleProps {
   onResize: (delta: number) => void
@@ -9,7 +9,7 @@ export default function ResizeHandle({ onResize, className = '' }: ResizeHandleP
   const [isDragging, setIsDragging] = useState(false)
   const [startX, setStartX] = useState(0)
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+  const handleMouseDown = useCallback((e: ReactMouseEvent) => {
     setIsDragging(true)
     setStartX(e.clientX)
     e.preventDefault()

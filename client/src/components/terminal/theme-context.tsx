@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
 
 type Theme = 'oxocarbon'
 
@@ -9,7 +9,7 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>('oxocarbon') // oxocarbon only
 
   useEffect(() => {

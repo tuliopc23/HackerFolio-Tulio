@@ -1,10 +1,9 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { useState } from 'react'
+import { useState, lazy, Suspense, type ReactNode } from 'react'
 
 import { ThemeProvider } from '@/components/terminal/theme-context'
 
-export function AppProviders({ children }: { children: React.ReactNode }) {
+export function AppProviders({ children }: { children: ReactNode }) {
   // Create QueryClient instance with optimized defaults
   const [queryClient] = useState(
     () =>
@@ -41,13 +40,20 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
         {children}
         {/* React Query DevTools - only in development */}
         {import.meta.env.DEV && (
-          <ReactQueryDevtools
-            initialIsOpen={false}
-            buttonPosition='bottom-left'
-            position='bottom'
-          />
+          <Suspense fallback={null}>
+            <ReactQueryDevtoolsLazy
+              initialIsOpen={false}
+              buttonPosition='bottom-left'
+              position='bottom'
+            />
+          </Suspense>
         )}
       </ThemeProvider>
     </QueryClientProvider>
   )
 }
+
+// Lazy-load DevTools in development only, avoiding unused import warnings
+const ReactQueryDevtoolsLazy = lazy(() =>
+  import('@tanstack/react-query-devtools').then(mod => ({ default: mod.ReactQueryDevtools }))
+)

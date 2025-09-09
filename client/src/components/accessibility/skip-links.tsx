@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { useSkipLinks } from '@/hooks/use-accessibility'
 
 /**

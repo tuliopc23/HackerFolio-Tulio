@@ -1,4 +1,12 @@
-import React, { createContext, useContext, useRef, useCallback, useEffect } from 'react'
+import {
+  createContext,
+  useContext,
+  useRef,
+  useCallback,
+  useEffect,
+  type ReactNode,
+  type RefObject,
+} from 'react'
 
 interface FocusManagerContextType {
   registerFocusable: (id: string, element: HTMLElement) => void
@@ -14,7 +22,7 @@ interface FocusManagerContextType {
 const FocusManagerContext = createContext<FocusManagerContextType | undefined>(undefined)
 
 interface FocusManagerProps {
-  children: React.ReactNode
+  children: ReactNode
   initialTrapFocus?: boolean
   onEscape?: () => void
 }
@@ -212,7 +220,7 @@ export function useFocusManager() {
 /**
  * Hook to register an element as focusable within the focus manager
  */
-export function useFocusRegistration(id: string, elementRef: React.RefObject<HTMLElement>) {
+export function useFocusRegistration(id: string, elementRef: RefObject<HTMLElement>) {
   const { registerFocusable, unregisterFocusable } = useFocusManager()
 
   useEffect(() => {

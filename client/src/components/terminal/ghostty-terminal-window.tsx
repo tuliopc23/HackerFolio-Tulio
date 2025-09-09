@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 
 import ResizeHandle from '@/components/ui/resize-handle'
 
 interface GhosttyTerminalWindowProps {
-  leftPane: React.ReactNode
-  rightPane: React.ReactNode
+  leftPane: ReactNode
+  rightPane: ReactNode
   onClose?: () => void
   onMinimize?: () => void
   onMaximize?: () => void

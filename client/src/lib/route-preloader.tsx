@@ -1,5 +1,5 @@
 import { type Router } from '@tanstack/react-router'
-import React from 'react'
+import type { AnchorHTMLAttributes, ReactNode } from 'react'
 
 /**
  * Route preloading utility for improved navigation performance
@@ -174,7 +174,7 @@ export function useRoutePreloader(router: Router<any, any>) {
  */
 export interface PreloadLinkProps {
   to: string
-  children: React.ReactNode
+  children: ReactNode
   className?: string
   preloader?: RoutePreloader
   onMouseEnter?: () => void
@@ -191,7 +191,7 @@ export function PreloadLink({
   onMouseDown,
   onClick,
   ...props
-}: PreloadLinkProps & React.AnchorHTMLAttributes<HTMLAnchorElement>) {
+}: PreloadLinkProps & AnchorHTMLAttributes<HTMLAnchorElement>) {
   const handleMouseEnter = () => {
     preloader?.handleLinkHover(to)
     onMouseEnter?.()

@@ -1,11 +1,11 @@
-import React from 'react'
+import type { FC } from 'react'
 
 interface ColorRowProps {
   idx: number
   name: string
 }
 
-const ColorRow: React.FC<ColorRowProps> = ({ idx, name }) => (
+const ColorRow: FC<ColorRowProps> = ({ idx, name }) => (
   <div className='flex items-center gap-4 p-2'>
     <span className={`ansi-fg-${name} text-sm font-mono min-w-[120px]`}>
       {name} (#{idx})

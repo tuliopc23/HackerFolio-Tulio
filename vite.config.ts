@@ -23,6 +23,8 @@ export default defineConfig(({ command, mode }) => {
         '@': path.resolve(__dirname, 'client/src'),
         '@server': path.resolve(__dirname, 'server'),
       },
+      // Ensure a single React instance across chunks
+      dedupe: ['react', 'react-dom'],
     },
     build: {
       outDir: isSSR
@@ -41,78 +43,7 @@ export default defineConfig(({ command, mode }) => {
             },
             external: ['react', 'react-dom/server'],
           }
-        : {
-            output: {
-              manualChunks: id => {
-                // Core React libraries
-                if (id.includes('react') || id.includes('react-dom')) {
-                  return 'react-core'
-                }
-
-                // TanStack Router and related
-                if (id.includes('@tanstack/react-router') || id.includes('@tanstack/history')) {
-                  return 'tanstack-router'
-                }
-
-                // TanStack Query
-                if (id.includes('@tanstack/react-query')) {
-                  return 'tanstack-query'
-                }
-
-                // Router DevTools (separate chunk for dev)
-                if (id.includes('@tanstack/react-router-devtools')) {
-                  return 'router-devtools'
-                }
-
-                // Motion library
-                if (id.includes('motion')) {
-                  return 'motion-lib'
-                }
-
-                // Database and validation libraries
-                if (
-                  id.includes('drizzle-orm') ||
-                  id.includes('drizzle-zod') ||
-                  id.includes('zod')
-                ) {
-                  return 'data-libs'
-                }
-
-                // UI utilities
-                if (id.includes('clsx') || id.includes('tailwind-merge')) {
-                  return 'ui-utils'
-                }
-
-                // Route-based chunks for pages
-                if (id.includes('/pages/projects')) {
-                  return 'page-projects'
-                }
-
-                if (id.includes('/pages/not-found')) {
-                  return 'page-not-found'
-                }
-
-                if (id.includes('TerminalThemePreview')) {
-                  return 'component-theme-preview'
-                }
-
-                // Terminal components (group related components)
-                if (id.includes('/components/terminal/')) {
-                  return 'terminal-components'
-                }
-
-                // Accessibility components
-                if (id.includes('/components/accessibility/')) {
-                  return 'accessibility-components'
-                }
-
-                // Node modules vendor chunk
-                if (id.includes('node_modules')) {
-                  return 'vendor'
-                }
-              },
-            },
-          },
+        : undefined,
       chunkSizeWarningLimit: 1000,
       assetsInlineLimit: 4096,
     },
@@ -126,6 +57,12 @@ export default defineConfig(({ command, mode }) => {
       open: isDev,
       cors: true,
       hmr: isDev,
+      // In dev, allow Vite/HMR and libraries that rely on eval
+      headers: isDev
+        ? {
+            'Content-Security-Policy': "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+          }
+        : undefined,
     },
     preview: {
       port: 4173,

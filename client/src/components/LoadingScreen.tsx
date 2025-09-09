@@ -1,5 +1,5 @@
 import { motion, useMotionValue, useTransform, animate } from 'motion/react'
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import './loading-screen.css'
 import { MACINTOSH_ASCII } from '../assets/ascii/macintosh'

@@ -107,7 +107,7 @@ export default function GhosttyTerminalWindow({
                     aria-label='Terminal active'
                   />
                 </div>
-                <div className='flex-1 p-[14px] font-mono text-[12.5px] leading-[1.5] text-[#f2f4f8] overflow-y-auto overflow-x-hidden ios-inertia'>
+                <div className='flex-1 p-[14px] font-mono text-[12.5px] leading-[1.5] text-[#f2f4f8] overflow-y-auto overflow-x-hidden ios-inertia content-visibility-auto composite-layer'>
                   {leftPane}
                 </div>
               </div>
@@ -139,7 +139,7 @@ export default function GhosttyTerminalWindow({
                     aria-label='System online'
                   />
                 </div>
-                <div className='flex-1 p-[14px] font-mono text-[12.5px] leading-[1.5] text-[#f2f4f8] overflow-y-auto overflow-x-hidden ios-inertia'>
+                <div className='flex-1 p-[14px] font-mono text-[12.5px] leading-[1.5] text-[#f2f4f8] overflow-y-auto overflow-x-hidden ios-inertia content-visibility-auto composite-layer'>
                   {rightPane}
                 </div>
               </div>

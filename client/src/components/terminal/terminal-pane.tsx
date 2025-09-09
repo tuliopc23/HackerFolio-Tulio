@@ -57,14 +57,25 @@ export default function TerminalPane() {
   const outputRef = useRef<HTMLDivElement>(null)
   const terminalRef = useRef<HTMLDivElement>(null)
 
-  // Virtualizer for terminal history
+  // Virtualizer for terminal history with stable keys and height caching
+  const rowSizeMap = useRef(new Map<string, number>())
   const rowVirtualizer = useVirtualizer({
     count: history.length,
     getScrollElement: () => outputRef.current,
-    estimateSize: () => 64, // rough average height per entry
-    overscan: 8,
-    measureElement: (el: Element | null) =>
-      el ? (el as HTMLElement).getBoundingClientRect().height : 0,
+    estimateSize: (index: number) => {
+      const id = history[index]?.id
+      const size = id ? rowSizeMap.current.get(id) : undefined
+      return typeof size === 'number' && !Number.isNaN(size) ? size : 64
+    },
+    overscan: 6,
+    getItemKey: index => history[index]?.id ?? index,
+    measureElement: (el: Element | null) => {
+      if (!el) return 0
+      const h = (el as HTMLElement).getBoundingClientRect().height
+      const key = (el as HTMLElement).getAttribute('data-key')
+      if (key) rowSizeMap.current.set(key, h)
+      return h
+    },
   })
 
   // TanStack Query hooks
@@ -105,14 +116,18 @@ export default function TerminalPane() {
   }, [commands, processor])
 
   useEffect(() => {
-    // Scroll to bottom when history updates (ensure latest is visible)
-    if (history.length > 0) {
+    // Auto-scroll only when user is at the bottom to avoid scroll thrash
+    const el = outputRef.current
+    const atBottom = (() => {
+      if (!el) return true
+      const threshold = 8
+      return el.scrollTop + el.clientHeight >= el.scrollHeight - threshold
+    })()
+    if (history.length > 0 && atBottom) {
       try {
         rowVirtualizer.scrollToIndex(history.length - 1, { align: 'end' })
       } catch {
-        if (outputRef.current) {
-          outputRef.current.scrollTop = outputRef.current.scrollHeight
-        }
+        if (el) el.scrollTop = el.scrollHeight
       }
     }
   }, [history.length, rowVirtualizer])
@@ -311,6 +326,7 @@ export default function TerminalPane() {
               <div
                 key={entry.id}
                 data-index={idx}
+                data-key={entry.id}
                 ref={rowVirtualizer.measureElement}
                 style={{
                   position: 'absolute',

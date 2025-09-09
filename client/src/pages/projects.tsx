@@ -49,11 +49,11 @@ export default function Projects() {
           {loading && <div className='text-text-soft'>Loading projects...</div>}
           {error && <div className='text-terminal-red'>{error.message}</div>}
 
-          <div className='grid gap-6 md:grid-cols-2'>
+          <div className='grid gap-6 md:grid-cols-2 content-visibility-auto'>
             {transformedProjects.map(project => (
               <div
                 key={project.id}
-                className='pane-border rounded-lg p-6 bg-[#0a0a0a] hover:border-cyan-bright transition-colors'
+                className='pane-border rounded-lg p-6 bg-[#0a0a0a] hover:border-cyan-bright transition-colors contain-paint'
               >
                 <div className='flex items-start justify-between mb-4'>
                   <div>

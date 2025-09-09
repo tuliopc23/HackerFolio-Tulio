@@ -1,9 +1,24 @@
 import { hydrateRoot, createRoot } from 'react-dom/client'
 
+// Preload self-hosted Monaspace Neon variable font in production using hashed URL
+// Vite will resolve the final asset path at build time
+import monaspaceNeonUrl from '@/assets/Monaspace Neon/Monaspace Neon Var.woff2?url'
+
 import App from './App'
 import './index.css'
 
 const rootElement = document.getElementById('root')
+
+// Inject font preload early in production to ensure Monaspace Neon is chosen
+if (!import.meta.env.DEV && typeof document !== 'undefined' && monaspaceNeonUrl) {
+  const link = document.createElement('link')
+  link.rel = 'preload'
+  link.as = 'font'
+  link.href = monaspaceNeonUrl
+  link.type = 'font/woff2'
+  link.crossOrigin = 'anonymous'
+  document.head.appendChild(link)
+}
 if (!rootElement) {
   throw new Error('Root element not found')
 }

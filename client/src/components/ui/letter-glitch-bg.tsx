@@ -21,7 +21,10 @@ const LetterGlitchBackground = ({
   smooth?: boolean
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const animationRef = useRef<number | null>(null) // Use number for requestAnimationFrame ID
+  // Frame scheduling (RAF/timeout) for WebKit-friendly cadence
+  const rafIdRef = useRef<number | null>(null)
+  const timeoutIdRef = useRef<number | null>(null)
+  const lastFrameTimeRef = useRef<number>(Date.now())
   const workerRef = useRef<Worker | null>(null)
   const letters = useRef<
     Array<{
@@ -263,44 +266,70 @@ const LetterGlitchBackground = ({
       }
     }
   }, [smooth, getRandomChar, getRandomColor])
-
-  const handleSmoothTransitions = useCallback(() => {
-    let needsRedraw = false
-    letters.current.forEach(letter => {
-      if (letter.colorProgress < 1) {
-        letter.colorProgress += 0.03 // Slower transition for smoother effect
-        if (letter.colorProgress > 1) letter.colorProgress = 1
-
-        const startRgb = hexToRgb(letter.color)
-        const endRgb = hexToRgb(letter.targetColor)
-        if (startRgb && endRgb) {
-          letter.color = interpolateColor(startRgb, endRgb, letter.colorProgress)
-          needsRedraw = true
-        }
-      }
-    })
-
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (needsRedraw) {
-      drawLetters()
-    }
-  }, [drawLetters])
-
   const animate = useCallback(() => {
-    // Schedule the next frame using requestAnimationFrame
-    animationRef.current = requestAnimationFrame(animate)
+    // Skip updates when tab is hidden (no visible change, saves work)
+    const docHidden = typeof document !== 'undefined' ? document.hidden : false
+    const scheduleNext = () => {
+      const isWebKit =
+        typeof navigator !== 'undefined' &&
+        navigator.userAgent.includes('WebKit') &&
+        !navigator.userAgent.includes('Chrome')
+      if (isWebKit) {
+        timeoutIdRef.current = window.setTimeout(() => {
+          rafIdRef.current = requestAnimationFrame(animate)
+        }, 33)
+      } else {
+        rafIdRef.current = requestAnimationFrame(animate)
+      }
+    }
 
+    if (docHidden) {
+      scheduleNext()
+      return
+    }
     const now = Date.now()
+    const dt = now - lastFrameTimeRef.current
+    lastFrameTimeRef.current = now
+
+    // Update letters at configured glitch cadence (incremental redraw)
     if (now - lastGlitchTime.current >= glitchSpeed) {
       updateLetters()
-      drawLetters()
       lastGlitchTime.current = now
     }
 
+    // Smooth transitions: time-based; redraw only affected cells
     if (smooth) {
-      handleSmoothTransitions()
+      const incrementPerSecond = 1.8 // ~0.03 per 16.67ms
+      for (let i = 0; i < letters.current.length; i++) {
+        const letter = letters.current[i]
+        if (letter && letter.colorProgress < 1) {
+          letter.colorProgress += (incrementPerSecond * dt) / 1000
+          if (letter.colorProgress > 1) letter.colorProgress = 1
+
+          const startRgb = hexToRgb(letter.color)
+          const endRgb = hexToRgb(letter.targetColor)
+          if (startRgb && endRgb) {
+            letter.color = interpolateColor(startRgb, endRgb, letter.colorProgress)
+            // Redraw only this cell
+            const cols = Math.max(1, grid.current.columns)
+            const x = (i % cols) * charWidth
+            const y = Math.floor(i / cols) * charHeight
+            if (context.current) {
+              const ctx = context.current
+              ctx.fillStyle = '#000000'
+              ctx.fillRect(x, y, charWidth, charHeight)
+              ctx.font = `${String(fontSize)}px 'JetBrains Mono', 'Courier New', monospace`
+              ctx.textBaseline = 'top'
+              ctx.fillStyle = letter.color || '#666666'
+              ctx.fillText(letter.char || ' ', x, y)
+            }
+          }
+        }
+      }
     }
-  }, [glitchSpeed, smooth, updateLetters, handleSmoothTransitions, drawLetters])
+
+    scheduleNext()
+  }, [glitchSpeed, smooth, updateLetters])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -379,31 +408,38 @@ const LetterGlitchBackground = ({
       }
     }
     resizeCanvas()
+    lastFrameTimeRef.current = Date.now()
     animate()
 
-    let resizeTimeout: NodeJS.Timeout
-
-    const handleResize = () => {
-      clearTimeout(resizeTimeout)
-      resizeTimeout = setTimeout(() => {
-        if (animationRef.current) {
-          cancelAnimationFrame(animationRef.current)
-        }
+    // Prefer ResizeObserver on the canvas parent for precise size changes
+    const parent = canvas.parentElement
+    let ro: ResizeObserver | null = null
+    let resizeTimeout: number | undefined
+    const debouncedResize = () => {
+      if (resizeTimeout) window.clearTimeout(resizeTimeout)
+      resizeTimeout = window.setTimeout(() => {
+        if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current)
+        if (timeoutIdRef.current) clearTimeout(timeoutIdRef.current)
         resizeCanvas()
         animate()
       }, 100)
     }
 
-    if (typeof window !== 'undefined') {
-      window.addEventListener('resize', handleResize)
+    if (parent && typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(() => {
+        debouncedResize()
+      })
+      ro.observe(parent)
+    } else if (typeof window !== 'undefined') {
+      window.addEventListener('resize', debouncedResize, { passive: true })
     }
 
     return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current)
-      }
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('resize', handleResize)
+      if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current)
+      if (timeoutIdRef.current) clearTimeout(timeoutIdRef.current)
+      if (ro) ro.disconnect()
+      else if (typeof window !== 'undefined') {
+        window.removeEventListener('resize', debouncedResize as unknown as () => void)
       }
       if (workerRef.current) {
         workerRef.current.terminate()

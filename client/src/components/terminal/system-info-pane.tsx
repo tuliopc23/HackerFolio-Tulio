@@ -14,8 +14,60 @@ interface Project {
   updated_at?: string | null | undefined
 }
 
-function SystemInfoPane() {
+// Lightweight world clock that updates itself without re-rendering the whole pane
+const WorldClock = memo(() => {
   const [currentTime, setCurrentTime] = useState(new Date())
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 1000)
+    return () => {
+      clearInterval(timer)
+    }
+  }, [])
+
+  const formatTime = (time: Date, timezone: string) => {
+    try {
+      return time.toLocaleTimeString('en-US', { hour12: false, timeZone: timezone })
+    } catch {
+      return time.toTimeString().slice(0, 8)
+    }
+  }
+
+  const timezones = [
+    { name: 'RIO', timezone: 'America/Sao_Paulo', city: 'Rio de Janeiro' },
+    { name: 'SF', timezone: 'America/Los_Angeles', city: 'San Francisco' },
+    { name: 'LON', timezone: 'Europe/London', city: 'London' },
+    { name: 'TYO', timezone: 'Asia/Tokyo', city: 'Tokyo' },
+  ]
+
+  return (
+    <div className='space-y-2 mb-4'>
+      <div className='text-pink-400 text-[10px] font-medium tracking-wide uppercase'>
+        WORLD CLOCK
+      </div>
+      <div className='grid grid-cols-2 gap-x-4 gap-y-2 text-xs'>
+        {timezones.map(tz => (
+          <div key={tz.name} className='flex items-center justify-between'>
+            <div className='text-[#dde1e6] opacity-80 text-[10px] uppercase tracking-wide font-medium'>
+              {tz.city}
+            </div>
+            <div
+              className='text-green-400 font-mono font-semibold text-sm'
+              suppressHydrationWarning
+            >
+              {formatTime(currentTime, tz.timezone)}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+})
+WorldClock.displayName = 'WorldClock'
+
+function SystemInfoPane() {
   const [showFastfetch, setShowFastfetch] = useState(false)
 
   // Use TanStack Query for projects data
@@ -60,16 +112,6 @@ function SystemInfoPane() {
   }, [projectsData.length])
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date())
-    }, 1000)
-
-    return () => {
-      clearInterval(timer)
-    }
-  }, [])
-
-  useEffect(() => {
     // Trigger fastfetch display after component mounts
     const timeout = setTimeout(() => {
       setShowFastfetch(true)
@@ -79,25 +121,6 @@ function SystemInfoPane() {
     }
   }, [])
 
-  const formatTime = (time: Date, timezone: string) => {
-    try {
-      return time.toLocaleTimeString('en-US', {
-        hour12: false,
-        timeZone: timezone,
-      })
-    } catch {
-      // Fallback to basic time format on error
-      return time.toTimeString().slice(0, 8)
-    }
-  }
-
-  const timezones = [
-    { name: 'RIO', timezone: 'America/Sao_Paulo', city: 'Rio de Janeiro' },
-    { name: 'SF', timezone: 'America/Los_Angeles', city: 'San Francisco' },
-    { name: 'LON', timezone: 'Europe/London', city: 'London' },
-    { name: 'TYO', timezone: 'Asia/Tokyo', city: 'Tokyo' },
-  ]
-
   return (
     <div
       className='h-full flex flex-col font-mono text-[12.5px] leading-[1.5] text-[#f2f4f8]'
@@ -105,26 +128,7 @@ function SystemInfoPane() {
     >
       <div className='flex-1 overflow-y-auto'>
         {/* World Clock */}
-        <div className='space-y-2 mb-4'>
-          <div className='text-pink-400 text-[10px] font-medium tracking-wide uppercase'>
-            WORLD CLOCK
-          </div>
-          <div className='grid grid-cols-2 gap-x-4 gap-y-2 text-xs'>
-            {timezones.map(tz => (
-              <div key={tz.name} className='flex items-center justify-between'>
-                <div className='text-[#dde1e6] opacity-80 text-[10px] uppercase tracking-wide font-medium'>
-                  {tz.city}
-                </div>
-                <div
-                  className='text-green-400 font-mono font-semibold text-sm'
-                  suppressHydrationWarning
-                >
-                  {formatTime(currentTime, tz.timezone)}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <WorldClock />
         {/* Fastfetch Output */}
         {showFastfetch && (
           <div className='space-y-2'>

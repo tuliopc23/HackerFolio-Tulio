@@ -22,7 +22,25 @@ export class CommandProcessor {
   addToHistory(command: string) {
     if (command.trim() && this.history[this.history.length - 1] !== command) {
       this.history.push(command)
-      localStorage.setItem('terminal-history', JSON.stringify(this.history))
+      const save = () => {
+        try {
+          localStorage.setItem('terminal-history', JSON.stringify(this.history))
+        } catch {
+          // Ignore quota or availability errors silently
+        }
+      }
+      // Defer persistence to idle time without changing UX
+      const w =
+        typeof window !== 'undefined'
+          ? (window as unknown as {
+              requestIdleCallback?: (cb: () => void, opts?: { timeout?: number }) => number
+            })
+          : null
+      if (w?.requestIdleCallback) {
+        w.requestIdleCallback(save, { timeout: 500 })
+      } else {
+        setTimeout(save, 0)
+      }
       this.historyIndex = this.history.length
     }
   }

@@ -58,7 +58,7 @@
   --color-magenta-glow: #ffccf2;
 
   --radius: 0.5rem;
-  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  --font-mono: 'Monaspace Neon', 'JetBrains Mono', 'Courier New', monospace;
 }
 
 /* CSS Custom Properties for backwards compatibility */
@@ -146,6 +146,17 @@
 /* Oxocarbon theme: dark-only app uses oxocarbon tokens */
 
 @layer base {
+  /* Self-hosted Monaspace Neon variable font */
+  @font-face {
+    font-family: 'Monaspace Neon';
+    src:
+      url('./assets/Monaspace Neon/Monaspace Neon Var.woff2') format('woff2'),
+      url('./assets/Monaspace Neon/Monaspace Neon Var.woff') format('woff');
+    font-weight: 200 800;
+    font-style: normal;
+    font-display: swap;
+  }
+
   * {
     border-color: var(--border);
   }
@@ -825,6 +836,19 @@ select:focus-visible {
     content-visibility: auto;
     contain-intrinsic-size: 1200px 800px;
   }
+}
+
+/* Utility: apply content-visibility to scrollable panes without changing visuals */
+@supports (content-visibility: auto) {
+  .content-visibility-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 800px 600px;
+  }
+}
+
+/* Utility: stabilize compositing for heavy wrappers (use sparingly) */
+.composite-layer {
+  transform: translateZ(0);
 }
 
 /* Guarded Safari-only tweaks example (kept minimal) */

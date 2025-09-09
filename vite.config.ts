@@ -43,13 +43,73 @@ export default defineConfig(({ command, mode }) => {
           }
         : {
             output: {
-              manualChunks: {
-                'react-core': ['react', 'react-dom'],
-                'tanstack-router': ['@tanstack/react-router', '@tanstack/history'],
-                'tanstack-query': ['@tanstack/react-query'],
-                'motion-lib': ['motion'],
-                'data-libs': ['drizzle-orm', 'drizzle-zod', 'zod'],
-                'ui-utils': ['clsx', 'tailwind-merge'],
+              manualChunks: id => {
+                // Core React libraries
+                if (id.includes('react') || id.includes('react-dom')) {
+                  return 'react-core'
+                }
+
+                // TanStack Router and related
+                if (id.includes('@tanstack/react-router') || id.includes('@tanstack/history')) {
+                  return 'tanstack-router'
+                }
+
+                // TanStack Query
+                if (id.includes('@tanstack/react-query')) {
+                  return 'tanstack-query'
+                }
+
+                // Router DevTools (separate chunk for dev)
+                if (id.includes('@tanstack/react-router-devtools')) {
+                  return 'router-devtools'
+                }
+
+                // Motion library
+                if (id.includes('motion')) {
+                  return 'motion-lib'
+                }
+
+                // Database and validation libraries
+                if (
+                  id.includes('drizzle-orm') ||
+                  id.includes('drizzle-zod') ||
+                  id.includes('zod')
+                ) {
+                  return 'data-libs'
+                }
+
+                // UI utilities
+                if (id.includes('clsx') || id.includes('tailwind-merge')) {
+                  return 'ui-utils'
+                }
+
+                // Route-based chunks for pages
+                if (id.includes('/pages/projects')) {
+                  return 'page-projects'
+                }
+
+                if (id.includes('/pages/not-found')) {
+                  return 'page-not-found'
+                }
+
+                if (id.includes('TerminalThemePreview')) {
+                  return 'component-theme-preview'
+                }
+
+                // Terminal components (group related components)
+                if (id.includes('/components/terminal/')) {
+                  return 'terminal-components'
+                }
+
+                // Accessibility components
+                if (id.includes('/components/accessibility/')) {
+                  return 'accessibility-components'
+                }
+
+                // Node modules vendor chunk
+                if (id.includes('node_modules')) {
+                  return 'vendor'
+                }
               },
             },
           },

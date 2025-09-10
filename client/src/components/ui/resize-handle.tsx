@@ -37,8 +37,8 @@ export default function ResizeHandle({ onResize, className = '' }: ResizeHandleP
         /* intentional noop - no cleanup needed when not dragging */
       }
     }
-    document.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mouseup', handleMouseUp)
+    document.addEventListener('mousemove', handleMouseMove, { passive: true })
+    document.addEventListener('mouseup', handleMouseUp, { passive: true })
     return () => {
       document.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseup', handleMouseUp)

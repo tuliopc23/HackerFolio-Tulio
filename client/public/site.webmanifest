@@ -1,0 +1,17 @@
+{
+  "name": "Tulio Cunha – Terminal Portfolio",
+  "short_name": "HackerFolio",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#33b1ff",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
+    }
+  ]
+}

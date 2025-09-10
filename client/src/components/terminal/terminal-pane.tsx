@@ -226,16 +226,23 @@ export default function TerminalPane() {
       // Add to history with final output
       const isError = finalError
 
-      setHistory(prev => [
-        ...prev,
-        {
-          command,
-          output: finalOutput,
-          timestamp: new Date(),
-          error: isError,
-          id: `cmd-${Date.now().toString()}-${Math.random().toString(36).slice(2, 9)}`,
-        },
-      ])
+      const MAX_HISTORY = 1000
+      setHistory(prev => {
+        const next = [
+          ...prev,
+          {
+            command,
+            output: finalOutput,
+            timestamp: new Date(),
+            error: isError,
+            id: `cmd-${Date.now().toString()}-${Math.random().toString(36).slice(2, 9)}`,
+          },
+        ]
+        if (next.length > MAX_HISTORY) {
+          return next.slice(next.length - MAX_HISTORY)
+        }
+        return next
+      })
 
       // Announce command completion
       setLastCommandStatus(isError ? 'error' : 'success')

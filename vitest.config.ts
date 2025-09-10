@@ -51,7 +51,6 @@ export default defineConfig({
         '**/__mocks__/**',
         'coverage/**',
         'drizzle/**',
-        'server/db/migrate.ts',
         'client/src/entry-*',
       ],
       thresholds: {

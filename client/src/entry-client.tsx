@@ -1,7 +1,5 @@
 import { hydrateRoot, createRoot } from 'react-dom/client'
 
-// Preload self-hosted Monaspace Neon variable font in production using hashed URL
-// Vite will resolve the final asset path at build time
 import monaspaceNeonUrl from '@/assets/Monaspace Neon/Monaspace Neon Var.woff2?url'
 
 import App from './App'
@@ -9,7 +7,6 @@ import './index.css'
 
 const rootElement = document.getElementById('root')
 
-// Inject font preload early in production to ensure Monaspace Neon is chosen
 if (!import.meta.env.DEV && typeof document !== 'undefined' && monaspaceNeonUrl) {
   const link = document.createElement('link')
   link.rel = 'preload'
@@ -23,20 +20,13 @@ if (!rootElement) {
   throw new Error('Root element not found')
 }
 
-// Enhanced hydration with better error handling
 function renderApp() {
-  if (!rootElement) {
-    // eslint-disable-next-line no-console
-    console.error('Root element not found')
-    return
-  }
+  if (!rootElement) return
 
   try {
-    // In development (Vite), there is no SSR markup. Force client mount.
     if (import.meta.env.DEV) {
       createRoot(rootElement).render(<App />)
     } else {
-      // In production, hydrate only if SSR injected DOM exists.
       const hasSSRContent = rootElement.firstElementChild != null
       if (hasSSRContent) {
         hydrateRoot(rootElement, <App />)
@@ -44,10 +34,7 @@ function renderApp() {
         createRoot(rootElement).render(<App />)
       }
     }
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Failed to render app:', error)
-    // Fallback to basic error display
+  } catch {
     rootElement.innerHTML = `
       <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 24px;">
         <div style="color: #ef4444; font-size: 20px; margin-bottom: 16px;">⚠️ App Error</div>

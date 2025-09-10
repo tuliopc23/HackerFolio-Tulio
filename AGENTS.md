@@ -20,7 +20,6 @@
 - `bun run test` – Run Vitest once with jsdom and coverage.
 - `bun run check:all` – Type check, lint, format check, and tests.
 - `bun run fix:all` – Apply Prettier and ESLint fixes.
-- DB helpers (direct): `bun server/db/migrate.ts`, `bun server/db/seed.ts`.
 
 ## Coding Style & Naming Conventions
 

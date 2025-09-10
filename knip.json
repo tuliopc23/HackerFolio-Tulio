@@ -2,7 +2,7 @@
   "$schema": "https://unpkg.com/knip@latest/schema.json",
   "workspaces": {
     ".": {
-      "entry": ["client/src/entry-client.tsx", "client/src/entry-server.tsx", "server/scripts/**/*.ts"],
+      "entry": ["client/src/entry-client.tsx", "client/src/entry-server.tsx"],
       "project": ["**/*.{js,jsx,ts,tsx}", "!**/*.test.{js,jsx,ts,tsx}"],
       "ignore": ["node_modules/**", "dist/**", "build/**", "coverage/**", "drizzle/**", ".vite/**"]
     }

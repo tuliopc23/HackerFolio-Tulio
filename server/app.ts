@@ -1,4 +1,3 @@
-// server/app.ts - Simplified main server file
 import { cors } from '@elysiajs/cors'
 import { Elysia, type Context } from 'elysia'
 
@@ -9,15 +8,12 @@ import { terminalRoutes } from './routes/terminal'
 
 const { PORT } = env
 
-// Database is already set up, no migrations needed
-console.log('✅ Using existing database')
-
 const app = new Elysia()
 
 app
   .use(
     cors({
-      origin: true, // Allow all origins for a portfolio
+      origin: true,
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],

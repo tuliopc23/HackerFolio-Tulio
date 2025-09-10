@@ -6,11 +6,7 @@ import { createAppRouter, AppRouterProvider } from '@/router-enhanced'
 
 function App({ router: providedRouter }: { router?: ReturnType<typeof createAppRouter> }) {
   const [isLoading, setIsLoading] = useState(true)
-
-  // OPTIMIZATION: Memoize router creation to prevent recreation on every render
   const router = useMemo(() => providedRouter ?? createAppRouter(), [providedRouter])
-
-  // Initialize route preloader
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
   const preloader = useRoutePreloader(router as any)
 
@@ -18,12 +14,9 @@ function App({ router: providedRouter }: { router?: ReturnType<typeof createAppR
     setIsLoading(false)
   }
 
-  // Setup link observation after loading is complete
   useEffect(() => {
     if (!isLoading) {
-      // Start observing links for preloading
       preloader.observeLinks()
-
       return () => {
         preloader.destroy()
       }
@@ -32,7 +25,6 @@ function App({ router: providedRouter }: { router?: ReturnType<typeof createAppR
   }, [isLoading, preloader])
 
   return (
-    // OPTIMIZATION: Replace AnimatePresence with CSS transitions (-50KB)
     <div className='app-container'>
       {isLoading ? (
         <LoadingScreen key='loading' onComplete={handleLoadingComplete} />

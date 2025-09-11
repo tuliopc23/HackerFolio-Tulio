@@ -1,6 +1,6 @@
 import { hydrateRoot, createRoot } from 'react-dom/client'
 
-import monaspaceNeonUrl from '@/assets/Monaspace Neon/Monaspace Neon Var.woff2?url'
+import monaspaceNeonUrl from '@/assets/fonts/monaspace/Monaspace Neon Var.woff2?url'
 
 import App from './App'
 import './index.css'

@@ -150,8 +150,8 @@
   @font-face {
     font-family: 'Monaspace Neon';
     src:
-      url('./assets/Monaspace Neon/Monaspace Neon Var.woff2') format('woff2'),
-      url('./assets/Monaspace Neon/Monaspace Neon Var.woff') format('woff');
+      url('./assets/fonts/monaspace/Monaspace Neon Var.woff2') format('woff2'),
+      url('./assets/fonts/monaspace/Monaspace Neon Var.woff') format('woff');
     font-weight: 200 800;
     font-style: normal;
     font-display: swap;

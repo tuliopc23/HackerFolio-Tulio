@@ -290,7 +290,7 @@ export default function TerminalPane() {
   return (
     <div
       ref={terminalRef}
-      className='h-full flex flex-col font-mono text-[12.5px] leading-[1.5] text-[rgba(235,241,255,0.9)]'
+      className='h-full flex flex-col font-mono text-[13.5px] leading-[1.5] text-[rgba(235,241,255,0.9)]'
       role='application'
       aria-label='Interactive Terminal'
       aria-describedby='terminal-help terminal-status'
@@ -371,7 +371,7 @@ export default function TerminalPane() {
               setInput(e.target.value)
             }}
             onKeyDown={handleKeyDown}
-            className='ml-2 bg-transparent border-none outline-none text-[rgba(0,234,255,0.9)] font-mono text-[12.5px] leading-[1.5] flex-1 focus-visible:shadow-[0_0_0_2px_rgba(0,234,255,0.3)] focus-visible:rounded-sm'
+            className='ml-2 bg-transparent border-none outline-none text-[rgba(0,234,255,0.9)] font-mono text-[13.5px] leading-[1.5] flex-1 focus-visible:shadow-[0_0_0_2px_rgba(0,234,255,0.3)] focus-visible:rounded-sm'
             aria-label='Terminal command input'
             aria-describedby='terminal-help terminal-status'
             aria-invalid={lastCommandStatus === 'error' ? 'true' : 'false'}
@@ -391,7 +391,7 @@ export default function TerminalPane() {
       {/* Command Help Footer */}
       <div
         id='terminal-help'
-        className='px-3 py-2 border-t border-[rgba(128,255,128,0.25)] text-xs text-green-400 bg-black/20'
+        className='px-3 py-2 border-t border-[rgba(128,255,128,0.25)] text-[13px] text-green-400 bg-black/20'
         role='complementary'
         aria-label='Terminal keyboard shortcuts'
       >

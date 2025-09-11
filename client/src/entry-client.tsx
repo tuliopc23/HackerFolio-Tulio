@@ -1,21 +1,12 @@
 import { hydrateRoot, createRoot } from 'react-dom/client'
 
-import monaspaceNeonUrl from '@/assets/fonts/monaspace/Monaspace Neon Var.woff2?url'
-
 import App from './App'
+
 import './index.css'
 
 const rootElement = document.getElementById('root')
 
-if (!import.meta.env.DEV && typeof document !== 'undefined' && monaspaceNeonUrl) {
-  const link = document.createElement('link')
-  link.rel = 'preload'
-  link.as = 'font'
-  link.href = monaspaceNeonUrl
-  link.type = 'font/woff2'
-  link.crossOrigin = 'anonymous'
-  document.head.appendChild(link)
-}
+// Font loading is handled via CDN includes in index.html
 if (!rootElement) {
   throw new Error('Root element not found')
 }

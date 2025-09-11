@@ -51,6 +51,9 @@ export default tseslint.config(
       'dist/**',
       'build/**',
       'coverage/**',
+      // Asset/specimen files (not part of app source)
+      'client/src/assets/fonts/**/specimen_files/**',
+      'client/src/assets/fonts/**/index.html',
       '*.config.js',
       '*.config.ts',
       'drizzle/**',

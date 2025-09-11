@@ -266,17 +266,17 @@ function SystemInfoPane() {
         )}
 
         {/* Bottom Cards Section */}
-        <div className='flex gap-3 mt-4'>
+        <div className='flex gap-3 mt-4 items-stretch flex-1'>
           {/* Recent Projects Card */}
-          <div className='flex-1 bg-black/30 border border-[#393939] rounded-lg p-3 text-xs font-mono pane-border'>
+          <div className='flex-1 bg-black/30 border border-[#393939] rounded-lg p-3 text-[12px] font-mono pane-border min-h-[200px] h-full'>
             <div className='text-[#be95ff] text-xs font-semibold tracking-wide uppercase mb-2 phosphor-glow'>
               RECENT PROJECTS
             </div>
             {projectsLoading ? (
-              <div className='text-[#dde1e6] opacity-60 text-[9px]'>Loading...</div>
+              <div className='text-[#dde1e6] opacity-60'>Loading...</div>
             ) : currentProject ? (
               <div className='space-y-2 phosphor-glow'>
-                <div className='flex items-center justify-between text-[9px] text-[#dde1e6] opacity-60'>
+                <div className='flex items-center justify-between text-[12px] text-[#dde1e6] opacity-60'>
                   <span>
                     Showing {currentProjectIndex + 1} / {projects.length}
                   </span>
@@ -285,16 +285,16 @@ function SystemInfoPane() {
                   </span>
                 </div>
                 <div key={currentProject.id} className='border-l-2 border-[#33b1ff] pl-2'>
-                  <div className='text-[#33b1ff] text-[10px] font-medium whitespace-normal break-words multiline-ellipsis-2'>
+                  <div className='text-[#33b1ff] text-[13px] font-medium whitespace-normal break-words multiline-ellipsis-2'>
                     {currentProject.name}
                   </div>
-                  <div className='text-[#dde1e6] opacity-70 text-[8px] whitespace-normal break-words multiline-ellipsis-3'>
+                  <div className='text-[#dde1e6] opacity-70 text-[12px] whitespace-normal break-words multiline-ellipsis-3'>
                     {currentProject.description ?? 'No description'}
                   </div>
                   <div className='flex items-center gap-2 mt-1'>
                     {currentProject.status && (
                       <span
-                        className={`text-[8px] px-1 rounded ${
+                        className={`text-[12px] px-1 rounded ${
                           currentProject.status === 'active'
                             ? 'bg-green-400/20 text-green-400'
                             : currentProject.status === 'completed'
@@ -306,7 +306,7 @@ function SystemInfoPane() {
                       </span>
                     )}
                     {currentProject.tech_stack && currentProject.tech_stack.length > 0 && (
-                      <span className='text-[8px] text-[#be95ff] opacity-70 whitespace-normal break-words multiline-ellipsis-2'>
+                      <span className='text-[12px] text-[#be95ff] opacity-70 whitespace-normal break-words multiline-ellipsis-2'>
                         {currentProject.tech_stack.slice(0, 2).join(', ')}
                       </span>
                     )}
@@ -314,36 +314,36 @@ function SystemInfoPane() {
                 </div>
               </div>
             ) : (
-              <div className='text-[#dde1e6] opacity-60 text-[9px]'>No projects found</div>
+              <div className='text-[#dde1e6] opacity-60'>No projects found</div>
             )}
           </div>
 
           {/* Project Stats Card */}
-          <div className='flex-1 bg-black/30 border border-[#393939] rounded-lg p-3 text-xs font-mono'>
+          <div className='flex-1 bg-black/30 border border-[#393939] rounded-lg p-3 text-[12px] font-mono min-h-[200px] h-full'>
             <div className='text-[#be95ff] text-xs font-semibold tracking-wide uppercase mb-2'>
               PROJECT STATS
             </div>
             {projectsLoading ? (
-              <div className='text-[#dde1e6] opacity-60 text-[9px]'>Loading...</div>
+              <div className='text-[#dde1e6] opacity-60'>Loading...</div>
             ) : (
               <div className='space-y-1.5'>
-                <div className='flex justify-between text-[9px]'>
+                <div className='flex justify-between text-[12px]'>
                   <span className='text-[#dde1e6] opacity-70'>Total:</span>
                   <span className='text-green-400 font-mono'>{projects.length}</span>
                 </div>
-                <div className='flex justify-between text-[9px]'>
+                <div className='flex justify-between text-[12px]'>
                   <span className='text-[#dde1e6] opacity-70'>Active:</span>
                   <span className='text-green-400 font-mono'>
                     {projects.filter(p => p.status === 'active').length}
                   </span>
                 </div>
-                <div className='flex justify-between text-[9px]'>
+                <div className='flex justify-between text-[12px]'>
                   <span className='text-[#dde1e6] opacity-70'>Completed:</span>
                   <span className='text-blue-400 font-mono'>
                     {projects.filter(p => p.status === 'completed').length}
                   </span>
                 </div>
-                <div className='flex justify-between text-[9px]'>
+                <div className='flex justify-between text-[12px]'>
                   <span className='text-[#dde1e6] opacity-70'>Technologies:</span>
                   <span className='text-pink-400 font-mono'>
                     {new Set(projects.flatMap(p => p.tech_stack ?? [])).size}
@@ -354,7 +354,7 @@ function SystemInfoPane() {
                 {projects.length > 0 && projects[0]?.updated_at && (
                   <>
                     <div className='border-t border-[#393939] my-2' />
-                    <div className='flex justify-between text-[9px]'>
+                    <div className='flex justify-between text-[12px]'>
                       <span className='text-[#dde1e6] opacity-70'>Last Update:</span>
                       <span className='text-pink-400 font-mono' suppressHydrationWarning>
                         {new Date(projects[0].updated_at).toLocaleDateString('en-US', {

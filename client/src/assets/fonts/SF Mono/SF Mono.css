@@ -1,0 +1,10 @@
+@font-face {
+  font-family: 'SF Mono';
+  src: url('fonts/SF-Mono-Powerline-Regular.eot');
+  src:
+    url('fonts/SF-Mono-Powerline-Regular.eot?#iefix') format('embedded-opentype'),
+    url('fonts/SF-Mono-Powerline-Regular.woff2') format('woff2'),
+    url('fonts/SF-Mono-Powerline-Regular.woff') format('woff'),
+    url('fonts/SF-Mono-Powerline-Regular.ttf') format('truetype'),
+    url('fonts/SF-Mono-Powerline-Regular.svg#SF Mono') format('svg');
+}

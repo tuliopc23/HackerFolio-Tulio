@@ -97,17 +97,17 @@ export default function GhosttyTerminalWindow({
               >
                 <div className='px-[14px] py-[10px] border-b border-white/[0.04] flex items-center justify-between'>
                   <div>
-                    <span className='font-mono text-[11px] font-semibold text-[#be95ff] tracking-[0.3px]'>
+                    <span className='font-mono text-[12px] font-semibold text-[#be95ff] tracking-[0.3px]'>
                       [pane-01]
                     </span>
-                    <span className='ml-2 text-[11px] text-[#dde1e6] opacity-60'>terminal</span>
+                    <span className='ml-2 text-[12px] text-[#dde1e6] opacity-60'>terminal</span>
                   </div>
                   <div
                     className='w-2 h-2 rounded-full bg-[#42be65] shadow-[0_0_6px_rgba(66,190,101,0.6)]'
                     aria-label='Terminal active'
                   />
                 </div>
-                <div className='flex-1 p-[14px] font-mono text-[12.5px] leading-[1.5] text-[#f2f4f8] overflow-y-auto overflow-x-hidden ios-inertia content-visibility-auto composite-layer'>
+                <div className='flex-1 p-[14px] font-mono text-[13.5px] leading-[1.5] text-[#f2f4f8] overflow-y-auto overflow-x-hidden ios-inertia content-visibility-auto composite-layer'>
                   {leftPane}
                 </div>
               </div>
@@ -129,10 +129,10 @@ export default function GhosttyTerminalWindow({
               >
                 <div className='px-[14px] py-[10px] border-b border-white/[0.04] flex items-center justify-between'>
                   <div>
-                    <span className='font-mono text-[11px] font-semibold text-[#be95ff] tracking-[0.3px]'>
+                    <span className='font-mono text-[12px] font-semibold text-[#be95ff] tracking-[0.3px]'>
                       [pane-02]
                     </span>
-                    <span className='ml-2 text-[11px] text-[#dde1e6] opacity-60'>system</span>
+                    <span className='ml-2 text-[12px] text-[#dde1e6] opacity-60'>system</span>
                   </div>
                   <div
                     className='w-2 h-2 rounded-full bg-[#42be65] shadow-[0_0_6px_rgba(66,190,101,0.6)]'

@@ -204,7 +204,7 @@ const LetterGlitchBackground = ({
     ctx.clearRect(0, 0, width, height)
 
     // Set font once, outside the loop for slight optimization
-    ctx.font = `${String(fontSize)}px 'JetBrains Mono', 'Courier New', monospace`
+    ctx.font = `${String(fontSize)}px 'SF Mono', 'Courier New', monospace`
     ctx.textBaseline = 'top'
 
     // Pre-calculate cols to avoid redundant calculations
@@ -318,7 +318,7 @@ const LetterGlitchBackground = ({
               const ctx = context.current
               ctx.fillStyle = '#000000'
               ctx.fillRect(x, y, charWidth, charHeight)
-              ctx.font = `${String(fontSize)}px 'JetBrains Mono', 'Courier New', monospace`
+              ctx.font = `${String(fontSize)}px 'SF Mono', 'Courier New', monospace`
               ctx.textBaseline = 'top'
               ctx.fillStyle = letter.color || '#666666'
               ctx.fillText(letter.char || ' ', x, y)

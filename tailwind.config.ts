@@ -75,7 +75,7 @@ export default {
       fontFamily: {
         sans: ['var(--font-sans)'],
         serif: ['var(--font-serif)'],
-        mono: ['var(--font-mono)', 'JetBrains Mono', 'Courier New', 'monospace'],
+        mono: ['var(--font-mono)', 'SF Mono', 'SFMono-Regular', 'Courier New', 'monospace'],
       },
       keyframes: {
         'accordion-down': {

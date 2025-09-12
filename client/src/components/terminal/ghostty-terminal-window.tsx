@@ -46,7 +46,7 @@ export default function GhosttyTerminalWindow({
       {/* Outer wrapper uses drop-shadow to reduce Safari rasterization cost */}
       <div style={{ filter: 'drop-shadow(0 20px 60px rgba(0,0,0,0.6))' }}>
         <section
-          className={`crt-screen w-[min(95vw,1600px)] h-[min(90vh,1200px)] bg-[#0a0a0a] rounded-[20px] shadow-[0_0_0_1px_rgba(255,255,255,0.03),inset_0_0_0_1px_rgba(255,255,255,0.02)] overflow-hidden flex flex-col contain-paint ${className}`}
+          className={`crt-screen w-[min(98vw,1800px)] h-[min(93vh,1350px)] bg-[#0a0a0a] rounded-[20px] shadow-[0_0_0_1px_rgba(255,255,255,0.03),inset_0_0_0_1px_rgba(255,255,255,0.02)] overflow-hidden flex flex-col contain-paint ${className}`}
           aria-label='Terminal window'
           style={{ backgroundColor: '#0a0a0a' }}
         >
@@ -90,7 +90,7 @@ export default function GhosttyTerminalWindow({
             <div className='flex h-full p-4 gap-1'>
               {/* Left pane - Terminal */}
               <div
-                className='bg-[#0a0a0a] border border-[#393939] rounded-2xl overflow-hidden shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02),0_2px_8px_rgba(0,0,0,0.15)] flex flex-col transition-colors duration-200 hover:border-[#be95ff] focus-within:border-[#33b1ff]'
+                className='bg-[#0a0a0a] border border-[#393939] rounded-2xl overflow-hidden shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02),0_2px_8px_rgba(0,0,0,0.15)] flex flex-col transition-colors duration-200 hover:border-[#be95ff]'
                 role='group'
                 aria-label='Terminal pane'
                 style={{ width: `${String(leftPaneWidth)}%` }}
@@ -107,7 +107,7 @@ export default function GhosttyTerminalWindow({
                     aria-label='Terminal active'
                   />
                 </div>
-                <div className='flex-1 p-[14px] font-mono text-[13.5px] leading-[1.5] text-[#f2f4f8] overflow-y-auto overflow-x-hidden ios-inertia content-visibility-auto composite-layer'>
+                <div className='flex-1 p-[14px] font-mono text-[13.5px] leading-[1.5] text-[#f2f4f8] overflow-y-auto overflow-x-hidden ios-inertia composite-layer'>
                   {leftPane}
                 </div>
               </div>
@@ -122,7 +122,7 @@ export default function GhosttyTerminalWindow({
 
               {/* Right pane - System */}
               <div
-                className='bg-[#0a0a0a] border border-[#393939] rounded-2xl overflow-hidden shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02),0_2px_8px_rgba(0,0,0,0.15)] flex flex-col transition-colors duration-200 hover:border-[#be95ff] focus-within:border-[#33b1ff]'
+                className='bg-[#0a0a0a] border border-[#393939] rounded-2xl overflow-hidden shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02),0_2px_8px_rgba(0,0,0,0.15)] flex flex-col transition-colors duration-200 hover:border-[#be95ff]'
                 role='group'
                 aria-label='System information pane'
                 style={{ width: `${String(100 - leftPaneWidth)}%` }}
@@ -139,7 +139,7 @@ export default function GhosttyTerminalWindow({
                     aria-label='System online'
                   />
                 </div>
-                <div className='flex-1 p-[14px] font-mono text-[12.5px] leading-[1.5] text-[#f2f4f8] overflow-y-auto overflow-x-hidden ios-inertia content-visibility-auto composite-layer'>
+                <div className='flex-1 p-[14px] font-mono text-[12.5px] leading-[1.5] text-[#f2f4f8] overflow-y-auto overflow-x-hidden ios-inertia composite-layer'>
                   {rightPane}
                 </div>
               </div>

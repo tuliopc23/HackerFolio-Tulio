@@ -30,7 +30,7 @@ const HistoryEntry = memo(
             <span className='text-pink-400'>portfolio</span>
             <span className='text-green-400'>:~$</span>
           </span>
-          <span className='ml-2 text-cyan-bright'>{entry.command}</span>
+          {entry.command ? <span className='ml-2 text-cyan-bright'>{entry.command}</span> : null}
         </div>
         {entry.output && (
           <TypedTerminalOutput
@@ -371,7 +371,7 @@ export default function TerminalPane() {
               setInput(e.target.value)
             }}
             onKeyDown={handleKeyDown}
-            className='ml-2 bg-transparent border-none outline-none text-[rgba(0,234,255,0.9)] font-mono text-[13.5px] leading-[1.5] flex-1 focus-visible:shadow-[0_0_0_2px_rgba(0,234,255,0.3)] focus-visible:rounded-sm'
+            className='ml-2 bg-transparent border-none outline-none text-[color:var(--term-fg)] glow-soft font-mono text-[13.5px] leading-[1.5] flex-1'
             aria-label='Terminal command input'
             aria-describedby='terminal-help terminal-status'
             aria-invalid={lastCommandStatus === 'error' ? 'true' : 'false'}
@@ -381,44 +381,48 @@ export default function TerminalPane() {
             disabled={isExecuting}
             aria-multiline='false'
           />
-          <span
-            className={`cursor-block ${isExecuting ? 'animate-pulse' : ''}`}
-            aria-hidden='true'
-          />
+          {/* Removed decorative cursor block to avoid confusion with real caret */}
         </div>
       </div>
 
       {/* Command Help Footer */}
       <div
         id='terminal-help'
-        className='px-3 py-2 border-t border-[rgba(128,255,128,0.25)] text-[13px] text-green-400 bg-black/20'
+        className='px-3 py-2 border-t border-[rgba(255,126,182,0.25)] text-[13px] text-[rgba(242,244,248,0.95)] bg-black/20'
         role='complementary'
         aria-label='Terminal keyboard shortcuts'
       >
         <div className='flex flex-wrap gap-4'>
           <span>
-            <kbd className='bg-black/40 px-1 rounded' aria-label='Tab key'>
+            <kbd className='text-[color:var(--ansi-2)] phosphor-glow' aria-label='Tab key'>
               Tab
             </kbd>
-            <span className='sr-only'>key for </span>autocomplete
+            <span className='sr-only'>key for </span>
+            <span className='text-terminal-green phosphor-glow'> autocomplete</span>
           </span>
           <span>
-            <kbd className='bg-black/40 px-1 rounded' aria-label='Up and down arrow keys'>
+            <kbd
+              className='text-[color:var(--ansi-2)] phosphor-glow'
+              aria-label='Up and down arrow keys'
+            >
               ↑↓
             </kbd>
-            <span className='sr-only'>keys for </span>history
+            <span className='sr-only'>keys for </span>
+            <span className='text-terminal-green phosphor-glow'> history</span>
           </span>
           <span>
-            <kbd className='bg-black/40 px-1 rounded' aria-label='Control plus C'>
+            <kbd className='text-[color:var(--ansi-2)] phosphor-glow' aria-label='Control plus C'>
               Ctrl+C
             </kbd>
-            <span className='sr-only'>to </span>clear
+            <span className='sr-only'>to </span>
+            <span className='text-terminal-green phosphor-glow'> clear</span>
           </span>
           <span>
-            <kbd className='bg-black/40 px-1 rounded' aria-label='Control plus L'>
+            <kbd className='text-[color:var(--ansi-2)] phosphor-glow' aria-label='Control plus L'>
               Ctrl+L
             </kbd>
-            <span className='sr-only'>to </span>clear screen
+            <span className='sr-only'>to </span>
+            <span className='text-terminal-green phosphor-glow'> clear screen</span>
           </span>
         </div>
       </div>

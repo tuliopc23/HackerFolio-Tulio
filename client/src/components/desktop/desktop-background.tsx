@@ -37,35 +37,37 @@ export default function DesktopBackground() {
       <div className='absolute top-2 left-2 space-y-4 z-50'>{/* Icons removed */}</div>
 
       {/* Desktop Status Bar */}
-      <div className='absolute bottom-0 left-0 right-0 bg-[#0a0a0a] bg-opacity-80 border-t border-magenta-soft backdrop-blur-sm contain-paint overflow-hidden isolate'>
+      <div className='absolute bottom-0 left-0 right-0 bg-[#0a0a0a] bg-opacity-80 border-t border-[#393939] backdrop-blur-sm contain-paint overflow-hidden isolate'>
         <div className='px-6 py-2 flex items-center justify-between'>
           {/* Left side - System status */}
           <div className='flex items-center gap-4 text-xs'>
             <div className='flex items-center gap-2'>
               <div className='w-2 h-2 rounded-full bg-cyan-soft animate-pulse shadow-[0_0_6px_rgba(130,207,255,0.6)]' />
-              <span className='text-cyan-soft font-medium'>System Online</span>
+              <span className='text-[color:var(--ansi-2)] font-medium phosphor-glow'>
+                System Online
+              </span>
             </div>
-            <div className='text-magenta-soft'>
-              <span className='text-magenta-soft'>CPU:</span>
-              <span className='text-cyan-soft ml-1'>23%</span>
-              <span className='text-magenta-soft mx-2'>•</span>
-              <span className='text-magenta-soft'>RAM:</span>
-              <span className='text-cyan-soft ml-1'>4.2GB</span>
-              <span className='text-magenta-soft mx-2'>•</span>
-              <span className='text-magenta-soft'>Network:</span>
-              <span className='text-cyan-soft ml-1'>Active</span>
+            <div className='text-[#f2f4f8]'>
+              <span className='text-[#f2f4f8]'>CPU:</span>
+              <span className='text-[color:var(--ansi-2)] ml-1 phosphor-glow'>23%</span>
+              <span className='text-[#393939] mx-2'>•</span>
+              <span className='text-[#f2f4f8]'>RAM:</span>
+              <span className='text-[color:var(--ansi-6)] ml-1 phosphor-glow'>4.2GB</span>
+              <span className='text-[#393939] mx-2'>•</span>
+              <span className='text-[#f2f4f8]'>Network:</span>
+              <span className='text-[color:var(--ansi-6)] ml-1 phosphor-glow'>Active</span>
             </div>
           </div>
 
           {/* Right side - Clock */}
           <div className='flex items-center gap-4 text-xs'>
             <div
-              className='text-cyan-soft font-mono font-semibold text-shadow-sm'
+              className='text-cyan-bright font-mono font-semibold glow-soft'
               suppressHydrationWarning
             >
               {formatTime(currentTime)}
             </div>
-            <div className='text-magenta-soft' suppressHydrationWarning>
+            <div className='text-[#f2f4f8]' suppressHydrationWarning>
               {currentTime.toLocaleDateString('en-US', {
                 month: 'short',
                 day: 'numeric',

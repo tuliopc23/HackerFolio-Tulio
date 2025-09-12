@@ -77,7 +77,7 @@
   --term-fg: #f2f4f8;
   --term-selection-bg: #393939;
   --term-selection-fg: #f2f4f8;
-  --term-cursor: #ffffff;
+  --term-cursor: #ff7eb6; /* pink cursor for visibility */
   --term-cursor-text: #000000;
 
   /* ANSI 16-Color Palette */
@@ -281,6 +281,11 @@
   text-shadow: 0 0 6px currentColor;
 }
 
+/* Reusable soft glow for CRT-style emphasis */
+.glow-soft {
+  text-shadow: 0 0 6px currentColor;
+}
+
 .pane-border {
   border: 1px solid var(--magenta-soft);
   /* Pane glow using the pink color from the palette */
@@ -328,7 +333,7 @@
   display: inline-block;
   width: 0.6em;
   height: 1em;
-  background-color: var(--magenta-bright);
+  background-color: var(--magenta-soft);
   /* DISABLED: animation: cursor-blink 1s infinite; */
   margin-left: 2px;
 }
@@ -453,8 +458,8 @@
   box-shadow: 0 0 0 4px rgba(51, 177, 255, 0.3);
 }
 
-/* High contrast focus for better visibility */
-*:focus-visible {
+/* High contrast focus for better visibility (exclude form inputs) */
+*:focus-visible:not(input):not(textarea):not(select) {
   outline: 2px solid var(--cyan-bright);
   outline-offset: 2px;
   box-shadow: 0 0 0 4px rgba(51, 177, 255, 0.3);
@@ -510,14 +515,12 @@ a:focus-visible {
   border-radius: 2px;
 }
 
-/* Input focus enhancement */
+/* Remove cyan outline/margin from inputs */
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 2px solid var(--cyan-bright);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(51, 177, 255, 0.3);
-  border-color: var(--cyan-bright);
+  outline: none;
+  box-shadow: none;
 }
 
 /* Status indicators for screen readers */
@@ -761,6 +764,19 @@ select:focus-visible {
 .terminal,
 .terminal * {
   caret-color: var(--term-cursor);
+}
+
+/* Ensure real caret is pink on inputs globally */
+input,
+textarea,
+select {
+  caret-color: var(--term-cursor);
+}
+
+/* Terminal input placeholder: dim cyan, nearly neutral */
+#terminal-input::placeholder {
+  color: rgba(130, 207, 255, 0.55); /* cyan-soft at ~55% */
+  opacity: 1; /* ensure consistent rendering across browsers */
 }
 
 .terminal .cursor,

@@ -1,4 +1,6 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
+
+import { useFocusManager } from '@/components/accessibility/focus-manager'
 
 import ResizeHandle from '@/components/ui/resize-handle'
 
@@ -19,15 +21,32 @@ export default function GhosttyTerminalWindow({
   onMaximize,
   className = '',
 }: GhosttyTerminalWindowProps) {
-  const [leftPaneWidth, setLeftPaneWidth] = useState(50) // percentage
+  // Persisted left pane width (percentage)
+  const [leftPaneWidth, setLeftPaneWidth] = useState<number>(() => {
+    if (typeof window === 'undefined') return 50
+    const raw = window.localStorage.getItem('ghostty-leftPaneWidth')
+    const n = raw ? Number(raw) : NaN
+    return Number.isFinite(n) && n >= 20 && n <= 80 ? n : 50
+  })
+  const [isMaximized, setIsMaximized] = useState(false)
+  const { setTrapFocus } = useFocusManager()
 
-  // Lock body scroll when terminal is active
+  // Lock body scroll and trap focus when terminal is active
   useEffect(() => {
     document.body.classList.add('ghostty-active')
+    setTrapFocus(true)
     return () => {
       document.body.classList.remove('ghostty-active')
+      setTrapFocus(false)
     }
-  }, [])
+  }, [setTrapFocus])
+
+  // Persist pane width
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('ghostty-leftPaneWidth', String(Math.round(leftPaneWidth)))
+    }
+  }, [leftPaneWidth])
 
   const handleResize = (delta: number) => {
     // Convert pixel delta to percentage based on container width
@@ -41,18 +60,35 @@ export default function GhosttyTerminalWindow({
     setLeftPaneWidth(newWidth)
   }
 
+  const toggleMaximize = () => {
+    setIsMaximized(v => !v)
+    onMaximize?.()
+  }
+
+  const sectionSizeClasses = useMemo(() => {
+    return isMaximized
+      ? 'w-[min(99vw,1920px)] h-[min(98dvh,1400px)] max-h-[calc(100dvh-8px)]'
+      : 'w-[min(98vw,1800px)] h-[min(95dvh,1350px)] max-h-[calc(100dvh-16px)] sm:max-h-[calc(100dvh-24px)] md:max-h-[calc(100dvh-40px)]'
+  }, [isMaximized])
+
   return (
     // Reserve space above the footer/status bar and keep centered
     <div className='fixed left-0 right-0 top-0 bottom-4 sm:bottom-6 md:bottom-10 grid place-items-center z-40'>
       {/* Outer wrapper uses drop-shadow to reduce Safari rasterization cost */}
       <div style={{ filter: 'drop-shadow(0 20px 60px rgba(0,0,0,0.6))' }}>
         <section
-          className={`crt-screen w-[min(98vw,1800px)] h-[min(95dvh,1350px)] max-h-[calc(100dvh-16px)] sm:max-h-[calc(100dvh-24px)] md:max-h-[calc(100dvh-40px)] bg-[#0a0a0a] rounded-[20px] shadow-[0_0_0_1px_rgba(255,255,255,0.03),inset_0_0_0_1px_rgba(255,255,255,0.02)] overflow-hidden flex flex-col contain-paint ${className}`}
+          className={`crt-screen ${sectionSizeClasses} bg-[#0a0a0a] rounded-[20px] shadow-[0_0_0_1px_rgba(255,255,255,0.03),inset_0_0_0_1px_rgba(255,255,255,0.02)] overflow-hidden flex flex-col contain-paint ${className}`}
           aria-label='Terminal window'
+          aria-roledescription='Terminal window'
           style={{ backgroundColor: '#0a0a0a' }}
         >
           {/* Titlebar with traffic lights on LEFT */}
-          <div className='flex items-center justify-between h-9 px-4 py-2' aria-hidden='true'>
+          <div
+            className='flex items-center justify-between h-9 px-4 py-2 select-none'
+            aria-hidden='true'
+            onDoubleClick={toggleMaximize}
+            title='Double-click to toggle maximize'
+          >
             <div className='flex gap-2 items-center'>
               <button
                 className='w-[11px] h-[11px] rounded-full border-none cursor-pointer transition-all duration-150 shadow-[inset_0_1px_2px_rgba(255,255,255,0.2),0_1px_2px_rgba(0,0,0,0.4)] bg-gradient-to-br from-[#ff5f56] to-[#e94b3c] hover:scale-110 hover:shadow-[inset_0_1px_3px_rgba(255,255,255,0.3),0_2px_4px_rgba(0,0,0,0.5)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-bright focus-visible:outline-offset-2'
@@ -68,7 +104,7 @@ export default function GhosttyTerminalWindow({
               />
               <button
                 className='w-[11px] h-[11px] rounded-full border-none cursor-pointer transition-all duration-150 shadow-[inset_0_1px_2px_rgba(255,255,255,0.2),0_1px_2px_rgba(0,0,0,0.4)] bg-gradient-to-br from-[#27c93f] to-[#1db954] hover:scale-110 hover:shadow-[inset_0_1px_3px_rgba(255,255,255,0.3),0_2px_4px_rgba(0,0,0,0.5)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-bright focus-visible:outline-offset-2'
-                onClick={onMaximize}
+                onClick={toggleMaximize}
                 aria-label='Maximize window'
                 title='Maximize'
               />
@@ -108,7 +144,7 @@ export default function GhosttyTerminalWindow({
                     aria-label='Terminal active'
                   />
                 </div>
-                <div className='flex-1 p-[14px] font-mono text-[13.5px] leading-[1.5] text-[#f2f4f8] overflow-y-auto overflow-x-hidden ios-inertia composite-layer'>
+                <div className='flex-1 p-[14px] font-mono text-[13.5px] leading-[1.5] text-[#f2f4f8] overflow-y-auto overflow-x-hidden ios-inertia content-visibility-auto composite-layer'>
                   {leftPane}
                 </div>
               </div>
@@ -118,6 +154,10 @@ export default function GhosttyTerminalWindow({
                 <ResizeHandle
                   onResize={handleResize}
                   className='w-full h-16 flex items-center justify-center hover:bg-[rgba(190,149,255,0.1)] rounded text-[#be95ff] hover:text-[#82cfff] transition-colors duration-200'
+                  currentLeftWidthPct={leftPaneWidth}
+                  minPct={20}
+                  maxPct={80}
+                  stepPct={2}
                 />
               </div>
 
@@ -140,7 +180,7 @@ export default function GhosttyTerminalWindow({
                     aria-label='System online'
                   />
                 </div>
-                <div className='flex-1 p-[14px] font-mono text-[12.5px] leading-[1.5] text-[#f2f4f8] overflow-y-auto overflow-x-hidden ios-inertia composite-layer'>
+                <div className='flex-1 p-[14px] font-mono text-[12.5px] leading-[1.5] text-[#f2f4f8] overflow-y-auto overflow-x-hidden ios-inertia content-visibility-auto composite-layer'>
                   {rightPane}
                 </div>
               </div>

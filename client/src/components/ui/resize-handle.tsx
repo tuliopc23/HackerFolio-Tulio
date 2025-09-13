@@ -3,9 +3,20 @@ import { useState, useCallback, useEffect, type MouseEvent as ReactMouseEvent } 
 interface ResizeHandleProps {
   onResize: (delta: number) => void
   className?: string
+  currentLeftWidthPct?: number
+  minPct?: number
+  maxPct?: number
+  stepPct?: number
 }
 
-export default function ResizeHandle({ onResize, className = '' }: ResizeHandleProps) {
+export default function ResizeHandle({
+  onResize,
+  className = '',
+  currentLeftWidthPct,
+  minPct = 20,
+  maxPct = 80,
+  stepPct = 2,
+}: ResizeHandleProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [startX, setStartX] = useState(0)
 
@@ -51,10 +62,37 @@ export default function ResizeHandle({ onResize, className = '' }: ResizeHandleP
       onMouseDown={handleMouseDown}
       type='button'
       aria-label='Resize panes'
+      role='separator'
+      aria-orientation='vertical'
+      aria-valuenow={currentLeftWidthPct ?? undefined}
+      aria-valuemin={minPct}
+      aria-valuemax={maxPct}
+      tabIndex={0}
       onKeyDown={e => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()
-          // Could implement keyboard resize here
+          // No-op: enter activates but resize is via arrows
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          e.preventDefault()
+          const container = document.querySelector('[data-terminal-container]') as
+            | HTMLElement
+            | null
+          const width = container?.clientWidth ?? 0
+          if (!width) return
+          const dir = e.key === 'ArrowLeft' ? -1 : 1
+          const delta = (stepPct / 100) * width * dir
+          onResize(delta)
+        } else if (e.key === 'PageUp' || e.key === 'PageDown') {
+          e.preventDefault()
+          const container = document.querySelector('[data-terminal-container]') as
+            | HTMLElement
+            | null
+          const width = container?.clientWidth ?? 0
+          if (!width) return
+          const dir = e.key === 'PageDown' ? -1 : 1
+          const step = Math.max(stepPct * 2, 5)
+          const delta = (step / 100) * width * dir
+          onResize(delta)
         }
       }}
       style={{ cursor: 'col-resize' }}

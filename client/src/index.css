@@ -243,6 +243,12 @@
   backface-visibility: hidden;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .crt-screen::before {
+    animation: none !important;
+  }
+}
+
 .crt-screen::after {
   content: '';
   position: absolute;

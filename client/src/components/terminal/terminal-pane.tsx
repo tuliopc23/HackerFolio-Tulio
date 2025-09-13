@@ -140,6 +140,9 @@ export default function TerminalPane() {
         return
       }
       void runCommand(input)
+    } else if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'C' || e.key === 'c')) {
+      e.preventDefault()
+      void copyLastOutput()
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
       const historyCommand = processor.getHistoryCommand('up')
@@ -169,6 +172,21 @@ export default function TerminalPane() {
       e.preventDefault()
       setHistory([])
       announce('Terminal screen cleared', 'polite')
+    }
+  }
+
+  const copyLastOutput = async () => {
+    const last = [...history].reverse().find(h => h.output && h.output.trim().length > 0)
+    const text = last?.output ?? ''
+    if (!text) {
+      announce('No output to copy', 'polite')
+      return
+    }
+    try {
+      await navigator.clipboard.writeText(text.replace(/\x1b\[[0-9;]+m/g, ''))
+      announce('Copied output to clipboard', 'polite')
+    } catch {
+      announce('Clipboard copy failed', 'assertive')
     }
   }
 
@@ -309,7 +327,7 @@ export default function TerminalPane() {
       {/* Terminal Content */}
       <div
         ref={outputRef}
-        className='flex-1 overflow-y-auto'
+        className='flex-1 overflow-y-auto ios-inertia content-visibility-auto composite-layer'
         id='terminal-content'
         role='log'
         aria-live='polite'
@@ -392,7 +410,7 @@ export default function TerminalPane() {
         role='complementary'
         aria-label='Terminal keyboard shortcuts'
       >
-        <div className='flex flex-wrap gap-4'>
+        <div className='flex flex-wrap gap-4 items-center'>
           <span>
             <kbd className='text-[color:var(--ansi-2)] phosphor-glow' aria-label='Tab key'>
               Tab
@@ -424,6 +442,15 @@ export default function TerminalPane() {
             <span className='sr-only'>to </span>
             <span className='text-terminal-green phosphor-glow'> clear screen</span>
           </span>
+          <button
+            type='button'
+            onClick={() => void copyLastOutput()}
+            className='ml-auto px-2 py-1 rounded border border-[#393939] text-[12px] text-[#33b1ff] hover:bg-[#393939] hover:bg-opacity-60 transition-colors focus:outline-none focus:ring-2 focus:ring-[#33b1ff] focus:ring-opacity-50'
+            aria-label='Copy last output to clipboard'
+            title='Copy last output (Ctrl/Cmd+Shift+C)'
+          >
+            Copy last
+          </button>
         </div>
       </div>
     </div>

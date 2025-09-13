@@ -41,3 +41,26 @@ function renderApp() {
 }
 
 renderApp()
+
+// Register Service Worker (production only)
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  const registerSW = async () => {
+    try {
+      await navigator.serviceWorker.register('/sw.js', { scope: '/' })
+    } catch {
+      // Fallback: register asset-scoped worker to at least cache assets
+      try {
+        await navigator.serviceWorker.register('/assets/router-sw.js', { scope: '/assets/' })
+      } catch {
+        // Silent fail — PWA is optional
+      }
+    }
+  }
+  if (document.readyState === 'complete') {
+    void registerSW()
+  } else {
+    window.addEventListener('load', () => {
+      void registerSW()
+    })
+  }
+}

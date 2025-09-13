@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import FocusManager from '@/components/accessibility/focus-manager'
 import SkipLinks from '@/components/accessibility/skip-links'
@@ -9,8 +9,27 @@ import SystemInfoPane from '@/components/terminal/system-info-pane'
 import TerminalPane from '@/components/terminal/terminal-pane'
 
 export default function Home() {
-  const [terminalVisible, setTerminalVisible] = useState(true)
-  const [terminalMinimized, setTerminalMinimized] = useState(false)
+  const [terminalVisible, setTerminalVisible] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true
+    const raw = window.localStorage.getItem('terminalVisible')
+    return raw === null ? true : raw === 'true'
+  })
+  const [terminalMinimized, setTerminalMinimized] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false
+    return window.localStorage.getItem('terminalMinimized') === 'true'
+  })
+
+  // Persist visibility/minimize state
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('terminalVisible', String(terminalVisible))
+    }
+  }, [terminalVisible])
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('terminalMinimized', String(terminalMinimized))
+    }
+  }, [terminalMinimized])
 
   const handleTerminalClose = () => {
     setTerminalVisible(false)

@@ -42,11 +42,12 @@ export default function GhosttyTerminalWindow({
   }
 
   return (
-    <div className='fixed inset-0 grid place-items-center z-40'>
+    // Reserve space above the footer/status bar and keep centered
+    <div className='fixed left-0 right-0 top-0 bottom-4 sm:bottom-6 md:bottom-10 grid place-items-center z-40'>
       {/* Outer wrapper uses drop-shadow to reduce Safari rasterization cost */}
       <div style={{ filter: 'drop-shadow(0 20px 60px rgba(0,0,0,0.6))' }}>
         <section
-          className={`crt-screen w-[min(98vw,1800px)] h-[min(93vh,1350px)] bg-[#0a0a0a] rounded-[20px] shadow-[0_0_0_1px_rgba(255,255,255,0.03),inset_0_0_0_1px_rgba(255,255,255,0.02)] overflow-hidden flex flex-col contain-paint ${className}`}
+          className={`crt-screen w-[min(98vw,1800px)] h-[min(95dvh,1350px)] max-h-[calc(100dvh-16px)] sm:max-h-[calc(100dvh-24px)] md:max-h-[calc(100dvh-40px)] bg-[#0a0a0a] rounded-[20px] shadow-[0_0_0_1px_rgba(255,255,255,0.03),inset_0_0_0_1px_rgba(255,255,255,0.02)] overflow-hidden flex flex-col contain-paint ${className}`}
           aria-label='Terminal window'
           style={{ backgroundColor: '#0a0a0a' }}
         >

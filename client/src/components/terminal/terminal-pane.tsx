@@ -183,6 +183,7 @@ export default function TerminalPane() {
       return
     }
     try {
+      // eslint-disable-next-line no-control-regex
       await navigator.clipboard.writeText(text.replace(/\x1b\[[0-9;]+m/g, ''))
       announce('Copied output to clipboard', 'polite')
     } catch {

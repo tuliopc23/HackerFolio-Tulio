@@ -64,3 +64,6 @@ vite.config.ts.*
 
 # Server public (legacy)
 server/public
+
+# Stakpak local files
+.stakpak

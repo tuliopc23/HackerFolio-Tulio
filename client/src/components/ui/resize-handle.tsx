@@ -12,9 +12,9 @@ interface ResizeHandleProps {
 export default function ResizeHandle({
   onResize,
   className = '',
-  currentLeftWidthPct,
-  minPct = 20,
-  maxPct = 80,
+  currentLeftWidthPct: _currentLeftWidthPct,
+  minPct: _minPct = 20,
+  maxPct: _maxPct = 80,
   stepPct = 2,
 }: ResizeHandleProps) {
   const [isDragging, setIsDragging] = useState(false)
@@ -62,11 +62,6 @@ export default function ResizeHandle({
       onMouseDown={handleMouseDown}
       type='button'
       aria-label='Resize panes'
-      role='separator'
-      aria-orientation='vertical'
-      aria-valuenow={currentLeftWidthPct ?? undefined}
-      aria-valuemin={minPct}
-      aria-valuemax={maxPct}
       tabIndex={0}
       onKeyDown={e => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -74,9 +69,7 @@ export default function ResizeHandle({
           // No-op: enter activates but resize is via arrows
         } else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
           e.preventDefault()
-          const container = document.querySelector('[data-terminal-container]') as
-            | HTMLElement
-            | null
+          const container = document.querySelector('[data-terminal-container]')
           const width = container?.clientWidth ?? 0
           if (!width) return
           const dir = e.key === 'ArrowLeft' ? -1 : 1
@@ -84,9 +77,7 @@ export default function ResizeHandle({
           onResize(delta)
         } else if (e.key === 'PageUp' || e.key === 'PageDown') {
           e.preventDefault()
-          const container = document.querySelector('[data-terminal-container]') as
-            | HTMLElement
-            | null
+          const container = document.querySelector('[data-terminal-container]')
           const width = container?.clientWidth ?? 0
           if (!width) return
           const dir = e.key === 'PageDown' ? -1 : 1

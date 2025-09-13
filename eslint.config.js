@@ -54,6 +54,9 @@ export default tseslint.config(
       // Asset/specimen files (not part of app source)
       'client/src/assets/fonts/**/specimen_files/**',
       'client/src/assets/fonts/**/index.html',
+      // Service worker files
+      'client/public/sw.js',
+      'client/public/assets/router-sw.js',
       '*.config.js',
       '*.config.ts',
       'drizzle/**',

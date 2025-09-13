@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 
 import { useFocusManager } from '@/components/accessibility/focus-manager'
-
 import ResizeHandle from '@/components/ui/resize-handle'
 
 interface GhosttyTerminalWindowProps {

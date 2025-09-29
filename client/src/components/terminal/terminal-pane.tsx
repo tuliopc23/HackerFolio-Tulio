@@ -25,12 +25,14 @@ const HistoryEntry = memo(
     return (
       <div key={entry.id}>
         <div className='flex'>
-          <span className='font-semibold'>
+          <span className='terminal-command'>
             <span className='text-green-400'>user@</span>
             <span className='text-pink-400'>portfolio</span>
             <span className='text-green-400'>:~$</span>
           </span>
-          {entry.command ? <span className='ml-2 text-cyan-bright'>{entry.command}</span> : null}
+          {entry.command ? (
+            <span className='ml-2 text-cyan-bright terminal-command'>{entry.command}</span>
+          ) : null}
         </div>
         {entry.output && (
           <TypedTerminalOutput
@@ -309,7 +311,7 @@ export default function TerminalPane() {
   return (
     <div
       ref={terminalRef}
-      className='h-full flex flex-col font-mono text-[13.5px] leading-[1.5] text-[rgba(235,241,255,0.9)]'
+      className='h-full flex flex-col font-mono text-[13.5px] terminal-body text-[rgba(235,241,255,0.9)]'
       role='application'
       aria-label='Interactive Terminal'
       aria-describedby='terminal-help terminal-status'
@@ -372,7 +374,7 @@ export default function TerminalPane() {
 
         {/* Current Command Line */}
         <div className='flex items-center' role='group' aria-label='Command input'>
-          <span className='font-semibold' aria-hidden='true'>
+          <span className='terminal-command' aria-hidden='true'>
             <span className='text-green-400'>user@</span>
             <span className='text-pink-400'>portfolio</span>
             <span className='text-green-400'>:~$</span>
@@ -390,7 +392,7 @@ export default function TerminalPane() {
               setInput(e.target.value)
             }}
             onKeyDown={handleKeyDown}
-            className='ml-2 bg-transparent border-none outline-none text-[color:var(--term-fg)] glow-soft font-mono text-[13.5px] leading-[1.5] flex-1'
+            className='ml-2 bg-transparent border-none outline-none text-[color:var(--term-fg)] terminal-body flex-1'
             aria-label='Terminal command input'
             aria-describedby='terminal-help terminal-status'
             aria-invalid={lastCommandStatus === 'error' ? 'true' : 'false'}
@@ -407,7 +409,7 @@ export default function TerminalPane() {
       {/* Command Help Footer */}
       <div
         id='terminal-help'
-        className='px-3 py-2 border-t border-[rgba(255,126,182,0.25)] text-[13px] text-[rgba(242,244,248,0.95)] bg-black/20'
+        className='px-3 py-2 border-t border-[rgba(255,126,182,0.25)] text-[13px] terminal-caption bg-black/20'
         role='complementary'
         aria-label='Terminal keyboard shortcuts'
       >

@@ -58,6 +58,21 @@
 
   --radius: 0.5rem;
   --font-mono: 'SF Mono', 'SFMono-Regular', 'Monaspace Neon', 'Courier New', monospace;
+
+  /* Typography System */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* Line Height System */
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
 }
 
 /* CSS Custom Properties for backwards compatibility */
@@ -133,6 +148,21 @@
   --radius: 0.5rem;
   --font-mono: 'SF Mono', 'SFMono-Regular', 'Courier New', monospace;
 
+  /* Typography System */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* Line Height System */
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
+
   /* Color scheme declaration for proper dark mode */
   color-scheme: dark;
 }
@@ -173,6 +203,8 @@
 
   body {
     font-family: var(--font-mono);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--line-height-normal);
     -webkit-font-smoothing: antialiased;
     background-color: var(--term-bg) !important;
     color: var(--text-cyan);
@@ -191,6 +223,96 @@
 }
 
 @layer components {
+  /* Typography Component Classes */
+  .text-terminal-light {
+    font-weight: var(--font-weight-light);
+    line-height: var(--line-height-normal);
+  }
+
+  .text-terminal-normal {
+    font-weight: var(--font-weight-normal);
+    line-height: var(--line-height-normal);
+  }
+
+  .text-terminal-medium {
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-snug);
+  }
+
+  .text-terminal-semibold {
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+  }
+
+  .text-terminal-bold {
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-tight);
+  }
+
+  .text-terminal-extrabold {
+    font-weight: var(--font-weight-extrabold);
+    line-height: var(--line-height-tight);
+  }
+
+  /* Text Shadow System for Terminal Depth */
+  .text-shadow-subtle {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  .text-shadow-soft {
+    text-shadow:
+      0 0 3px currentColor,
+      0 1px 2px rgba(0, 0, 0, 0.4);
+  }
+
+  .text-shadow-medium {
+    text-shadow:
+      0 0 6px currentColor,
+      0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  .text-shadow-strong {
+    text-shadow:
+      0 0 8px currentColor,
+      0 0 16px currentColor,
+      0 2px 6px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Terminal Specific Typography */
+  .terminal-title {
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+    text-shadow:
+      0 0 6px currentColor,
+      0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  .terminal-subtitle {
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-snug);
+    text-shadow: 0 0 3px currentColor;
+  }
+
+  .terminal-body {
+    font-weight: var(--font-weight-normal);
+    line-height: var(--line-height-normal);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  .terminal-caption {
+    font-weight: var(--font-weight-light);
+    line-height: var(--line-height-relaxed);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  }
+
+  .terminal-command {
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-snug);
+    text-shadow:
+      0 0 4px currentColor,
+      0 1px 2px rgba(0, 0, 0, 0.4);
+  }
+
   /* Terminal Pane Component Styles */
   .terminal-pane {
     background-color: #0a0a0a;
@@ -284,6 +406,7 @@
 }
 
 .terminal-output {
+  line-height: var(--line-height-snug);
   text-shadow: 0 0 6px currentColor;
 }
 
@@ -429,19 +552,39 @@
 
 /* Syntax highlighting */
 .syntax-keyword {
-  color: hsl(198, 89%, 66%);
+  color: var(--ansi-6); /* cyan */
+  font-weight: var(--font-weight-semibold);
+  text-shadow: 0 0 4px currentColor;
 }
 .syntax-string {
-  color: hsl(55, 68%, 69%);
+  color: var(--ansi-3); /* green */
+  font-weight: var(--font-weight-normal);
+  text-shadow: 0 0 3px currentColor;
 }
 .syntax-comment {
-  color: hsl(50, 11%, 46%);
+  color: var(--ansi-8); /* bright black */
+  font-weight: var(--font-weight-light);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
 }
 .syntax-function {
-  color: hsl(74, 74%, 67%);
+  color: var(--ansi-2); /* pink */
+  font-weight: var(--font-weight-medium);
+  text-shadow: 0 0 4px currentColor;
 }
 .syntax-variable {
-  color: hsl(0, 0%, 97%);
+  color: var(--ansi-7); /* white */
+  font-weight: var(--font-weight-normal);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+.syntax-number {
+  color: var(--ansi-5); /* light cyan */
+  font-weight: var(--font-weight-medium);
+  text-shadow: 0 0 3px currentColor;
+}
+.syntax-operator {
+  color: var(--ansi-13); /* bright magenta */
+  font-weight: var(--font-weight-medium);
+  text-shadow: 0 0 3px currentColor;
 }
 
 /* Screen Reader Only */
@@ -649,7 +792,7 @@ select:focus-visible {
 
 /* ANSI styling support */
 .ansi-bold {
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 .ansi-italic {
   font-style: italic;

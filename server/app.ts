@@ -41,6 +41,9 @@ function getAssetHeaders(extension: string | undefined) {
     woff2: 'font/woff2',
     ttf: 'font/ttf',
     eot: 'application/vnd.ms-fontobject',
+    webmanifest: 'application/manifest+json',
+    map: 'application/json',
+    txt: 'text/plain; charset=utf-8',
   }
 
   const contentType = mimeTypes[extension ?? ''] ?? 'application/octet-stream'
@@ -66,21 +69,53 @@ async function resolveAsset(fileKey: string) {
   return { file, headers }
 }
 
-async function buildAssetResponse(fileKey: string, method: string) {
-  const asset = await resolveAsset(fileKey)
+async function buildPublicFileResponse(filePathRelative: string, method: string) {
+  try {
+    const staticDir = await getStaticDir()
+    const filePath = `${staticDir}/${filePathRelative}`
+    const file = Bun.file(filePath)
+    if (!(await file.exists())) {
+      return new Response('Not found', {
+        status: 404,
+        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+      })
+    }
+    const ext = filePathRelative.split('.').pop()?.toLowerCase()
+    const headers = getAssetHeaders(ext)
+    if (method === 'HEAD') return new Response(null, { status: 200, headers })
+    return new Response(file, { headers })
+  } catch (e) {
+    console.error('Public file serve error:', e)
+    return new Response('Not found', {
+      status: 404,
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+    })
+  }
+}
 
-  if (!asset) {
+async function buildAssetResponse(fileKey: string, method: string) {
+  try {
+    const asset = await resolveAsset(fileKey)
+
+    if (!asset) {
+      return new Response('File not found', {
+        status: 404,
+        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+      })
+    }
+
+    if (method === 'HEAD') {
+      return new Response(null, { status: 200, headers: asset.headers })
+    }
+
+    return new Response(asset.file, { headers: asset.headers })
+  } catch (e) {
+    console.error('Asset serve error:', e)
     return new Response('File not found', {
       status: 404,
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
     })
   }
-
-  if (method === 'HEAD') {
-    return new Response(null, { status: 200, headers: asset.headers })
-  }
-
-  return new Response(asset.file, { headers: asset.headers })
 }
 
 const app = new Elysia()
@@ -140,6 +175,14 @@ app.get('/assets/*', async ({ params, request }) => {
     })
   }
 })
+
+// Public root assets (favicon, manifest, sw)
+app.get('/favicon.ico', ({ request }) => buildPublicFileResponse('favicon.ico', request.method))
+app.get('/favicon.svg', ({ request }) => buildPublicFileResponse('favicon.svg', request.method))
+app.get('/site.webmanifest', ({ request }) =>
+  buildPublicFileResponse('site.webmanifest', request.method)
+)
+app.get('/sw.js', ({ request }) => buildPublicFileResponse('sw.js', request.method))
 
 // Serve the built client in production
 if (process.env.NODE_ENV === 'production') {

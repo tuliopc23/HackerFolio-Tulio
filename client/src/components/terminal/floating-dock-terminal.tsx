@@ -106,7 +106,10 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
         >
           {/* Navigation Section */}
           <div className='space-y-1' role='group' aria-labelledby='nav-heading'>
-            <div id='nav-heading' className='text-xs text-[#be95ff] px-2 mb-1'>
+            <div
+              id='nav-heading'
+              className='text-xs text-[#be95ff] px-2 mb-1 text-terminal-semibold'
+            >
               Navigation
             </div>
             {navigationItems.map(item => (
@@ -131,7 +134,10 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
 
           {/* System Section */}
           <div className='space-y-1' role='group' aria-labelledby='system-heading'>
-            <div id='system-heading' className='text-xs text-[#be95ff] px-2 mb-1'>
+            <div
+              id='system-heading'
+              className='text-xs text-[#be95ff] px-2 mb-1 text-terminal-semibold'
+            >
               System
             </div>
             {systemItems.map(item => (

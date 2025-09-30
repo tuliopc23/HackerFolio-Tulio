@@ -1,0 +1,110 @@
+{
+  "header" : {
+    "v" : 5
+  },
+  "object_list" : [
+    {
+      "border_tixels" : "3860D2F0-AD1E-404B-B251-5BBD762647A0",
+      "content_tixels" : "B1ED9839-7F02-4FDF-82F8-4692978A12BA",
+      "doc_ref" : "8A16ACBF-CB57-4584-A536-20317FC1B37F",
+      "frame_anchor_ref" : "62B031E2-1EA9-4C0C-8452-166FC227C6B9",
+      "frame_size" : "72,5",
+      "model_text" : "3721ED62-FFCE-4379-B48C-AD03562D8951",
+      "name" : "Text Field 6",
+      "object_id" : "01FA2123-06A0-404A-A07A-D1F2BB0730F4",
+      "origin" : "20,23",
+      "position_refs" : [
+        "62B031E2-1EA9-4C0C-8452-166FC227C6B9"
+      ],
+      "rectangular_border_enabled" : false,
+      "type_id" : 20
+    },
+    {
+      "doc_ref" : "8A16ACBF-CB57-4584-A536-20317FC1B37F",
+      "object_id" : "2518EFA5-65AB-41AE-A62A-9C9578284F87",
+      "type_id" : 18
+    },
+    {
+      "doc_ref" : "8A16ACBF-CB57-4584-A536-20317FC1B37F",
+      "object_id" : "352FF9C4-FCB9-4A68-9B95-C88E921B89E3",
+      "point" : "0,0",
+      "type_id" : 11
+    },
+    {
+      "alignment" : 0,
+      "color" : 4294950755,
+      "doc_ref" : "8A16ACBF-CB57-4584-A536-20317FC1B37F",
+      "object_id" : "3721ED62-FFCE-4379-B48C-AD03562D8951",
+      "position" : 0,
+      "text" : " _____   ______  __   ________  __      ______  ______ ______  ______   \n\/\\  __-.\/\\  ___\\\/\\ \\ \/ \/\\  ___\\\/\\ \\    \/\\  __ \\\/\\  == \/\\  ___\\\/\\  == \\  \n\\ \\ \\\/\\ \\ \\  __\\\\ \\ \\'\/\\ \\  __\\\\ \\ \\___\\ \\ \\\/\\ \\ \\  _-\\ \\  __\\\\ \\  __<  \n \\ \\____-\\ \\_____\\ \\__| \\ \\_____\\ \\_____\\ \\_____\\ \\_\\  \\ \\_____\\ \\_\\ \\_\\\n  \\\/____\/ \\\/_____\/\\\/_\/   \\\/_____\/\\\/_____\/\\\/_____\/\\\/_\/   \\\/_____\/\\\/_\/ \/_\/",
+      "type_id" : 27
+    },
+    {
+      "doc_ref" : "8A16ACBF-CB57-4584-A536-20317FC1B37F",
+      "object_id" : "3860D2F0-AD1E-404B-B251-5BBD762647A0",
+      "type_id" : 18
+    },
+    {
+      "doc_ref" : "8A16ACBF-CB57-4584-A536-20317FC1B37F",
+      "object_id" : "62B031E2-1EA9-4C0C-8452-166FC227C6B9",
+      "point" : "0,0",
+      "type_id" : 11
+    },
+    {
+      "doc_ref" : "8A16ACBF-CB57-4584-A536-20317FC1B37F",
+      "name" : "Canvas 1",
+      "object_id" : "67F2790C-A0D2-4539-983C-D63DE1B3EB1E",
+      "subshape_refs" : [
+        "01FA2123-06A0-404A-A07A-D1F2BB0730F4",
+        "B8932C76-7837-4E93-8BBF-82888DEE4B03"
+      ],
+      "type_id" : 1
+    },
+    {
+      "canvas_refs" : [
+        "67F2790C-A0D2-4539-983C-D63DE1B3EB1E"
+      ],
+      "object_id" : "8A16ACBF-CB57-4584-A536-20317FC1B37F",
+      "shape_seq_numbers" : {
+        "4" : 6,
+        "6" : 1
+      },
+      "type_id" : 0
+    },
+    {
+      "doc_ref" : "8A16ACBF-CB57-4584-A536-20317FC1B37F",
+      "object_id" : "A11B01EC-C6A7-4133-82DB-2671AA4CC8CE",
+      "type_id" : 18
+    },
+    {
+      "doc_ref" : "8A16ACBF-CB57-4584-A536-20317FC1B37F",
+      "object_id" : "B1ED9839-7F02-4FDF-82F8-4692978A12BA",
+      "type_id" : 18
+    },
+    {
+      "border_tixels" : "A11B01EC-C6A7-4133-82DB-2671AA4CC8CE",
+      "content_tixels" : "2518EFA5-65AB-41AE-A62A-9C9578284F87",
+      "doc_ref" : "8A16ACBF-CB57-4584-A536-20317FC1B37F",
+      "frame_anchor_ref" : "352FF9C4-FCB9-4A68-9B95-C88E921B89E3",
+      "frame_size" : "83,5",
+      "model_text" : "F596092A-93AF-48F1-BB0A-9909E4F410CD",
+      "name" : "Text Field 5",
+      "object_id" : "B8932C76-7837-4E93-8BBF-82888DEE4B03",
+      "origin" : "11,18",
+      "position_refs" : [
+        "352FF9C4-FCB9-4A68-9B95-C88E921B89E3"
+      ],
+      "rectangular_border_enabled" : false,
+      "type_id" : 20
+    },
+    {
+      "alignment" : 0,
+      "color" : 4291131647,
+      "doc_ref" : "8A16ACBF-CB57-4584-A536-20317FC1B37F",
+      "object_id" : "F596092A-93AF-48F1-BB0A-9909E4F410CD",
+      "position" : 0,
+      "text" : " ______  __  __  __      __  ______      ______  __  __  __   __  __  __  ______   \n\/\\__  _\\\/\\ \\\/\\ \\\/\\ \\    \/\\ \\\/\\  __ \\    \/\\  ___\\\/\\ \\\/\\ \\\/\\ \"-.\\ \\\/\\ \\_\\ \\\/\\  __ \\  \n\\\/_\/\\ \\\/\\ \\ \\_\\ \\ \\ \\___\\ \\ \\ \\ \\\/\\ \\   \\ \\ \\___\\ \\ \\_\\ \\ \\ \\-.  \\ \\  __ \\ \\  __ \\ \n   \\ \\_\\ \\ \\_____\\ \\_____\\ \\_\\ \\_____\\   \\ \\_____\\ \\_____\\ \\_\\\\\"\\_\\ \\_\\ \\_\\ \\_\\ \\_\\\n    \\\/_\/  \\\/_____\/\\\/_____\/\\\/_\/\\\/_____\/    \\\/_____\/\\\/_____\/\\\/_\/ \\\/_\/\\\/_\/\\\/_\/\\\/_\/\\\/_\/",
+      "type_id" : 27
+    }
+  ]
+}

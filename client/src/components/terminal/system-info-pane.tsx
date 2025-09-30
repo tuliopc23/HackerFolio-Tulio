@@ -45,17 +45,17 @@ const WorldClock = memo(() => {
 
   return (
     <div className='space-y-2 mb-4'>
-      <div className='text-pink-400 text-[10px] font-medium tracking-wide uppercase'>
+      <div className='text-pink-400 text-[10px] text-terminal-semibold tracking-wide uppercase'>
         WORLD CLOCK
       </div>
       <div className='grid grid-cols-2 gap-x-4 gap-y-2 text-xs'>
         {timezones.map(tz => (
           <div key={tz.name} className='flex items-center justify-between'>
-            <div className='text-[#f2f4f8] text-[10px] uppercase tracking-wide font-medium'>
+            <div className='text-[#f2f4f8] text-[10px] uppercase tracking-wide text-terminal-medium'>
               {tz.city}
             </div>
             <div
-              className='text-green-400 font-mono font-semibold text-sm glow-soft'
+              className='text-green-400 font-mono text-terminal-semibold text-sm glow-soft'
               suppressHydrationWarning
             >
               {formatTime(currentTime, tz.timezone)}
@@ -124,7 +124,7 @@ function SystemInfoPane() {
 
   return (
     <div
-      className='h-full flex flex-col font-mono text-[12.5px] leading-[1.5] text-[#f2f4f8]'
+      className='h-full flex flex-col font-mono text-[12.5px] terminal-body text-[#f2f4f8]'
       aria-label='System Information'
     >
       <div className='flex-1 flex flex-col min-h-0 overflow-hidden'>
@@ -133,7 +133,7 @@ function SystemInfoPane() {
         {/* Fastfetch Output */}
         {showFastfetch && (
           <div className='space-y-2'>
-            <div className='text-pink-400 text-xs font-medium tracking-wide phosphor-glow'>
+            <div className='text-pink-400 text-xs text-terminal-semibold tracking-wide phosphor-glow'>
               SYSTEM INFO
             </div>
             <div className='flex gap-3'>
@@ -169,35 +169,35 @@ function SystemInfoPane() {
 
                       {/* Core System Info */}
                       <div>
-                        <span className='text-[#82cfff] font-medium'>OS:</span>
+                        <span className='text-[#82cfff] text-terminal-medium'>OS:</span>
                         <span className='text-[#42be65] ml-1 font-mono glow-soft'>
                           macOS Tahoe 26.0 ARM64
                         </span>
                       </div>
 
                       <div>
-                        <span className='text-[#82cfff] font-medium'>Host:</span>
+                        <span className='text-[#82cfff] text-terminal-medium'>Host:</span>
                         <span className='text-[#42be65] ml-1 font-mono glow-soft'>
                           MacBook Pro (14-inch, 2023)
                         </span>
                       </div>
 
                       <div>
-                        <span className='text-[#82cfff] font-medium'>CPU:</span>
+                        <span className='text-[#82cfff] text-terminal-medium'>CPU:</span>
                         <span className='text-[#be95ff] ml-1 font-mono glow-soft'>
                           Apple M4 Pro (12) @ 3.50 GHz
                         </span>
                       </div>
 
                       <div>
-                        <span className='text-[#82cfff] font-medium'>Memory:</span>
+                        <span className='text-[#82cfff] text-terminal-medium'>Memory:</span>
                         <span className='text-[#42be65] ml-1 font-mono glow-soft'>
                           36 GB Unified
                         </span>
                       </div>
 
                       <div>
-                        <span className='text-[#82cfff] font-medium'>Terminal:</span>
+                        <span className='text-[#82cfff] text-terminal-medium'>Terminal:</span>
                         <span className='text-[#be95ff] ml-1 font-mono glow-soft'>
                           Ghostty 1.0.0
                         </span>
@@ -228,12 +228,14 @@ function SystemInfoPane() {
               <div className='w-44 bg-black/30 border border-[#393939] rounded-lg p-3 text-xs font-mono min-h-[200px] flex flex-col'>
                 {/* Header with Status */}
                 <div className='flex items-center justify-between mb-3'>
-                  <span className='text-pink-400 text-[10px] font-semibold uppercase tracking-wide'>
+                  <span className='text-pink-400 text-[10px] text-terminal-semibold uppercase tracking-wide'>
                     CONNECTION
                   </span>
                   <div className='flex items-center gap-1'>
                     <div className='w-2 h-2 rounded-full bg-green-400 animate-pulse' />
-                    <span className='text-green-400 text-[9px] font-bold glow-soft'>SECURE</span>
+                    <span className='text-green-400 text-[9px] text-terminal-bold glow-soft'>
+                      SECURE
+                    </span>
                   </div>
                 </div>
 
@@ -293,7 +295,7 @@ function SystemInfoPane() {
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 flex-1 min-h-0 h-full'>
           {/* Recent Projects Card - Compact */}
           <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-[12px] font-mono pane-border flex flex-col min-h-0 h-full'>
-            <div className='text-[#be95ff] text-xs font-semibold tracking-wide uppercase mb-2 phosphor-glow'>
+            <div className='text-[#be95ff] text-xs text-terminal-semibold tracking-wide uppercase mb-2 phosphor-glow'>
               RECENT PROJECTS
             </div>
             <div className='flex-1 min-h-0'>
@@ -310,7 +312,7 @@ function SystemInfoPane() {
                     </span>
                   </div>
                   <div key={currentProject.id} className='border-l-2 border-[#33b1ff] pl-2 flex-1'>
-                    <div className='text-[#33b1ff] text-[13px] font-medium whitespace-normal break-words glow-soft mb-1.5'>
+                    <div className='text-[#33b1ff] text-[13px] text-terminal-medium whitespace-normal break-words glow-soft mb-1.5'>
                       {currentProject.name}
                     </div>
                     <div className='text-[#f2f4f8] text-[11px] whitespace-normal break-words leading-relaxed mb-2'>
@@ -371,7 +373,7 @@ function SystemInfoPane() {
 
           {/* Project Stats Card - Compact */}
           <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-[12px] font-mono flex flex-col min-h-0 h-full'>
-            <div className='text-[#be95ff] text-xs font-semibold tracking-wide uppercase mb-2'>
+            <div className='text-[#be95ff] text-xs text-terminal-semibold tracking-wide uppercase mb-2'>
               PROJECT STATS
             </div>
             <div className='flex-1 min-h-0'>
@@ -408,7 +410,7 @@ function SystemInfoPane() {
                       <>
                         <div className='border-t border-[#393939] my-2' />
                         <div className='space-y-1'>
-                          <div className='text-[#82cfff] text-[10px] font-medium'>
+                          <div className='text-[#82cfff] text-[10px] text-terminal-medium'>
                             Popular Tech:
                           </div>
                           {Array.from(new Set(projects.flatMap(p => p.tech_stack ?? [])))

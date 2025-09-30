@@ -5,6 +5,7 @@ interface TypedTerminalOutputProps {
   isError?: boolean
   onComplete?: () => void
   animate?: boolean
+  ariaHidden?: boolean
 }
 
 export function TypedTerminalOutput({
@@ -12,6 +13,7 @@ export function TypedTerminalOutput({
   isError = false,
   onComplete,
   animate = true,
+  ariaHidden = false,
 }: TypedTerminalOutputProps) {
   const [shouldAnimate, setShouldAnimate] = useState(animate)
   const [isTyping, setIsTyping] = useState(false)
@@ -221,7 +223,8 @@ export function TypedTerminalOutput({
   if (!shouldAnimate) {
     return (
       <div
-        className={`ml-4 mb-2 ${isError ? 'text-terminal-red' : 'text-[rgba(235,241,255,0.9)]'}`}
+        className={`ml-4 terminal-body ${isError ? 'text-terminal-red' : 'text-[rgba(235,241,255,0.9)]'}`}
+        aria-hidden={ariaHidden}
       >
         {formatOutput}
       </div>
@@ -229,7 +232,10 @@ export function TypedTerminalOutput({
   }
 
   return (
-    <div className={`ml-4 mb-2 ${isError ? 'text-terminal-red' : 'text-[rgba(235,241,255,0.9)]'}`}>
+    <div
+      className={`ml-4 terminal-body ${isError ? 'text-terminal-red' : 'text-[rgba(235,241,255,0.9)]'}`}
+      aria-hidden={ariaHidden}
+    >
       {formatOutput}
       {isTyping && <span className='animate-pulse'>|</span>}
     </div>

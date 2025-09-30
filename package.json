@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently -k -n server,client -c green,cyan \"bun --hot server/app.ts\" \"vite --config vite.config.ts\"",
+    "dev": "bash -c \"trap 'kill 0' INT TERM; bun server/app.ts & vite --config vite.config.ts & wait\"",
     "build": "vite build --config vite.config.ts && vite build --config vite.config.ts --ssr",
     "build:production": "NODE_ENV=production bun run build",
     "start:production": "NODE_ENV=production bun server/app.ts",

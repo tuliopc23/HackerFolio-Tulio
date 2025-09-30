@@ -4,7 +4,6 @@ import { z } from 'zod'
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.coerce.number().default(3001),
-  DATABASE_URL: z.string().default('./database/portfolio.db'),
   GITHUB_TOKEN: z.string().optional(),
   SESSION_SECRET: z.string().optional(),
 })

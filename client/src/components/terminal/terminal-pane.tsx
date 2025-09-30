@@ -17,6 +17,7 @@ interface TerminalHistory {
   error?: boolean | undefined
   id: string
   isTyping?: boolean
+  showPrompt?: boolean
 }
 
 // Extracted to top-level to satisfy react/no-unstable-nested-components
@@ -24,21 +25,31 @@ const HistoryEntry = memo(
   ({ entry, isOldEntry }: { entry: TerminalHistory; isOldEntry: boolean }) => {
     return (
       <div key={entry.id}>
-        <div className='flex'>
-          <span className='terminal-command'>
-            <span className='text-green-400'>user@</span>
-            <span className='text-pink-400'>portfolio</span>
-            <span className='text-green-400'>:~$</span>
-          </span>
-          {entry.command ? (
+        {entry.command ? (
+          <div className='flex'>
+            <span className='terminal-command'>
+              <span className='text-green-400'>user@</span>
+              <span className='text-pink-400'>portfolio</span>
+              <span className='text-green-400'>:~$</span>
+            </span>
             <span className='ml-2 text-cyan-bright terminal-command'>{entry.command}</span>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
+        {!entry.command && entry.showPrompt ? (
+          <div className='flex' aria-hidden='true'>
+            <span className='terminal-command'>
+              <span className='text-green-400'>user@</span>
+              <span className='text-pink-400'>portfolio</span>
+              <span className='text-green-400'>:~$</span>
+            </span>
+          </div>
+        ) : null}
         {entry.output && (
           <TypedTerminalOutput
             output={entry.output}
             isError={entry.error ?? false}
             animate={!isOldEntry}
+            ariaHidden={entry.id.startsWith('art-')}
           />
         )}
       </div>
@@ -46,6 +57,8 @@ const HistoryEntry = memo(
   }
 )
 HistoryEntry.displayName = 'HistoryEntry'
+
+
 
 export default function TerminalPane() {
   const navigate = useNavigate()
@@ -90,24 +103,57 @@ export default function TerminalPane() {
   useFocusRegistration('terminal-pane', terminalRef as React.RefObject<HTMLElement>)
 
   useEffect(() => {
-    // Auto-focus input
     if (inputRef.current) {
       inputRef.current.focus()
       announce('Terminal initialized and ready for commands', 'polite')
     }
-    // Add ANSI-colored boot messages into history for consistent styling
     setHistory(prev => {
       if (prev.length > 0) return prev
       const boot = `\x1b[36mInitializing secure connection...\x1b[39m\n\x1b[32m✓ Connection established\x1b[39m`
-      const art = `\x1b[32m _____ _   _ _    ___ ___   \x1b[35m  ___ _   _ _  _ _  _   _   \x1b[39m\n\x1b[32m|_   _| | | | |  |_ _/ _ \\  \x1b[35m / __| | | | \\| | || | /_\\  \x1b[39m\n\x1b[32m  | | | |_| | |__ | | (_) |\x1b[35m | (__| |_| | .\` | __ |/ _ \\ \x1b[39m\n\x1b[32m  |_|  \\___/|____|___\\___/ \x1b[35m  \\___|\\___|_|\\_|_||_/_/ \\_\\\x1b[39m\n\x1b[92m        _    \x1b[95m __         \x1b[96m _                      \x1b[39m\n\x1b[92m       |_  ||\x1b[95m (__|_ _. _| \x1b[96m| \\ _    _ | _ ._  _ ._ \x1b[39m\n\x1b[92m       ||_|||\x1b[95m __)|_(_|(_|<\x1b[96m|_/(/_\\/(/_|(_)|_)(/_|  \x1b[39m\n\x1b[92m             \x1b[95m            \x1b[96m               |        \x1b[39m`
-      const tip = `\x1b[35mTip\x1b[39m: Type \x1b[36mhelp\x1b[39m or \x1b[36mhelp projects\x1b[39m for flags`
-      return [
-        ...prev,
-        { command: '', output: boot, timestamp: new Date(), id: 'boot-1' },
-        { command: '', output: art, timestamp: new Date(), id: 'art-1' },
-        { command: '', output: tip, timestamp: new Date(), id: 'tip-1' },
-      ]
+      return [...prev, { command: '', output: boot, timestamp: new Date(), id: 'boot-1' }]
     })
+
+    let cancelled = false
+    const loadBanner = () => {
+      try {
+        const banners = import.meta.glob('@/assets/TulioCUnha Ascii.txt', { query: '?raw', import: 'default', eager: true }) as Record<string, string>
+        const txt = Object.values(banners)[0] ?? ''
+        const lines = txt.replace(/\r\n/g, '\n').split('\n')
+        const nameLines = lines.slice(0, 5)
+        const devLines = lines.slice(5)
+        const colorizeLines = (ls: string[], code: string) =>
+          ls.map(l => `${code}${l}\x1b[39m`).join('\n')
+        const art = `${colorizeLines(nameLines, '\x1b[32m')}\n${colorizeLines(devLines, '\x1b[36m')}\n`
+        const tip = `\x1b[35mTip\x1b[39m: Type \x1b[36mhelp\x1b[39m or \x1b[36mhelp projects\x1b[39m for flags\n`
+        if (!cancelled) {
+          setHistory(prev => {
+            if (prev.some(h => h.id === 'art-1')) return prev
+            return [
+              ...prev,
+              { command: '', output: art, timestamp: new Date(), id: 'art-1', showPrompt: true },
+              { command: '', output: tip, timestamp: new Date(), id: 'tip-1' },
+            ]
+          })
+        }
+      } catch {
+        if (!cancelled) {
+          setHistory(prev => [
+            ...prev,
+            {
+              command: '',
+              output: `\x1b[36mWelcome\x1b[39m`,
+              timestamp: new Date(),
+              id: 'art-fallback',
+            },
+          ])
+        }
+      }
+    }
+
+    loadBanner()
+    return () => {
+      cancelled = true
+    }
   }, [announce])
 
   useEffect(() => {
@@ -392,7 +438,7 @@ export default function TerminalPane() {
               setInput(e.target.value)
             }}
             onKeyDown={handleKeyDown}
-            className='ml-2 bg-transparent border-none outline-none text-[color:var(--term-fg)] terminal-body flex-1'
+            className='ml-2 bg-transparent border-none outline-none text-[color:var(--term-fg)] text-terminal-medium flex-1'
             aria-label='Terminal command input'
             aria-describedby='terminal-help terminal-status'
             aria-invalid={lastCommandStatus === 'error' ? 'true' : 'false'}

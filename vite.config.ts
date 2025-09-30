@@ -9,6 +9,7 @@ export default defineConfig(({ command, mode }) => {
 
   return {
     root: path.resolve(__dirname, 'client'),
+    base: '/',
     plugins: [
       react({
         include: '**/*.{jsx,tsx}',
@@ -33,6 +34,7 @@ export default defineConfig(({ command, mode }) => {
       emptyOutDir: true,
       sourcemap: isDev,
       minify: isProd,
+      manifest: !isSSR,
       target: isSSR ? 'node18' : 'es2020',
       rollupOptions: isSSR
         ? {
@@ -43,7 +45,9 @@ export default defineConfig(({ command, mode }) => {
             },
             external: ['react', 'react-dom/server'],
           }
-        : undefined,
+        : {
+            input: path.resolve(__dirname, 'client/index.html'),
+          },
       chunkSizeWarningLimit: 1000,
       assetsInlineLimit: 4096,
     },

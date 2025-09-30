@@ -60,6 +60,7 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/server ./server
 COPY --from=build /app/database ./database
+COPY verify-deployment.ts ./
 
 # Ensure proper ownership/permissions for runtime user and SQLite DB
 USER root
@@ -68,5 +69,5 @@ USER bun
 
 # Port will be dynamically assigned by the platform via PORT env var
 
-# Start the application
-CMD ["bun", "run", "start:production"]
+# Start the application with pre-flight verification
+CMD ["sh", "-c", "bun verify-deployment.ts && bun run start:production"]

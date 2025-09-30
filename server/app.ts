@@ -14,17 +14,22 @@ let resolvedStaticDir: (typeof STATIC_DIRS)[number] | null = null
 async function getStaticDir() {
   if (resolvedStaticDir) return resolvedStaticDir
 
+  console.log('🔍 Resolving static directory...')
   for (const d of STATIC_DIRS) {
     const f = Bun.file(`${d}/index.html`)
     // deno-lint-ignore no-await-in-loop
     if (await f.exists()) {
+      console.log(`✅ Found static files in: ${d}`)
       resolvedStaticDir = d
       break
+    } else {
+      console.log(`❌ Not found: ${d}/index.html`)
     }
   }
 
   // Fallback to default even if not found to avoid returning undefined
   resolvedStaticDir ??= './dist/public'
+  console.log(`📁 Using static directory: ${resolvedStaticDir}`)
   return resolvedStaticDir
 }
 
@@ -158,7 +163,11 @@ app
 
 // Static file serving for production
 app.get('/assets/*', async ({ params, request }) => {
+  const assetPath = params['*']
+  console.log(`📦 Asset request: /assets/${assetPath}`)
+
   if (process.env.NODE_ENV !== 'production') {
+    console.log(`⚠️  Rejecting asset request (not in production mode)`)
     return new Response('Not found', {
       status: 404,
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
@@ -166,9 +175,11 @@ app.get('/assets/*', async ({ params, request }) => {
   }
 
   try {
-    return await buildAssetResponse(params['*'], request.method)
+    const response = await buildAssetResponse(assetPath, request.method)
+    console.log(`✅ Asset served: /assets/${assetPath} (${response.status})`)
+    return response
   } catch (error) {
-    console.error('Static file error:', error)
+    console.error(`❌ Static file error for /assets/${assetPath}:`, error)
     return new Response('Internal server error', {
       status: 500,
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },

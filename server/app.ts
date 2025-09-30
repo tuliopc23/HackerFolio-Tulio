@@ -35,8 +35,8 @@ async function getStaticDir() {
 
 function getAssetHeaders(extension: string | undefined) {
   const mimeTypes: Record<string, string> = {
-    js: 'application/javascript',
-    css: 'text/css',
+    js: 'application/javascript; charset=utf-8',
+    css: 'text/css; charset=utf-8',
     png: 'image/png',
     jpg: 'image/jpeg',
     jpeg: 'image/jpeg',
@@ -55,6 +55,9 @@ function getAssetHeaders(extension: string | undefined) {
   return {
     'Content-Type': contentType,
     'Cache-Control': 'public, max-age=31536000, immutable',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS',
+    'X-Content-Type-Options': 'nosniff',
   }
 }
 
@@ -161,29 +164,33 @@ app
   .use(apiRoutes)
   .use(terminalRoutes)
 
-// Static file serving for production
-app.get('/assets/*', async ({ params, request }) => {
-  const assetPath = params['*']
-  console.log(`📦 Asset request: /assets/${assetPath}`)
-
+// Static file serving for production - using Elysia context API for proper file streaming
+app.get('/assets/*', async ({ params, set }) => {
   if (process.env.NODE_ENV !== 'production') {
-    console.log(`⚠️  Rejecting asset request (not in production mode)`)
-    return new Response('Not found', {
-      status: 404,
-      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-    })
+    set.status = 404
+    return 'Not found'
   }
 
   try {
-    const response = await buildAssetResponse(assetPath, request.method)
-    console.log(`✅ Asset served: /assets/${assetPath} (${response.status})`)
-    return response
+    const staticDir = await getStaticDir()
+    const fileName = params['*']
+    const filePath = `${staticDir}/assets/${fileName}`
+    const file = Bun.file(filePath)
+
+    if (!(await file.exists())) {
+      set.status = 404
+      return 'File not found'
+    }
+
+    const ext = fileName.split('.').pop()?.toLowerCase()
+    const headers = getAssetHeaders(ext)
+
+    set.headers = headers
+    return file
   } catch (error) {
-    console.error(`❌ Static file error for /assets/${assetPath}:`, error)
-    return new Response('Internal server error', {
-      status: 500,
-      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-    })
+    console.error('Static file error:', error)
+    set.status = 500
+    return 'Internal server error'
   }
 })
 

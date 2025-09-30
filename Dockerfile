@@ -26,7 +26,7 @@ ENV npm_config_python=/usr/bin/python3
 COPY package.json bun.lock* ./
 RUN echo ">>> bun install (build stage)" \
     && bun install --verbose \
-    && bun pm untrusted --write --all || true
+    && bun pm trust --all
 
 # Copy config files needed for the build
 COPY vite.config.ts tsconfig.json tailwind.config.ts postcss.config.js ./

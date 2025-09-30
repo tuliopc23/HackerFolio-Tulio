@@ -48,7 +48,6 @@ FROM oven/bun:1.2.21 AS runtime
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=8000
 
 # Bring package.json/lockfile for bun run scripts metadata
 COPY --from=build /app/package.json ./
@@ -67,8 +66,7 @@ USER root
 RUN chown -R bun:bun /app && chmod -R u+rwX,g+rwX /app/database || true
 USER bun
 
-# Expose app port
-EXPOSE 8000
+# Port will be dynamically assigned by the platform via PORT env var
 
 # Start the application
 CMD ["bun", "run", "start:production"]

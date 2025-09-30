@@ -23,24 +23,25 @@ interface TerminalHistory {
 // Extracted to top-level to satisfy react/no-unstable-nested-components
 const HistoryEntry = memo(
   ({ entry, isOldEntry }: { entry: TerminalHistory; isOldEntry: boolean }) => {
+    const isBanner = entry.id.startsWith('art-') || entry.id.startsWith('tip-')
     return (
-      <div key={entry.id}>
+      <div key={entry.id} className={isBanner ? 'pb-8' : undefined}>
         {entry.command ? (
           <div className='flex'>
-            <span className='terminal-command'>
-              <span className='text-green-400'>user@</span>
-              <span className='text-pink-400'>portfolio</span>
-              <span className='text-green-400'>:~$</span>
+            <span className='terminal-prompt'>
+              <span className='text-[#42be65]'>user@</span>
+              <span className='text-[#ff7eb6]'>portfolio</span>
+              <span className='text-[#42be65]'>:~$</span>
             </span>
-            <span className='ml-2 text-cyan-bright terminal-command'>{entry.command}</span>
+            <span className='ml-2 text-cyan-bright terminal-prompt'>{entry.command}</span>
           </div>
         ) : null}
         {!entry.command && entry.showPrompt ? (
           <div className='flex' aria-hidden='true'>
-            <span className='terminal-command'>
-              <span className='text-green-400'>user@</span>
-              <span className='text-pink-400'>portfolio</span>
-              <span className='text-green-400'>:~$</span>
+            <span className='terminal-prompt'>
+              <span className='text-[#42be65]'>user@</span>
+              <span className='text-[#ff7eb6]'>portfolio</span>
+              <span className='text-[#42be65]'>:~$</span>
             </span>
           </div>
         ) : null}
@@ -48,7 +49,7 @@ const HistoryEntry = memo(
           <TypedTerminalOutput
             output={entry.output}
             isError={entry.error ?? false}
-            animate={!isOldEntry}
+            animate={!isOldEntry || isBanner}
             ariaHidden={entry.id.startsWith('art-')}
           />
         )}
@@ -57,8 +58,6 @@ const HistoryEntry = memo(
   }
 )
 HistoryEntry.displayName = 'HistoryEntry'
-
-
 
 export default function TerminalPane() {
   const navigate = useNavigate()
@@ -93,6 +92,57 @@ export default function TerminalPane() {
     },
   })
 
+  useEffect(() => {
+    rowSizeMap.current.clear()
+    let frame1: number | null = null
+    let frame2: number | null = null
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
+
+    const measure = () => {
+      rowVirtualizer.measure()
+    }
+
+    if (typeof requestAnimationFrame === 'function') {
+      frame1 = requestAnimationFrame(() => {
+        frame2 = requestAnimationFrame(measure)
+      })
+    } else {
+      timeoutId = setTimeout(measure, 16)
+    }
+
+    return () => {
+      if (frame1 !== null && typeof cancelAnimationFrame === 'function') {
+        cancelAnimationFrame(frame1)
+      }
+      if (frame2 !== null && typeof cancelAnimationFrame === 'function') {
+        cancelAnimationFrame(frame2)
+      }
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId)
+      }
+    }
+  }, [history.length, rowVirtualizer])
+
+  useEffect(() => {
+    if (typeof document === 'undefined' || !('fonts' in document)) return
+    let cancelled = false
+    const fontPromises: Array<Promise<unknown>> = [document.fonts.ready]
+    try {
+      fontPromises.push(document.fonts.load('16px "Monaspace Neon"'))
+    } catch {
+      // ignore unsupported font loading
+    }
+
+    void Promise.all(fontPromises).then(() => {
+      if (cancelled) return
+      rowSizeMap.current.clear()
+      rowVirtualizer.measure()
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [rowVirtualizer])
+
   // TanStack Query hooks
   const { data: commands } = useCommands()
   const executeCommand = useExecuteCommand()
@@ -116,7 +166,11 @@ export default function TerminalPane() {
     let cancelled = false
     const loadBanner = () => {
       try {
-        const banners = import.meta.glob('@/assets/TulioCUnha Ascii.txt', { query: '?raw', import: 'default', eager: true }) as Record<string, string>
+        const banners = import.meta.glob<string>('@/assets/TulioCUnha Ascii.txt', {
+          query: '?raw',
+          import: 'default',
+          eager: true,
+        })
         const txt = Object.values(banners)[0] ?? ''
         const lines = txt.replace(/\r\n/g, '\n').split('\n')
         const nameLines = lines.slice(0, 5)
@@ -357,7 +411,7 @@ export default function TerminalPane() {
   return (
     <div
       ref={terminalRef}
-      className='h-full flex flex-col font-mono text-[13.5px] terminal-body text-[rgba(235,241,255,0.9)]'
+      className='h-full flex flex-col font-mono text-terminal-body terminal-body text-[rgba(235,241,255,0.9)]'
       role='application'
       aria-label='Interactive Terminal'
       aria-describedby='terminal-help terminal-status'
@@ -420,10 +474,10 @@ export default function TerminalPane() {
 
         {/* Current Command Line */}
         <div className='flex items-center' role='group' aria-label='Command input'>
-          <span className='terminal-command' aria-hidden='true'>
-            <span className='text-green-400'>user@</span>
-            <span className='text-pink-400'>portfolio</span>
-            <span className='text-green-400'>:~$</span>
+          <span className='terminal-prompt' aria-hidden='true'>
+            <span className='text-[#42be65]'>user@</span>
+            <span className='text-[#ff7eb6]'>portfolio</span>
+            <span className='text-[#42be65]'>:~$</span>
           </span>
           <label htmlFor='terminal-input' className='sr-only'>
             Terminal command input. Use Tab for autocomplete, up and down arrows for command
@@ -438,7 +492,7 @@ export default function TerminalPane() {
               setInput(e.target.value)
             }}
             onKeyDown={handleKeyDown}
-            className='ml-2 bg-transparent border-none outline-none text-[color:var(--term-fg)] text-terminal-medium flex-1'
+            className='ml-2 bg-transparent border-none outline-none text-[color:var(--term-fg)] text-terminal-prompt flex-1'
             aria-label='Terminal command input'
             aria-describedby='terminal-help terminal-status'
             aria-invalid={lastCommandStatus === 'error' ? 'true' : 'false'}
@@ -455,7 +509,7 @@ export default function TerminalPane() {
       {/* Command Help Footer */}
       <div
         id='terminal-help'
-        className='px-3 py-2 border-t border-[rgba(255,126,182,0.25)] text-[13px] terminal-caption bg-black/20'
+        className='px-3 py-2 border-t border-[rgba(255,126,182,0.25)] text-terminal-header terminal-caption bg-black/20'
         role='complementary'
         aria-label='Terminal keyboard shortcuts'
       >
@@ -494,7 +548,7 @@ export default function TerminalPane() {
           <button
             type='button'
             onClick={() => void copyLastOutput()}
-            className='ml-auto px-2 py-1 rounded border border-[#393939] text-[12px] text-[#33b1ff] hover:bg-[#393939] hover:bg-opacity-60 transition-colors focus:outline-none focus:ring-2 focus:ring-[#33b1ff] focus:ring-opacity-50'
+            className='ml-auto px-2 py-1 rounded border border-[#393939] text-terminal-label text-[#33b1ff] hover:bg-[#393939] hover:bg-opacity-60 transition-colors focus:outline-none focus:ring-2 focus:ring-[#33b1ff] focus:ring-opacity-50'
             aria-label='Copy last output to clipboard'
             title='Copy last output (Ctrl/Cmd+Shift+C)'
           >

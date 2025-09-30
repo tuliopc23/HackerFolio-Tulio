@@ -16,7 +16,7 @@
   --color-ansi-2: #ff7eb6;
   --color-ansi-3: #42be65;
   --color-ansi-4: #08bdba;
-  --color-ansi-5: #82cfff;
+  --color-ansi-5: #33b1ff;
   --color-ansi-6: #33b1ff;
   --color-ansi-7: #dde1e6;
   --color-ansi-8: #393939;
@@ -46,7 +46,7 @@
   --color-lumon-text: var(--color-term-fg);
   --color-neon-blue: var(--color-ansi-6);
   --color-cyan-bright: var(--color-ansi-6);
-  --color-cyan-soft: var(--color-ansi-5);
+  --color-cyan-soft: var(--color-ansi-6);
   --color-text-cyan: var(--color-term-fg);
   --color-text-soft: #b3e6e6;
   --color-terminal-green: var(--color-ansi-3);
@@ -57,7 +57,7 @@
   --color-magenta-glow: #ffccf2;
 
   --radius: 0.5rem;
-  --font-mono: 'SF Mono', 'SFMono-Regular', 'Monaspace Neon', 'Courier New', monospace;
+  --font-mono: 'SF Mono', 'SFMono-Regular', 'Courier New', monospace;
 
   /* Typography System */
   --font-weight-light: 300;
@@ -73,6 +73,14 @@
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.625;
   --line-height-loose: 2;
+
+  /* Typography Scale for Terminal UI */
+  --text-terminal-prompt: 1rem;
+  --text-terminal-body: 0.9375rem;
+  --text-terminal-header: 0.8125rem;
+  --text-terminal-label: 0.75rem;
+  --text-terminal-meta: 0.6875rem;
+  --text-terminal-tiny: 0.625rem;
 }
 
 /* CSS Custom Properties for backwards compatibility */
@@ -101,8 +109,8 @@
   --ansi-2: #ff7eb6; /* green slot (mapped to pink) */
   --ansi-3: #42be65; /* yellow slot (mapped to green) */
   --ansi-4: #08bdba; /* blue slot (mapped to teal) */
-  --ansi-5: #82cfff; /* magenta (light cyan) */
-  --ansi-6: #33b1ff; /* cyan (blue) */
+  --ansi-5: #33b1ff; /* magenta (unified to brightest cyan) */
+  --ansi-6: #33b1ff; /* cyan (brightest cyan) */
   --ansi-7: #dde1e6; /* white */
   --ansi-8: #393939; /* bright black */
   --ansi-9: #78a9ff; /* bright red (same as normal) */
@@ -115,7 +123,7 @@
 
   /* Oxocarbon theme colors */
   --cyan-bright: var(--ansi-6);
-  --cyan-soft: var(--ansi-5);
+  --cyan-soft: var(--ansi-6);
   --text-cyan: var(--term-fg);
   --text-soft: #b3e6e6;
   --terminal-green: var(--ansi-3);
@@ -176,16 +184,6 @@
 
 @layer base {
   /* Self-hosted Monaspace Neon variable font */
-  @font-face {
-    font-family: 'Monaspace Neon';
-    src:
-      url('./assets/fonts/monaspace/Monaspace Neon Var.woff2') format('woff2'),
-      url('./assets/fonts/monaspace/Monaspace Neon Var.woff') format('woff');
-    font-weight: 200 800;
-    font-style: normal;
-    font-display: swap;
-  }
-
   * {
     border-color: var(--border);
   }
@@ -199,6 +197,7 @@
     min-height: 100dvh;
     margin: 0;
     padding: 0;
+    font-size: 90%;
   }
 
   body {
@@ -313,6 +312,40 @@
       0 1px 2px rgba(0, 0, 0, 0.4);
   }
 
+  /* Typography Scale Classes */
+  .text-terminal-prompt {
+    font-size: var(--text-terminal-prompt);
+  }
+
+  .text-terminal-body {
+    font-size: var(--text-terminal-body);
+  }
+
+  .text-terminal-header {
+    font-size: var(--text-terminal-header);
+  }
+
+  .text-terminal-label {
+    font-size: var(--text-terminal-label);
+  }
+
+  .text-terminal-meta {
+    font-size: var(--text-terminal-meta);
+  }
+
+  .text-terminal-tiny {
+    font-size: var(--text-terminal-tiny);
+  }
+
+  .terminal-prompt {
+    font-size: var(--text-terminal-prompt);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-snug);
+    text-shadow:
+      0 0 4px currentColor,
+      0 1px 2px rgba(0, 0, 0, 0.4);
+  }
+
   /* Terminal Pane Component Styles */
   .terminal-pane {
     background-color: #0a0a0a;
@@ -408,6 +441,11 @@
 .terminal-output {
   line-height: var(--line-height-snug);
   text-shadow: 0 0 6px currentColor;
+  /* Ensure terminal text uses rem-based sizing for zoom resilience */
+  font-size: clamp(0.625rem, 0.5vw + 0.25rem, 0.75rem);
+  /* Allow horizontal scrolling for ASCII art instead of wrapping */
+  overflow-x: auto;
+  max-width: 100%;
 }
 
 /* Reusable soft glow for CRT-style emphasis */
@@ -506,6 +544,7 @@
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -519,6 +558,20 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--cyan-bright);
+}
+
+/* Hide scrollbar in terminal output but keep functionality */
+.terminal-output::-webkit-scrollbar,
+.whitespace-pre::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* For Firefox */
+.terminal-output,
+.whitespace-pre {
+  scrollbar-width: none;
 }
 
 /* Reduce motion for accessibility */
@@ -907,6 +960,26 @@ select:focus-visible {
 ::selection {
   background-color: var(--term-selection-bg);
   color: var(--term-selection-fg);
+}
+
+/* Terminal link styling - prevent unwanted backgrounds */
+.terminal-output a,
+.terminal-body a {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+.terminal-output a:visited,
+.terminal-body a:visited {
+  color: var(--cyan-bright);
+  background-color: transparent !important;
+}
+
+.terminal-output a:focus,
+.terminal-body a:focus {
+  background-color: transparent !important;
+  outline: 1px solid var(--cyan-bright);
+  outline-offset: 2px;
 }
 
 /* Terminal cursor and caret styling */

@@ -145,7 +145,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
           <span className='terminal-title'>
             <span className='text-cyan-bright'>root@hackerfolio</span>
             <span className='text-magenta-bright'>:</span>
-            <span className='text-green-400'>~</span>
+            <span className='text-[#42be65]'>~</span>
             <span className='text-cyan-bright'>$</span>
           </span>
         </div>

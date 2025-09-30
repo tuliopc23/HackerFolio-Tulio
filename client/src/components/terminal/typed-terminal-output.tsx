@@ -136,7 +136,7 @@ export function TypedTerminalOutput({
             href={p.url}
             target='_blank'
             rel='noopener noreferrer'
-            className='underline text-cyan-bright focus:outline-none focus:ring-2 focus:ring-cyan-bright focus:ring-opacity-50 rounded'
+            className='underline text-cyan-bright hover:text-cyan-soft focus:outline-none focus:ring-1 focus:ring-cyan-bright focus:ring-opacity-50 bg-transparent'
             aria-label={`External link: ${p.url}`}
           >
             {p.url}
@@ -165,7 +165,7 @@ export function TypedTerminalOutput({
       }
 
       return (
-        <div key={`line-${String(i)}`} className='whitespace-pre-wrap'>
+        <div key={`line-${String(i)}`} className='whitespace-pre overflow-x-auto'>
           {segments.map((seg, k) => (
             <span
               key={`segment-${String(i)}-${String(k)}-${seg.text.slice(0, 10)}`}

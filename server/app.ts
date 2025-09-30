@@ -8,14 +8,112 @@ import { terminalRoutes } from './routes/terminal'
 
 const { PORT } = env
 
+const STATIC_DIRS = ['./dist/public', './dist'] as const
+let resolvedStaticDir: (typeof STATIC_DIRS)[number] | null = null
+
+async function getStaticDir() {
+  if (resolvedStaticDir) return resolvedStaticDir
+
+  for (const d of STATIC_DIRS) {
+    const f = Bun.file(`${d}/index.html`)
+    // deno-lint-ignore no-await-in-loop
+    if (await f.exists()) {
+      resolvedStaticDir = d
+      break
+    }
+  }
+
+  // Fallback to default even if not found to avoid returning undefined
+  resolvedStaticDir ??= './dist/public'
+  return resolvedStaticDir
+}
+
+function getAssetHeaders(extension: string | undefined) {
+  const mimeTypes: Record<string, string> = {
+    js: 'application/javascript',
+    css: 'text/css',
+    png: 'image/png',
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    svg: 'image/svg+xml',
+    ico: 'image/x-icon',
+    woff: 'font/woff',
+    woff2: 'font/woff2',
+    ttf: 'font/ttf',
+    eot: 'application/vnd.ms-fontobject',
+  }
+
+  const contentType = mimeTypes[extension ?? ''] ?? 'application/octet-stream'
+  return {
+    'Content-Type': contentType,
+    'Cache-Control': 'public, max-age=31536000, immutable',
+  }
+}
+
+async function resolveAsset(fileKey: string) {
+  const sanitizedName = decodeURIComponent(fileKey).split('?')[0]?.trim()
+  if (!sanitizedName) return null
+
+  const staticDir = await getStaticDir()
+  const filePath = `${staticDir}/assets/${sanitizedName}`
+  const file = Bun.file(filePath)
+
+  if (!(await file.exists())) return null
+
+  const ext = sanitizedName.split('.').pop()?.toLowerCase()
+  const headers = getAssetHeaders(ext)
+
+  return { file, headers }
+}
+
+async function buildAssetResponse(fileKey: string, method: string) {
+  const asset = await resolveAsset(fileKey)
+
+  if (!asset) {
+    return new Response('File not found', {
+      status: 404,
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+    })
+  }
+
+  if (method === 'HEAD') {
+    return new Response(null, { status: 200, headers: asset.headers })
+  }
+
+  return new Response(asset.file, { headers: asset.headers })
+}
+
 const app = new Elysia()
 
 app
+  .onRequest(async ({ request }) => {
+    if (request.method !== 'HEAD') return undefined
+
+    const url = new URL(request.url)
+
+    if (url.pathname.startsWith('/assets/')) {
+      const fileKey = url.pathname.slice('/assets/'.length)
+      return await buildAssetResponse(fileKey, 'HEAD')
+    }
+
+    if (process.env.NODE_ENV === 'production' && !url.pathname.startsWith('/api')) {
+      const indexHtml = Bun.file(`${await getStaticDir()}/index.html`)
+      if (!(await indexHtml.exists())) {
+        return new Response(null, { status: 404 })
+      }
+      return new Response(null, {
+        status: 200,
+        headers: { 'Content-Type': 'text/html; charset=utf-8' },
+      })
+    }
+
+    return new Response(null, { status: 200 })
+  })
   .use(
     cors({
       origin: true,
       credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'],
       allowedHeaders: ['Content-Type', 'Authorization'],
     })
   )
@@ -24,86 +122,29 @@ app
   .use(terminalRoutes)
 
 // Static file serving for production
-app.get('/assets/*', async ({ params, set }) => {
+app.get('/assets/*', async ({ params, request }) => {
   if (process.env.NODE_ENV !== 'production') {
-    set.status = 404
-    return 'Not found'
+    return new Response('Not found', {
+      status: 404,
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+    })
   }
 
   try {
-    // Get static directory
-    const STATIC_DIRS = ['./dist/public', './dist'] as const
-    let staticDir: (typeof STATIC_DIRS)[number] = './dist/public'
-
-    for (const d of STATIC_DIRS) {
-      const f = Bun.file(`${d}/index.html`)
-      if (await f.exists()) {
-        staticDir = d
-        break
-      }
-    }
-
-    const fileName = params['*']
-    const filePath = `${staticDir}/assets/${fileName}`
-    const file = Bun.file(filePath)
-
-    if (!(await file.exists())) {
-      set.status = 404
-      return 'File not found'
-    }
-
-    const ext = fileName.split('.').pop()?.toLowerCase()
-    const mimeTypes: Record<string, string> = {
-      js: 'application/javascript',
-      css: 'text/css',
-      png: 'image/png',
-      jpg: 'image/jpeg',
-      jpeg: 'image/jpeg',
-      svg: 'image/svg+xml',
-      ico: 'image/x-icon',
-      woff: 'font/woff',
-      woff2: 'font/woff2',
-      ttf: 'font/ttf',
-      eot: 'application/vnd.ms-fontobject',
-    }
-
-    const contentType = mimeTypes[ext ?? ''] ?? 'application/octet-stream'
-
-    set.headers = {
-      'Content-Type': contentType,
-      'Cache-Control': 'public, max-age=31536000, immutable',
-    }
-
-    return file
+    return await buildAssetResponse(params['*'], request.method)
   } catch (error) {
     console.error('Static file error:', error)
-    set.status = 500
-    return 'Internal server error'
+    return new Response('Internal server error', {
+      status: 500,
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+    })
   }
 })
 
 // Serve the built client in production
 if (process.env.NODE_ENV === 'production') {
-  // Get the static directory that was configured earlier
-  const STATIC_DIRS = ['./dist/public', './dist'] as const
-  let staticDir: (typeof STATIC_DIRS)[number] = './dist/public'
-
-  try {
-    for (const d of STATIC_DIRS) {
-      const f = Bun.file(`${d}/index.html`)
-      // deno-lint-ignore no-await-in-loop
-      if (await f.exists()) {
-        staticDir = d
-        break
-      }
-    }
-  } catch (error) {
-    console.error('❌ Static directory detection error:', error)
-    staticDir = './dist/public' // explicit fallback
-  }
-
   // SSR render if server bundle exists; fallback to static index.html
-  const indexHtml = Bun.file(`${staticDir}/index.html`)
+  const indexHtml = Bun.file(`${await getStaticDir()}/index.html`)
   // Cache HTML content in memory to avoid disk reads per request
   let cachedIndexHtml: string | null = null
   // Type definitions for SSR module
@@ -136,8 +177,10 @@ if (process.env.NODE_ENV === 'production') {
     }
   }
 
-  app.get('*', async ({ request, set }: Context) => {
+  app.get('*', async ({ request }: Context) => {
     const url = new URL(request.url)
+    const isHeadRequest = request.method === 'HEAD'
+
     if (process.env.DEBUG === 'true' || process.env.NODE_ENV === 'development') {
       console.log(`🌐 Request: ${url.pathname}`)
     }
@@ -145,7 +188,7 @@ if (process.env.NODE_ENV === 'production') {
     // Don't handle API routes
     if (url.pathname.startsWith('/api')) {
       if (process.env.DEBUG === 'true') console.log(`🔄 Skipping API route: ${url.pathname}`)
-      return
+      return new Response(null, { status: 404 })
     }
 
     // Don't handle asset routes - let static plugin handle them
@@ -159,7 +202,7 @@ if (process.env.NODE_ENV === 'production') {
       url.pathname.endsWith('.ico')
     ) {
       if (process.env.DEBUG === 'true') console.log(`📁 Skipping asset route: ${url.pathname}`)
-      return // Let static plugin handle these
+      return new Response(null, { status: 404 })
     }
 
     try {
@@ -190,21 +233,25 @@ if (process.env.NODE_ENV === 'production') {
           const script = `\n<script>window.__INITIAL_DATA__ = ${JSON.stringify(data).replace(/</g, '\\u003c')};</script>`
           rendered = rendered.replace('</body>', `${script}\n</body>`)
         }
-        set.headers = {
-          'Content-Type': 'text/html; charset=utf-8',
+        const headers = { 'Content-Type': 'text/html; charset=utf-8' }
+        if (isHeadRequest) {
+          return new Response(null, { status: 200, headers })
         }
-        return rendered
+        return new Response(rendered, { status: 200, headers })
       } else {
         console.log(`📄 Using static HTML for: ${url.pathname}`)
-        set.headers = {
-          'Content-Type': 'text/html; charset=utf-8',
+        const headers = { 'Content-Type': 'text/html; charset=utf-8' }
+        if (isHeadRequest) {
+          return new Response(null, { status: 200, headers })
         }
-        return new Response(indexHtml)
+        return new Response(htmlText, { status: 200, headers })
       }
     } catch (error) {
       console.error(`❌ SSR error for ${url.pathname}:`, error)
-      set.status = 500
-      return 'SSR error'
+      return new Response('SSR error', {
+        status: 500,
+        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+      })
     }
   })
 }

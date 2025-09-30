@@ -154,7 +154,7 @@ export default function GhosttyTerminalWindow({
               <div className='flex items-center justify-center w-2'>
                 <ResizeHandle
                   onResize={handleResize}
-                  className='w-full h-16 flex items-center justify-center hover:bg-[rgba(190,149,255,0.1)] rounded text-[#be95ff] hover:text-[#82cfff] transition-colors duration-200'
+                  className='w-full h-16 flex items-center justify-center hover:bg-[rgba(190,149,255,0.1)] rounded text-[#be95ff] hover:text-[#33b1ff] transition-colors duration-200'
                   currentLeftWidthPct={leftPaneWidth}
                   minPct={20}
                   maxPct={80}

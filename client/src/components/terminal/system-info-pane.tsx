@@ -45,17 +45,17 @@ const WorldClock = memo(() => {
 
   return (
     <div className='space-y-2 mb-4'>
-      <div className='text-pink-400 text-[10px] text-terminal-semibold tracking-wide uppercase'>
+      <div className='text-[#ff7eb6] text-terminal-meta text-terminal-semibold tracking-wide uppercase'>
         WORLD CLOCK
       </div>
-      <div className='grid grid-cols-2 gap-x-4 gap-y-2 text-xs'>
+      <div className='grid grid-cols-2 gap-x-4 gap-y-2 text-terminal-header'>
         {timezones.map(tz => (
           <div key={tz.name} className='flex items-center justify-between'>
-            <div className='text-[#f2f4f8] text-[10px] uppercase tracking-wide text-terminal-medium'>
+            <div className='text-[#f2f4f8] text-terminal-meta uppercase tracking-wide text-terminal-medium'>
               {tz.city}
             </div>
             <div
-              className='text-green-400 font-mono text-terminal-semibold text-sm glow-soft'
+              className='text-[#42be65] font-mono text-terminal-semibold text-terminal-body glow-soft'
               suppressHydrationWarning
             >
               {formatTime(currentTime, tz.timezone)}
@@ -124,7 +124,7 @@ function SystemInfoPane() {
 
   return (
     <div
-      className='h-full flex flex-col font-mono text-[12.5px] terminal-body text-[#f2f4f8]'
+      className='h-full flex flex-col font-mono text-terminal-body terminal-body text-[#f2f4f8]'
       aria-label='System Information'
     >
       <div className='flex-1 flex flex-col min-h-0 overflow-hidden'>
@@ -133,13 +133,13 @@ function SystemInfoPane() {
         {/* Fastfetch Output */}
         {showFastfetch && (
           <div className='space-y-2'>
-            <div className='text-pink-400 text-xs text-terminal-semibold tracking-wide phosphor-glow'>
+            <div className='text-[#ff7eb6] text-xs text-terminal-semibold tracking-wide phosphor-glow'>
               SYSTEM INFO
             </div>
-            <div className='flex gap-3'>
+            <div className='flex gap-3 overflow-hidden'>
               {/* Main System Info Card - Optimized Height */}
-              <div className='flex-1 bg-black/30 border border-[#393939] rounded-lg p-3.5 text-xs text-[#f2f4f8] font-mono min-h-[200px]'>
-                <div className='flex gap-4 h-full'>
+              <div className='flex-1 bg-black/30 border border-[#393939] rounded-lg p-3.5 text-xs text-[#f2f4f8] font-mono min-h-[12.5rem] min-w-0 overflow-hidden'>
+                <div className='flex gap-4 h-full min-w-0'>
                   {/* Apple Logo - Left Side */}
                   <div className='flex-shrink-0 flex items-center'>
                     <img
@@ -150,54 +150,54 @@ function SystemInfoPane() {
                       loading='lazy'
                       decoding='async'
                       draggable={false}
-                      className='select-none w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 xl:w-56 xl:h-56 object-contain drop-shadow-[0_0_8px_rgba(221,225,230,0.35)]'
+                      className='select-none w-[6rem] h-[6rem] sm:w-[8rem] sm:h-[8rem] md:w-[10rem] md:h-[10rem] lg:w-[12rem] lg:h-[12rem] xl:w-[14rem] xl:h-[14rem] object-contain drop-shadow-[0_0_0.5rem_rgba(221,225,230,0.35)]'
                     />
                   </div>
 
                   {/* System Info - Right Side - Compact */}
-                  <div className='flex-1 flex flex-col justify-between'>
+                  <div className='flex-1 flex flex-col justify-between min-w-0 overflow-hidden'>
                     <div className='space-y-1.5'>
                       {/* Username@hostname */}
-                      <div className='font-normal text-xs mb-1.5'>
+                      <div className='font-normal text-xs mb-1.5 truncate'>
                         <span className='text-[#33b1ff]'>tuliopinheirocunha</span>
                         <span className='text-[#393939]'>@</span>
                         <span className='text-[#be95ff]'>MacBook-Pro</span>
                       </div>
 
-                      {/* Separator */}
-                      <div className='text-[#393939]'>────────────────────────────────────────</div>
+                      {/* Separator - responsive border instead of text */}
+                      <div className='border-t border-[#393939] w-full' />
 
                       {/* Core System Info */}
-                      <div>
-                        <span className='text-[#82cfff] text-terminal-medium'>OS:</span>
+                      <div className='truncate'>
+                        <span className='text-[#33b1ff] text-terminal-medium'>OS:</span>
                         <span className='text-[#42be65] ml-1 font-mono glow-soft'>
                           macOS Tahoe 26.0 ARM64
                         </span>
                       </div>
 
-                      <div>
-                        <span className='text-[#82cfff] text-terminal-medium'>Host:</span>
+                      <div className='truncate'>
+                        <span className='text-[#33b1ff] text-terminal-medium'>Host:</span>
                         <span className='text-[#42be65] ml-1 font-mono glow-soft'>
                           MacBook Pro (14-inch, 2023)
                         </span>
                       </div>
 
-                      <div>
-                        <span className='text-[#82cfff] text-terminal-medium'>CPU:</span>
+                      <div className='truncate'>
+                        <span className='text-[#33b1ff] text-terminal-medium'>CPU:</span>
                         <span className='text-[#be95ff] ml-1 font-mono glow-soft'>
                           Apple M4 Pro (12) @ 3.50 GHz
                         </span>
                       </div>
 
-                      <div>
-                        <span className='text-[#82cfff] text-terminal-medium'>Memory:</span>
+                      <div className='truncate'>
+                        <span className='text-[#33b1ff] text-terminal-medium'>Memory:</span>
                         <span className='text-[#42be65] ml-1 font-mono glow-soft'>
                           36 GB Unified
                         </span>
                       </div>
 
-                      <div>
-                        <span className='text-[#82cfff] text-terminal-medium'>Terminal:</span>
+                      <div className='truncate'>
+                        <span className='text-[#33b1ff] text-terminal-medium'>Terminal:</span>
                         <span className='text-[#be95ff] ml-1 font-mono glow-soft'>
                           Ghostty 1.0.0
                         </span>
@@ -206,16 +206,16 @@ function SystemInfoPane() {
 
                     {/* Bottom Status Bar - Compact */}
                     <div className='mt-2 pt-2 border-t border-[#393939]'>
-                      <div className='flex justify-between items-center text-[10px]'>
+                      <div className='flex justify-between items-center text-terminal-meta'>
                         <div className='flex gap-3'>
                           <span className='text-[#f2f4f8]'>
-                            Load: <span className='text-green-400 font-mono glow-soft'>1.2</span>
+                            Load: <span className='text-[#42be65] font-mono glow-soft'>1.2</span>
                           </span>
                           <span className='text-[#f2f4f8]'>
-                            Temp: <span className='text-green-400 font-mono glow-soft'>42°C</span>
+                            Temp: <span className='text-[#42be65] font-mono glow-soft'>42°C</span>
                           </span>
                         </div>
-                        <span className='text-[#82cfff] font-mono' suppressHydrationWarning>
+                        <span className='text-[#33b1ff] font-mono' suppressHydrationWarning>
                           {Math.floor((Date.now() - 1704067200000) / 3600000)}h uptime
                         </span>
                       </div>
@@ -225,15 +225,15 @@ function SystemInfoPane() {
               </div>
 
               {/* SSH Connection Card - Right Side - Compact */}
-              <div className='w-44 bg-black/30 border border-[#393939] rounded-lg p-3 text-xs font-mono min-h-[200px] flex flex-col'>
+              <div className='w-[11rem] bg-black/30 border border-[#393939] rounded-lg p-3 text-terminal-header font-mono min-h-[12.5rem] flex flex-col flex-shrink-0 overflow-hidden'>
                 {/* Header with Status */}
                 <div className='flex items-center justify-between mb-3'>
-                  <span className='text-pink-400 text-[10px] text-terminal-semibold uppercase tracking-wide'>
+                  <span className='text-[#ff7eb6] text-terminal-meta text-terminal-semibold uppercase tracking-wide'>
                     CONNECTION
                   </span>
                   <div className='flex items-center gap-1'>
-                    <div className='w-2 h-2 rounded-full bg-green-400 animate-pulse' />
-                    <span className='text-green-400 text-[9px] text-terminal-bold glow-soft'>
+                    <div className='w-2 h-2 rounded-full bg-[#42be65] animate-pulse' />
+                    <span className='text-[#42be65] text-terminal-tiny text-terminal-bold glow-soft'>
                       SECURE
                     </span>
                   </div>
@@ -241,21 +241,21 @@ function SystemInfoPane() {
 
                 {/* Connection Info - Compact */}
                 <div className='space-y-2 flex-1'>
-                  <div className='flex justify-between text-[9px]'>
+                  <div className='flex justify-between text-terminal-tiny'>
                     <span className='text-[#f2f4f8]'>Protocol:</span>
-                    <span className='text-green-400 font-mono glow-soft'>SSH-2.0</span>
+                    <span className='text-[#42be65] font-mono glow-soft'>SSH-2.0</span>
                   </div>
-                  <div className='flex justify-between text-[9px]'>
+                  <div className='flex justify-between text-terminal-tiny'>
                     <span className='text-[#f2f4f8]'>Cipher:</span>
-                    <span className='text-pink-400 font-mono glow-soft'>AES-256</span>
+                    <span className='text-[#ff7eb6] font-mono glow-soft'>AES-256</span>
                   </div>
-                  <div className='flex justify-between text-[9px]'>
+                  <div className='flex justify-between text-terminal-tiny'>
                     <span className='text-[#f2f4f8]'>Latency:</span>
-                    <span className='text-green-400 font-mono glow-soft'>12ms</span>
+                    <span className='text-[#42be65] font-mono glow-soft'>12ms</span>
                   </div>
-                  <div className='flex justify-between text-[9px]'>
+                  <div className='flex justify-between text-terminal-tiny'>
                     <span className='text-[#f2f4f8]'>Uptime:</span>
-                    <span className='text-pink-400 font-mono glow-soft' suppressHydrationWarning>
+                    <span className='text-[#ff7eb6] font-mono glow-soft' suppressHydrationWarning>
                       {Math.floor((Date.now() - 1704067200000) / 86400000).toString()}d
                     </span>
                   </div>
@@ -265,24 +265,24 @@ function SystemInfoPane() {
 
                   {/* Network Stats - Reduced */}
                   <div className='space-y-1.5'>
-                    <div className='flex justify-between text-[9px]'>
+                    <div className='flex justify-between text-terminal-tiny'>
                       <span className='text-[#f2f4f8]'>TX:</span>
-                      <span className='text-green-400 font-mono glow-soft'>1.2GB</span>
+                      <span className='text-[#42be65] font-mono glow-soft'>1.2GB</span>
                     </div>
-                    <div className='flex justify-between text-[9px]'>
+                    <div className='flex justify-between text-terminal-tiny'>
                       <span className='text-[#f2f4f8]'>RX:</span>
-                      <span className='text-green-400 font-mono glow-soft'>3.4GB</span>
+                      <span className='text-[#42be65] font-mono glow-soft'>3.4GB</span>
                     </div>
-                    <div className='flex justify-between text-[9px]'>
+                    <div className='flex justify-between text-terminal-tiny'>
                       <span className='text-[#f2f4f8]'>Sessions:</span>
-                      <span className='text-pink-400 font-mono glow-soft'>4</span>
+                      <span className='text-[#ff7eb6] font-mono glow-soft'>4</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Status Footer */}
                 <div className='mt-auto pt-2 border-t border-[#393939]'>
-                  <div className='text-center text-[8px] text-[#82cfff] font-mono'>
+                  <div className='text-center text-terminal-tiny text-[#33b1ff] font-mono'>
                     ◉ Active Session
                   </div>
                 </div>
@@ -292,9 +292,9 @@ function SystemInfoPane() {
         )}
 
         {/* Bottom Cards Section - Compact */}
-        <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 flex-1 min-h-0 h-full'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 flex-1 min-h-0'>
           {/* Recent Projects Card - Compact */}
-          <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-[12px] font-mono pane-border flex flex-col min-h-0 h-full'>
+          <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-terminal-header font-mono pane-border flex flex-col min-h-0 min-w-0'>
             <div className='text-[#be95ff] text-xs text-terminal-semibold tracking-wide uppercase mb-2 phosphor-glow'>
               RECENT PROJECTS
             </div>
@@ -303,7 +303,7 @@ function SystemInfoPane() {
                 <div className='text-[#f2f4f8]'>Loading...</div>
               ) : currentProject ? (
                 <div className='space-y-2 h-full flex flex-col'>
-                  <div className='flex items-center justify-between text-[11px] text-[#f2f4f8]'>
+                  <div className='flex items-center justify-between text-terminal-label text-[#f2f4f8]'>
                     <span>
                       Showing {currentProjectIndex + 1} / {projects.length}
                     </span>
@@ -311,23 +311,26 @@ function SystemInfoPane() {
                       <span className='block h-full w-1/3 bg-[#33b1ff] animate-pulse' />
                     </span>
                   </div>
-                  <div key={currentProject.id} className='border-l-2 border-[#33b1ff] pl-2 flex-1'>
-                    <div className='text-[#33b1ff] text-[13px] text-terminal-medium whitespace-normal break-words glow-soft mb-1.5'>
+                  <div
+                    key={currentProject.id}
+                    className='border-l-2 border-[#33b1ff] pl-2 flex-1 min-w-0'
+                  >
+                    <div className='text-[#33b1ff] text-terminal-body text-terminal-medium truncate glow-soft mb-1.5'>
                       {currentProject.name}
                     </div>
-                    <div className='text-[#f2f4f8] text-[11px] whitespace-normal break-words leading-relaxed mb-2'>
+                    <div className='text-[#f2f4f8] text-terminal-label leading-relaxed mb-2 line-clamp-2'>
                       {currentProject.description ?? 'No description'}
                     </div>
-                    <div className='space-y-1.5'>
+                    <div className='space-y-1.5 overflow-visible'>
                       {currentProject.status && (
                         <div className='flex items-center gap-2'>
-                          <span className='text-[#82cfff] text-[10px]'>Status:</span>
+                          <span className='text-[#33b1ff] text-terminal-meta'>Status:</span>
                           <span
-                            className={`text-[11px] px-1.5 py-0.5 rounded ${
+                            className={`text-terminal-label px-1.5 py-0.5 rounded ${
                               currentProject.status === 'active'
-                                ? 'bg-green-400/20 text-green-400'
+                                ? 'bg-[#42be65]/20 text-[#42be65]'
                                 : currentProject.status === 'completed'
-                                  ? 'bg-blue-400/20 text-blue-400'
+                                  ? 'bg-[#33b1ff]/20 text-[#33b1ff]'
                                   : 'bg-yellow-400/20 text-yellow-400'
                             } glow-soft`}
                           >
@@ -337,12 +340,14 @@ function SystemInfoPane() {
                       )}
                       {currentProject.tech_stack && currentProject.tech_stack.length > 0 && (
                         <div>
-                          <span className='text-[#82cfff] text-[10px] block mb-1'>Tech:</span>
+                          <span className='text-[#33b1ff] text-terminal-meta block mb-1'>
+                            Tech:
+                          </span>
                           <div className='flex flex-wrap gap-1'>
                             {currentProject.tech_stack.slice(0, 3).map(tech => (
                               <span
                                 key={`${String(currentProject.id)}-${tech}`}
-                                className='text-[10px] text-pink-400 bg-pink-400/10 px-1.5 py-0.5 rounded glow-soft'
+                                className='text-terminal-meta text-[#ff7eb6] bg-[#ff7eb6]/10 px-1.5 py-0.5 rounded glow-soft'
                               >
                                 {tech}
                               </span>
@@ -352,12 +357,12 @@ function SystemInfoPane() {
                       )}
                       {(currentProject.github_url ?? currentProject.live_url) && (
                         <div className='pt-1.5 border-t border-[#393939]'>
-                          <div className='flex gap-3 text-[10px]'>
+                          <div className='flex gap-3 text-terminal-meta'>
                             {currentProject.github_url && (
-                              <span className='text-[#82cfff]'>→ GitHub</span>
+                              <span className='text-[#33b1ff]'>→ GitHub</span>
                             )}
                             {currentProject.live_url && (
-                              <span className='text-green-400'>→ Live</span>
+                              <span className='text-[#42be65]'>→ Live</span>
                             )}
                           </div>
                         </div>
@@ -372,7 +377,7 @@ function SystemInfoPane() {
           </div>
 
           {/* Project Stats Card - Compact */}
-          <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-[12px] font-mono flex flex-col min-h-0 h-full'>
+          <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-terminal-header font-mono flex flex-col min-h-0 min-w-0'>
             <div className='text-[#be95ff] text-xs text-terminal-semibold tracking-wide uppercase mb-2'>
               PROJECT STATS
             </div>
@@ -382,25 +387,25 @@ function SystemInfoPane() {
               ) : (
                 <div className='space-y-2 h-full flex flex-col'>
                   <div className='space-y-1.5 flex-1'>
-                    <div className='flex justify-between text-[11px]'>
+                    <div className='flex justify-between text-terminal-label'>
                       <span className='text-[#f2f4f8]'>Total:</span>
-                      <span className='text-green-400 font-mono glow-soft'>{projects.length}</span>
+                      <span className='text-[#42be65] font-mono glow-soft'>{projects.length}</span>
                     </div>
-                    <div className='flex justify-between text-[11px]'>
+                    <div className='flex justify-between text-terminal-label'>
                       <span className='text-[#f2f4f8]'>Active:</span>
-                      <span className='text-green-400 font-mono glow-soft'>
+                      <span className='text-[#42be65] font-mono glow-soft'>
                         {projects.filter(p => p.status === 'active').length}
                       </span>
                     </div>
-                    <div className='flex justify-between text-[11px]'>
+                    <div className='flex justify-between text-terminal-label'>
                       <span className='text-[#f2f4f8]'>Completed:</span>
-                      <span className='text-blue-400 font-mono glow-soft'>
+                      <span className='text-[#33b1ff] font-mono glow-soft'>
                         {projects.filter(p => p.status === 'completed').length}
                       </span>
                     </div>
-                    <div className='flex justify-between text-[11px]'>
+                    <div className='flex justify-between text-terminal-label'>
                       <span className='text-[#f2f4f8]'>Technologies:</span>
-                      <span className='text-pink-400 font-mono glow-soft'>
+                      <span className='text-[#ff7eb6] font-mono glow-soft'>
                         {new Set(projects.flatMap(p => p.tech_stack ?? [])).size}
                       </span>
                     </div>
@@ -410,7 +415,7 @@ function SystemInfoPane() {
                       <>
                         <div className='border-t border-[#393939] my-2' />
                         <div className='space-y-1'>
-                          <div className='text-[#82cfff] text-[10px] text-terminal-medium'>
+                          <div className='text-[#33b1ff] text-terminal-meta text-terminal-medium'>
                             Popular Tech:
                           </div>
                           {Array.from(new Set(projects.flatMap(p => p.tech_stack ?? [])))
@@ -418,10 +423,10 @@ function SystemInfoPane() {
                             .map(tech => (
                               <div
                                 key={`tech-${tech}`}
-                                className='flex justify-between text-[10px]'
+                                className='flex justify-between text-terminal-meta'
                               >
                                 <span className='text-[#f2f4f8]'>{tech}:</span>
-                                <span className='text-pink-400 font-mono glow-soft'>
+                                <span className='text-[#ff7eb6] font-mono glow-soft'>
                                   {projects.filter(p => p.tech_stack?.includes(tech)).length}
                                 </span>
                               </div>
@@ -434,10 +439,10 @@ function SystemInfoPane() {
                   {/* Most Recent Update */}
                   {projects.length > 0 && projects[0]?.updated_at && (
                     <div className='mt-auto pt-2 border-t border-[#393939]'>
-                      <div className='flex justify-between text-[11px]'>
+                      <div className='flex justify-between text-terminal-label'>
                         <span className='text-[#f2f4f8]'>Last Update:</span>
                         <span
-                          className='text-pink-400 font-mono glow-soft'
+                          className='text-[#ff7eb6] font-mono glow-soft'
                           suppressHydrationWarning
                         >
                           {new Date(projects[0].updated_at).toLocaleDateString('en-US', {

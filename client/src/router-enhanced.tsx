@@ -181,11 +181,14 @@ export function createAppRouter(opts?: RouterOpts) {
 }
 
 export function AppRouterProvider({ router }: { router: ReturnType<typeof createAppRouter> }) {
+  const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined'
+  const shouldShowDevtools = import.meta.env.DEV && import.meta.env.MODE !== 'test' && isBrowser
+
   return (
     <>
       <RouterProvider router={router} />
       {/* Router DevTools - only in development */}
-      {import.meta.env.DEV && (
+      {shouldShowDevtools && (
         <Suspense fallback={null}>
           <TanStackRouterDevtools router={router} />
         </Suspense>

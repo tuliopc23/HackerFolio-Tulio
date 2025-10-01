@@ -117,63 +117,6 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
       }
 
       switch (sanitizedCommand) {
-        case 'help': {
-          const cmds = await orm
-            .select({
-              command: tCommands.command,
-              description: tCommands.description,
-              category: tCommands.category,
-            })
-            .from(tCommands)
-            .where(eq(tCommands.isActive, true))
-            .orderBy(tCommands.command)
-
-          // General grouped help
-          const byCat: Record<string, Array<{ command: string; description: string | null }>> = {}
-          for (const c of cmds) {
-            const cat = c.category ?? 'misc'
-            byCat[cat] ??= []
-            byCat[cat].push({ command: c.command, description: c.description })
-          }
-          const sections: string[] = []
-          const wrap = (txt: string, width: number, indent: string) => {
-            const words = (txt || '').split(/\s+/)
-            const lines: string[] = []
-            let line = ''
-            for (const word of words) {
-              const next = line ? line + ' ' + word : word
-              if (indent.length + next.length > width) {
-                if (line) lines.push(line)
-                line = word
-              } else {
-                line = next
-              }
-            }
-            if (line) lines.push(line)
-            return lines.map((l, i) => (i === 0 ? l : indent + l)).join('\n')
-          }
-          for (const [cat, rows] of Object.entries(byCat)) {
-            const col = Math.max(12, Math.min(22, ...rows.map(r => r.command.length)))
-            const header =
-              ansi.magenta(ansi.bold(cat.toUpperCase())) +
-              '\n' +
-              ansi.cyan('COMMAND'.padEnd(col)) +
-              '  ' +
-              ansi.cyan('DESCRIPTION')
-            const line = '-'.repeat(('COMMAND'.padEnd(col) + '  DESCRIPTION').length)
-            const body = rows
-              .map(r => {
-                const left = ansi.cyan(r.command.padEnd(col))
-                const right = wrap(r.description ?? '', 80, ' '.repeat(col + 2))
-                const [first, ...rest] = right.split('\n')
-                return [left + '  ' + (first ?? ''), ...rest].join('\n')
-              })
-              .join('\n')
-            sections.push(`${header}\n${ansi.dim(line)}\n${body}`)
-          }
-          return makeResult(true, sanitizedCommand, sections.join('\n\n'), { startedAt })
-        }
-
         case 'projects': {
           // Parse flags and free-text filter
           let filter = ''

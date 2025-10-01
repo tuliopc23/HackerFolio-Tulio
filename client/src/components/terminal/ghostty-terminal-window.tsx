@@ -22,10 +22,10 @@ export default function GhosttyTerminalWindow({
 }: GhosttyTerminalWindowProps) {
   // Persisted left pane width (percentage)
   const [leftPaneWidth, setLeftPaneWidth] = useState<number>(() => {
-    if (typeof window === 'undefined') return 50
+    if (typeof window === 'undefined') return 40
     const raw = window.localStorage.getItem('ghostty-leftPaneWidth')
     const n = raw ? Number(raw) : NaN
-    return Number.isFinite(n) && n >= 20 && n <= 80 ? n : 50
+    return Number.isFinite(n) && n >= 20 && n <= 80 ? n : 40
   })
   const [isMaximized, setIsMaximized] = useState(false)
   const { setTrapFocus } = useFocusManager()

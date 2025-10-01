@@ -4,7 +4,10 @@
 
 ### Requirement: Vite Production Build Configuration
 
-The build system SHALL configure Vite to generate production-ready assets with explicit base URL configuration to ensure proper asset resolution in containerized deployments. The configuration MUST include:
+The build system SHALL configure Vite to generate production-ready assets with
+explicit base URL configuration to ensure proper asset resolution in
+containerized deployments. The configuration MUST include:
+
 - Explicit `base: '/'` setting for consistent root-relative asset paths
 - `build.manifest: true` to generate manifest.json for SSR asset tracking
 - Proper `index.html` input configuration for the client build
@@ -14,9 +17,12 @@ The build system SHALL configure Vite to generate production-ready assets with e
 
 - **GIVEN** the application is being built for production
 - **WHEN** `bun run build:production` is executed
-- **THEN** the generated `dist/public/index.html` SHALL contain root-relative asset paths starting with `/assets/`
-- **AND** a `dist/public/.vite/manifest.json` file SHALL be generated with asset mapping
-- **AND** all CSS and JavaScript files SHALL be placed in `dist/public/assets/` directory
+- **THEN** the generated `dist/public/index.html` SHALL contain root-relative
+  asset paths starting with `/assets/`
+- **AND** a `dist/public/.vite/manifest.json` file SHALL be generated with asset
+  mapping
+- **AND** all CSS and JavaScript files SHALL be placed in `dist/public/assets/`
+  directory
 
 #### Scenario: Assets load correctly in containerized environment
 
@@ -33,4 +39,5 @@ The build system SHALL configure Vite to generate production-ready assets with e
 - **WHEN** the container is run locally (e.g., via OrbStack)
 - **THEN** the asset loading behavior SHALL match the Sevalla deployment
 - **AND** the same asset paths SHALL be used in both environments
-- **AND** the application SHALL function identically in local and production containers
+- **AND** the application SHALL function identically in local and production
+  containers

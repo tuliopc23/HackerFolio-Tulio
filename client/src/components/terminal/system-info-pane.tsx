@@ -51,11 +51,21 @@ const WorldClock = memo(() => {
       <div className='grid grid-cols-2 gap-x-4 gap-y-2 text-terminal-body'>
         {timezones.map(tz => (
           <div key={tz.name} className='flex items-center justify-between'>
-            <div className='text-[#f2f4f8] text-terminal-label terminal-caption uppercase tracking-wide'>
+            <div
+              className='text-[#f2f4f8] text-terminal-label uppercase tracking-wide'
+              style={{
+                fontSize: 'calc(var(--text-terminal-label) + 1px)',
+                fontWeight: 'var(--font-weight-bold)',
+              }}
+            >
               {tz.city}
             </div>
             <div
               className='text-[#42be65] font-mono text-terminal-body terminal-command glow-soft'
+              style={{
+                fontSize: 'calc(var(--text-terminal-body) + 1px)',
+                fontWeight: 'var(--font-weight-bold)',
+              }}
               suppressHydrationWarning
             >
               {formatTime(currentTime, tz.timezone)}
@@ -133,7 +143,10 @@ function SystemInfoPane() {
         {/* Fastfetch Output */}
         {showFastfetch && (
           <div className='space-y-2'>
-            <div className='text-[#ff7eb6] text-terminal-meta terminal-subtitle tracking-wide phosphor-glow'>
+            <div
+              className='text-[#ff7eb6] text-terminal-meta terminal-subtitle tracking-wide phosphor-glow'
+              style={{ fontSize: 'calc(var(--text-terminal-meta) + 1px)' }}
+            >
               SYSTEM INFO
             </div>
             <div className='flex gap-3 overflow-hidden'>
@@ -225,15 +238,21 @@ function SystemInfoPane() {
               </div>
 
               {/* SSH Connection Card - Right Side - Compact */}
-              <div className='w-[11rem] bg-black/30 border border-[#393939] rounded-lg p-3 text-terminal-body terminal-body font-mono min-h-[12.5rem] flex flex-col flex-shrink-0 overflow-hidden'>
+              <div className='w-[11rem] bg-black/30 border border-[#393939] rounded-lg p-3 text-terminal-body terminal-body font-mono min-h-[12.5625rem] flex flex-col flex-shrink-0 overflow-hidden'>
                 {/* Header with Status */}
                 <div className='flex items-center justify-between mb-3'>
-                  <span className='text-[#ff7eb6] text-terminal-meta terminal-subtitle uppercase tracking-wide'>
+                  <span
+                    className='text-[#ff7eb6] text-terminal-meta terminal-subtitle uppercase tracking-wide'
+                    style={{ fontSize: 'calc(var(--text-terminal-meta) + 1px)' }}
+                  >
                     CONNECTION
                   </span>
                   <div className='flex items-center gap-1'>
                     <div className='w-2 h-2 rounded-full bg-[#42be65] animate-pulse' />
-                    <span className='text-[#42be65] text-terminal-tiny terminal-command glow-soft'>
+                    <span
+                      className='text-[#42be65] text-terminal-tiny terminal-command glow-soft'
+                      style={{ fontSize: 'calc(var(--text-terminal-tiny) + 1px)' }}
+                    >
                       SECURE
                     </span>
                   </div>
@@ -241,19 +260,31 @@ function SystemInfoPane() {
 
                 {/* Connection Info - Compact */}
                 <div className='space-y-2 flex-1'>
-                  <div className='flex justify-between text-terminal-tiny'>
+                  <div
+                    className='flex justify-between text-terminal-tiny'
+                    style={{ fontSize: 'calc(var(--text-terminal-tiny) + 1px)' }}
+                  >
                     <span className='text-[#f2f4f8]'>Protocol:</span>
                     <span className='text-[#42be65] font-mono glow-soft'>SSH-2.0</span>
                   </div>
-                  <div className='flex justify-between text-terminal-tiny'>
+                  <div
+                    className='flex justify-between text-terminal-tiny'
+                    style={{ fontSize: 'calc(var(--text-terminal-tiny) + 1px)' }}
+                  >
                     <span className='text-[#f2f4f8]'>Cipher:</span>
                     <span className='text-[#ff7eb6] font-mono glow-soft'>AES-256</span>
                   </div>
-                  <div className='flex justify-between text-terminal-tiny'>
+                  <div
+                    className='flex justify-between text-terminal-tiny'
+                    style={{ fontSize: 'calc(var(--text-terminal-tiny) + 1px)' }}
+                  >
                     <span className='text-[#f2f4f8]'>Latency:</span>
                     <span className='text-[#42be65] font-mono glow-soft'>12ms</span>
                   </div>
-                  <div className='flex justify-between text-terminal-tiny'>
+                  <div
+                    className='flex justify-between text-terminal-tiny'
+                    style={{ fontSize: 'calc(var(--text-terminal-tiny) + 1px)' }}
+                  >
                     <span className='text-[#f2f4f8]'>Uptime:</span>
                     <span className='text-[#ff7eb6] font-mono glow-soft' suppressHydrationWarning>
                       {Math.floor((Date.now() - 1704067200000) / 86400000).toString()}d
@@ -265,15 +296,24 @@ function SystemInfoPane() {
 
                   {/* Network Stats - Reduced */}
                   <div className='space-y-1.5'>
-                    <div className='flex justify-between text-terminal-tiny'>
+                    <div
+                      className='flex justify-between text-terminal-tiny'
+                      style={{ fontSize: 'calc(var(--text-terminal-tiny) + 1px)' }}
+                    >
                       <span className='text-[#f2f4f8]'>TX:</span>
                       <span className='text-[#42be65] font-mono glow-soft'>1.2GB</span>
                     </div>
-                    <div className='flex justify-between text-terminal-tiny'>
+                    <div
+                      className='flex justify-between text-terminal-tiny'
+                      style={{ fontSize: 'calc(var(--text-terminal-tiny) + 1px)' }}
+                    >
                       <span className='text-[#f2f4f8]'>RX:</span>
                       <span className='text-[#42be65] font-mono glow-soft'>3.4GB</span>
                     </div>
-                    <div className='flex justify-between text-terminal-tiny'>
+                    <div
+                      className='flex justify-between text-terminal-tiny'
+                      style={{ fontSize: 'calc(var(--text-terminal-tiny) + 1px)' }}
+                    >
                       <span className='text-[#f2f4f8]'>Sessions:</span>
                       <span className='text-[#ff7eb6] font-mono glow-soft'>4</span>
                     </div>
@@ -282,7 +322,10 @@ function SystemInfoPane() {
 
                 {/* Status Footer */}
                 <div className='mt-auto pt-2 border-t border-[#393939]'>
-                  <div className='text-center text-terminal-tiny text-[#33b1ff] font-mono'>
+                  <div
+                    className='text-center text-terminal-tiny text-[#33b1ff] font-mono'
+                    style={{ fontSize: 'calc(var(--text-terminal-tiny) + 1px)' }}
+                  >
                     ◉ Active Session
                   </div>
                 </div>
@@ -294,78 +337,68 @@ function SystemInfoPane() {
         {/* Bottom Cards Section - Compact */}
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 flex-1 min-h-0'>
           {/* Recent Projects Card - Compact */}
-          <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-terminal-body terminal-body font-mono pane-border flex flex-col min-h-0 min-w-0'>
-            <div className='text-[#be95ff] text-terminal-meta terminal-subtitle tracking-wide uppercase mb-2 phosphor-glow'>
+          <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-terminal-body terminal-body font-mono flex flex-col min-h-0 min-w-0'>
+            <div
+              className='text-[#be95ff] text-terminal-meta terminal-subtitle tracking-wide uppercase mb-2'
+              style={{ fontSize: 'calc(var(--text-terminal-meta) + 1px)' }}
+            >
               RECENT PROJECTS
             </div>
             <div className='flex-1 min-h-0'>
               {projectsLoading ? (
                 <div className='text-[#f2f4f8]'>Loading...</div>
               ) : currentProject ? (
-                <div className='space-y-2 h-full flex flex-col'>
-                  <div className='flex items-center justify-between text-terminal-label text-[#f2f4f8]'>
-                    <span>
-                      Showing {currentProjectIndex + 1} / {projects.length}
-                    </span>
-                    <span className='h-1 w-12 bg-[#393939] rounded overflow-hidden'>
-                      <span className='block h-full w-1/3 bg-[#33b1ff] animate-pulse' />
+                <div className='space-y-2.5 h-full flex flex-col'>
+                  <div
+                    className='flex items-center gap-2 text-terminal-label'
+                    style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
+                  >
+                    <span className='text-[#ff7eb6]'>→</span>
+                    <span className='text-[#42be65] font-mono glow-soft hover:text-[#ff7eb6] transition-colors'>
+                      {currentProject.name}
                     </span>
                   </div>
-                  <div
-                    key={currentProject.id}
-                    className='border-l-2 border-[#33b1ff] pl-2 flex-1 min-w-0'
-                  >
-                    <div className='text-[#33b1ff] text-terminal-prompt terminal-command truncate glow-soft mb-1.5'>
-                      {currentProject.name}
+
+                  <div className='border-t border-[#393939]' />
+
+                  <div className='space-y-2 flex-1'>
+                    <div
+                      className='text-[#f2f4f8] leading-relaxed line-clamp-3'
+                      style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
+                    >
+                      {currentProject.description ??
+                        'The Next concept of excellence in Terminal Apps on Apple Platforms (early stages)'}
                     </div>
-                    <div className='text-[#f2f4f8] text-terminal-label terminal-body leading-relaxed mb-2 line-clamp-2'>
-                      {currentProject.description ?? 'No description'}
-                    </div>
-                    <div className='space-y-1.5 overflow-visible'>
-                      {currentProject.status && (
-                        <div className='flex items-center gap-2'>
-                          <span className='text-[#33b1ff] text-terminal-meta'>Status:</span>
-                          <span
-                            className={`text-terminal-label px-1.5 py-0.5 rounded ${
-                              currentProject.status === 'active'
-                                ? 'bg-[#42be65]/20 text-[#42be65]'
-                                : currentProject.status === 'completed'
-                                  ? 'bg-[#33b1ff]/20 text-[#33b1ff]'
-                                  : 'bg-yellow-400/20 text-yellow-400'
-                            } glow-soft`}
-                          >
-                            {currentProject.status}
-                          </span>
-                        </div>
+                    {currentProject.tech_stack && currentProject.tech_stack.length > 0 && (
+                      <div
+                        className='flex items-center justify-between text-terminal-label'
+                        style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
+                      >
+                        <span className='text-[#ff7eb6]'>Tech:</span>
+                        <span className='text-[#42be65] font-mono glow-soft'>
+                          {currentProject.tech_stack.slice(0, 3).join(', ')}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className='mt-auto pt-2 border-t border-[#393939]'>
+                    <div
+                      className='flex items-center justify-between text-terminal-label'
+                      style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
+                    >
+                      <span className='text-[#f2f4f8]'>
+                        Showing {currentProjectIndex + 1} / {projects.length}
+                      </span>
+                      {currentProject.github_url && (
+                        <span className='text-[#ff7eb6] font-mono glow-soft hover:text-[#be95ff] transition-colors'>
+                          GitHub →
+                        </span>
                       )}
-                      {currentProject.tech_stack && currentProject.tech_stack.length > 0 && (
-                        <div>
-                          <span className='text-[#33b1ff] text-terminal-meta block mb-1'>
-                            Tech:
-                          </span>
-                          <div className='flex flex-wrap gap-1'>
-                            {currentProject.tech_stack.slice(0, 3).map(tech => (
-                              <span
-                                key={`${String(currentProject.id)}-${tech}`}
-                                className='text-terminal-meta text-[#ff7eb6] bg-[#ff7eb6]/10 px-1.5 py-0.5 rounded glow-soft'
-                              >
-                                {tech}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                      {(currentProject.github_url ?? currentProject.live_url) && (
-                        <div className='pt-1.5 border-t border-[#393939]'>
-                          <div className='flex gap-3 text-terminal-meta'>
-                            {currentProject.github_url && (
-                              <span className='text-[#33b1ff]'>→ GitHub</span>
-                            )}
-                            {currentProject.live_url && (
-                              <span className='text-[#42be65]'>→ Live</span>
-                            )}
-                          </div>
-                        </div>
+                      {!currentProject.github_url && currentProject.live_url && (
+                        <span className='text-[#ff7eb6] font-mono glow-soft hover:text-[#be95ff] transition-colors'>
+                          Live →
+                        </span>
                       )}
                     </div>
                   </div>
@@ -378,13 +411,19 @@ function SystemInfoPane() {
 
           {/* Personal Website Card - Compact */}
           <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-terminal-body terminal-body font-mono flex flex-col min-h-0 min-w-0'>
-            <div className='text-[#be95ff] text-terminal-meta terminal-subtitle tracking-wide uppercase mb-2'>
+            <div
+              className='text-[#be95ff] text-terminal-meta terminal-subtitle tracking-wide uppercase mb-2'
+              style={{ fontSize: 'calc(var(--text-terminal-meta) + 1px)' }}
+            >
               PERSONAL WEBSITE
             </div>
             <div className='flex-1 min-h-0'>
               <div className='space-y-2.5 h-full flex flex-col'>
                 {/* Main Website Link */}
-                <div className='flex items-center gap-2 text-terminal-label'>
+                <div
+                  className='flex items-center gap-2 text-terminal-label'
+                  style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
+                >
                   <span className='text-[#ff7eb6]'>→</span>
                   <a
                     href='https://www.tuliocunha.dev'
@@ -400,7 +439,10 @@ function SystemInfoPane() {
 
                 {/* Navigation Links */}
                 <div className='space-y-2 flex-1'>
-                  <div className='flex items-center justify-between text-terminal-label'>
+                  <div
+                    className='flex items-center justify-between text-terminal-label'
+                    style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
+                  >
                     <span className='text-[#ff7eb6]'>Profile:</span>
                     <a
                       href='https://www.tuliocunha.dev'
@@ -411,7 +453,10 @@ function SystemInfoPane() {
                       Home
                     </a>
                   </div>
-                  <div className='flex items-center justify-between text-terminal-label'>
+                  <div
+                    className='flex items-center justify-between text-terminal-label'
+                    style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
+                  >
                     <span className='text-[#ff7eb6]'>Projects:</span>
                     <a
                       href='https://www.tuliocunha.dev'
@@ -422,7 +467,10 @@ function SystemInfoPane() {
                       View Projects
                     </a>
                   </div>
-                  <div className='flex items-center justify-between text-terminal-label'>
+                  <div
+                    className='flex items-center justify-between text-terminal-label'
+                    style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
+                  >
                     <span className='text-[#ff7eb6]'>Blog:</span>
                     <a
                       href='https://www.tuliocunha.dev'
@@ -437,7 +485,10 @@ function SystemInfoPane() {
 
                 {/* Book Time Section */}
                 <div className='mt-auto pt-2 border-t border-[#393939]'>
-                  <div className='flex items-center justify-between text-terminal-label'>
+                  <div
+                    className='flex items-center justify-between text-terminal-label'
+                    style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
+                  >
                     <span className='text-[#f2f4f8]'>Book Time:</span>
                     <a
                       href='https://fantastical.app/tuliopinheirocunha'

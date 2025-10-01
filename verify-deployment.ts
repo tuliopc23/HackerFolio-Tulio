@@ -11,10 +11,7 @@ const REQUIRED_FILES = [
   'database/portfolio.db',
 ]
 
-const REQUIRED_DIRS = [
-  'dist/public/assets',
-  'dist/server',
-]
+const REQUIRED_DIRS = ['dist/public/assets', 'dist/server']
 
 console.log('🔍 Verifying deployment files...\n')
 

@@ -2,14 +2,21 @@
 
 ## Why
 
-The application builds correctly and runs locally in Docker (OrbStack), but when deployed to Sevalla, the frontend fails to load with a white screen. Browser dev tools show "This page failed to load a stylesheet from a URL" errors. The root cause is that Vite generates asset paths without considering the production base URL configuration, causing the server to serve static assets with incorrect paths that the browser cannot resolve in the containerized Sevalla environment.
+The application builds correctly and runs locally in Docker (OrbStack), but when
+deployed to Sevalla, the frontend fails to load with a white screen. Browser dev
+tools show "This page failed to load a stylesheet from a URL" errors. The root
+cause is that Vite generates asset paths without considering the production base
+URL configuration, causing the server to serve static assets with incorrect
+paths that the browser cannot resolve in the containerized Sevalla environment.
 
 ## What Changes
 
 - **Vite Configuration:**
-  - Add explicit `base: '/'` configuration to vite.config.ts for consistent asset path generation
+  - Add explicit `base: '/'` configuration to vite.config.ts for consistent
+    asset path generation
   - Ensure proper manifest.json generation for SSR asset resolution
-  - Configure build.manifest option to enable proper asset tracking in production
+  - Configure build.manifest option to enable proper asset tracking in
+    production
 
 - **Server Asset Handling:**
   - Verify static asset serving correctly handles Vite's generated asset paths

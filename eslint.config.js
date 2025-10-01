@@ -73,6 +73,7 @@ export default tseslint.config(
       '**/setup-tests.ts',
       // Dev scripts - not shipped to production
       'server/scripts/**',
+      'verify-deployment.ts',
     ],
   },
 

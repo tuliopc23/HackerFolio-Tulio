@@ -123,7 +123,12 @@ export default function GhosttyTerminalWindow({
 
           {/* Terminal content - scrollable */}
           <div className='overflow-hidden bg-[#0a0a0a]' data-terminal-container>
-            <div className='grid h-full p-4 gap-1' style={{ gridTemplateColumns: `${String(leftPaneWidth)}% 8px ${String(100 - leftPaneWidth)}%` }}>
+            <div
+              className='grid h-full p-4 gap-1'
+              style={{
+                gridTemplateColumns: `${String(leftPaneWidth)}% 8px ${String(100 - leftPaneWidth)}%`,
+              }}
+            >
               {/* Left pane - Terminal */}
               <div
                 className='bg-[#0a0a0a] border border-[#393939] rounded-2xl overflow-hidden shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02),0_2px_8px_rgba(0,0,0,0.15)] grid grid-rows-[auto_1fr] transition-colors duration-200 hover:border-[#be95ff]'

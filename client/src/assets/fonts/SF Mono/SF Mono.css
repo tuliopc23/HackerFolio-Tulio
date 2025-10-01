@@ -7,4 +7,6 @@
     url('fonts/SF-Mono-Powerline-Regular.woff') format('woff'),
     url('fonts/SF-Mono-Powerline-Regular.ttf') format('truetype'),
     url('fonts/SF-Mono-Powerline-Regular.svg#SF Mono') format('svg');
+  font-weight: normal;
+  font-style: normal;
 }

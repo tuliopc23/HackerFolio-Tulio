@@ -45,12 +45,14 @@ const HistoryEntry = memo(
           </div>
         ) : null}
         {entry.output && (
-          <TypedTerminalOutput
-            output={entry.output}
-            isError={entry.error ?? false}
-            animate={!isOldEntry || isBanner}
-            ariaHidden={entry.id.startsWith('art-')}
-          />
+          <div className={entry.id.startsWith('tip-') ? 'text-[1.06em]' : undefined}>
+            <TypedTerminalOutput
+              output={entry.output}
+              isError={entry.error ?? false}
+              animate={!isOldEntry || isBanner}
+              ariaHidden={entry.id.startsWith('art-')}
+            />
+          </div>
         )}
       </div>
     )
@@ -105,14 +107,14 @@ export default function TerminalPane() {
         const colorizeLines = (ls: string[], code: string) =>
           ls.map(l => `${code}${l}\x1b[39m`).join('\n')
         const art = `${colorizeLines(nameLines, '\x1b[32m')}\n${colorizeLines(devLines, '\x1b[36m')}\n`
-        const tip = `\x1b[35mTip\x1b[39m: Type \x1b[36mhelp\x1b[39m or \x1b[36mhelp projects\x1b[39m for flags\n`
+        const tip = `\x1b[36mType \x1b[1m\x1b[32mhelp\x1b[39m\x1b[22m \x1b[36mfor tutorial\x1b[39m\n`
         if (!cancelled) {
           setHistory(prev => {
             if (prev.some(h => h.id === 'art-1')) return prev
             return [
               ...prev,
-              { command: '', output: art, timestamp: new Date(), id: 'art-1', showPrompt: true },
-              { command: '', output: tip, timestamp: new Date(), id: 'tip-1' },
+              { command: '', output: art, timestamp: new Date(), id: 'art-1' },
+              { command: '', output: tip, timestamp: new Date(), id: 'tip-1', showPrompt: true },
             ]
           })
         }
@@ -370,7 +372,7 @@ export default function TerminalPane() {
 
         {/* Current Command Line */}
         <div className='flex items-center' role='group' aria-label='Command input'>
-          <span className='terminal-prompt' aria-hidden='true'>
+          <span className='terminal-prompt pr-1.5' aria-hidden='true'>
             <span className='text-[#42be65]'>user@</span>
             <span className='text-[#ff7eb6]'>portfolio</span>
             <span className='text-[#42be65]'>:~$</span>
@@ -388,7 +390,7 @@ export default function TerminalPane() {
               setInput(e.target.value)
             }}
             onKeyDown={handleKeyDown}
-            className='ml-2 bg-transparent border-none outline-none text-[color:var(--term-fg)] text-terminal-prompt flex-1'
+            className='ml-3 bg-transparent border-none outline-none text-[color:var(--term-fg)] text-terminal-prompt flex-1'
             aria-label='Terminal command input'
             aria-describedby='terminal-help terminal-status'
             aria-invalid={lastCommandStatus === 'error' ? 'true' : 'false'}
@@ -409,7 +411,7 @@ export default function TerminalPane() {
         role='complementary'
         aria-label='Terminal keyboard shortcuts'
       >
-        <div className='flex flex-wrap gap-4 items-center'>
+        <div className='flex flex-wrap gap-5 items-center'>
           <span>
             <kbd className='text-[color:var(--ansi-2)] phosphor-glow' aria-label='Tab key'>
               Tab

@@ -391,14 +391,24 @@ function SystemInfoPane() {
                         Showing {currentProjectIndex + 1} / {projects.length}
                       </span>
                       {currentProject.github_url && (
-                        <span className='text-[#ff7eb6] font-mono glow-soft hover:text-[#be95ff] transition-colors'>
+                        <a
+                          href={currentProject.github_url}
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className='text-[#ff7eb6] font-mono glow-soft hover:text-[#be95ff] transition-colors'
+                        >
                           GitHub →
-                        </span>
+                        </a>
                       )}
                       {!currentProject.github_url && currentProject.live_url && (
-                        <span className='text-[#ff7eb6] font-mono glow-soft hover:text-[#be95ff] transition-colors'>
+                        <a
+                          href={currentProject.live_url}
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className='text-[#ff7eb6] font-mono glow-soft hover:text-[#be95ff] transition-colors'
+                        >
                           Live →
-                        </span>
+                        </a>
                       )}
                     </div>
                   </div>

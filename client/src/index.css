@@ -544,37 +544,43 @@
   }
 }
 
-/* Scrollbar styling */
+/* Scrollbar styling - Discrete and elegant */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--cyan-soft);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  transition: background 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--cyan-bright);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* For Firefox - Discrete scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
 }
 
 /* Hide scrollbar in terminal output but keep functionality */
+.terminal-output,
+.whitespace-pre {
+  scrollbar-width: none;
+}
+
 .terminal-output::-webkit-scrollbar,
 .whitespace-pre::-webkit-scrollbar {
   width: 0;
   height: 0;
   display: none;
-}
-
-/* For Firefox */
-.terminal-output,
-.whitespace-pre {
-  scrollbar-width: none;
 }
 
 /* Reduce motion for accessibility */

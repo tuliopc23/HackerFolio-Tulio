@@ -48,12 +48,14 @@ WHERE command = 'gh';
 UPDATE terminal_commands
 SET response_template = '{{ansi.cyan("Technical Stack")}}
 
-{{ansi.magenta("Languages")}}: Swift, Go, Rust, Zig, TypeScript
-{{ansi.magenta("Frontend")}}: Svelte, Vue, Solid, Modern CSS
-{{ansi.magenta("Runtimes")}}: Bun, Node, Deno
-{{ansi.magenta("Frameworks")}}: Next, Nuxt, SvelteKit, Gin, Elysia, Actix, Fiber
-{{ansi.magenta("Native")}}: SwiftUI, AppKit, UIKit
-{{ansi.magenta("Infrastructure")}}: Docker, Podman, Hashicorp Products, DevOps, IaC, Cloud',
+{{ansi.magenta("Languages")}}: Swift, Go, Rust, Zig, TypeScript, Python
+{{ansi.magenta("MacOS & iOS Apps")}}: SwiftUI, AppKit, UIKit
+{{ansi.magenta("System''s Programming")}}: Developer Tools, Cli Tools
+{{ansi.magenta("Web Backend")}}: Fiber, Gin, Actix, Actum, Elysia, Hono, Nitro, Fastify...
+{{ansi.magenta("Web Frontend")}}: React, Svelte, Vue, Solid, Modern CSS
+{{ansi.magenta("Web Meta Frameworks")}}: Tanstack Start, Remix, Next, Nuxt, Sveltekit
+{{ansi.magenta("JS Runtimes")}}: Bun, Node, Deno
+{{ansi.magenta("Cloud Native")}}: Docker, Podman, Apple Containers, Terraform, DevOps...',
     updated_at = CURRENT_TIMESTAMP
 WHERE command = 'grep';
 
@@ -83,12 +85,14 @@ My name is {{ansi.magenta("Tulio Cunha")}}, I am a full-stack developer passiona
     
     ('skills', 'Display technical skills and stack', 'info', '{{ansi.cyan("Technical Stack")}}
 
-{{ansi.magenta("Languages")}}: Swift, Go, Rust, Zig, TypeScript
-{{ansi.magenta("Frontend")}}: Svelte, Vue, Solid, Modern CSS
-{{ansi.magenta("Runtimes")}}: Bun, Node, Deno
-{{ansi.magenta("Frameworks")}}: Next, Nuxt, SvelteKit, Gin, Elysia, Actix, Fiber
-{{ansi.magenta("Native")}}: SwiftUI, AppKit, UIKit
-{{ansi.magenta("Infrastructure")}}: Docker, Podman, Hashicorp Products, DevOps, IaC, Cloud', true, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+{{ansi.magenta("Languages")}}: Swift, Go, Rust, Zig, TypeScript, Python
+{{ansi.magenta("MacOS & iOS Apps")}}: SwiftUI, AppKit, UIKit
+{{ansi.magenta("System''s Programming")}}: Developer Tools, Cli Tools
+{{ansi.magenta("Web Backend")}}: Fiber, Gin, Actix, Actum, Elysia, Hono, Nitro, Fastify...
+{{ansi.magenta("Web Frontend")}}: React, Svelte, Vue, Solid, Modern CSS
+{{ansi.magenta("Web Meta Frameworks")}}: Tanstack Start, Remix, Next, Nuxt, Sveltekit
+{{ansi.magenta("JS Runtimes")}}: Bun, Node, Deno
+{{ansi.magenta("Cloud Native")}}: Docker, Podman, Apple Containers, Terraform, DevOps...', true, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     
     ('github', 'Display Github Profile URL', 'navigation', '{{ansi.cyan("GitHub Profile")}}
 

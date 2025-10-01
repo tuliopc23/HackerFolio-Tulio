@@ -76,15 +76,19 @@ export class CommandProcessor {
     const commands = [
       'help',
       'whoami',
+      'info',
       'stack',
       'projects',
+      'ls',
+      'skills',
+      'grep',
+      'github',
+      'gh',
+      'contact',
       'open',
       'theme',
       'clear',
-      'ls',
-      'cat',
       'time',
-      'github',
     ]
     const merged = Array.from(new Set([...commands, ...Array.from(this.serverCommands)]))
 

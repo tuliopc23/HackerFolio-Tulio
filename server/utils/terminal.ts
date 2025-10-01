@@ -9,6 +9,8 @@ export const ansi = {
   red: (s: string) => `\x1b[31m${s}\x1b[39m`,
   underline: (s: string) => `\x1b[4m${s}\x1b[24m`,
   dim: (s: string) => `\x1b[2m${s}\x1b[22m`,
+  gray: (s: string) => `\x1b[90m${s}\x1b[39m`,
+  link: (url: string, text: string) => `\x1b]8;;${url}\x1b\\${text}\x1b]8;;\x1b\\`,
 }
 
 // Safe JSON parsing helper

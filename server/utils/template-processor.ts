@@ -275,14 +275,30 @@ ${ansi.green('Download full resume')}: https://tuliopinheirocunha.dev/resume.pdf
         if (
           outerFn in ansi &&
           innerFn in ansi &&
-          typeof (ansi as Record<string, unknown>)[outerFn] === 'function' &&
-          typeof (ansi as Record<string, unknown>)[innerFn] === 'function'
+          typeof (ansi as unknown as Record<string, unknown>)[outerFn] === 'function' &&
+          typeof (ansi as unknown as Record<string, unknown>)[innerFn] === 'function'
         ) {
-          const outerColorFn = (ansi as Record<string, (text: string) => string>)[outerFn]
-          const innerColorFn = (ansi as Record<string, (text: string) => string>)[innerFn]
+          const outerColorFn = (ansi as unknown as Record<string, (text: string) => string>)[
+            outerFn
+          ]
+          const innerColorFn = (ansi as unknown as Record<string, (text: string) => string>)[
+            innerFn
+          ]
           if (outerColorFn && innerColorFn) {
             return outerColorFn(innerColorFn(text))
           }
+        }
+        return match
+      }
+    )
+
+    // Replace ANSI link function: {{ansi.link("url", "text")}}
+    result = result.replace(
+      /{{ansi\.link\("([^"]+)",\s*"([^"]+)"\)}}/g,
+      (match, url: string, text: string) => {
+        if ('link' in ansi) {
+          const linkFn = ansi.link
+          return linkFn(url, text)
         }
         return match
       }
@@ -294,11 +310,36 @@ ${ansi.green('Download full resume')}: https://tuliopinheirocunha.dev/resume.pdf
       (match, colorName: string, text: string) => {
         if (
           colorName in ansi &&
-          typeof (ansi as Record<string, unknown>)[colorName] === 'function'
+          typeof (ansi as unknown as Record<string, unknown>)[colorName] === 'function'
         ) {
-          const colorFn = (ansi as Record<string, (text: string) => string>)[colorName]
+          const colorFn = (ansi as unknown as Record<string, (text: string) => string>)[colorName]
           if (colorFn) {
             return colorFn(text)
+          }
+        }
+        return match
+      }
+    )
+
+    // Replace ANSI link function: {{ansi.link("url", "text")}}
+    result = result.replace(
+      /{{ansi\.link\("([^"]+)",\s*"([^"]+)"\)}}/g,
+      (match, url: string, text: string) => {
+        if ('link' in ansi) {
+          return ansi.link(url, text)
+        }
+        return match
+      }
+    )
+
+    // Replace simple ANSI function calls: {{ansi.color("text")}}
+    result = result.replace(
+      /{{ansi\.(\w+)\("([^"]+)"\)}}/g,
+      (match, colorName: string, text: string) => {
+        if (colorName in ansi) {
+          const colorFn = (ansi as Record<string, unknown>)[colorName]
+          if (typeof colorFn === 'function') {
+            return (colorFn as (text: string) => string)(text)
           }
         }
         return match

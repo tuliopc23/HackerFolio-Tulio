@@ -485,7 +485,7 @@ function SystemInfoPane() {
                   >
                     <span className='text-[#f2f4f8]'>Book Time:</span>
                     <a
-                      href='https://fantastical.app/tuliopinheirocunha'
+                      href='https://fantastical.app/tuliocunha'
                       target='_blank'
                       rel='noopener noreferrer'
                       className='text-[#ff7eb6] font-mono font-semibold glow-soft hover:text-[#be95ff] transition-colors'

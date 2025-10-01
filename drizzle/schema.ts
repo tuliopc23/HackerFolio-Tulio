@@ -1,15 +1,5 @@
-import { sqliteTable, AnySQLiteColumn, uniqueIndex, integer, text } from "drizzle-orm/sqlite-core"
+import { sqliteTable, AnySQLiteColumn, integer, text, uniqueIndex } from "drizzle-orm/sqlite-core"
   import { sql } from "drizzle-orm"
-
-export const portfolioContent = sqliteTable("portfolio_content", {
-	id: integer().primaryKey().notNull(),
-	section: text().notNull(),
-	content: text(),
-	updatedAt: text("updated_at").default("sql`(CURRENT_TIMESTAMP)`"),
-},
-(table) => [
-	uniqueIndex("portfolio_content_section_unique").on(table.section),
-]);
 
 export const projects = sqliteTable("projects", {
 	id: integer().primaryKey().notNull(),
@@ -41,5 +31,15 @@ export const terminalCommands = sqliteTable("terminal_commands", {
 },
 (table) => [
 	uniqueIndex("terminal_commands_command_unique").on(table.command),
+]);
+
+export const portfolioContent = sqliteTable("portfolio_content", {
+	id: integer().primaryKey().notNull(),
+	section: text().notNull(),
+	content: text(),
+	updatedAt: text("updated_at").default("sql`(CURRENT_TIMESTAMP)`"),
+},
+(table) => [
+	uniqueIndex("portfolio_content_section_unique").on(table.section),
 ]);
 

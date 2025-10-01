@@ -37,6 +37,12 @@ export function TypedTerminalOutput({
     const urlRegex = /(https?:\/\/[^\s]+)/g
     // eslint-disable-next-line no-control-regex
     const ANSI_PATTERN = new RegExp('\\x1b\\[([0-9;]+)m', 'g') // e.g., \x1b[31m or \x1b[1;32m
+    // OSC 8 hyperlink pattern: \x1b]8;;url\x1b\\text\x1b]8;;\x1b\\
+    // eslint-disable-next-line no-control-regex
+    const OSC8_PATTERN = new RegExp(
+      '\\x1b\\]8;;([^\\x1b]*)\\x1b\\\\([^\\x1b]*)\\x1b\\]8;;\\x1b\\\\',
+      'g'
+    )
 
     interface StyleState {
       bold?: boolean
@@ -151,32 +157,98 @@ export function TypedTerminalOutput({
     }
 
     const renderLine = (line: string, i: number) => {
-      const segments: Array<{ text: string; classes: string }> = []
+      // First, parse OSC 8 hyperlinks and replace them with a placeholder
+      interface HyperlinkInfo {
+        url: string
+        text: string
+        placeholder: string
+      }
+      const hyperlinks: HyperlinkInfo[] = []
+      let processedLine = line
+      let hyperlinkMatch: RegExpExecArray | null
+      OSC8_PATTERN.lastIndex = 0
+      while ((hyperlinkMatch = OSC8_PATTERN.exec(line)) !== null) {
+        const url = hyperlinkMatch[1] || ''
+        const text = hyperlinkMatch[2] || ''
+        const placeholder = `__HYPERLINK_${hyperlinks.length}__`
+        hyperlinks.push({ url, text, placeholder })
+        processedLine = processedLine.replace(hyperlinkMatch[0], placeholder)
+        OSC8_PATTERN.lastIndex = 0
+      }
+
+      const segments: Array<{ text: string; classes: string; hyperlinks: HyperlinkInfo[] }> = []
       let lastIndex = 0
       let state = initState()
       let match: RegExpExecArray | null
-      while ((match = ANSI_PATTERN.exec(line)) !== null) {
+      ANSI_PATTERN.lastIndex = 0
+      while ((match = ANSI_PATTERN.exec(processedLine)) !== null) {
         const { index: idx } = match
         if (idx > lastIndex) {
-          segments.push({ text: line.slice(lastIndex, idx), classes: stateToClass(state) })
+          segments.push({
+            text: processedLine.slice(lastIndex, idx),
+            classes: stateToClass(state),
+            hyperlinks,
+          })
         }
         const codes = match[1]?.split(';').map(n => Number(n || '0')) ?? []
         for (const code of codes) state = applyCode(state, code)
         const { lastIndex: newLastIndex } = ANSI_PATTERN
         lastIndex = newLastIndex
       }
-      if (lastIndex < line.length) {
-        segments.push({ text: line.slice(lastIndex), classes: stateToClass(state) })
+      if (lastIndex < processedLine.length) {
+        segments.push({
+          text: processedLine.slice(lastIndex),
+          classes: stateToClass(state),
+          hyperlinks,
+        })
+      }
+
+      const renderTextWithHyperlinks = (text: string, links: HyperlinkInfo[]) => {
+        let result: React.ReactNode[] = [text]
+        for (let j = 0; j < links.length; j++) {
+          const link = links[j]
+          if (!link) continue
+          const newResult: React.ReactNode[] = []
+          for (const part of result) {
+            if (typeof part === 'string' && part.includes(link.placeholder)) {
+              const splitParts = part.split(link.placeholder)
+              for (let k = 0; k < splitParts.length; k++) {
+                const splitPart = splitParts[k]
+                if (splitPart) newResult.push(splitPart)
+                if (k < splitParts.length - 1) {
+                  newResult.push(
+                    <a
+                      key={`hyperlink-${j}-${k}`}
+                      href={link.url}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='underline text-cyan-bright hover:text-cyan-soft focus:outline-none focus:ring-1 focus:ring-cyan-bright focus:ring-opacity-50 bg-transparent'
+                      aria-label={`External link: ${link.url}`}
+                    >
+                      {link.text}
+                    </a>
+                  )
+                }
+              }
+            } else {
+              newResult.push(part)
+            }
+          }
+          result = newResult
+        }
+        return result
       }
 
       return (
-        <div key={`line-${String(i)}`} className='whitespace-pre overflow-x-auto'>
+        <div key={`line-${String(i)}`} className='whitespace-pre-wrap break-words overflow-x-auto'>
           {segments.map((seg, k) => (
             <span
               key={`segment-${String(i)}-${String(k)}-${seg.text.slice(0, 10)}`}
               className={seg.classes}
             >
-              {renderTextWithLinks(seg.text)}
+              {seg.hyperlinks.length > 0
+                ? renderTextWithHyperlinks(seg.text, seg.hyperlinks)
+                : renderTextWithLinks(seg.text)}
             </span>
           ))}
         </div>

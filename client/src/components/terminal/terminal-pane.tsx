@@ -234,6 +234,26 @@ export default function TerminalPane() {
         return
       }
 
+      // Handle OPEN_URL command
+      if (result.output.startsWith('OPEN_URL:')) {
+        const url = result.output.substring(9)
+        window.open(url, '_blank', 'noopener,noreferrer')
+        setHistory(prev => [
+          ...prev,
+          {
+            command,
+            output: `\x1b[32mOpening ${url} in new tab...\x1b[39m`,
+            timestamp: new Date(),
+            error: false,
+            id: `cmd-${Date.now().toString()}-${Math.random().toString(36).slice(2, 9)}`,
+          },
+        ])
+        setInput('')
+        setIsExecuting(false)
+        announce(`Opening ${url} in new tab`, 'polite')
+        return
+      }
+
       // Handle navigation
       if (result.navigate) {
         if (result.navigate.startsWith('theme:')) {
@@ -258,6 +278,15 @@ export default function TerminalPane() {
         serverResult = await executeCommand.mutateAsync({ command: cmd, args })
         finalOutput = serverResult.output
         finalError = !!serverResult.error
+
+        // Handle OPEN_URL from server response
+        if (finalOutput.startsWith('OPEN_URL:')) {
+          const url = finalOutput.substring(9)
+          window.open(url, '_blank', 'noopener,noreferrer')
+          finalOutput = `\x1b[32mOpening ${url} in new tab...\x1b[39m`
+          finalError = false
+          announce(`Opening ${url} in new tab`, 'polite')
+        }
       } catch (err) {
         if (err instanceof Error) {
           finalOutput = err.message

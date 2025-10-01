@@ -856,6 +856,10 @@ select:focus-visible {
 .ansi-underline {
   text-decoration: underline;
 }
+.ansi-large {
+  font-size: 1.15em;
+  font-weight: var(--font-weight-extrabold);
+}
 
 /* Foreground colors - using ANSI palette */
 .ansi-fg-black {

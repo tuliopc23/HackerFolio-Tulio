@@ -42,6 +42,7 @@ export function TypedTerminalOutput({
       bold?: boolean
       italic?: boolean
       underline?: boolean
+      large?: boolean
       fg?: string | null
       bg?: string | null
     }
@@ -49,6 +50,7 @@ export function TypedTerminalOutput({
       bold: false,
       italic: false,
       underline: false,
+      large: false,
       fg: null,
       bg: null,
     })
@@ -58,6 +60,7 @@ export function TypedTerminalOutput({
       if (s.bold) classes.push('ansi-bold')
       if (s.italic) classes.push('ansi-italic')
       if (s.underline) classes.push('ansi-underline')
+      if (s.large) classes.push('ansi-large')
       if (s.fg) classes.push(`ansi-fg-${s.fg}`)
       if (s.bg) classes.push(`ansi-bg-${s.bg}`)
       return classes.join(' ')
@@ -73,6 +76,8 @@ export function TypedTerminalOutput({
       if (code === 24) return { ...s, underline: false }
       if (code === 39) return { ...s, fg: null }
       if (code === 49) return { ...s, bg: null }
+      if (code === 53) return { ...s, large: true }
+      if (code === 55) return { ...s, large: false }
       const fgMap: Record<number, string> = {
         30: 'black',
         31: 'red',

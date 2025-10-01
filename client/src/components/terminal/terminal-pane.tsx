@@ -107,7 +107,7 @@ export default function TerminalPane() {
         const colorizeLines = (ls: string[], code: string) =>
           ls.map(l => `${code}${l}\x1b[39m`).join('\n')
         const art = `${colorizeLines(nameLines, '\x1b[32m')}\n${colorizeLines(devLines, '\x1b[36m')}\n`
-        const tip = `\x1b[36mType \x1b[1m\x1b[32mhelp\x1b[39m\x1b[22m \x1b[36mfor tutorial\x1b[39m\n`
+        const tip = `\x1b[36mType \x1b[53m\x1b[32mhelp\x1b[55m\x1b[39m \x1b[36mfor tutorial\x1b[39m\n`
         if (!cancelled) {
           setHistory(prev => {
             if (prev.some(h => h.id === 'art-1')) return prev

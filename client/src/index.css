@@ -75,8 +75,8 @@
   --line-height-loose: 2;
 
   /* Typography Scale for Terminal UI */
-  --text-terminal-prompt: 1rem;
-  --text-terminal-body: 0.9375rem;
+  --text-terminal-prompt: 0.9375rem;
+  --text-terminal-body: 0.875rem;
   --text-terminal-header: 0.8125rem;
   --text-terminal-label: 0.75rem;
   --text-terminal-meta: 0.6875rem;
@@ -339,7 +339,7 @@
 
   .terminal-prompt {
     font-size: var(--text-terminal-prompt);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-bold);
     line-height: var(--line-height-snug);
     text-shadow:
       0 0 4px currentColor,
@@ -441,9 +441,8 @@
 .terminal-output {
   line-height: var(--line-height-snug);
   text-shadow: 0 0 6px currentColor;
-  /* Ensure terminal text uses rem-based sizing for zoom resilience */
-  font-size: clamp(0.625rem, 0.5vw + 0.25rem, 0.75rem);
-  /* Allow horizontal scrolling for ASCII art instead of wrapping */
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-normal);
   overflow-x: auto;
   max-width: 100%;
 }

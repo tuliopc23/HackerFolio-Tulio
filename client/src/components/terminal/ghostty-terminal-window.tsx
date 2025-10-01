@@ -66,8 +66,8 @@ export default function GhosttyTerminalWindow({
 
   const sectionSizeClasses = useMemo(() => {
     return isMaximized
-      ? 'w-[min(99vw,1920px)] h-[min(98dvh,1400px)] max-h-[calc(100dvh-8px)]'
-      : 'w-[min(98vw,1800px)] h-[min(95dvh,1350px)] max-h-[calc(100dvh-16px)] sm:max-h-[calc(100dvh-24px)] md:max-h-[calc(100dvh-40px)]'
+      ? 'w-[min(99vw,1920px)] h-[min(98dvh,1400px)] max-h-[calc(100dvh-8px)] min-h-[400px]'
+      : 'w-[min(98vw,1800px)] h-[min(90dvh,1200px)] max-h-[calc(100dvh-60px)] min-h-[400px]'
   }, [isMaximized])
 
   return (
@@ -76,7 +76,7 @@ export default function GhosttyTerminalWindow({
       {/* Outer wrapper uses drop-shadow to reduce Safari rasterization cost */}
       <div style={{ filter: 'drop-shadow(0 20px 60px rgba(0,0,0,0.6))' }}>
         <section
-          className={`crt-screen ${sectionSizeClasses} bg-[#0a0a0a] rounded-[20px] shadow-[0_0_0_1px_rgba(255,255,255,0.03),inset_0_0_0_1px_rgba(255,255,255,0.02)] overflow-hidden flex flex-col contain-paint ${className}`}
+          className={`crt-screen ${sectionSizeClasses} bg-[#0a0a0a] rounded-[20px] shadow-[0_0_0_1px_rgba(255,255,255,0.03),inset_0_0_0_1px_rgba(255,255,255,0.02)] overflow-hidden grid grid-rows-[auto_1fr] contain-paint ${className}`}
           aria-label='Terminal window'
           aria-roledescription='Terminal window'
           style={{ backgroundColor: '#0a0a0a' }}
@@ -122,21 +122,20 @@ export default function GhosttyTerminalWindow({
           </div>
 
           {/* Terminal content - scrollable */}
-          <div className='flex-1 overflow-hidden bg-[#0a0a0a]' data-terminal-container>
-            <div className='flex h-full p-4 gap-1'>
+          <div className='overflow-hidden bg-[#0a0a0a]' data-terminal-container>
+            <div className='grid h-full p-4 gap-1' style={{ gridTemplateColumns: `${String(leftPaneWidth)}% 8px ${String(100 - leftPaneWidth)}%` }}>
               {/* Left pane - Terminal */}
               <div
-                className='bg-[#0a0a0a] border border-[#393939] rounded-2xl overflow-hidden shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02),0_2px_8px_rgba(0,0,0,0.15)] flex flex-col transition-colors duration-200 hover:border-[#be95ff]'
+                className='bg-[#0a0a0a] border border-[#393939] rounded-2xl overflow-hidden shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02),0_2px_8px_rgba(0,0,0,0.15)] grid grid-rows-[auto_1fr] transition-colors duration-200 hover:border-[#be95ff]'
                 role='group'
                 aria-label='Terminal pane'
-                style={{ width: `${String(leftPaneWidth)}%` }}
               >
-                <div className='px-[14px] py-[10px] border-b border-white/[0.04] flex items-center justify-between'>
+                <div className='px-[14px] py-[10px] border-b border-white/[0.04] flex items-center justify-between flex-shrink-0'>
                   <div>
-                    <span className='font-mono text-[12px] text-terminal-semibold text-[#be95ff] tracking-[0.3px] text-shadow-soft'>
+                    <span className='font-mono text-terminal-header terminal-subtitle text-[#be95ff] tracking-[0.3px]'>
                       [pane-01]
                     </span>
-                    <span className='ml-2 text-[12px] text-terminal-normal text-[#dde1e6] opacity-60 text-shadow-subtle'>
+                    <span className='ml-2 text-terminal-label terminal-caption text-[#dde1e6] opacity-60'>
                       terminal
                     </span>
                   </div>
@@ -145,13 +144,13 @@ export default function GhosttyTerminalWindow({
                     aria-label='Terminal active'
                   />
                 </div>
-                <div className='flex-1 p-[14px] font-mono text-[13.5px] terminal-body text-[#f2f4f8] overflow-y-auto overflow-x-hidden ios-inertia content-visibility-auto composite-layer'>
+                <div className='p-[14px] font-mono text-terminal-prompt terminal-body text-[#f2f4f8] overflow-y-auto overflow-x-hidden ios-inertia content-visibility-auto composite-layer'>
                   {leftPane}
                 </div>
               </div>
 
               {/* Resize Handle */}
-              <div className='flex items-center justify-center w-2'>
+              <div className='grid place-items-center'>
                 <ResizeHandle
                   onResize={handleResize}
                   className='w-full h-16 flex items-center justify-center hover:bg-[rgba(190,149,255,0.1)] rounded text-[#be95ff] hover:text-[#33b1ff] transition-colors duration-200'
@@ -164,17 +163,16 @@ export default function GhosttyTerminalWindow({
 
               {/* Right pane - System */}
               <div
-                className='bg-[#0a0a0a] border border-[#393939] rounded-2xl overflow-hidden shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02),0_2px_8px_rgba(0,0,0,0.15)] flex flex-col transition-colors duration-200 hover:border-[#be95ff]'
+                className='bg-[#0a0a0a] border border-[#393939] rounded-2xl overflow-hidden shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02),0_2px_8px_rgba(0,0,0,0.15)] grid grid-rows-[auto_1fr] transition-colors duration-200 hover:border-[#be95ff]'
                 role='group'
                 aria-label='System information pane'
-                style={{ width: `${String(100 - leftPaneWidth)}%` }}
               >
-                <div className='px-[14px] py-[10px] border-b border-white/[0.04] flex items-center justify-between'>
+                <div className='px-[14px] py-[10px] border-b border-white/[0.04] flex items-center justify-between flex-shrink-0'>
                   <div>
-                    <span className='font-mono text-[12px] text-terminal-semibold text-[#be95ff] tracking-[0.3px] text-shadow-soft'>
+                    <span className='font-mono text-terminal-header terminal-subtitle text-[#be95ff] tracking-[0.3px]'>
                       [pane-02]
                     </span>
-                    <span className='ml-2 text-[12px] text-terminal-normal text-[#dde1e6] opacity-60 text-shadow-subtle'>
+                    <span className='ml-2 text-terminal-label terminal-caption text-[#dde1e6] opacity-60'>
                       system
                     </span>
                   </div>
@@ -183,7 +181,7 @@ export default function GhosttyTerminalWindow({
                     aria-label='System online'
                   />
                 </div>
-                <div className='flex-1 p-[14px] font-mono text-[12.5px] terminal-body text-[#f2f4f8] overflow-y-auto overflow-x-hidden ios-inertia content-visibility-auto composite-layer'>
+                <div className='p-[14px] font-mono text-terminal-body terminal-body text-[#f2f4f8] overflow-y-auto overflow-x-hidden ios-inertia content-visibility-auto composite-layer'>
                   {rightPane}
                 </div>
               </div>

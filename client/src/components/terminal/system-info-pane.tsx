@@ -45,17 +45,17 @@ const WorldClock = memo(() => {
 
   return (
     <div className='space-y-2 mb-4'>
-      <div className='text-[#ff7eb6] text-terminal-meta text-terminal-semibold tracking-wide uppercase'>
+      <div className='text-[#ff7eb6] text-terminal-meta terminal-subtitle tracking-wide uppercase'>
         WORLD CLOCK
       </div>
-      <div className='grid grid-cols-2 gap-x-4 gap-y-2 text-terminal-header'>
+      <div className='grid grid-cols-2 gap-x-4 gap-y-2 text-terminal-body'>
         {timezones.map(tz => (
           <div key={tz.name} className='flex items-center justify-between'>
-            <div className='text-[#f2f4f8] text-terminal-meta uppercase tracking-wide text-terminal-medium'>
+            <div className='text-[#f2f4f8] text-terminal-label terminal-caption uppercase tracking-wide'>
               {tz.city}
             </div>
             <div
-              className='text-[#42be65] font-mono text-terminal-semibold text-terminal-body glow-soft'
+              className='text-[#42be65] font-mono text-terminal-body terminal-command glow-soft'
               suppressHydrationWarning
             >
               {formatTime(currentTime, tz.timezone)}
@@ -124,7 +124,7 @@ function SystemInfoPane() {
 
   return (
     <div
-      className='h-full flex flex-col font-mono text-terminal-body terminal-body text-[#f2f4f8]'
+      className='h-full flex flex-col font-mono text-terminal-body text-[#f2f4f8] font-medium'
       aria-label='System Information'
     >
       <div className='flex-1 flex flex-col min-h-0 overflow-hidden'>
@@ -133,12 +133,12 @@ function SystemInfoPane() {
         {/* Fastfetch Output */}
         {showFastfetch && (
           <div className='space-y-2'>
-            <div className='text-[#ff7eb6] text-xs text-terminal-semibold tracking-wide phosphor-glow'>
+            <div className='text-[#ff7eb6] text-terminal-meta terminal-subtitle tracking-wide phosphor-glow'>
               SYSTEM INFO
             </div>
             <div className='flex gap-3 overflow-hidden'>
               {/* Main System Info Card - Optimized Height */}
-              <div className='flex-1 bg-black/30 border border-[#393939] rounded-lg p-3.5 text-xs text-[#f2f4f8] font-mono min-h-[12.5rem] min-w-0 overflow-hidden'>
+              <div className='flex-1 bg-black/30 border border-[#393939] rounded-lg p-3.5 text-terminal-body terminal-body text-[#f2f4f8] font-mono min-h-[12.5rem] min-w-0 overflow-hidden'>
                 <div className='flex gap-4 h-full min-w-0'>
                   {/* Apple Logo - Left Side */}
                   <div className='flex-shrink-0 flex items-center'>
@@ -158,7 +158,7 @@ function SystemInfoPane() {
                   <div className='flex-1 flex flex-col justify-between min-w-0 overflow-hidden'>
                     <div className='space-y-1.5'>
                       {/* Username@hostname */}
-                      <div className='font-normal text-xs mb-1.5 truncate'>
+                      <div className='terminal-body text-terminal-body mb-1.5 truncate'>
                         <span className='text-[#33b1ff]'>tuliopinheirocunha</span>
                         <span className='text-[#393939]'>@</span>
                         <span className='text-[#be95ff]'>MacBook-Pro</span>
@@ -169,35 +169,35 @@ function SystemInfoPane() {
 
                       {/* Core System Info */}
                       <div className='truncate'>
-                        <span className='text-[#33b1ff] text-terminal-medium'>OS:</span>
+                        <span className='text-[#33b1ff] terminal-subtitle'>OS:</span>
                         <span className='text-[#42be65] ml-1 font-mono glow-soft'>
                           macOS Tahoe 26.0 ARM64
                         </span>
                       </div>
 
                       <div className='truncate'>
-                        <span className='text-[#33b1ff] text-terminal-medium'>Host:</span>
+                        <span className='text-[#33b1ff] terminal-subtitle'>Host:</span>
                         <span className='text-[#42be65] ml-1 font-mono glow-soft'>
                           MacBook Pro (14-inch, 2023)
                         </span>
                       </div>
 
                       <div className='truncate'>
-                        <span className='text-[#33b1ff] text-terminal-medium'>CPU:</span>
+                        <span className='text-[#33b1ff] terminal-subtitle'>CPU:</span>
                         <span className='text-[#be95ff] ml-1 font-mono glow-soft'>
                           Apple M4 Pro (12) @ 3.50 GHz
                         </span>
                       </div>
 
                       <div className='truncate'>
-                        <span className='text-[#33b1ff] text-terminal-medium'>Memory:</span>
+                        <span className='text-[#33b1ff] terminal-subtitle'>Memory:</span>
                         <span className='text-[#42be65] ml-1 font-mono glow-soft'>
                           36 GB Unified
                         </span>
                       </div>
 
                       <div className='truncate'>
-                        <span className='text-[#33b1ff] text-terminal-medium'>Terminal:</span>
+                        <span className='text-[#33b1ff] terminal-subtitle'>Terminal:</span>
                         <span className='text-[#be95ff] ml-1 font-mono glow-soft'>
                           Ghostty 1.0.0
                         </span>
@@ -225,15 +225,15 @@ function SystemInfoPane() {
               </div>
 
               {/* SSH Connection Card - Right Side - Compact */}
-              <div className='w-[11rem] bg-black/30 border border-[#393939] rounded-lg p-3 text-terminal-header font-mono min-h-[12.5rem] flex flex-col flex-shrink-0 overflow-hidden'>
+              <div className='w-[11rem] bg-black/30 border border-[#393939] rounded-lg p-3 text-terminal-body terminal-body font-mono min-h-[12.5rem] flex flex-col flex-shrink-0 overflow-hidden'>
                 {/* Header with Status */}
                 <div className='flex items-center justify-between mb-3'>
-                  <span className='text-[#ff7eb6] text-terminal-meta text-terminal-semibold uppercase tracking-wide'>
+                  <span className='text-[#ff7eb6] text-terminal-meta terminal-subtitle uppercase tracking-wide'>
                     CONNECTION
                   </span>
                   <div className='flex items-center gap-1'>
                     <div className='w-2 h-2 rounded-full bg-[#42be65] animate-pulse' />
-                    <span className='text-[#42be65] text-terminal-tiny text-terminal-bold glow-soft'>
+                    <span className='text-[#42be65] text-terminal-tiny terminal-command glow-soft'>
                       SECURE
                     </span>
                   </div>
@@ -294,8 +294,8 @@ function SystemInfoPane() {
         {/* Bottom Cards Section - Compact */}
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 flex-1 min-h-0'>
           {/* Recent Projects Card - Compact */}
-          <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-terminal-header font-mono pane-border flex flex-col min-h-0 min-w-0'>
-            <div className='text-[#be95ff] text-xs text-terminal-semibold tracking-wide uppercase mb-2 phosphor-glow'>
+          <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-terminal-body terminal-body font-mono pane-border flex flex-col min-h-0 min-w-0'>
+            <div className='text-[#be95ff] text-terminal-meta terminal-subtitle tracking-wide uppercase mb-2 phosphor-glow'>
               RECENT PROJECTS
             </div>
             <div className='flex-1 min-h-0'>
@@ -315,10 +315,10 @@ function SystemInfoPane() {
                     key={currentProject.id}
                     className='border-l-2 border-[#33b1ff] pl-2 flex-1 min-w-0'
                   >
-                    <div className='text-[#33b1ff] text-terminal-body text-terminal-medium truncate glow-soft mb-1.5'>
+                    <div className='text-[#33b1ff] text-terminal-prompt terminal-command truncate glow-soft mb-1.5'>
                       {currentProject.name}
                     </div>
-                    <div className='text-[#f2f4f8] text-terminal-label leading-relaxed mb-2 line-clamp-2'>
+                    <div className='text-[#f2f4f8] text-terminal-label terminal-body leading-relaxed mb-2 line-clamp-2'>
                       {currentProject.description ?? 'No description'}
                     </div>
                     <div className='space-y-1.5 overflow-visible'>
@@ -376,86 +376,80 @@ function SystemInfoPane() {
             </div>
           </div>
 
-          {/* Project Stats Card - Compact */}
-          <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-terminal-header font-mono flex flex-col min-h-0 min-w-0'>
-            <div className='text-[#be95ff] text-xs text-terminal-semibold tracking-wide uppercase mb-2'>
-              PROJECT STATS
+          {/* Personal Website Card - Compact */}
+          <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-terminal-body terminal-body font-mono flex flex-col min-h-0 min-w-0'>
+            <div className='text-[#be95ff] text-terminal-meta terminal-subtitle tracking-wide uppercase mb-2'>
+              PERSONAL WEBSITE
             </div>
             <div className='flex-1 min-h-0'>
-              {projectsLoading ? (
-                <div className='text-[#f2f4f8]'>Loading...</div>
-              ) : (
-                <div className='space-y-2 h-full flex flex-col'>
-                  <div className='space-y-1.5 flex-1'>
-                    <div className='flex justify-between text-terminal-label'>
-                      <span className='text-[#f2f4f8]'>Total:</span>
-                      <span className='text-[#42be65] font-mono glow-soft'>{projects.length}</span>
-                    </div>
-                    <div className='flex justify-between text-terminal-label'>
-                      <span className='text-[#f2f4f8]'>Active:</span>
-                      <span className='text-[#42be65] font-mono glow-soft'>
-                        {projects.filter(p => p.status === 'active').length}
-                      </span>
-                    </div>
-                    <div className='flex justify-between text-terminal-label'>
-                      <span className='text-[#f2f4f8]'>Completed:</span>
-                      <span className='text-[#33b1ff] font-mono glow-soft'>
-                        {projects.filter(p => p.status === 'completed').length}
-                      </span>
-                    </div>
-                    <div className='flex justify-between text-terminal-label'>
-                      <span className='text-[#f2f4f8]'>Technologies:</span>
-                      <span className='text-[#ff7eb6] font-mono glow-soft'>
-                        {new Set(projects.flatMap(p => p.tech_stack ?? [])).size}
-                      </span>
-                    </div>
-
-                    {/* Technology Breakdown - Reduced */}
-                    {projects.length > 0 && (
-                      <>
-                        <div className='border-t border-[#393939] my-2' />
-                        <div className='space-y-1'>
-                          <div className='text-[#33b1ff] text-terminal-meta text-terminal-medium'>
-                            Popular Tech:
-                          </div>
-                          {Array.from(new Set(projects.flatMap(p => p.tech_stack ?? [])))
-                            .slice(0, 4)
-                            .map(tech => (
-                              <div
-                                key={`tech-${tech}`}
-                                className='flex justify-between text-terminal-meta'
-                              >
-                                <span className='text-[#f2f4f8]'>{tech}:</span>
-                                <span className='text-[#ff7eb6] font-mono glow-soft'>
-                                  {projects.filter(p => p.tech_stack?.includes(tech)).length}
-                                </span>
-                              </div>
-                            ))}
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Most Recent Update */}
-                  {projects.length > 0 && projects[0]?.updated_at && (
-                    <div className='mt-auto pt-2 border-t border-[#393939]'>
-                      <div className='flex justify-between text-terminal-label'>
-                        <span className='text-[#f2f4f8]'>Last Update:</span>
-                        <span
-                          className='text-[#ff7eb6] font-mono glow-soft'
-                          suppressHydrationWarning
-                        >
-                          {new Date(projects[0].updated_at).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            timeZone: 'UTC',
-                          })}
-                        </span>
-                      </div>
-                    </div>
-                  )}
+              <div className='space-y-2.5 h-full flex flex-col'>
+                {/* Main Website Link */}
+                <div className='flex items-center gap-2 text-terminal-label'>
+                  <span className='text-[#ff7eb6]'>→</span>
+                  <a
+                    href='https://www.tuliocunha.dev'
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    className='text-[#42be65] font-mono glow-soft hover:text-[#ff7eb6] transition-colors'
+                  >
+                    www.tuliocunha.dev
+                  </a>
                 </div>
-              )}
+
+                <div className='border-t border-[#393939]' />
+
+                {/* Navigation Links */}
+                <div className='space-y-2 flex-1'>
+                  <div className='flex items-center justify-between text-terminal-label'>
+                    <span className='text-[#ff7eb6]'>Profile:</span>
+                    <a
+                      href='https://www.tuliocunha.dev'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='text-[#42be65] font-mono glow-soft hover:text-[#ff7eb6] transition-colors'
+                    >
+                      Home
+                    </a>
+                  </div>
+                  <div className='flex items-center justify-between text-terminal-label'>
+                    <span className='text-[#ff7eb6]'>Projects:</span>
+                    <a
+                      href='https://www.tuliocunha.dev'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='text-[#42be65] font-mono glow-soft hover:text-[#ff7eb6] transition-colors'
+                    >
+                      View Projects
+                    </a>
+                  </div>
+                  <div className='flex items-center justify-between text-terminal-label'>
+                    <span className='text-[#ff7eb6]'>Blog:</span>
+                    <a
+                      href='https://www.tuliocunha.dev'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='text-[#42be65] font-mono glow-soft hover:text-[#ff7eb6] transition-colors'
+                    >
+                      Read Articles
+                    </a>
+                  </div>
+                </div>
+
+                {/* Book Time Section */}
+                <div className='mt-auto pt-2 border-t border-[#393939]'>
+                  <div className='flex items-center justify-between text-terminal-label'>
+                    <span className='text-[#f2f4f8]'>Book Time:</span>
+                    <a
+                      href='https://fantastical.app/tuliopinheirocunha'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='text-[#ff7eb6] font-mono glow-soft hover:text-[#be95ff] transition-colors'
+                    >
+                      Schedule →
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

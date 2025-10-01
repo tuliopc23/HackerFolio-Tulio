@@ -1,5 +1,4 @@
 import { useNavigate } from '@tanstack/react-router'
-import { useVirtualizer } from '@tanstack/react-virtual'
 import { useState, useEffect, useRef, useCallback, type KeyboardEvent, memo } from 'react'
 
 import { useFocusRegistration } from '@/components/accessibility/focus-manager'
@@ -70,78 +69,6 @@ export default function TerminalPane() {
   const inputRef = useRef<HTMLInputElement>(null)
   const outputRef = useRef<HTMLDivElement>(null)
   const terminalRef = useRef<HTMLDivElement>(null)
-
-  // Virtualizer for terminal history with stable keys and height caching
-  const rowSizeMap = useRef(new Map<string, number>())
-  const rowVirtualizer = useVirtualizer({
-    count: history.length,
-    getScrollElement: () => outputRef.current,
-    estimateSize: (index: number) => {
-      const id = history[index]?.id
-      const size = id ? rowSizeMap.current.get(id) : undefined
-      return typeof size === 'number' && !Number.isNaN(size) ? size : 64
-    },
-    overscan: 6,
-    getItemKey: index => history[index]?.id ?? index,
-    measureElement: (el: Element | null) => {
-      if (!el) return 0
-      const h = (el as HTMLElement).getBoundingClientRect().height
-      const key = (el as HTMLElement).getAttribute('data-key')
-      if (key) rowSizeMap.current.set(key, h)
-      return h
-    },
-  })
-
-  useEffect(() => {
-    rowSizeMap.current.clear()
-    let frame1: number | null = null
-    let frame2: number | null = null
-    let timeoutId: ReturnType<typeof setTimeout> | null = null
-
-    const measure = () => {
-      rowVirtualizer.measure()
-    }
-
-    if (typeof requestAnimationFrame === 'function') {
-      frame1 = requestAnimationFrame(() => {
-        frame2 = requestAnimationFrame(measure)
-      })
-    } else {
-      timeoutId = setTimeout(measure, 16)
-    }
-
-    return () => {
-      if (frame1 !== null && typeof cancelAnimationFrame === 'function') {
-        cancelAnimationFrame(frame1)
-      }
-      if (frame2 !== null && typeof cancelAnimationFrame === 'function') {
-        cancelAnimationFrame(frame2)
-      }
-      if (timeoutId !== null) {
-        clearTimeout(timeoutId)
-      }
-    }
-  }, [history.length, rowVirtualizer])
-
-  useEffect(() => {
-    if (typeof document === 'undefined' || !('fonts' in document)) return
-    let cancelled = false
-    const fontPromises: Array<Promise<unknown>> = [document.fonts.ready]
-    try {
-      fontPromises.push(document.fonts.load('16px "Monaspace Neon"'))
-    } catch {
-      // ignore unsupported font loading
-    }
-
-    void Promise.all(fontPromises).then(() => {
-      if (cancelled) return
-      rowSizeMap.current.clear()
-      rowVirtualizer.measure()
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [rowVirtualizer])
 
   // TanStack Query hooks
   const { data: commands } = useCommands()
@@ -218,21 +145,15 @@ export default function TerminalPane() {
   }, [commands, processor])
 
   useEffect(() => {
-    // Auto-scroll only when user is at the bottom to avoid scroll thrash
-    const el = outputRef.current
-    const atBottom = (() => {
-      if (!el) return true
+    if (history.length > 0 && outputRef.current) {
+      const el = outputRef.current
       const threshold = 8
-      return el.scrollTop + el.clientHeight >= el.scrollHeight - threshold
-    })()
-    if (history.length > 0 && atBottom) {
-      try {
-        rowVirtualizer.scrollToIndex(history.length - 1, { align: 'end' })
-      } catch {
-        if (el) el.scrollTop = el.scrollHeight
+      const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - threshold
+      if (atBottom) {
+        el.scrollTop = el.scrollHeight
       }
     }
-  }, [history.length, rowVirtualizer])
+  }, [history.length])
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -438,39 +359,14 @@ export default function TerminalPane() {
         aria-describedby='terminal-help'
         tabIndex={-1}
       >
-        {/* Command History - Virtualized for performance */}
-        <div
-          style={{
-            height: `${rowVirtualizer.getTotalSize().toString()}px`,
-            position: 'relative',
-          }}
-        >
-          {rowVirtualizer.getVirtualItems().map(virtualRow => {
-            const idx = virtualRow.index
-            if (idx < 0 || idx >= history.length) return null
-            const entry = history[idx] ?? null
-            if (!entry) return null
-            return (
-              <div
-                key={entry.id}
-                data-index={idx}
-                data-key={entry.id}
-                ref={rowVirtualizer.measureElement}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  transform: `translateY(${virtualRow.start.toString()}px)`,
-                }}
-              >
-                <div className='terminal-output pb-2'>
-                  <HistoryEntry entry={entry} isOldEntry={history.length - 1 - idx > 1} />
-                </div>
-              </div>
-            )
-          })}
-        </div>
+        {history.map((entry, idx) => {
+          const isOldEntry = history.length - 1 - idx > 1
+          return (
+            <div key={entry.id} className='terminal-output pb-2'>
+              <HistoryEntry entry={entry} isOldEntry={isOldEntry} />
+            </div>
+          )
+        })}
 
         {/* Current Command Line */}
         <div className='flex items-center' role='group' aria-label='Command input'>

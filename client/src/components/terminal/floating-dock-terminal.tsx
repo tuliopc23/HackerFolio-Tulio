@@ -108,7 +108,7 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
           <div className='space-y-1' role='group' aria-labelledby='nav-heading'>
             <div
               id='nav-heading'
-              className='text-xs text-[#be95ff] px-2 mb-1 text-terminal-semibold'
+              className='text-terminal-meta terminal-subtitle text-[#be95ff] px-2 mb-1'
             >
               Navigation
             </div>
@@ -119,12 +119,12 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
                   void navigate({ to: item.path })
                   announceNavigation(item.label)
                 }}
-                className='w-full flex items-center gap-2 px-3 py-2 rounded text-sm text-[#33b1ff] hover:bg-[#393939] hover:bg-opacity-60 transition-colors group focus:outline-none focus:ring-2 focus:ring-[#33b1ff] focus:ring-opacity-50'
+                className='w-full flex items-center gap-2 px-3 py-2 rounded text-terminal-body terminal-body text-[#33b1ff] hover:bg-[#393939] hover:bg-opacity-60 transition-colors group focus:outline-none focus:ring-2 focus:ring-[#33b1ff] focus:ring-opacity-50'
                 title={item.label}
                 aria-label={`Navigate to ${item.label}`}
               >
                 <item.icon className='w-4 h-4' aria-hidden='true' />
-                <span className='text-xs'>{item.label}</span>
+                <span className='text-terminal-label terminal-body'>{item.label}</span>
               </button>
             ))}
           </div>
@@ -136,7 +136,7 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
           <div className='space-y-1' role='group' aria-labelledby='system-heading'>
             <div
               id='system-heading'
-              className='text-xs text-[#be95ff] px-2 mb-1 text-terminal-semibold'
+              className='text-terminal-meta terminal-subtitle text-[#be95ff] px-2 mb-1'
             >
               System
             </div>
@@ -144,12 +144,12 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
               <button
                 key={item.id}
                 onClick={item.action}
-                className='w-full flex items-center gap-2 px-3 py-2 rounded text-sm text-[#33b1ff] hover:bg-[#393939] hover:bg-opacity-60 transition-colors focus:outline-none focus:ring-2 focus:ring-[#33b1ff] focus:ring-opacity-50'
+                className='w-full flex items-center gap-2 px-3 py-2 rounded text-terminal-body terminal-body text-[#33b1ff] hover:bg-[#393939] hover:bg-opacity-60 transition-colors focus:outline-none focus:ring-2 focus:ring-[#33b1ff] focus:ring-opacity-50'
                 title={item.label}
                 aria-label={`System: ${item.label}`}
               >
                 <item.icon className='w-4 h-4' />
-                <span className='text-xs'>{item.label}</span>
+                <span className='text-terminal-label terminal-body'>{item.label}</span>
               </button>
             ))}
           </div>

@@ -413,35 +413,32 @@ export default function TerminalPane() {
       >
         <div className='flex flex-wrap gap-5 items-center'>
           <span>
-            <kbd className='text-[color:var(--ansi-2)] phosphor-glow' aria-label='Tab key'>
+            <kbd className='text-[color:var(--ansi-2)]' aria-label='Tab key'>
               Tab
             </kbd>
             <span className='sr-only'>key for </span>
-            <span className='text-terminal-green phosphor-glow'> autocomplete</span>
+            <span className='text-terminal-green'> autocomplete</span>
           </span>
           <span>
-            <kbd
-              className='text-[color:var(--ansi-2)] phosphor-glow'
-              aria-label='Up and down arrow keys'
-            >
+            <kbd className='text-[color:var(--ansi-2)]' aria-label='Up and down arrow keys'>
               ↑↓
             </kbd>
             <span className='sr-only'>keys for </span>
-            <span className='text-terminal-green phosphor-glow'> history</span>
+            <span className='text-terminal-green'> history</span>
           </span>
           <span>
-            <kbd className='text-[color:var(--ansi-2)] phosphor-glow' aria-label='Control plus C'>
+            <kbd className='text-[color:var(--ansi-2)]' aria-label='Control plus C'>
               Ctrl+C
             </kbd>
             <span className='sr-only'>to </span>
-            <span className='text-terminal-green phosphor-glow'> clear</span>
+            <span className='text-terminal-green'> clear</span>
           </span>
           <span>
-            <kbd className='text-[color:var(--ansi-2)] phosphor-glow' aria-label='Control plus L'>
+            <kbd className='text-[color:var(--ansi-2)]' aria-label='Control plus L'>
               Ctrl+L
             </kbd>
             <span className='sr-only'>to </span>
-            <span className='text-terminal-green phosphor-glow'> clear screen</span>
+            <span className='text-terminal-green'> clear screen</span>
           </span>
           <button
             type='button'

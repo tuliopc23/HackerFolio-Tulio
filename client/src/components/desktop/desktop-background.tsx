@@ -43,28 +43,23 @@ export default function DesktopBackground() {
           <div className='flex items-center gap-4 text-xs'>
             <div className='flex items-center gap-2'>
               <div className='w-2 h-2 rounded-full bg-cyan-soft animate-pulse shadow-[0_0_6px_rgba(130,207,255,0.6)]' />
-              <span className='text-[color:var(--ansi-2)] font-medium phosphor-glow'>
-                System Online
-              </span>
+              <span className='text-[color:var(--ansi-2)] font-medium'>System Online</span>
             </div>
             <div className='text-[#f2f4f8]'>
               <span className='text-[#f2f4f8]'>CPU:</span>
-              <span className='text-[color:var(--ansi-2)] ml-1 phosphor-glow'>23%</span>
+              <span className='text-[color:var(--ansi-2)] ml-1'>23%</span>
               <span className='text-[#393939] mx-2'>•</span>
               <span className='text-[#f2f4f8]'>RAM:</span>
-              <span className='text-[color:var(--ansi-6)] ml-1 phosphor-glow'>4.2GB</span>
+              <span className='text-[color:var(--ansi-6)] ml-1'>4.2GB</span>
               <span className='text-[#393939] mx-2'>•</span>
               <span className='text-[#f2f4f8]'>Network:</span>
-              <span className='text-[color:var(--ansi-6)] ml-1 phosphor-glow'>Active</span>
+              <span className='text-[color:var(--ansi-6)] ml-1'>Active</span>
             </div>
           </div>
 
           {/* Right side - Clock */}
           <div className='flex items-center gap-4 text-xs'>
-            <div
-              className='text-cyan-bright font-mono font-semibold glow-soft'
-              suppressHydrationWarning
-            >
+            <div className='text-cyan-bright font-mono font-semibold' suppressHydrationWarning>
               {formatTime(currentTime)}
             </div>
             <div className='text-[#f2f4f8]' suppressHydrationWarning>

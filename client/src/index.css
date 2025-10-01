@@ -435,13 +435,6 @@
   }
 }
 
-.phosphor-glow {
-  /* Stronger phosphor glow across app with minimal layers (Safari-friendly) */
-  text-shadow:
-    0 0 12px currentColor,
-    0 0 24px currentColor;
-}
-
 .terminal-output {
   line-height: var(--line-height-snug);
   text-shadow: 0 0 6px currentColor;
@@ -449,11 +442,6 @@
   font-weight: var(--font-weight-normal);
   overflow-x: auto;
   max-width: 100%;
-}
-
-/* Reusable soft glow for CRT-style emphasis */
-.glow-soft {
-  text-shadow: 0 0 6px currentColor;
 }
 
 .pane-border {
@@ -773,9 +761,6 @@ select:focus-visible {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-  .phosphor-glow {
-    text-shadow: none;
   }
 }
 

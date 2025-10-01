@@ -61,7 +61,7 @@ const WorldClock = memo(() => {
               {tz.city}
             </div>
             <div
-              className='text-[#42be65] font-mono text-terminal-body terminal-command glow-soft'
+              className='text-[#42be65] font-mono text-terminal-body terminal-command'
               style={{
                 fontSize: 'calc(var(--text-terminal-body) + 1px)',
                 fontWeight: 'var(--font-weight-bold)',
@@ -143,7 +143,7 @@ function SystemInfoPane() {
         {/* Fastfetch Output */}
         {showFastfetch && (
           <div className='space-y-2'>
-            <div className='text-[#ff7eb6] text-terminal-body font-bold tracking-wide phosphor-glow uppercase'>
+            <div className='text-[#ff7eb6] text-terminal-body font-bold tracking-wide uppercase'>
               SYSTEM INFO
             </div>
             <div className='flex gap-3 overflow-hidden'>
@@ -180,37 +180,33 @@ function SystemInfoPane() {
                       {/* Core System Info */}
                       <div className='truncate'>
                         <span className='text-[#33b1ff] terminal-subtitle'>OS:</span>
-                        <span className='text-[#42be65] ml-1 font-mono glow-soft'>
+                        <span className='text-[#42be65] ml-1 font-mono'>
                           macOS Tahoe 26.0 ARM64
                         </span>
                       </div>
 
                       <div className='truncate'>
                         <span className='text-[#33b1ff] terminal-subtitle'>Host:</span>
-                        <span className='text-[#42be65] ml-1 font-mono glow-soft'>
+                        <span className='text-[#42be65] ml-1 font-mono'>
                           MacBook Pro (14-inch, 2023)
                         </span>
                       </div>
 
                       <div className='truncate'>
                         <span className='text-[#33b1ff] terminal-subtitle'>CPU:</span>
-                        <span className='text-[#be95ff] ml-1 font-mono glow-soft'>
+                        <span className='text-[#be95ff] ml-1 font-mono'>
                           Apple M4 Pro (12) @ 3.50 GHz
                         </span>
                       </div>
 
                       <div className='truncate'>
                         <span className='text-[#33b1ff] terminal-subtitle'>Memory:</span>
-                        <span className='text-[#42be65] ml-1 font-mono glow-soft'>
-                          36 GB Unified
-                        </span>
+                        <span className='text-[#42be65] ml-1 font-mono'>36 GB Unified</span>
                       </div>
 
                       <div className='truncate'>
                         <span className='text-[#33b1ff] terminal-subtitle'>Terminal:</span>
-                        <span className='text-[#be95ff] ml-1 font-mono glow-soft'>
-                          Ghostty 1.0.0
-                        </span>
+                        <span className='text-[#be95ff] ml-1 font-mono'>Ghostty 1.0.0</span>
                       </div>
                     </div>
 
@@ -219,10 +215,10 @@ function SystemInfoPane() {
                       <div className='flex justify-between items-center text-terminal-meta'>
                         <div className='flex gap-3'>
                           <span className='text-[#f2f4f8]'>
-                            Load: <span className='text-[#42be65] font-mono glow-soft'>1.2</span>
+                            Load: <span className='text-[#42be65] font-mono'>1.2</span>
                           </span>
                           <span className='text-[#f2f4f8]'>
-                            Temp: <span className='text-[#42be65] font-mono glow-soft'>42°C</span>
+                            Temp: <span className='text-[#42be65] font-mono'>42°C</span>
                           </span>
                         </div>
                         <span className='text-[#33b1ff] font-mono' suppressHydrationWarning>
@@ -244,7 +240,7 @@ function SystemInfoPane() {
                   <div className='flex items-center gap-1'>
                     <div className='w-2 h-2 rounded-full bg-[#42be65] animate-pulse' />
                     <span
-                      className='text-[#42be65] text-terminal-tiny terminal-command glow-soft'
+                      className='text-[#42be65] text-terminal-tiny terminal-command'
                       style={{ fontSize: 'calc(var(--text-terminal-tiny) + 1px)' }}
                     >
                       SECURE
@@ -259,28 +255,28 @@ function SystemInfoPane() {
                     style={{ fontSize: 'calc(var(--text-terminal-tiny) + 1px)' }}
                   >
                     <span className='text-[#f2f4f8]'>Protocol:</span>
-                    <span className='text-[#42be65] font-mono glow-soft'>SSH-2.0</span>
+                    <span className='text-[#42be65] font-mono'>SSH-2.0</span>
                   </div>
                   <div
                     className='flex justify-between text-terminal-tiny'
                     style={{ fontSize: 'calc(var(--text-terminal-tiny) + 1px)' }}
                   >
                     <span className='text-[#f2f4f8]'>Cipher:</span>
-                    <span className='text-[#ff7eb6] font-mono glow-soft'>AES-256</span>
+                    <span className='text-[#ff7eb6] font-mono'>AES-256</span>
                   </div>
                   <div
                     className='flex justify-between text-terminal-tiny'
                     style={{ fontSize: 'calc(var(--text-terminal-tiny) + 1px)' }}
                   >
                     <span className='text-[#f2f4f8]'>Latency:</span>
-                    <span className='text-[#42be65] font-mono glow-soft'>12ms</span>
+                    <span className='text-[#42be65] font-mono'>12ms</span>
                   </div>
                   <div
                     className='flex justify-between text-terminal-tiny'
                     style={{ fontSize: 'calc(var(--text-terminal-tiny) + 1px)' }}
                   >
                     <span className='text-[#f2f4f8]'>Uptime:</span>
-                    <span className='text-[#ff7eb6] font-mono glow-soft' suppressHydrationWarning>
+                    <span className='text-[#ff7eb6] font-mono' suppressHydrationWarning>
                       {Math.floor((Date.now() - 1704067200000) / 86400000).toString()}d
                     </span>
                   </div>
@@ -295,21 +291,21 @@ function SystemInfoPane() {
                       style={{ fontSize: 'calc(var(--text-terminal-tiny) + 1px)' }}
                     >
                       <span className='text-[#f2f4f8]'>TX:</span>
-                      <span className='text-[#42be65] font-mono glow-soft'>1.2GB</span>
+                      <span className='text-[#42be65] font-mono'>1.2GB</span>
                     </div>
                     <div
                       className='flex justify-between text-terminal-tiny'
                       style={{ fontSize: 'calc(var(--text-terminal-tiny) + 1px)' }}
                     >
                       <span className='text-[#f2f4f8]'>RX:</span>
-                      <span className='text-[#42be65] font-mono glow-soft'>3.4GB</span>
+                      <span className='text-[#42be65] font-mono'>3.4GB</span>
                     </div>
                     <div
                       className='flex justify-between text-terminal-tiny'
                       style={{ fontSize: 'calc(var(--text-terminal-tiny) + 1px)' }}
                     >
                       <span className='text-[#f2f4f8]'>Sessions:</span>
-                      <span className='text-[#ff7eb6] font-mono glow-soft'>4</span>
+                      <span className='text-[#ff7eb6] font-mono'>4</span>
                     </div>
                   </div>
                 </div>
@@ -345,7 +341,7 @@ function SystemInfoPane() {
                     style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
                   >
                     <span className='text-[#ff7eb6]'>→</span>
-                    <span className='text-[#42be65] font-mono glow-soft hover:text-[#ff7eb6] transition-colors'>
+                    <span className='text-[#42be65] font-mono hover:text-[#ff7eb6] transition-colors'>
                       {currentProject.name}
                     </span>
                   </div>
@@ -366,7 +362,7 @@ function SystemInfoPane() {
                         style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
                       >
                         <span className='text-[#ff7eb6]'>Tech:</span>
-                        <span className='text-[#42be65] font-mono glow-soft'>
+                        <span className='text-[#42be65] font-mono'>
                           {currentProject.tech_stack.slice(0, 3).join(', ')}
                         </span>
                       </div>
@@ -386,7 +382,7 @@ function SystemInfoPane() {
                           href={currentProject.github_url}
                           target='_blank'
                           rel='noopener noreferrer'
-                          className='text-[#ff7eb6] font-mono glow-soft hover:text-[#be95ff] transition-colors'
+                          className='text-[#ff7eb6] font-mono hover:text-[#be95ff] transition-colors'
                         >
                           GitHub →
                         </a>
@@ -396,7 +392,7 @@ function SystemInfoPane() {
                           href={currentProject.live_url}
                           target='_blank'
                           rel='noopener noreferrer'
-                          className='text-[#ff7eb6] font-mono glow-soft hover:text-[#be95ff] transition-colors'
+                          className='text-[#ff7eb6] font-mono hover:text-[#be95ff] transition-colors'
                         >
                           Live →
                         </a>
@@ -427,7 +423,7 @@ function SystemInfoPane() {
                     href='https://www.tuliocunha.dev'
                     target='_blank'
                     rel='noopener noreferrer'
-                    className='text-[#42be65] font-mono glow-soft hover:text-[#ff7eb6] transition-colors'
+                    className='text-[#42be65] font-mono hover:text-[#ff7eb6] transition-colors'
                   >
                     www.tuliocunha.dev
                   </a>
@@ -446,7 +442,7 @@ function SystemInfoPane() {
                       href='https://www.tuliocunha.dev'
                       target='_blank'
                       rel='noopener noreferrer'
-                      className='text-[#42be65] font-mono glow-soft hover:text-[#ff7eb6] transition-colors'
+                      className='text-[#42be65] font-mono hover:text-[#ff7eb6] transition-colors'
                     >
                       Home
                     </a>
@@ -460,7 +456,7 @@ function SystemInfoPane() {
                       href='https://www.tuliocunha.dev'
                       target='_blank'
                       rel='noopener noreferrer'
-                      className='text-[#42be65] font-mono glow-soft hover:text-[#ff7eb6] transition-colors'
+                      className='text-[#42be65] font-mono hover:text-[#ff7eb6] transition-colors'
                     >
                       View Projects
                     </a>
@@ -474,7 +470,7 @@ function SystemInfoPane() {
                       href='https://www.tuliocunha.dev'
                       target='_blank'
                       rel='noopener noreferrer'
-                      className='text-[#42be65] font-mono glow-soft hover:text-[#ff7eb6] transition-colors'
+                      className='text-[#42be65] font-mono hover:text-[#ff7eb6] transition-colors'
                     >
                       Read Articles
                     </a>

@@ -29,7 +29,7 @@ export default function TerminalThemePreview() {
         className='terminal min-h-screen p-6 font-mono'
         style={{ background: 'var(--term-bg)', color: 'var(--term-fg)' }}
       >
-        <h1 className='text-2xl mb-6 phosphor-glow'>ANSI Theme Preview - Ghostty Inspired</h1>
+        <h1 className='text-2xl mb-6'>ANSI Theme Preview - Ghostty Inspired</h1>
 
         <div className='mb-8'>
           <h2 className='text-lg mb-4 text-cyan-bright'>Color Palette</h2>
@@ -78,7 +78,7 @@ export default function TerminalThemePreview() {
         <div className='mb-8'>
           <h2 className='text-lg mb-4 text-cyan-bright'>Terminal Effects</h2>
           <div className='bg-black/50 p-4 rounded border border-[color:var(--ansi-8)]'>
-            <p className='phosphor-glow mb-2'>Phosphor glow effect</p>
+            <p className='mb-2'>Phosphor glow effect</p>
             <p className='terminal-output mb-2'>Terminal output shadow</p>
             <div className='cursor-block inline-block' />
             <span className='ml-2'>Blinking cursor</span>

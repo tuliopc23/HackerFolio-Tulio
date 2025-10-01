@@ -124,7 +124,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
       <div className='crt-scanlines' />
 
       <motion.pre
-        className='ascii phosphor-glow'
+        className='ascii'
         role='img'
         aria-label='Vintage Macintosh'
         initial={{ opacity: 0, scale: 0.9 }}

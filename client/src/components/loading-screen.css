@@ -82,28 +82,6 @@
   overflow-x: auto;
 }
 
-/* Phosphor Glow Effect */
-.phosphor-glow {
-  /* Stronger phosphor glow for loading ASCII while keeping layers minimal */
-  text-shadow:
-    0 0 12px currentColor,
-    0 0 24px rgba(66, 190, 101, 0.7);
-  /* Animate opacity for a performant pulse effect */
-  animation: phosphor-pulse 3s ease-in-out infinite alternate;
-  will-change: opacity;
-}
-
-/* Simplified phosphor-pulse for WebKit performance */
-@keyframes phosphor-pulse {
-  0%,
-  100% {
-    opacity: 0.8;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
 /* Terminal Connection Messages */
 .connection-terminal {
   position: relative;
@@ -299,7 +277,6 @@
 @media (prefers-reduced-motion: reduce) {
   .ascii,
   .bar,
-  .phosphor-glow,
   .status-ok,
   .terminal-cursor {
     animation: none !important;
@@ -309,10 +286,6 @@
   .crt-scanlines {
     animation: none !important;
     opacity: 0.1 !important;
-  }
-
-  .phosphor-glow {
-    text-shadow: 0 0 5px currentColor !important;
   }
 
   .message-line {
@@ -431,28 +404,6 @@
   overflow-x: auto;
 }
 
-/* Phosphor Glow Effect */
-.phosphor-glow {
-  /* Stronger phosphor glow for loading ASCII while keeping layers minimal */
-  text-shadow:
-    0 0 12px currentColor,
-    0 0 24px rgba(66, 190, 101, 0.7);
-  /* Animate opacity for a performant pulse effect */
-  animation: phosphor-pulse 3s ease-in-out infinite alternate;
-  will-change: opacity;
-}
-
-/* Simplified phosphor-pulse for WebKit performance */
-@keyframes phosphor-pulse {
-  0%,
-  100% {
-    opacity: 0.8;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
 /* Progress Bar Container */
 .progress {
   /* Use rem for zoom resilience: 45rem = 720px at 100% */
@@ -540,8 +491,7 @@
 /* Accessibility: Respect user's motion preferences */
 @media (prefers-reduced-motion: reduce) {
   .ascii,
-  .bar,
-  .phosphor-glow {
+  .bar {
     animation: none !important;
     transition: none !important;
   }
@@ -549,10 +499,6 @@
   .crt-scanlines {
     animation: none !important;
     opacity: 0.1 !important;
-  }
-
-  .phosphor-glow {
-    text-shadow: 0 0 5px currentColor !important;
   }
 }
 
@@ -582,14 +528,6 @@
     opacity: 0.3;
   }
 
-  .phosphor-glow {
-    /* Stronger yet simple glow for WebKit */
-    text-shadow:
-      0 0 14px currentColor,
-      0 0 22px rgba(66, 190, 101, 0.6);
-    animation: none;
-  }
-
   .ascii {
     /* Disable complex animations */
     animation: none;
@@ -602,9 +540,5 @@
   .crt-screen::before,
   .crt-screen::after {
     display: none;
-  }
-
-  .phosphor-glow {
-    text-shadow: 0 0 3px currentColor;
   }
 }

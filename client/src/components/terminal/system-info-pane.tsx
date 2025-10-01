@@ -341,7 +341,7 @@ function SystemInfoPane() {
                     style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
                   >
                     <span className='text-[#ff7eb6]'>→</span>
-                    <span className='text-[#42be65] font-mono hover:text-[#ff7eb6] transition-colors'>
+                    <span className='text-[#42be65] font-mono font-semibold hover:text-[#ff7eb6] transition-colors'>
                       {currentProject.name}
                     </span>
                   </div>
@@ -382,7 +382,7 @@ function SystemInfoPane() {
                           href={currentProject.github_url}
                           target='_blank'
                           rel='noopener noreferrer'
-                          className='text-[#ff7eb6] font-mono hover:text-[#be95ff] transition-colors'
+                          className='text-[#ff7eb6] font-mono font-semibold hover:text-[#be95ff] transition-colors'
                         >
                           GitHub →
                         </a>
@@ -392,7 +392,7 @@ function SystemInfoPane() {
                           href={currentProject.live_url}
                           target='_blank'
                           rel='noopener noreferrer'
-                          className='text-[#ff7eb6] font-mono hover:text-[#be95ff] transition-colors'
+                          className='text-[#ff7eb6] font-mono font-semibold hover:text-[#be95ff] transition-colors'
                         >
                           Live →
                         </a>
@@ -423,7 +423,7 @@ function SystemInfoPane() {
                     href='https://www.tuliocunha.dev'
                     target='_blank'
                     rel='noopener noreferrer'
-                    className='text-[#42be65] font-mono hover:text-[#ff7eb6] transition-colors'
+                    className='text-[#42be65] font-mono font-semibold hover:text-[#ff7eb6] transition-colors'
                   >
                     www.tuliocunha.dev
                   </a>
@@ -488,7 +488,7 @@ function SystemInfoPane() {
                       href='https://fantastical.app/tuliopinheirocunha'
                       target='_blank'
                       rel='noopener noreferrer'
-                      className='text-[#ff7eb6] font-mono glow-soft hover:text-[#be95ff] transition-colors'
+                      className='text-[#ff7eb6] font-mono font-semibold glow-soft hover:text-[#be95ff] transition-colors'
                     >
                       Schedule →
                     </a>

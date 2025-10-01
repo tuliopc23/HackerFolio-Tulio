@@ -1,4 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
+import { ArrowUpDown, ClipboardCopy, Keyboard, Monitor } from 'lucide-react'
 import { useState, useEffect, useRef, useCallback, type KeyboardEvent, memo } from 'react'
 
 import { useFocusRegistration } from '@/components/accessibility/focus-manager'
@@ -81,6 +82,59 @@ export default function TerminalPane() {
   useFocusRegistration('terminal-input', inputRef as React.RefObject<HTMLElement>)
   useFocusRegistration('terminal-pane', terminalRef as React.RefObject<HTMLElement>)
 
+  const createWelcomeState = useCallback(() => {
+    const boot = `\x1b[36mInitializing secure connection...\x1b[39m\n\x1b[32m✓ Connection established\x1b[39m`
+    const bootEntry = {
+      command: '',
+      output: boot,
+      timestamp: new Date(),
+      id: `boot-${String(Date.now())}-${Math.random().toString(36).slice(2, 9)}`,
+    }
+
+    try {
+      const banners = import.meta.glob<string>('@/assets/TulioCUnha Ascii.txt', {
+        query: '?raw',
+        import: 'default',
+        eager: true,
+      })
+      const txt = Object.values(banners)[0] ?? ''
+      const lines = txt.replace(/\r\n/g, '\n').split('\n')
+      const nameLines = lines.slice(0, 5)
+      const devLines = lines.slice(5)
+      const colorizeLines = (ls: string[], code: string) =>
+        ls.map(l => `${code}${l}\x1b[39m`).join('\n')
+      const art = `${colorizeLines(nameLines, '\x1b[32m')}\n${colorizeLines(devLines, '\x1b[36m')}\n`
+      const tip = `\x1b[36mType \x1b[53m\x1b[32mhelp\x1b[55m\x1b[39m \x1b[36mfor tutorial\x1b[39m\n`
+
+      return [
+        bootEntry,
+        {
+          command: '',
+          output: art,
+          timestamp: new Date(),
+          id: `art-${String(Date.now())}-${Math.random().toString(36).slice(2, 9)}`,
+        },
+        {
+          command: '',
+          output: tip,
+          timestamp: new Date(),
+          id: `tip-${String(Date.now())}-${Math.random().toString(36).slice(2, 9)}`,
+          showPrompt: true,
+        },
+      ]
+    } catch {
+      return [
+        bootEntry,
+        {
+          command: '',
+          output: `\x1b[36mWelcome\x1b[39m`,
+          timestamp: new Date(),
+          id: `art-fallback-${String(Date.now())}-${Math.random().toString(36).slice(2, 9)}`,
+        },
+      ]
+    }
+  }, [])
+
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus()
@@ -88,56 +142,9 @@ export default function TerminalPane() {
     }
     setHistory(prev => {
       if (prev.length > 0) return prev
-      const boot = `\x1b[36mInitializing secure connection...\x1b[39m\n\x1b[32m✓ Connection established\x1b[39m`
-      return [...prev, { command: '', output: boot, timestamp: new Date(), id: 'boot-1' }]
+      return createWelcomeState()
     })
-
-    let cancelled = false
-    const loadBanner = () => {
-      try {
-        const banners = import.meta.glob<string>('@/assets/TulioCUnha Ascii.txt', {
-          query: '?raw',
-          import: 'default',
-          eager: true,
-        })
-        const txt = Object.values(banners)[0] ?? ''
-        const lines = txt.replace(/\r\n/g, '\n').split('\n')
-        const nameLines = lines.slice(0, 5)
-        const devLines = lines.slice(5)
-        const colorizeLines = (ls: string[], code: string) =>
-          ls.map(l => `${code}${l}\x1b[39m`).join('\n')
-        const art = `${colorizeLines(nameLines, '\x1b[32m')}\n${colorizeLines(devLines, '\x1b[36m')}\n`
-        const tip = `\x1b[36mType \x1b[53m\x1b[32mhelp\x1b[55m\x1b[39m \x1b[36mfor tutorial\x1b[39m\n`
-        if (!cancelled) {
-          setHistory(prev => {
-            if (prev.some(h => h.id === 'art-1')) return prev
-            return [
-              ...prev,
-              { command: '', output: art, timestamp: new Date(), id: 'art-1' },
-              { command: '', output: tip, timestamp: new Date(), id: 'tip-1', showPrompt: true },
-            ]
-          })
-        }
-      } catch {
-        if (!cancelled) {
-          setHistory(prev => [
-            ...prev,
-            {
-              command: '',
-              output: `\x1b[36mWelcome\x1b[39m`,
-              timestamp: new Date(),
-              id: 'art-fallback',
-            },
-          ])
-        }
-      }
-    }
-
-    loadBanner()
-    return () => {
-      cancelled = true
-    }
-  }, [announce])
+  }, [announce, createWelcomeState])
 
   useEffect(() => {
     // Set server commands for autocomplete enrichment when commands data loads
@@ -195,8 +202,8 @@ export default function TerminalPane() {
       announce('Command input cleared', 'polite')
     } else if (e.ctrlKey && e.key === 'l') {
       e.preventDefault()
-      setHistory([])
-      announce('Terminal screen cleared', 'polite')
+      setHistory(createWelcomeState())
+      announce('Terminal cleared and reset to welcome state', 'polite')
     }
   }
 
@@ -228,9 +235,10 @@ export default function TerminalPane() {
 
       // Handle special commands
       if (result.output === 'CLEAR') {
-        setHistory([])
+        setHistory(createWelcomeState())
         setInput('')
         setIsExecuting(false)
+        announce('Terminal cleared and reset to welcome state', 'polite')
         return
       }
 
@@ -329,7 +337,16 @@ export default function TerminalPane() {
       setInput('')
       setIsExecuting(false)
     },
-    [processor, navigate, setTheme, executeCommand, announceCommand, announceError, announce]
+    [
+      processor,
+      navigate,
+      setTheme,
+      executeCommand,
+      announceCommand,
+      announceError,
+      announce,
+      createWelcomeState,
+    ]
   )
 
   // Uses top-level HistoryEntry memoized component
@@ -440,43 +457,28 @@ export default function TerminalPane() {
         role='complementary'
         aria-label='Terminal keyboard shortcuts'
       >
-        <div className='flex flex-wrap gap-5 items-center'>
-          <span>
-            <kbd className='text-[color:var(--ansi-2)]' aria-label='Tab key'>
-              Tab
-            </kbd>
-            <span className='sr-only'>key for </span>
-            <span className='text-terminal-green'> autocomplete</span>
+        <div className='flex flex-wrap items-center gap-4'>
+          <span className='inline-flex items-center gap-2 text-terminal-green'>
+            <Keyboard className='h-4 w-4' aria-hidden='true' />
+            <span>Tab for autocomplete</span>
           </span>
-          <span>
-            <kbd className='text-[color:var(--ansi-2)]' aria-label='Up and down arrow keys'>
-              ↑↓
-            </kbd>
-            <span className='sr-only'>keys for </span>
-            <span className='text-terminal-green'> history</span>
+          <span className='inline-flex items-center gap-2 text-terminal-green'>
+            <ArrowUpDown className='h-4 w-4' aria-hidden='true' />
+            <span>History navigation</span>
           </span>
-          <span>
-            <kbd className='text-[color:var(--ansi-2)]' aria-label='Control plus C'>
-              Ctrl+C
-            </kbd>
-            <span className='sr-only'>to </span>
-            <span className='text-terminal-green'> clear</span>
-          </span>
-          <span>
-            <kbd className='text-[color:var(--ansi-2)]' aria-label='Control plus L'>
-              Ctrl+L
-            </kbd>
-            <span className='sr-only'>to </span>
-            <span className='text-terminal-green'> clear screen</span>
+          <span className='inline-flex items-center gap-2 text-terminal-green'>
+            <Monitor className='h-4 w-4' aria-hidden='true' />
+            <span>Ctrl+L clears screen</span>
           </span>
           <button
             type='button'
             onClick={() => void copyLastOutput()}
-            className='ml-auto px-2 py-1 rounded border border-[#393939] text-terminal-label text-[#33b1ff] hover:bg-[#393939] hover:bg-opacity-60 transition-colors focus:outline-none focus:ring-2 focus:ring-[#33b1ff] focus:ring-opacity-50'
-            aria-label='Copy last output to clipboard'
+            className='ml-auto inline-flex items-center gap-2 rounded border border-[#393939] px-2 py-1 text-terminal-label text-[#33b1ff] hover:bg-[#393939] hover:bg-opacity-60 transition-colors focus:outline-none focus:ring-2 focus:ring-[#33b1ff] focus:ring-opacity-50'
+            aria-label='Copy last output (Ctrl/Cmd+Shift+C)'
             title='Copy last output (Ctrl/Cmd+Shift+C)'
           >
-            Copy last
+            <ClipboardCopy className='h-4 w-4' aria-hidden='true' />
+            <span className='sr-only'>Copy last output</span>
           </button>
         </div>
       </div>

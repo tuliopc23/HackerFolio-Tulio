@@ -1,15 +1,10 @@
 import { useNavigate } from '@tanstack/react-router'
+import { FolderOpen, Home, Palette, Terminal } from 'lucide-react'
 import { useState, useMemo } from 'react'
 
-import { Home, FolderOpen, Palette } from '@/components/icons/custom-icons'
 import { useTerminalAccessibility } from '@/hooks/use-accessibility'
 
 import { useTheme } from './theme-context'
-
-// Terminal icon component - moved outside render to avoid recreation
-const TerminalIcon = () => (
-  <div className='w-4 h-4 border border-current rounded bg-current bg-opacity-20' />
-)
 
 interface FloatingDockTerminalProps {
   onRestoreTerminal?: () => void
@@ -35,7 +30,7 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
     () => [
       {
         id: 'terminal',
-        icon: TerminalIcon,
+        icon: Terminal,
         label: 'Terminal',
         action: () => {
           if (onRestoreTerminal) onRestoreTerminal()
@@ -148,7 +143,7 @@ export default function FloatingDockTerminal({ onRestoreTerminal }: FloatingDock
                 title={item.label}
                 aria-label={`System: ${item.label}`}
               >
-                <item.icon className='w-4 h-4' />
+                <item.icon className='w-4 h-4' aria-hidden='true' />
                 <span className='text-terminal-label terminal-body'>{item.label}</span>
               </button>
             ))}

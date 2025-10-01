@@ -299,7 +299,7 @@ export const terminalRoutes = new Elysia({ prefix: '/api' })
 
         // Add other command cases here...
         case 'clear':
-          // Frontend interprets CLEAR specially
+          // Frontend interprets CLEAR specially - restores welcome state
           return makeResult(true, sanitizedCommand, 'CLEAR', { startedAt })
 
         case 'cat': {

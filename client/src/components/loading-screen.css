@@ -1,20 +1,20 @@
 /* LoadingScreen Component Styles
  * Enhanced terminal theme with CRT effects and Oxocarbon color palette
- * Green ASCII art, pink loading bar, with phosphor glow and scanlines
+ * Green ASCII art with SSH prompt, phosphor glow, and scanlines
  */
 
 .loading-root {
   position: fixed;
   inset: 0;
   display: grid;
-  grid-template-rows: 1fr auto auto auto;
+  grid-template-rows: auto auto auto;
   align-items: center;
   justify-items: center;
-  gap: 24px;
+  gap: 20px;
   background: var(--term-bg, #000);
   z-index: 9999;
   overflow: hidden;
-  padding: 20px;
+  padding: clamp(16px, 3vw, 28px);
 }
 
 /* CRT Screen Effects */
@@ -190,60 +190,6 @@
   }
 }
 
-/* Progress Bar Container */
-.progress {
-  /* Use rem for zoom resilience: 45rem = 720px at 100% */
-  width: min(45rem, 84vw);
-  height: 0.875rem;
-  position: relative;
-  z-index: 2;
-}
-
-/* Progress Track - Subtle background */
-.track {
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 126, 182, 0.15);
-  border-radius: 9999px;
-  border: 1px solid rgba(255, 126, 182, 0.2);
-}
-
-/* Progress Bar - Pink with glow */
-.bar {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    var(--magenta-bright, #be95ff) 0%,
-    var(--magenta-soft, #ff7eb6) 50%,
-    var(--magenta-bright, #be95ff) 100%
-  );
-  border-radius: 9999px;
-  transform-origin: left;
-  box-shadow:
-    0 0 10px rgba(255, 126, 182, 0.6),
-    0 0 20px rgba(255, 126, 182, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-/* Progress Glow Effect */
-.progress-glow {
-  position: absolute;
-  top: -4px;
-  left: 0;
-  height: 22px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 126, 182, 0.4) 50%,
-    transparent 100%
-  );
-  border-radius: 9999px;
-  filter: blur(8px);
-  transition: width 0.1s linear;
-  z-index: -1;
-}
-
 /* Loading Indicator */
 .loading-indicator {
   position: relative;
@@ -254,6 +200,7 @@
   font-family: var(--font-mono);
   font-size: 14px;
   font-weight: 600;
+  color: var(--cyan-bright, #33b1ff);
   text-shadow:
     0 0 5px currentColor,
     0 0 10px rgba(51, 177, 255, 0.3);
@@ -276,7 +223,6 @@
 /* Accessibility: Respect user's motion preferences */
 @media (prefers-reduced-motion: reduce) {
   .ascii,
-  .bar,
   .status-ok,
   .terminal-cursor {
     animation: none !important;
@@ -298,15 +244,6 @@
   .ascii {
     color: #00ff00;
     text-shadow: none;
-  }
-
-  .bar {
-    background: #ff00ff;
-    box-shadow: none;
-  }
-
-  .track {
-    border: 2px solid #ff00ff;
   }
 
   .connection-terminal {
@@ -404,60 +341,6 @@
   overflow-x: auto;
 }
 
-/* Progress Bar Container */
-.progress {
-  /* Use rem for zoom resilience: 45rem = 720px at 100% */
-  width: min(45rem, 84vw);
-  height: 0.875rem;
-  position: relative;
-  z-index: 2;
-}
-
-/* Progress Track - Subtle background */
-.track {
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 126, 182, 0.15);
-  border-radius: 9999px;
-  border: 1px solid rgba(255, 126, 182, 0.2);
-}
-
-/* Progress Bar - Pink with glow */
-.bar {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    var(--magenta-bright, #be95ff) 0%,
-    var(--magenta-soft, #ff7eb6) 50%,
-    var(--magenta-bright, #be95ff) 100%
-  );
-  border-radius: 9999px;
-  transform-origin: left;
-  box-shadow:
-    0 0 10px rgba(255, 126, 182, 0.6),
-    0 0 20px rgba(255, 126, 182, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-/* Progress Glow Effect */
-.progress-glow {
-  position: absolute;
-  top: -4px;
-  left: 0;
-  height: 22px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 126, 182, 0.4) 50%,
-    transparent 100%
-  );
-  border-radius: 9999px;
-  filter: blur(8px);
-  transition: width 0.1s linear;
-  z-index: -1;
-}
-
 /* Loading Indicator */
 .loading-indicator {
   position: relative;
@@ -490,8 +373,7 @@
 
 /* Accessibility: Respect user's motion preferences */
 @media (prefers-reduced-motion: reduce) {
-  .ascii,
-  .bar {
+  .ascii {
     animation: none !important;
     transition: none !important;
   }
@@ -507,15 +389,6 @@
   .ascii {
     color: #00ff00;
     text-shadow: none;
-  }
-
-  .bar {
-    background: #ff00ff;
-    box-shadow: none;
-  }
-
-  .track {
-    border: 2px solid #ff00ff;
   }
 }
 

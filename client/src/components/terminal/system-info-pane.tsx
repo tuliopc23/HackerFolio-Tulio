@@ -1,7 +1,10 @@
-import { useState, useEffect, memo } from 'react'
+import { ArrowUpRight, CalendarClock, Clock4, FolderOpen, Globe2, Link2 } from 'lucide-react'
+import { memo, useEffect, useState } from 'react'
 
 import appleLogo from '@/assets/pngwing.com.png'
+import { renderIcon } from '@/lib/icon-registry'
 import { useProjects } from '@/lib/queries'
+import type { IconKey } from 'shared/iconography/registry'
 
 interface Project {
   id: number | string
@@ -45,8 +48,9 @@ const WorldClock = memo(() => {
 
   return (
     <div className='space-y-2 mb-4'>
-      <div className='text-[#ff7eb6] text-terminal-body font-bold tracking-wide uppercase'>
-        WORLD CLOCK
+      <div className='text-[#ff7eb6] text-terminal-body font-bold tracking-wide uppercase flex items-center gap-2'>
+        <Clock4 className='h-4 w-4 text-[#ff7eb6]' aria-hidden='true' />
+        <span>WORLD CLOCK</span>
       </div>
       <div className='grid grid-cols-2 gap-x-4 gap-y-2 text-terminal-body'>
         {timezones.map(tz => (
@@ -103,6 +107,134 @@ function SystemInfoPane() {
   // Current project (safe selection with fallback)
   const currentProject: Project | undefined =
     projects.length > 0 ? projects[currentProjectIndex % projects.length] : undefined
+
+  const baseTechIcons = {
+    react: 'simple/react',
+    bun: 'simple/bun',
+    vite: 'simple/vite',
+    tailwind: 'simple/tailwindcss',
+    typescript: 'simple/typescript',
+    swift: 'simple/swift',
+    svelte: 'simple/svelte',
+    drizzle: 'simple/drizzle',
+    router: 'simple/reactrouter',
+    elysia: 'lucide/route',
+    macos: 'lucide/apple',
+    terminal: 'lucide/terminal',
+    go: 'simple/go',
+    rust: 'simple/rust',
+    zig: 'simple/zig',
+    python: 'simple/python',
+    gin: 'simple/gin',
+    hono: 'simple/hono',
+    vapor: 'simple/vapor',
+    actix: 'simple/actix',
+    fastify: 'simple/fastify',
+    remix: 'simple/remix',
+    nextjs: 'simple/nextdotjs',
+    nuxt: 'simple/nuxt',
+    vue: 'simple/vuedotjs',
+    solid: 'simple/solid',
+    deno: 'simple/deno',
+    node: 'simple/nodedotjs',
+    podman: 'simple/podman',
+    terraform: 'simple/terraform',
+    tanstack: 'lucide/tree-palm',
+  } as const satisfies Record<string, IconKey>
+
+  const techIconMap: Record<string, IconKey> = {
+    react: baseTechIcons.react,
+    'react.js': baseTechIcons.react,
+    'react js': baseTechIcons.react,
+    'react router': baseTechIcons.router,
+    'tanstack router': baseTechIcons.router,
+    bun: baseTechIcons.bun,
+    vite: baseTechIcons.vite,
+    tailwind: baseTechIcons.tailwind,
+    typescript: baseTechIcons.typescript,
+    'tailwind css': baseTechIcons.tailwind,
+    tailwindcss: baseTechIcons.tailwind,
+    swift: baseTechIcons.swift,
+    swiftui: baseTechIcons.swift,
+    svelte: baseTechIcons.svelte,
+    drizzle: baseTechIcons.drizzle,
+    'drizzle orm': baseTechIcons.drizzle,
+    go: baseTechIcons.go,
+    rust: baseTechIcons.rust,
+    zig: baseTechIcons.zig,
+    python: baseTechIcons.python,
+    gin: baseTechIcons.gin,
+    hono: baseTechIcons.hono,
+    vapor: baseTechIcons.vapor,
+    actix: baseTechIcons.actix,
+    fastify: baseTechIcons.fastify,
+    remix: baseTechIcons.remix,
+    next: baseTechIcons.nextjs,
+    nuxt: baseTechIcons.nuxt,
+    vue: baseTechIcons.vue,
+    solid: baseTechIcons.solid,
+    deno: baseTechIcons.deno,
+    node: baseTechIcons.node,
+    podman: baseTechIcons.podman,
+    terraform: baseTechIcons.terraform,
+    macos: baseTechIcons.macos,
+    'apple platform': baseTechIcons.macos,
+    terminal: baseTechIcons.terminal,
+    'terminal interface': baseTechIcons.terminal,
+    elysia: baseTechIcons.elysia,
+    tanstack: baseTechIcons.tanstack,
+  }
+
+  const resolveTechIconKey = (label: string): IconKey | undefined => {
+    const normalized = label.toLowerCase().trim()
+    if (techIconMap[normalized]) return techIconMap[normalized]
+    if (normalized.includes('react')) return baseTechIcons.react
+    if (normalized.includes('tailwind')) return baseTechIcons.tailwind
+    if (normalized.includes('typescript') || normalized.includes('ts'))
+      return baseTechIcons.typescript
+    if (normalized.includes('bun')) return baseTechIcons.bun
+    if (normalized.includes('vite')) return baseTechIcons.vite
+    if (normalized.includes('swift')) return baseTechIcons.swift
+    if (normalized.includes('svelte')) return baseTechIcons.svelte
+    if (normalized.includes('drizzle')) return baseTechIcons.drizzle
+    if (normalized.includes('router')) return baseTechIcons.router
+    if (normalized.includes('elysia')) return baseTechIcons.elysia
+    if (normalized.includes('macos') || normalized.includes('apple')) return baseTechIcons.macos
+    if (normalized.includes('terminal')) return baseTechIcons.terminal
+    if (normalized.includes('tanstack')) return baseTechIcons.tanstack
+    return undefined
+  }
+
+  const renderTechBadge = (tech: string, index: number) => {
+    const iconKey = resolveTechIconKey(tech)
+
+    if (!iconKey) {
+      return (
+        <span
+          key={`tech-${String(index)}-${tech}`}
+          className='inline-flex items-center gap-1 px-2 py-1 bg-black/40 border border-[#393939] rounded text-xs text-[#f2f4f8]'
+        >
+          {tech}
+        </span>
+      )
+    }
+
+    const iconNode = renderIcon(iconKey, { className: 'h-4 w-4', label: tech })
+
+    return (
+      <span
+        key={`tech-${String(index)}-${tech}`}
+        className='inline-flex h-8 w-8 items-center justify-center rounded border border-[#393939] bg-black/40 text-[#33b1ff]'
+        title={tech}
+      >
+        {iconNode && typeof iconNode !== 'string' ? (
+          iconNode
+        ) : (
+          <span className='sr-only'>{tech}</span>
+        )}
+      </span>
+    )
+  }
 
   // Reset to first project when data changes
   useEffect(() => {
@@ -327,9 +459,10 @@ function SystemInfoPane() {
         {/* Bottom Cards Section - Compact */}
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 flex-1 min-h-0'>
           {/* Recent Projects Card - Compact */}
-          <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-terminal-body terminal-body font-mono flex flex-col min-h-0 min-w-0'>
-            <div className='text-[#be95ff] text-terminal-header font-bold tracking-wide uppercase mb-2'>
-              RECENT PROJECTS
+          <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-terminal-body terminal-body font-mono flex flex-col min-h-[18rem] min-w-0 pb-2'>
+            <div className='text-[#be95ff] text-terminal-header font-bold tracking-wide uppercase mb-2 flex items-center gap-2'>
+              <FolderOpen className='h-4 w-4' aria-hidden='true' />
+              <span>RECENT PROJECTS</span>
             </div>
             <div className='flex-1 min-h-0'>
               {projectsLoading ? (
@@ -340,7 +473,7 @@ function SystemInfoPane() {
                     className='flex items-center gap-2 text-terminal-label'
                     style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
                   >
-                    <span className='text-[#ff7eb6]'>→</span>
+                    <Link2 className='h-4 w-4 text-[#ff7eb6]' aria-hidden='true' />
                     <span className='text-[#42be65] font-mono font-semibold hover:text-[#ff7eb6] transition-colors'>
                       {currentProject.name}
                     </span>
@@ -356,47 +489,59 @@ function SystemInfoPane() {
                       {currentProject.description ??
                         'The Next concept of excellence in Terminal Apps on Apple Platforms (early stages)'}
                     </div>
+
                     {currentProject.tech_stack && currentProject.tech_stack.length > 0 && (
                       <div
-                        className='flex items-center justify-between text-terminal-label'
+                        className='text-terminal-label'
                         style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
                       >
-                        <span className='text-[#ff7eb6]'>Tech:</span>
-                        <span className='text-[#42be65] font-mono'>
-                          {currentProject.tech_stack.slice(0, 3).join(', ')}
-                        </span>
+                        <span className='text-[#ff7eb6] block mb-1'>Tech:</span>
+                        <div className='flex flex-wrap gap-2'>
+                          {currentProject.tech_stack
+                            .slice(0, 6)
+                            .map((tech, index) => renderTechBadge(tech, index))}
+                        </div>
                       </div>
                     )}
                   </div>
 
                   <div className='mt-auto pt-2 border-t border-[#393939]'>
                     <div
-                      className='flex items-center justify-between text-terminal-label'
+                      className='flex flex-col gap-2 text-terminal-label sm:flex-row sm:items-center sm:justify-between'
                       style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
                     >
                       <span className='text-[#f2f4f8]'>
                         Showing {currentProjectIndex + 1} / {projects.length}
                       </span>
-                      {currentProject.github_url && (
-                        <a
-                          href={currentProject.github_url}
-                          target='_blank'
-                          rel='noopener noreferrer'
-                          className='text-[#ff7eb6] font-mono font-semibold hover:text-[#be95ff] transition-colors'
-                        >
-                          GitHub →
-                        </a>
-                      )}
-                      {!currentProject.github_url && currentProject.live_url && (
-                        <a
-                          href={currentProject.live_url}
-                          target='_blank'
-                          rel='noopener noreferrer'
-                          className='text-[#ff7eb6] font-mono font-semibold hover:text-[#be95ff] transition-colors'
-                        >
-                          Live →
-                        </a>
-                      )}
+                      <div className='flex flex-wrap items-center gap-2'>
+                        {currentProject.github_url && (
+                          <a
+                            href={currentProject.github_url}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            className='text-[#ff7eb6] font-mono font-semibold hover:text-[#be95ff] transition-colors inline-flex items-center gap-2'
+                          >
+                            {renderIcon('simple/github', {
+                              className: 'h-4 w-4',
+                              label: 'GitHub repository',
+                            })}
+                            <span>GitHub</span>
+                            <ArrowUpRight className='h-4 w-4' aria-hidden='true' />
+                          </a>
+                        )}
+                        {!currentProject.github_url && currentProject.live_url && (
+                          <a
+                            href={currentProject.live_url}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            className='text-[#ff7eb6] font-mono font-semibold hover:text-[#be95ff] transition-colors inline-flex items-center gap-2'
+                          >
+                            <Link2 className='h-4 w-4' aria-hidden='true' />
+                            <span>Live</span>
+                            <ArrowUpRight className='h-4 w-4' aria-hidden='true' />
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -407,9 +552,10 @@ function SystemInfoPane() {
           </div>
 
           {/* Personal Website Card - Compact */}
-          <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-terminal-body terminal-body font-mono flex flex-col min-h-0 min-w-0'>
-            <div className='text-[#be95ff] text-terminal-header font-bold tracking-wide uppercase mb-2'>
-              PERSONAL WEBSITE
+          <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-terminal-body terminal-body font-mono flex flex-col min-h-[18rem] min-w-0 pb-2'>
+            <div className='text-[#be95ff] text-terminal-header font-bold tracking-wide uppercase mb-2 flex items-center gap-2'>
+              <Globe2 className='h-4 w-4 text-[#be95ff]' aria-hidden='true' />
+              <span>PERSONAL WEBSITE</span>
             </div>
             <div className='flex-1 min-h-0'>
               <div className='space-y-2.5 h-full flex flex-col'>
@@ -418,7 +564,7 @@ function SystemInfoPane() {
                   className='flex items-center gap-2 text-terminal-label'
                   style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
                 >
-                  <span className='text-[#ff7eb6]'>→</span>
+                  <Link2 className='h-4 w-4 text-[#ff7eb6]' aria-hidden='true' />
                   <a
                     href='https://www.tuliocunha.dev'
                     target='_blank'
@@ -442,9 +588,10 @@ function SystemInfoPane() {
                       href='https://www.tuliocunha.dev'
                       target='_blank'
                       rel='noopener noreferrer'
-                      className='text-[#42be65] font-mono hover:text-[#ff7eb6] transition-colors'
+                      className='text-[#42be65] font-mono hover:text-[#ff7eb6] transition-colors flex items-center gap-2'
                     >
                       Home
+                      <ArrowUpRight className='h-4 w-4 text-[#ff7eb6]' aria-hidden='true' />
                     </a>
                   </div>
                   <div
@@ -456,9 +603,10 @@ function SystemInfoPane() {
                       href='https://www.tuliocunha.dev'
                       target='_blank'
                       rel='noopener noreferrer'
-                      className='text-[#42be65] font-mono hover:text-[#ff7eb6] transition-colors'
+                      className='text-[#42be65] font-mono hover:text-[#ff7eb6] transition-colors flex items-center gap-2'
                     >
                       View Projects
+                      <ArrowUpRight className='h-4 w-4 text-[#ff7eb6]' aria-hidden='true' />
                     </a>
                   </div>
                   <div
@@ -470,13 +618,13 @@ function SystemInfoPane() {
                       href='https://www.tuliocunha.dev'
                       target='_blank'
                       rel='noopener noreferrer'
-                      className='text-[#42be65] font-mono hover:text-[#ff7eb6] transition-colors'
+                      className='text-[#42be65] font-mono hover:text-[#ff7eb6] transition-colors flex items-center gap-2'
                     >
                       Read Articles
+                      <ArrowUpRight className='h-4 w-4 text-[#ff7eb6]' aria-hidden='true' />
                     </a>
                   </div>
                 </div>
-
                 {/* Book Time Section */}
                 <div className='mt-auto pt-2 border-t border-[#393939]'>
                   <div
@@ -488,9 +636,11 @@ function SystemInfoPane() {
                       href='https://fantastical.app/tuliocunha'
                       target='_blank'
                       rel='noopener noreferrer'
-                      className='text-[#ff7eb6] font-mono font-semibold glow-soft hover:text-[#be95ff] transition-colors'
+                      className='text-[#ff7eb6] font-mono font-semibold glow-soft hover:text-[#be95ff] transition-colors flex items-center gap-2'
                     >
-                      Schedule →
+                      <CalendarClock className='h-4 w-4 text-[#ff7eb6]' aria-hidden='true' />
+                      <span>Schedule</span>
+                      <ArrowUpRight className='h-4 w-4 text-[#ff7eb6]' aria-hidden='true' />
                     </a>
                   </div>
                 </div>

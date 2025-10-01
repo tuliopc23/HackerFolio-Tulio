@@ -1,4 +1,7 @@
-import { useState, useEffect, useMemo } from 'react'
+import { cloneElement, isValidElement, useEffect, useMemo, useState, type ReactNode } from 'react'
+
+import { renderIcon } from '@/lib/icon-registry'
+import { findIconTokens } from 'shared/iconography/parser'
 
 interface TypedTerminalOutputProps {
   output: string
@@ -23,7 +26,7 @@ export function TypedTerminalOutput({
   }, [animate])
 
   // OPTIMIZATION: Memoize expensive ANSI parsing to avoid re-computation
-  const formatOutput = useMemo((): React.ReactNode => {
+  const formatOutput = useMemo((): ReactNode => {
     if (!output) return null
 
     // Hard cap to avoid rendering extremely large outputs accidentally
@@ -35,14 +38,15 @@ export function TypedTerminalOutput({
 
     // ANSI parser for SGR codes (very small subset)
     const urlRegex = /(https?:\/\/[^\s]+)/g
-    // eslint-disable-next-line no-control-regex
+    // eslint-disable-next-line no-control-regex -- ANSI escape codes require control characters
     const ANSI_PATTERN = new RegExp('\\x1b\\[([0-9;]+)m', 'g') // e.g., \x1b[31m or \x1b[1;32m
     // OSC 8 hyperlink pattern: \x1b]8;;url\x1b\\text\x1b]8;;\x1b\\
-    // eslint-disable-next-line no-control-regex
+    /* eslint-disable no-control-regex */ // ANSI escape codes require control characters
     const OSC8_PATTERN = new RegExp(
       '\\x1b\\]8;;([^\\x1b]*)\\x1b\\\\([^\\x1b]*)\\x1b\\]8;;\\x1b\\\\',
       'g'
     )
+    /* eslint-enable no-control-regex */
 
     interface StyleState {
       bold?: boolean
@@ -125,35 +129,112 @@ export function TypedTerminalOutput({
       return s
     }
 
-    const renderTextWithLinks = (text: string) => {
-      const parts: Array<string | { url: string }> = []
+    const renderIconTokensInString = (text: string, keyBase: string): ReactNode[] => {
+      const matches = findIconTokens(text)
+      if (matches.length === 0) return [text]
+
+      const nodes: ReactNode[] = []
+      let cursor = 0
+
+      const pushNode = (node: ReactNode) => {
+        if (node === null || node === undefined || node === false) return
+        if (Array.isArray(node)) {
+          for (const child of node as ReactNode[]) {
+            pushNode(child)
+          }
+          return
+        }
+        nodes.push(node)
+      }
+
+      matches.forEach(match => {
+        if (match.index > cursor) {
+          nodes.push(text.slice(cursor, match.index))
+        }
+        if (match.iconKey) {
+          const iconNode = renderIcon(match.iconKey, { label: match.label })
+          if (isValidElement(iconNode)) {
+            const iconIndex = match.index ?? nodes.length
+            const iconKeySuffix = `${keyBase}-icon-${String(iconIndex)}-${match.rawKey}`
+            nodes.push(cloneElement(iconNode, { key: iconKeySuffix }))
+          } else {
+            pushNode(iconNode)
+          }
+        } else {
+          nodes.push(`[icon] ${match.label}`)
+        }
+        cursor = match.index + match.match.length
+      })
+      if (cursor < text.length) {
+        nodes.push(text.slice(cursor))
+      }
+      return nodes
+    }
+
+    const pushWithIcons = (target: ReactNode[], text: string, keyBase: string) => {
+      const segments = renderIconTokensInString(text, keyBase)
+      segments.forEach(segment => {
+        if (typeof segment === 'string') {
+          if (segment.length > 0) target.push(segment)
+        } else {
+          target.push(segment)
+        }
+      })
+    }
+
+    const renderTextWithLinks = (text: string, baseKey: string) => {
+      interface TextPart {
+        type: 'text'
+        value: string
+        start: number
+      }
+
+      interface LinkPart {
+        type: 'link'
+        url: string
+        start: number
+      }
+
+      const parts: Array<TextPart | LinkPart> = []
       let lastIndex = 0
       const matches = Array.from(text.matchAll(urlRegex))
       for (const match of matches) {
         const url = match[0]
-        const index = match.index || 0
-        if (index > lastIndex) parts.push(text.slice(lastIndex, index))
-        parts.push({ url })
+        const index = typeof match.index === 'number' ? match.index : 0
+        if (index > lastIndex) {
+          parts.push({ type: 'text', value: text.slice(lastIndex, index), start: lastIndex })
+        }
+        parts.push({ type: 'link', url, start: index })
         lastIndex = index + url.length
       }
-      if (lastIndex < text.length) parts.push(text.slice(lastIndex))
-      if (parts.length === 0) parts.push(text)
-      return parts.map((p, j) =>
-        typeof p === 'string' ? (
-          <span key={`text-${String(j)}-${p.slice(0, 10)}`}>{p}</span>
-        ) : (
-          <a
-            key={`url-${String(j)}-${p.url}`}
-            href={p.url}
-            target='_blank'
-            rel='noopener noreferrer'
-            className='underline text-cyan-bright hover:text-cyan-soft focus:outline-none focus:ring-1 focus:ring-cyan-bright focus:ring-opacity-50 bg-transparent'
-            aria-label={`External link: ${p.url}`}
-          >
-            {p.url}
-          </a>
-        )
-      )
+      if (lastIndex < text.length) {
+        parts.push({ type: 'text', value: text.slice(lastIndex), start: lastIndex })
+      }
+      if (parts.length === 0) {
+        parts.push({ type: 'text', value: text, start: 0 })
+      }
+
+      const result: ReactNode[] = []
+      parts.forEach(part => {
+        if (part.type === 'text') {
+          pushWithIcons(result, part.value, `${baseKey}-text-${String(part.start)}`)
+        } else {
+          result.push(
+            <a
+              key={`${baseKey}-url-${String(part.start)}-${part.url}`}
+              href={part.url}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='underline text-cyan-bright hover:text-cyan-soft focus:outline-none focus:ring-1 focus:ring-cyan-bright focus:ring-opacity-50 bg-transparent'
+              aria-label={`External link: ${part.url}`}
+            >
+              {part.url}
+            </a>
+          )
+        }
+      })
+
+      return result
     }
 
     const renderLine = (line: string, i: number) => {
@@ -165,24 +246,26 @@ export function TypedTerminalOutput({
       }
       const hyperlinks: HyperlinkInfo[] = []
       let processedLine = line
-      let hyperlinkMatch: RegExpExecArray | null
-      OSC8_PATTERN.lastIndex = 0
-      while ((hyperlinkMatch = OSC8_PATTERN.exec(line)) !== null) {
-        const url = hyperlinkMatch[1] || ''
-        const text = hyperlinkMatch[2] || ''
-        const placeholder = `__HYPERLINK_${hyperlinks.length}__`
+
+      // Use matchAll to avoid infinite loop issues
+      const hyperlinkMatches = Array.from(line.matchAll(OSC8_PATTERN))
+      hyperlinkMatches.forEach((hyperlinkMatch, idx) => {
+        const url = hyperlinkMatch[1] ?? ''
+        const text = hyperlinkMatch[2] ?? ''
+        const placeholder = `__HYPERLINK_${String(idx)}__`
         hyperlinks.push({ url, text, placeholder })
         processedLine = processedLine.replace(hyperlinkMatch[0], placeholder)
-        OSC8_PATTERN.lastIndex = 0
-      }
+      })
 
       const segments: Array<{ text: string; classes: string; hyperlinks: HyperlinkInfo[] }> = []
       let lastIndex = 0
       let state = initState()
       let match: RegExpExecArray | null
+
+      // Reset lastIndex before loop to ensure clean state
       ANSI_PATTERN.lastIndex = 0
       while ((match = ANSI_PATTERN.exec(processedLine)) !== null) {
-        const { index: idx } = match
+        const idx = match.index
         if (idx > lastIndex) {
           segments.push({
             text: processedLine.slice(lastIndex, idx),
@@ -203,54 +286,61 @@ export function TypedTerminalOutput({
         })
       }
 
-      const renderTextWithHyperlinks = (text: string, links: HyperlinkInfo[]) => {
-        let result: React.ReactNode[] = [text]
-        for (let j = 0; j < links.length; j++) {
-          const link = links[j]
-          if (!link) continue
-          const newResult: React.ReactNode[] = []
-          for (const part of result) {
-            if (typeof part === 'string' && part.includes(link.placeholder)) {
-              const splitParts = part.split(link.placeholder)
-              for (let k = 0; k < splitParts.length; k++) {
-                const splitPart = splitParts[k]
-                if (splitPart) newResult.push(splitPart)
-                if (k < splitParts.length - 1) {
-                  newResult.push(
-                    <a
-                      key={`hyperlink-${j}-${k}`}
-                      href={link.url}
-                      target='_blank'
-                      rel='noopener noreferrer'
-                      className='underline text-cyan-bright hover:text-cyan-soft focus:outline-none focus:ring-1 focus:ring-cyan-bright focus:ring-opacity-50 bg-transparent'
-                      aria-label={`External link: ${link.url}`}
-                    >
-                      {link.text}
-                    </a>
-                  )
-                }
-              }
-            } else {
-              newResult.push(part)
-            }
-          }
-          result = newResult
+      const renderTextWithHyperlinks = (text: string, links: HyperlinkInfo[], baseKey: string) => {
+        if (links.length === 0) {
+          return renderTextWithLinks(text, baseKey)
         }
-        return result
+
+        const nodes: ReactNode[] = []
+        let cursor = 0
+        for (const link of links) {
+          const placeholderIndex = text.indexOf(link.placeholder, cursor)
+          if (placeholderIndex === -1) continue
+          if (placeholderIndex > cursor) {
+            pushWithIcons(
+              nodes,
+              text.slice(cursor, placeholderIndex),
+              `${baseKey}-${link.placeholder}-pre`
+            )
+          }
+          const children = renderIconTokensInString(
+            link.text,
+            `${baseKey}-${link.placeholder}-link`
+          )
+          nodes.push(
+            <a
+              key={`${baseKey}-${link.placeholder}-${link.url}`}
+              href={link.url}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='underline text-cyan-bright hover:text-cyan-soft focus:outline-none focus:ring-1 focus:ring-cyan-bright focus:ring-opacity-50 bg-transparent'
+              aria-label={`External link: ${link.url}`}
+            >
+              {children}
+            </a>
+          )
+          cursor = placeholderIndex + link.placeholder.length
+        }
+
+        if (cursor < text.length) {
+          pushWithIcons(nodes, text.slice(cursor), `${baseKey}-tail`)
+        }
+
+        return nodes.length > 0 ? nodes : renderTextWithLinks(text, `${baseKey}-fallback`)
       }
 
       return (
         <div key={`line-${String(i)}`} className='whitespace-pre-wrap break-words overflow-x-auto'>
-          {segments.map((seg, k) => (
-            <span
-              key={`segment-${String(i)}-${String(k)}-${seg.text.slice(0, 10)}`}
-              className={seg.classes}
-            >
-              {seg.hyperlinks.length > 0
-                ? renderTextWithHyperlinks(seg.text, seg.hyperlinks)
-                : renderTextWithLinks(seg.text)}
-            </span>
-          ))}
+          {segments.map((seg, k) => {
+            const segmentKey = `segment-${String(i)}-${String(k)}`
+            return (
+              <span key={`${segmentKey}-${seg.text.slice(0, 10)}`} className={seg.classes}>
+                {seg.hyperlinks.length > 0
+                  ? renderTextWithHyperlinks(seg.text, seg.hyperlinks, segmentKey)
+                  : renderTextWithLinks(seg.text, `${segmentKey}-text`)}
+              </span>
+            )
+          })}
         </div>
       )
     }

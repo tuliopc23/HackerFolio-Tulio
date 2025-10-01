@@ -1,8 +1,9 @@
 import { Link } from '@tanstack/react-router'
+import { ArrowLeft, ExternalLink, Star } from 'lucide-react'
 import { useMemo } from 'react'
 
-import { ArrowLeft, Code2, ExternalLink, Star } from '@/components/icons/custom-icons'
 import { useProjects } from '@/lib/queries'
+import { renderIcon } from '@/lib/icon-registry'
 
 export default function Projects() {
   const { data: projectsData, isLoading: loading, error } = useProjects()
@@ -36,7 +37,7 @@ export default function Projects() {
               to='/'
               className='inline-flex items-center gap-2 text-cyan-soft hover:text-cyan-bright transition-colors mb-4'
             >
-              <ArrowLeft className='w-4 h-4' />
+              <ArrowLeft className='w-4 h-4' aria-hidden='true' />
               Back to Terminal
             </Link>
             <h1 className='text-3xl font-bold text-cyan-bright mb-2'>Projects</h1>
@@ -61,7 +62,9 @@ export default function Projects() {
                       <h3 className='text-xl font-semibold text-cyan-bright whitespace-normal break-words multiline-ellipsis-2'>
                         {project.name}
                       </h3>
-                      {project.featured && <Star className='w-4 h-4 text-terminal-orange' />}
+                      {project.featured && (
+                        <Star className='w-4 h-4 text-terminal-orange' aria-hidden='true' />
+                      )}
                     </div>
                     <p className='text-text-soft text-sm'>{project.role}</p>
                   </div>
@@ -92,7 +95,7 @@ export default function Projects() {
                       rel='noopener noreferrer'
                       className='flex-1 px-4 py-2 bg-[#33b1ff] text-[#f2f4f8] rounded hover:bg-cyan-bright transition-colors flex items-center justify-center gap-2 text-sm font-medium'
                     >
-                      <ExternalLink className='w-4 h-4' />
+                      <ExternalLink className='w-4 h-4' aria-hidden='true' />
                       View Demo
                     </a>
                   )}
@@ -103,7 +106,10 @@ export default function Projects() {
                       rel='noopener noreferrer'
                       className='px-4 py-2 border border-cyan-soft text-cyan-soft rounded hover:bg-cyan-soft hover:text-[#f2f4f8] transition-colors flex items-center justify-center'
                     >
-                      <Code2 className='w-4 h-4' />
+                      {renderIcon('simple/github', {
+                        className: 'w-4 h-4',
+                        label: `${project.name} GitHub repository`,
+                      })}
                     </a>
                   )}
                 </div>

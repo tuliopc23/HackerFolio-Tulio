@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useTransform, animate } from 'motion/react'
+import { motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 
 import './loading-screen.css'
@@ -17,8 +17,11 @@ export interface LoadingScreenProps {
   onComplete: () => void
 }
 
-// Exactly 4 seconds as required - controls overall loading duration
-const DURATION_MS = 4000
+// Overall loading duration tuned to 3 seconds for a snappier handoff
+const DURATION_MS = 3000
+
+const CONNECTING_FRAMES = ['CONNECTING', 'CONNECTING.', 'CONNECTING..', 'CONNECTING...'] as const
+const CONNECTING_FRAME_INTERVAL_MS = 280
 
 // Connection sequence messages
 const CONNECTION_MESSAGES = [
@@ -32,38 +35,48 @@ const CONNECTION_MESSAGES = [
 ]
 
 /**
- * LoadingScreen displays vintage Macintosh ASCII art with a progress bar
- * that completes in exactly 4 seconds, then calls onComplete.
+ * LoadingScreen displays vintage Macintosh ASCII art alongside an SSH-style
+ * connection log. It runs for a fixed three-second window before invoking
+ * onComplete so the app can hydrate behind the scenes.
  *
  * Enhanced with terminal aesthetics including CRT scanlines, phosphor glow,
  * SSH-style connection messages, and the Oxocarbon color palette.
  */
 export function LoadingScreen({ onComplete }: LoadingScreenProps) {
-  const [ariaNow, setAriaNow] = useState(0)
   const [currentMessage, setCurrentMessage] = useState('')
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
   const [showCursor, setShowCursor] = useState(true)
-  const progress = useMotionValue(0)
-  const scaleX = useTransform(progress, v => v / 100)
+  const [connectingFrameIndex, setConnectingFrameIndex] = useState(0)
   const doneRef = useRef(false)
   const timeoutRef = useRef<number | null>(null)
+
+  const progressValue = Math.min(
+    100,
+    Math.round((currentMessageIndex / Math.max(CONNECTION_MESSAGES.length - 1, 1)) * 100)
+  )
 
   // Adjust animation speeds for WebKit performance
   const typewriterSpeed = isWebkit() ? 25 : 15
   const blinkSpeed = isWebkit() ? 800 : 600
 
   useEffect(() => {
-    // Animate progress from 0 to 100 linearly over exactly 4 seconds
-    const controls = animate(progress, 100, {
-      duration: DURATION_MS / 1000,
-      ease: 'linear',
-      onUpdate: v => {
-        setAriaNow(Math.round(v))
-      },
-    })
+    if (typeof window === 'undefined') return
+
+    const interval = window.setInterval(() => {
+      setConnectingFrameIndex(prev => (prev + 1) % CONNECTING_FRAMES.length)
+    }, CONNECTING_FRAME_INTERVAL_MS)
+
+    return () => {
+      window.clearInterval(interval)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
 
     // Connection message sequence
-    let messageTimeout: number
+    const messageTimeouts: number[] = []
+    const typeIntervals: number[] = []
     const startMessageSequence = () => {
       const showMessage = (index: number) => {
         if (index >= CONNECTION_MESSAGES.length) return
@@ -73,34 +86,40 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
         let charIndex = 0
 
         // Typewriter effect
-        const typeInterval = setInterval(() => {
+        const typeInterval = window.setInterval(() => {
           if (charIndex <= message.length) {
             setCurrentMessage(message.slice(0, charIndex))
             charIndex++
           } else {
-            clearInterval(typeInterval)
+            window.clearInterval(typeInterval)
             // Show next message after a shorter delay
-            messageTimeout = window.setTimeout(() => {
-              showMessage(index + 1)
-            }, 150)
+            messageTimeouts.push(
+              window.setTimeout(() => {
+                showMessage(index + 1)
+              }, 150)
+            )
           }
         }, typewriterSpeed)
+
+        typeIntervals.push(typeInterval)
       }
 
       // Start first message after a brief delay
-      messageTimeout = window.setTimeout(() => {
-        showMessage(0)
-      }, 500)
+      messageTimeouts.push(
+        window.setTimeout(() => {
+          showMessage(0)
+        }, 500)
+      )
     }
 
     startMessageSequence()
 
     // Cursor blinking effect - reduced frequency for WebKit
-    const cursorInterval = setInterval(() => {
+    const cursorInterval = window.setInterval(() => {
       setShowCursor(prev => !prev)
     }, blinkSpeed)
 
-    // Trigger completion exactly at 4000ms - this guarantees timing
+    // Trigger completion at the configured duration - guarantees timing
     timeoutRef.current = window.setTimeout(() => {
       if (!doneRef.current) {
         doneRef.current = true
@@ -109,14 +128,14 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
     }, DURATION_MS)
 
     return () => {
-      controls.stop()
-      clearTimeout(messageTimeout)
-      clearInterval(cursorInterval)
+      messageTimeouts.forEach(window.clearTimeout)
+      typeIntervals.forEach(window.clearInterval)
+      window.clearInterval(cursorInterval)
       if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
+        window.clearTimeout(timeoutRef.current)
       }
     }
-  }, [onComplete, progress, typewriterSpeed, blinkSpeed])
+  }, [onComplete, typewriterSpeed, blinkSpeed])
 
   return (
     <div className='loading-root crt-screen' data-testid='loading-root'>
@@ -172,39 +191,20 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
           ))}
         </div>
       </motion.div>
-
-      <div
-        className='progress'
-        role='progressbar'
-        aria-label='Loading'
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={ariaNow}
-        data-testid='progress'
-      >
-        <div className='track' aria-hidden='true' />
-        <motion.div
-          className='bar'
-          style={{ scaleX, transformOrigin: 'left' }}
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: DURATION_MS / 1000, ease: 'linear' }}
-          aria-hidden='true'
-          data-testid='bar'
-        />
-        <div className='progress-glow' style={{ width: `${String(ariaNow)}%` }} />
-      </div>
-
-      {/* Loading percentage indicator */}
       <motion.div
         className='loading-indicator'
+        role='progressbar'
+        aria-live='polite'
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={progressValue}
+        data-testid='progress'
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5, duration: 0.6 }}
       >
-        <span className='loading-text'>
-          <span className='text-cyan-bright'>CONNECTING</span>
-          <span className='text-magenta-bright ml-2'>[{ariaNow}%]</span>
+        <span className='loading-text' data-testid='bar'>
+          {CONNECTING_FRAMES[connectingFrameIndex]}
         </span>
       </motion.div>
     </div>

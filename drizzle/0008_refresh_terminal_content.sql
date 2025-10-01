@@ -1,17 +1,15 @@
--- Add all static commands from client-side to database with rich templates
+-- Refresh terminal command templates with iconography enhancements
 
--- First, update existing commands with better templates
-UPDATE terminal_commands 
+UPDATE terminal_commands
 SET response_template = '{{ansi.cyan("Hello, World")}}
 
 My name is {{ansi.magenta("Tulio Cunha")}}, I am a full-stack developer passionate about what I do. I spend most of my days tinkering with low and high level programming to solve my problems, and yours, if you let me! {{ansi.green("[[icon:lucide/ghost|Terminal avatar]]")}}
 
 {{ansi.cyan("[[icon:lucide/github|GitHub]]")}} {{ansi.link("https://github.com/tuliopc23", "github.com/tuliopc23")}}
 {{ansi.cyan("[[icon:lucide/hammer|Status]]")}} Building amazing things {{ansi.yellow("[[icon:lucide/bolt|Lightning energy]]")}}',
-    examples = '["whoami"]',
-    aliases = '["who", "me"]',
-    metadata = '{"type": "profile", "responseType": "formatted"}'
-WHERE command = 'whoami';
+    updated_at = CURRENT_TIMESTAMP
+WHERE command IN ('whoami', 'info');
+--> statement-breakpoint
 
 UPDATE terminal_commands
 SET response_template = '{{ansi.cyan("Welcome! type those words and press enter to:")}}
@@ -34,25 +32,10 @@ SET response_template = '{{ansi.cyan("Welcome! type those words and press enter 
   {{ansi.green("Tab")}} - Autocomplete any command',
     updated_at = CURRENT_TIMESTAMP
 WHERE command = 'help';
+--> statement-breakpoint
 
--- Add all client-side commands to database
-INSERT OR REPLACE INTO terminal_commands (
-  command, 
-  description, 
-  category, 
-  response_template, 
-  examples, 
-  aliases, 
-  argument_schema, 
-  metadata,
-  is_active
-) VALUES
-
--- System commands
-('clear', 'Clear terminal output', 'system', 'CLEAR', '["clear"]', '["cls"]', '{}', '{"type": "system", "special": true}', 1),
-
--- File system commands  
-('ls', 'List available content', 'filesystem', '{{ansi.cyan("Projects Portfolio")}}
+UPDATE terminal_commands
+SET response_template = '{{ansi.cyan("Projects Portfolio")}}
 
 {{ansi.magenta("[[icon:lucide/list|Project]] LiqUIdify")}}
   {{ansi.dim("Apple Design Language inspired React component library")}}
@@ -82,18 +65,13 @@ INSERT OR REPLACE INTO terminal_commands (
   {{ansi.dim("Swift powered download manager and HTTP client")}}
   {{ansi.gray("[[icon:simple/swift|Swift]] [[icon:lucide/terminal|Terminal interface]]")}}
 
-{{ansi.yellow("[[icon:lucide/lightbulb|Tip]]")}} Use {{ansi.green("projects --help")}} to explore filters and pagination', '["ls"]', '["list", "dir"]', '{}', '{"type": "filesystem"}', 1),
+{{ansi.yellow("[[icon:lucide/lightbulb|Tip]]")}} Use {{ansi.green("projects --help")}} to explore filters and pagination',
+    updated_at = CURRENT_TIMESTAMP
+WHERE command = 'ls';
+--> statement-breakpoint
 
-('cat', 'Display file content', 'filesystem', '{{handleCatFile(args[0])}}', '["cat about.md", "cat contact.md", "cat resume.md"]', '["type", "show"]', '{"args": [{"name": "filename", "type": "string", "required": true, "options": ["about.md", "contact.md", "resume.md"]}]}', '{"type": "filesystem", "requiresArgs": true}', 1),
-
--- Navigation commands
-('open', 'Navigate to route or open URL', 'navigation', '{{handleOpenCommand(args[0])}}', '["open /projects", "open /about", "open https://github.com"]', '[]', '{"args": [{"name": "target", "type": "string", "required": true, "description": "Route path or URL to open"}]}', '{"type": "navigation", "requiresArgs": true}', 1),
-
--- Theme commands
-('theme', 'Switch terminal theme', 'system', '{{handleThemeCommand(args[0])}}', '["theme oxocarbon"]', '[]', '{"args": [{"name": "themeName", "type": "string", "required": true, "options": ["oxocarbon"]}]}', '{"type": "system", "requiresArgs": true}', 1),
-
--- Info commands with better templates
-('stack', 'Display technical skills and stack', 'info', '{{ansi.cyan("Tech Stack [[icon:lucide/hammer|Tech Stack]]")}}
+UPDATE terminal_commands
+SET response_template = '{{ansi.cyan("Tech Stack [[icon:lucide/hammer|Tech Stack]]")}}
 
 {{ansi.magenta("[[icon:lucide/sparkles|Highlights]]")}}
   {{ansi.gray("[[icon:simple/swift|Swift]] [[icon:simple/go|Go]] [[icon:simple/rust|Rust]] [[icon:simple/zig|Zig]] [[icon:simple/typescript|TypeScript]] [[icon:simple/python|Python]]")}}
@@ -117,15 +95,7 @@ INSERT OR REPLACE INTO terminal_commands (
   {{ansi.gray("[[icon:simple/bun|Bun]] [[icon:simple/nodedotjs|Node.js]] [[icon:simple/deno|Deno]]")}}
 
 {{ansi.magenta("[[icon:lucide/list|Cloud Native]]")}}
-  {{ansi.gray("[[icon:simple/docker|Docker]] [[icon:simple/podman|Podman]] [[icon:simple/terraform|Terraform]]")}}', '["stack"]', '["tech", "skills"]', '{}', '{"type": "info", "responseType": "formatted"}', 1),
-
-('time', 'Display current time', 'system', '{{ansi.cyan("Current Time")}}: {{currentTime}}
-{{ansi.cyan("Timezone")}}: {{timezone}}
-{{ansi.cyan("Unix Timestamp")}}: {{unixTime}}', '["time"]', '["date", "now"]', '{}', '{"type": "system", "dynamic": true}', 1);
-
--- Update created_at and updated_at for new commands
-UPDATE terminal_commands 
-SET 
-  created_at = CURRENT_TIMESTAMP,
-  updated_at = CURRENT_TIMESTAMP
-WHERE created_at IS NULL;
+  {{ansi.gray("[[icon:simple/docker|Docker]] [[icon:simple/podman|Podman]] [[icon:simple/terraform|Terraform]]")}}',
+    updated_at = CURRENT_TIMESTAMP
+WHERE command IN ('grep', 'skills');
+--> statement-breakpoint

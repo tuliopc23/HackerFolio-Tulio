@@ -1,0 +1,30 @@
+UI Iconography Guidelines
+
+Replace all arrows and icons in the UI, except:
+The system info Apple logo PNG.
+The small Apple logo on the pane02 system (top right of the right pane).
+you can add iconography using best design guidelines but carefully to not bloat the ui
+---
+
+Command Outputs in portfolio.db (Rendered on Client)
+
+Whoami Command
+Replace the ghost and thunder emojis with Lucide icons.
+GH Command
+GitHub Profile
+Replace the heading with the pink Lucide GitHub icon.
+Link: github.com/tuliopc23
+Add a Git tree icon for: “Feel free to contribute or open an issue on any project!”
+Contact Command
+Replace the email, calendar, and suitcase icons with Lucide icons.
+LS Command
+Remove all mentions of cats.
+Instead of tool names in parentheses, use their corresponding icons from Simple Icons (React, Bun, Vite, Tailwind, etc.).
+No emojis should be used.
+
+---
+
+Grep Command
+
+Consider placing the language icon after the name (e.g., Swift [icon], Rust [icon]).
+Further discussion is needed to finalize the best approach here.

@@ -1,8 +1,12 @@
 # database-schema Specification
 
 ## Purpose
-TBD - created by archiving change improve-command-accessibility. Update Purpose after archive.
+
+TBD - created by archiving change improve-command-accessibility. Update Purpose
+after archive.
+
 ## Requirements
+
 ### Requirement: Terminal Commands Table Schema
 
 The terminal_commands table SHALL store command definitions, aliases, and
@@ -63,4 +67,3 @@ terminal_commands schema changes to maintain type safety.
 - **THEN** developer SHALL run `bun run db:generate` to regenerate schema
 - **AND** TypeScript types SHALL be updated in server/db/schema.ts
 - **AND** type checking SHALL pass without errors
-

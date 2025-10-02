@@ -3,6 +3,7 @@ import {
   Apple,
   ArrowUpDown,
   Bolt,
+  Briefcase,
   CalendarClock,
   ClipboardCopy,
   Dot,
@@ -11,6 +12,8 @@ import {
   Hammer,
   Keyboard,
   Lightbulb,
+  Link,
+  Linkedin,
   List,
   Mail,
   Palette,
@@ -52,7 +55,7 @@ import {
   siPodman,
   siTerraform,
   siGithub,
-  siLinkedin,
+  siDocker,
   type SimpleIcon,
 } from 'simple-icons'
 
@@ -61,16 +64,22 @@ import { getIconMeta, type IconKey, isIconKey } from 'shared/iconography/registr
 const BASE_ICON_CLASS = 'h-[1em] w-[1em] align-middle'
 const BASE_SIMPLE_ICON_CLASS = clsx(BASE_ICON_CLASS, 'fill-current')
 
-const createSimpleIconRenderer = (icon: SimpleIcon) => (className?: string) => (
-  <svg
-    viewBox='0 0 24 24'
-    className={clsx(BASE_SIMPLE_ICON_CLASS, className)}
-    aria-hidden='true'
-    focusable='false'
-  >
-    <path d={icon.path} />
-  </svg>
-)
+const createSimpleIconRenderer = (icon: SimpleIcon) => {
+  const renderer = (className?: string) => (
+    <svg
+      viewBox='0 0 24 24'
+      className={clsx(BASE_SIMPLE_ICON_CLASS, className)}
+      aria-hidden='true'
+      focusable='false'
+    >
+      <path d={icon.path} />
+    </svg>
+  )
+
+  renderer.displayName = `${icon.title}SimpleIcon`
+
+  return renderer
+}
 
 const iconRenderers: Partial<Record<IconKey, (className?: string) => ReactNode>> = {
   'lucide/ghost': className => (
@@ -152,6 +161,15 @@ const iconRenderers: Partial<Record<IconKey, (className?: string) => ReactNode>>
   'lucide/hammer': className => (
     <Hammer className={clsx(BASE_ICON_CLASS, className)} aria-hidden='true' focusable='false' />
   ),
+  'lucide/linkedin': className => (
+    <Linkedin className={clsx(BASE_ICON_CLASS, className)} aria-hidden='true' focusable='false' />
+  ),
+  'lucide/link': className => (
+    <Link className={clsx(BASE_ICON_CLASS, className)} aria-hidden='true' focusable='false' />
+  ),
+  'lucide/briefcase': className => (
+    <Briefcase className={clsx(BASE_ICON_CLASS, className)} aria-hidden='true' focusable='false' />
+  ),
   'simple/react': createSimpleIconRenderer(siReact),
   'simple/bun': createSimpleIconRenderer(siBun),
   'simple/vite': createSimpleIconRenderer(siVite),
@@ -180,11 +198,10 @@ const iconRenderers: Partial<Record<IconKey, (className?: string) => ReactNode>>
   'simple/podman': createSimpleIconRenderer(siPodman),
   'simple/terraform': createSimpleIconRenderer(siTerraform),
   'simple/github': createSimpleIconRenderer(siGithub),
-  'simple/linkedin': createSimpleIconRenderer(siLinkedin),
+  'simple/docker': createSimpleIconRenderer(siDocker),
 }
 
 iconRenderers['lucide/github'] = iconRenderers['simple/github']
-iconRenderers['lucide/linkedin'] = iconRenderers['simple/linkedin']
 
 export interface RenderIconOptions {
   className?: string

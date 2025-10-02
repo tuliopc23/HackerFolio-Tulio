@@ -36,6 +36,8 @@ const iconRegistry: Record<IconKey, IconMeta> = {
   'lucide/user-round': { source: 'lucide', name: 'UserRound', defaultLabel: 'About me' },
   'lucide/hammer': { source: 'lucide', name: 'Hammer', defaultLabel: 'Status' },
   'lucide/route': { source: 'lucide', name: 'Route', defaultLabel: 'Route' },
+  'lucide/link': { source: 'lucide', name: 'Link', defaultLabel: 'Link' },
+  'lucide/briefcase': { source: 'lucide', name: 'Briefcase', defaultLabel: 'My work' },
   'simple/react': { source: 'simple', name: 'react', defaultLabel: 'React logo' },
   'simple/bun': { source: 'simple', name: 'bun', defaultLabel: 'Bun logo' },
   'simple/vite': { source: 'simple', name: 'vite', defaultLabel: 'Vite logo' },
@@ -73,7 +75,7 @@ const iconRegistry: Record<IconKey, IconMeta> = {
   'simple/rust': { source: 'simple', name: 'rust', defaultLabel: 'Rust logo' },
   'simple/go': { source: 'simple', name: 'go', defaultLabel: 'Go logo' },
   'simple/github': { source: 'simple', name: 'github', defaultLabel: 'GitHub' },
-  'simple/linkedin': { source: 'simple', name: 'linkedin', defaultLabel: 'LinkedIn' },
+  'simple/docker': { source: 'simple', name: 'docker', defaultLabel: 'Docker logo' },
 }
 
 export function getIconMeta(key: IconKey): IconMeta | undefined {

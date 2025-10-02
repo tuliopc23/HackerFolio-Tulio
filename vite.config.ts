@@ -23,6 +23,7 @@ export default defineConfig(({ command, mode }) => {
       alias: {
         '@': path.resolve(__dirname, 'client/src'),
         '@server': path.resolve(__dirname, 'server'),
+        shared: path.resolve(__dirname, 'shared'),
       },
       // Ensure a single React instance across chunks
       dedupe: ['react', 'react-dom'],

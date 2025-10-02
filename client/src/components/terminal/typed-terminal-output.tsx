@@ -148,14 +148,15 @@ export function TypedTerminalOutput({
       }
 
       matches.forEach(match => {
-        if (match.index > cursor) {
-          nodes.push(text.slice(cursor, match.index))
+        const matchIndex = typeof match.index === 'number' ? match.index : cursor
+
+        if (matchIndex > cursor) {
+          nodes.push(text.slice(cursor, matchIndex))
         }
         if (match.iconKey) {
           const iconNode = renderIcon(match.iconKey, { label: match.label })
           if (isValidElement(iconNode)) {
-            const iconIndex = match.index ?? nodes.length
-            const iconKeySuffix = `${keyBase}-icon-${String(iconIndex)}-${match.rawKey}`
+            const iconKeySuffix = `${keyBase}-icon-${String(matchIndex)}-${match.rawKey}`
             nodes.push(cloneElement(iconNode, { key: iconKeySuffix }))
           } else {
             pushNode(iconNode)
@@ -163,7 +164,7 @@ export function TypedTerminalOutput({
         } else {
           nodes.push(`[icon] ${match.label}`)
         }
-        cursor = match.index + match.match.length
+        cursor = matchIndex + match.match.length
       })
       if (cursor < text.length) {
         nodes.push(text.slice(cursor))

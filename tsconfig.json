@@ -1,30 +1,13 @@
 {
-  "include": [
-    "client/src/**/*",
-    "client/__tests__/**/*",
-    "shared/**/*",
-    "server/**/*",
-    "reset.d.ts",
-    "vitest.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "build",
-    "dist",
-    "drizzle/**/*",
-    "coverage"
-  ],
+  "include": ["client/src/**/*", "client/__tests__/**/*", "shared/**/*", "server/**/*", "reset.d.ts", "vitest.d.ts"],
+  "exclude": ["node_modules", "build", "dist", "drizzle/**/*", "coverage"],
   "compilerOptions": {
     "incremental": true,
     "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",
     "noEmit": true,
     "target": "ES2022",
     "module": "ESNext",
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
@@ -66,21 +49,11 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./client/src/*"
-      ],
-      "@server/*": [
-        "./server/*"
-      ]
+      "@/*": ["./client/src/*"],
+      "@server/*": ["./server/*"],
+      "shared/*": ["./shared/*"]
     },
-    "types": [
-      "node",
-      "vite/client",
-      "bun",
-      "@total-typescript/ts-reset",
-      "@testing-library/jest-dom",
-      "vitest/globals"
-    ]
+    "types": ["node", "vite/client", "bun", "@total-typescript/ts-reset", "@testing-library/jest-dom", "vitest/globals"]
   },
   "ts-node": {
     "esm": true

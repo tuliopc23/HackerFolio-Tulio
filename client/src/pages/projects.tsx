@@ -2,8 +2,8 @@ import { Link } from '@tanstack/react-router'
 import { ArrowLeft, ExternalLink, Star } from 'lucide-react'
 import { useMemo } from 'react'
 
-import { useProjects } from '@/lib/queries'
 import { renderIcon } from '@/lib/icon-registry'
+import { useProjects } from '@/lib/queries'
 
 export default function Projects() {
   const { data: projectsData, isLoading: loading, error } = useProjects()

@@ -18,7 +18,9 @@ describe('TemplateProcessor icon tokens', () => {
     expect(known?.iconKey).toBe('lucide/bolt')
     expect(unknown?.iconKey).toBeUndefined()
 
-    const matches = findIconTokens('Check [[icon:lucide/bolt|Energy]] and [[icon:lucide/missing|Fallback]].')
+    const matches = findIconTokens(
+      'Check [[icon:lucide/bolt|Energy]] and [[icon:lucide/missing|Fallback]].'
+    )
     expect(matches).toHaveLength(2)
     expect(matches[1]?.iconKey).toBeUndefined()
     expect(matches[1]?.label).toBe('Fallback')

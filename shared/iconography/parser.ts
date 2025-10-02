@@ -1,5 +1,13 @@
 import { getIconMeta, type IconKey, isIconKey } from './registry'
 
+const deriveFallbackLabel = (iconKey: IconKey | undefined, rawKey: string): string => {
+  if (!iconKey) return rawKey
+  const metaLabel = getIconMeta(iconKey)?.defaultLabel
+  if (metaLabel && metaLabel.length > 0) return metaLabel
+  const [, inferred] = iconKey.split('/')
+  return inferred ?? iconKey
+}
+
 export interface ParsedIconToken {
   rawKey: string
   iconKey?: IconKey
@@ -20,9 +28,7 @@ export function parseIconToken(raw: string): ParsedIconToken | undefined {
   const rawKey = (match[1] ?? '').toLowerCase()
   const iconKey = isIconKey(rawKey as IconKey) ? (rawKey as IconKey) : undefined
   const providedLabel = match[2]?.trim()
-  const fallback = iconKey
-    ? (getIconMeta(iconKey)?.defaultLabel ?? iconKey.split('/')[1] ?? iconKey)
-    : rawKey
+  const fallback = deriveFallbackLabel(iconKey, rawKey)
   const label = providedLabel && providedLabel.length > 0 ? providedLabel : fallback
 
   const token: ParsedIconToken = {
@@ -43,12 +49,10 @@ export function findIconTokens(text: string): IconTokenMatch[] {
     const rawKey = (execResult[1] ?? '').toLowerCase()
     const providedLabel = (execResult[2] ?? '').trim()
     const iconKey = isIconKey(rawKey as IconKey) ? (rawKey as IconKey) : undefined
-    const fallback = iconKey
-      ? (getIconMeta(iconKey)?.defaultLabel ?? iconKey.split('/')[1] ?? iconKey)
-      : rawKey
+    const fallback = deriveFallbackLabel(iconKey, rawKey)
     const label = providedLabel && providedLabel.length > 0 ? providedLabel : fallback
     matches.push({
-      match: execResult[0] ?? '',
+      match: execResult[0],
       index: execResult.index,
       rawKey,
       label,

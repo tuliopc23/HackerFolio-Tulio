@@ -188,6 +188,7 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-argument': 'warn',
       '@typescript-eslint/restrict-template-expressions': 'warn',
       '@typescript-eslint/prefer-promise-reject-errors': 'warn',
+      '@typescript-eslint/no-deprecated': 'warn',
     },
   },
 

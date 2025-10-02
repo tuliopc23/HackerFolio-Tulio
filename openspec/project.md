@@ -20,7 +20,9 @@ terminal-style commands.
 - **Testing:** Vitest 3, Testing Library, jsdom, custom render helpers
 - **Tooling:** ESLint 9 + TypeScript ESLint, Prettier 3, Knip, Bun runtime 1.2+
 - **Build/Deploy:** Vite builds static client assets; Bun serves SSR + API
-- **Iconography:** Lucide React for UI controls, Simple Icons via `react-simple-icons` for brand marks, and hand-tuned inline SVG fallbacks in `client/src/components/icons` for legacy glyphs
+- **Iconography:** Lucide React for UI controls, Simple Icons via
+  `react-simple-icons` for brand marks, and hand-tuned inline SVG fallbacks in
+  `client/src/components/icons` for legacy glyphs
 
 ## Development Workflow
 
@@ -84,10 +86,16 @@ terminal-style commands.
 
 ### Iconography
 
-- Lucide icons are wrapped via lightweight helpers in `client/src/components/icons` to standardize size, stroke, and animation hooks.
-- Brand marks use `react-simple-icons` components; keep imports tree-shaken by re-exporting only the brands we ship.
-- Terminal content stored in `database/portfolio.db` should reference icon keys, not emoji; application code resolves keys to Lucide or Simple Icons for consistency across UI and CLI responses.
-- Favor 16px, 20px, or 24px frames with `currentColor` fills to match the terminal palette and respect theme overrides.
+- Lucide icons are wrapped via lightweight helpers in
+  `client/src/components/icons` to standardize size, stroke, and animation
+  hooks.
+- Brand marks use `react-simple-icons` components; keep imports tree-shaken by
+  re-exporting only the brands we ship.
+- Terminal content stored in `database/portfolio.db` should reference icon keys,
+  not emoji; application code resolves keys to Lucide or Simple Icons for
+  consistency across UI and CLI responses.
+- Favor 16px, 20px, or 24px frames with `currentColor` fills to match the
+  terminal palette and respect theme overrides.
 
 ### Testing Strategy
 
@@ -114,10 +122,15 @@ scanlines, phosphor glow) while maintaining modern web performance standards.
 
 ## Data Conventions
 
-- Primary SQLite file lives at `database/portfolio.db` with WAL mode enabled (see `.db-wal`, `.db-shm`).
-- Drizzle ORM models in `server/db/schema.ts` define `projects`, `terminal_commands`, and `portfolio_content` tables, with Zod schemas generated for request validation.
-- Command templates support structured metadata (`templateVariables`, `argumentSchema`, `examples`, `aliases`) that power dynamic terminal output.
-- Seed content mirrors production structure; avoid manual edits to the DB and prefer migrations or seed scripts.
+- Primary SQLite file lives at `database/portfolio.db` with WAL mode enabled
+  (see `.db-wal`, `.db-shm`).
+- Drizzle ORM models in `server/db/schema.ts` define `projects`,
+  `terminal_commands`, and `portfolio_content` tables, with Zod schemas
+  generated for request validation.
+- Command templates support structured metadata (`templateVariables`,
+  `argumentSchema`, `examples`, `aliases`) that power dynamic terminal output.
+- Seed content mirrors production structure; avoid manual edits to the DB and
+  prefer migrations or seed scripts.
 
 ## Important Constraints
 
@@ -133,7 +146,9 @@ scanlines, phosphor glow) while maintaining modern web performance standards.
 
 - **CSS Fonts:** SF Mono Powerline (local font files in
   `client/src/assets/fonts/`)
-- **Icons:** Lucide React, `react-simple-icons` (Simple Icons), and legacy custom SVG set under `client/src/components/icons`; Boxicons remain in specimen assets only
+- **Icons:** Lucide React, `react-simple-icons` (Simple Icons), and legacy
+  custom SVG set under `client/src/components/icons`; Boxicons remain in
+  specimen assets only
 - **Build Tools:** Vite, esbuild, Lightning CSS (platform-specific binaries)
 - **Tailwind Plugins:** tailwindcss-animate, @tailwindcss/typography
 - **Server Middleware:** `@elysiajs/cors`, custom logging middleware

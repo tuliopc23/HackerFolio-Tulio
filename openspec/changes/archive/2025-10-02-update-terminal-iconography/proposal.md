@@ -6,8 +6,8 @@ The portfolio still mixes bespoke SVGs, raw emoji, and text arrows to convey
 meaning across the UI and terminal output. This inconsistent iconography breaks
 visual hierarchy, creates accessibility issues (screen readers read raw emoji),
 and prevents reuse of the `lucide-react` and `react-simple-icons` packages that
-were added for this purpose. A cohesive icon system is needed to modernize the UI
-and expose icons inside terminal command responses without shipping emoji.
+were added for this purpose. A cohesive icon system is needed to modernize the
+UI and expose icons inside terminal command responses without shipping emoji.
 
 ## What Changes
 
@@ -15,9 +15,9 @@ and expose icons inside terminal command responses without shipping emoji.
   surfaces (projects page, floating dock, not-found view) and layer in
   purposeful embellishments (e.g., world clock badge, personal site cards) while
   preserving the terminal aesthetic.
-- Introduce an icon registry that wraps `lucide-react` and
-  `react-simple-icons`, exposes color/size defaults, and provides a lookup by key
-  for use in both React components and terminal output rendering.
+- Introduce an icon registry that wraps `lucide-react` and `react-simple-icons`,
+  exposes color/size defaults, and provides a lookup by key for use in both
+  React components and terminal output rendering.
 - Extend the terminal renderer to support inline icon tokens
   (`[[icon:source/name|aria-label]]`) so command templates stored in
   `portfolio.db` can reference icons without HTML or emoji. Ensure fallback text
@@ -49,9 +49,9 @@ and expose icons inside terminal command responses without shipping emoji.
 ## Open Questions
 
 1. `grep` command: Should language/tool icons appear inline after each label, or
-   would that over-clutter the dense skills list? Need design confirmation (defer
-   decision until later).
+   would that over-clutter the dense skills list? Need design confirmation
+   (defer decision until later).
 2. [RESOLVED] Lucide icons in terminal output SHALL use the existing CSS color
    tokens (cyan, pink, green) — no new palette entries.
-3. [RESOLVED] Icons always render; no additional user preference or text-only mode
-   is planned.
+3. [RESOLVED] Icons always render; no additional user preference or text-only
+   mode is planned.

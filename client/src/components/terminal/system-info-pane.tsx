@@ -459,7 +459,7 @@ function SystemInfoPane() {
         {/* Bottom Cards Section - Compact */}
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 flex-1 min-h-0'>
           {/* Recent Projects Card - Compact */}
-          <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-terminal-body terminal-body font-mono flex flex-col min-h-[18rem] min-w-0 pb-2'>
+          <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-terminal-body terminal-body font-mono flex flex-col min-h-[14rem] min-w-0 pb-2'>
             <div className='text-[#be95ff] text-terminal-header font-bold tracking-wide uppercase mb-2 flex items-center gap-2'>
               <FolderOpen className='h-4 w-4' aria-hidden='true' />
               <span>RECENT PROJECTS</span>
@@ -468,10 +468,10 @@ function SystemInfoPane() {
               {projectsLoading ? (
                 <div className='text-[#f2f4f8]'>Loading...</div>
               ) : currentProject ? (
-                <div className='space-y-2.5 h-full flex flex-col'>
+                <div className='space-y-1 h-full flex flex-col'>
                   <div
                     className='flex items-center gap-2 text-terminal-label'
-                    style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
+                    style={{ fontSize: 'var(--text-terminal-label)' }}
                   >
                     <Link2 className='h-4 w-4 text-[#ff7eb6]' aria-hidden='true' />
                     <span className='text-[#42be65] font-mono font-semibold hover:text-[#ff7eb6] transition-colors'>
@@ -481,10 +481,10 @@ function SystemInfoPane() {
 
                   <div className='border-t border-[#393939]' />
 
-                  <div className='space-y-2 flex-1'>
+                  <div className='space-y-1 flex-1'>
                     <div
                       className='text-[#f2f4f8] leading-relaxed line-clamp-3'
-                      style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
+                      style={{ fontSize: 'var(--text-terminal-label)' }}
                     >
                       {currentProject.description ??
                         'The Next concept of excellence in Terminal Apps on Apple Platforms (early stages)'}
@@ -493,40 +493,42 @@ function SystemInfoPane() {
                     {currentProject.tech_stack && currentProject.tech_stack.length > 0 && (
                       <div
                         className='text-terminal-label'
-                        style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
+                        style={{ fontSize: 'var(--text-terminal-label)' }}
                       >
-                        <span className='text-[#ff7eb6] block mb-1'>Tech:</span>
-                        <div className='flex flex-wrap gap-2'>
-                          {currentProject.tech_stack
-                            .slice(0, 6)
-                            .map((tech, index) => renderTechBadge(tech, index))}
+                        <div className='flex items-center gap-2'>
+                          <span className='text-[#ff7eb6]'>Tech:</span>
+                          <div className='flex flex-wrap gap-1.5'>
+                            {currentProject.tech_stack
+                              .slice(0, 6)
+                              .map((tech, index) => renderTechBadge(tech, index))}
+                          </div>
                         </div>
                       </div>
                     )}
                   </div>
 
-                  <div className='mt-auto pt-2 border-t border-[#393939]'>
+                  <div className='mt-auto pt-1 border-t border-[#393939]'>
                     <div
-                      className='flex flex-col gap-2 text-terminal-label sm:flex-row sm:items-center sm:justify-between'
-                      style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
+                      className='flex flex-col gap-1 text-terminal-label sm:flex-row sm:items-center sm:justify-between'
+                      style={{ fontSize: 'var(--text-terminal-label)' }}
                     >
                       <span className='text-[#f2f4f8]'>
                         Showing {currentProjectIndex + 1} / {projects.length}
                       </span>
-                      <div className='flex flex-wrap items-center gap-2'>
+                      <div className='flex flex-wrap items-center gap-1.5'>
                         {currentProject.github_url && (
                           <a
                             href={currentProject.github_url}
                             target='_blank'
                             rel='noopener noreferrer'
-                            className='text-[#ff7eb6] font-mono font-semibold hover:text-[#be95ff] transition-colors inline-flex items-center gap-2'
+                            className='text-[#ff7eb6] font-mono font-semibold hover:text-[#be95ff] transition-colors inline-flex items-center gap-1.5'
                           >
                             {renderIcon('simple/github', {
-                              className: 'h-4 w-4',
+                              className: 'h-3.5 w-3.5',
                               label: 'GitHub repository',
                             })}
                             <span>GitHub</span>
-                            <ArrowUpRight className='h-4 w-4' aria-hidden='true' />
+                            <ArrowUpRight className='h-3.5 w-3.5' aria-hidden='true' />
                           </a>
                         )}
                         {!currentProject.github_url && currentProject.live_url && (
@@ -552,17 +554,17 @@ function SystemInfoPane() {
           </div>
 
           {/* Personal Website Card - Compact */}
-          <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-terminal-body terminal-body font-mono flex flex-col min-h-[18rem] min-w-0 pb-2'>
+          <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-terminal-body terminal-body font-mono flex flex-col min-h-[14rem] min-w-0 pb-2'>
             <div className='text-[#be95ff] text-terminal-header font-bold tracking-wide uppercase mb-2 flex items-center gap-2'>
               <Globe2 className='h-4 w-4 text-[#be95ff]' aria-hidden='true' />
               <span>PERSONAL WEBSITE</span>
             </div>
             <div className='flex-1 min-h-0'>
-              <div className='space-y-2.5 h-full flex flex-col'>
+              <div className='space-y-1 h-full flex flex-col'>
                 {/* Main Website Link */}
                 <div
                   className='flex items-center gap-2 text-terminal-label'
-                  style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
+                  style={{ fontSize: 'var(--text-terminal-label)' }}
                 >
                   <Link2 className='h-4 w-4 text-[#ff7eb6]' aria-hidden='true' />
                   <a
@@ -578,10 +580,10 @@ function SystemInfoPane() {
                 <div className='border-t border-[#393939]' />
 
                 {/* Navigation Links */}
-                <div className='space-y-2 flex-1'>
+                <div className='space-y-1 flex-1'>
                   <div
                     className='flex items-center justify-between text-terminal-label'
-                    style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
+                    style={{ fontSize: 'var(--text-terminal-label)' }}
                   >
                     <span className='text-[#ff7eb6]'>Profile:</span>
                     <a
@@ -596,7 +598,7 @@ function SystemInfoPane() {
                   </div>
                   <div
                     className='flex items-center justify-between text-terminal-label'
-                    style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
+                    style={{ fontSize: 'var(--text-terminal-label)' }}
                   >
                     <span className='text-[#ff7eb6]'>Projects:</span>
                     <a
@@ -611,7 +613,7 @@ function SystemInfoPane() {
                   </div>
                   <div
                     className='flex items-center justify-between text-terminal-label'
-                    style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
+                    style={{ fontSize: 'var(--text-terminal-label)' }}
                   >
                     <span className='text-[#ff7eb6]'>Blog:</span>
                     <a
@@ -626,21 +628,21 @@ function SystemInfoPane() {
                   </div>
                 </div>
                 {/* Book Time Section */}
-                <div className='mt-auto pt-2 border-t border-[#393939]'>
+                <div className='mt-auto pt-1 border-t border-[#393939]'>
                   <div
                     className='flex items-center justify-between text-terminal-label'
-                    style={{ fontSize: 'calc(var(--text-terminal-label) + 1px)' }}
+                    style={{ fontSize: 'var(--text-terminal-label)' }}
                   >
                     <span className='text-[#f2f4f8]'>Book Time:</span>
                     <a
                       href='https://fantastical.app/tuliocunha'
                       target='_blank'
                       rel='noopener noreferrer'
-                      className='text-[#ff7eb6] font-mono font-semibold glow-soft hover:text-[#be95ff] transition-colors flex items-center gap-2'
+                      className='text-[#ff7eb6] font-mono font-semibold glow-soft hover:text-[#be95ff] transition-colors flex items-center gap-1.5'
                     >
-                      <CalendarClock className='h-4 w-4 text-[#ff7eb6]' aria-hidden='true' />
+                      <CalendarClock className='h-3.5 w-3.5 text-[#ff7eb6]' aria-hidden='true' />
                       <span>Schedule</span>
-                      <ArrowUpRight className='h-4 w-4 text-[#ff7eb6]' aria-hidden='true' />
+                      <ArrowUpRight className='h-3.5 w-3.5 text-[#ff7eb6]' aria-hidden='true' />
                     </a>
                   </div>
                 </div>

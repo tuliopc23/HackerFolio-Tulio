@@ -4,7 +4,9 @@
 
 TBD - created by archiving change enhance-help-emphasis. Update Purpose after
 archive.
+
 ## Requirements
+
 ### Requirement: Help Command Visual Emphasis
 
 The welcome tip message SHALL emphasize the word "help" with increased font
@@ -193,4 +195,3 @@ current implementation.
 - **THEN** system SHALL return error message
 - **AND** error message SHALL suggest alternative commands (e.g., "Try
   'projects' or 'ls' to see available projects")
-

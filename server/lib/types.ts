@@ -11,6 +11,7 @@ export const apiProjectSchema = z.object({
   status: z.string().nullable(),
   createdAt: z.string().nullable(),
   updatedAt: z.string().nullable(),
+  tech_stack: z.array(z.string()).optional(),
 })
 
 export const terminalCommandSchema = z.object({

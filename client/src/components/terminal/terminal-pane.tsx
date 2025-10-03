@@ -4,9 +4,10 @@ import { useState, useEffect, useRef, useCallback, type KeyboardEvent, memo } fr
 
 import { useFocusRegistration } from '@/components/accessibility/focus-manager'
 import { useTerminalAccessibility } from '@/hooks/use-accessibility'
-import { useCompactASCII } from '@/hooks/use-media-query'
+import { useIsMobile } from '@/hooks/use-media-query'
 import { useExecuteCommand, useCommands, type ServerCommandResult } from '@/lib/queries'
 
+import asciiArt from '@/assets/ascii desktop.svg'
 import { CommandProcessor, type CommandResult } from './command-processor'
 import { useTheme } from './theme-context'
 import TypedTerminalOutput from './typed-terminal-output'
@@ -19,6 +20,7 @@ interface TerminalHistory {
   id: string
   isTyping?: boolean
   showPrompt?: boolean
+  svg?: string
 }
 
 // Extracted to top-level to satisfy react/no-unstable-nested-components
@@ -46,8 +48,23 @@ const HistoryEntry = memo(
             </span>
           </div>
         ) : null}
-        {entry.output && (
-          <div className={entry.id.startsWith('tip-') ? 'text-[1.06em]' : undefined}>
+        {entry.svg ? (
+          <div className='w-full' aria-hidden='true'>
+            <img
+              src={entry.svg}
+              alt=''
+              className='w-[340px] md:w-[580px] lg:w-[800px] h-auto'
+              style={{ imageRendering: 'crisp-edges' }}
+            />
+          </div>
+        ) : entry.output ? (
+          <div className={
+            entry.id.startsWith('tip-')
+              ? 'text-[1.06em]'
+              : entry.id.startsWith('art-')
+                ? 'text-[9px] md:text-[10px] lg:text-[14px]'
+                : undefined
+          }>
             <TypedTerminalOutput
               output={entry.output}
               isError={entry.error ?? false}
@@ -55,7 +72,7 @@ const HistoryEntry = memo(
               ariaHidden={entry.id.startsWith('art-')}
             />
           </div>
-        )}
+        ) : null}
       </div>
     )
   }
@@ -65,7 +82,7 @@ HistoryEntry.displayName = 'HistoryEntry'
 export default function TerminalPane() {
   const navigate = useNavigate()
   const { setTheme } = useTheme()
-  const shouldUseCompactASCII = useCompactASCII()
+  const isMobile = useIsMobile()
   const [input, setInput] = useState('')
   const [history, setHistory] = useState<TerminalHistory[]>([])
   const [processor] = useState(() => new CommandProcessor())
@@ -93,62 +110,27 @@ export default function TerminalPane() {
       id: `boot-${String(Date.now())}-${Math.random().toString(36).slice(2, 9)}`,
     }
 
-    try {
-      // Load compact or large ASCII based on screen size and orientation
-      // Compact: Mobile phones OR iPad landscape
-      // Large: Desktop OR iPad portrait
-      const asciiFile = shouldUseCompactASCII ? 'TulioCunha-Mobile-Ascii.txt' : 'TulioCUnha Ascii.txt'
-      const banners = import.meta.glob<string>('@/assets/TulioCunha*.txt', {
-        query: '?raw',
-        import: 'default',
-        eager: true,
-      })
+    const tip = `\x1b[36mType \x1b[53m\x1b[32mhelp\x1b[55m\x1b[39m \x1b[36mfor tutorial\x1b[39m\n`
 
-      // Find the correct banner file
-      const bannerPath = Object.keys(banners).find(path => path.includes(asciiFile))
-      const txt = bannerPath ? banners[bannerPath] : Object.values(banners)[0]
-
-      if (!txt) {
-        throw new Error('ASCII art file not found')
-      }
-
-      const lines = txt.replace(/\r\n/g, '\n').split('\n')
-      const nameLines = lines.slice(0, 5)
-      const devLines = lines.slice(5)
-      const colorizeLines = (ls: string[], code: string) =>
-        ls.map(l => `${code}${l}\x1b[39m`).join('\n')
-      const art = `${colorizeLines(nameLines, '\x1b[32m')}\n${colorizeLines(devLines, '\x1b[36m')}\n`
-      const tip = `\x1b[36mType \x1b[53m\x1b[32mhelp\x1b[55m\x1b[39m \x1b[36mfor tutorial\x1b[39m\n`
-
-      return [
-        bootEntry,
-        {
-          command: '',
-          output: art,
-          timestamp: new Date(),
-          id: `art-${String(Date.now())}-${Math.random().toString(36).slice(2, 9)}`,
-          showPrompt: true, // Show user@portfolio:~$ prompt above ASCII art
-        },
-        {
-          command: '',
-          output: tip,
-          timestamp: new Date(),
-          id: `tip-${String(Date.now())}-${Math.random().toString(36).slice(2, 9)}`,
-          showPrompt: true,
-        },
-      ]
-    } catch {
-      return [
-        bootEntry,
-        {
-          command: '',
-          output: `\x1b[36mWelcome\x1b[39m`,
-          timestamp: new Date(),
-          id: `art-fallback-${String(Date.now())}-${Math.random().toString(36).slice(2, 9)}`,
-        },
-      ]
-    }
-  }, [shouldUseCompactASCII])
+    return [
+      bootEntry,
+      {
+        command: '',
+        output: '',
+        svg: asciiArt,
+        timestamp: new Date(),
+        id: `art-${String(Date.now())}-${Math.random().toString(36).slice(2, 9)}`,
+        showPrompt: true,
+      },
+      {
+        command: '',
+        output: tip,
+        timestamp: new Date(),
+        id: `tip-${String(Date.now())}-${Math.random().toString(36).slice(2, 9)}`,
+        showPrompt: true,
+      },
+    ]
+  }, [])
 
   useEffect(() => {
     if (inputRef.current) {

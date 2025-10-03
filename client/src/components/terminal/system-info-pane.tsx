@@ -278,7 +278,7 @@ function SystemInfoPane() {
             <div className='text-[#ff7eb6] text-terminal-body font-bold tracking-wide uppercase'>
               SYSTEM INFO
             </div>
-            <div className='flex gap-3 overflow-hidden'>
+            <div className='flex flex-col md:flex-row gap-3 overflow-hidden'>
               {/* Main System Info Card - Optimized Height */}
               <div className='flex-1 bg-black/30 border border-[#393939] rounded-lg p-3.5 text-terminal-body terminal-body text-[#f2f4f8] font-mono min-h-[12.5rem] min-w-0 overflow-hidden'>
                 <div className='flex gap-4 h-full min-w-0'>
@@ -363,7 +363,7 @@ function SystemInfoPane() {
               </div>
 
               {/* SSH Connection Card - Right Side - Compact */}
-              <div className='w-[11rem] bg-black/30 border border-[#393939] rounded-lg p-3 text-terminal-body terminal-body font-mono min-h-[12.5625rem] flex flex-col flex-shrink-0 overflow-hidden'>
+              <div className='w-full md:w-[11rem] bg-black/30 border border-[#393939] rounded-lg p-3 text-terminal-body terminal-body font-mono min-h-[12.5625rem] flex flex-col flex-shrink-0 overflow-hidden'>
                 {/* Header with Status */}
                 <div className='flex items-center justify-between mb-3'>
                   <span className='text-[#ff7eb6] text-terminal-header font-bold uppercase tracking-wide'>
@@ -457,7 +457,7 @@ function SystemInfoPane() {
         )}
 
         {/* Bottom Cards Section - Compact */}
-        <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 flex-1 min-h-0'>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 flex-1 min-h-0'>
           {/* Recent Projects Card - Compact */}
           <div className='bg-black/30 border border-[#393939] rounded-lg p-2.5 text-terminal-body terminal-body font-mono flex flex-col min-h-[14rem] min-w-0 pb-2'>
             <div className='text-[#be95ff] text-terminal-header font-bold tracking-wide uppercase mb-2 flex items-center gap-2'>
@@ -509,7 +509,7 @@ function SystemInfoPane() {
 
                   <div className='mt-auto pt-1 border-t border-[#393939]'>
                     <div
-                      className='flex flex-col gap-1 text-terminal-label sm:flex-row sm:items-center sm:justify-between'
+                      className='flex flex-col gap-1 text-terminal-label md:flex-row md:items-center md:justify-between'
                       style={{ fontSize: 'var(--text-terminal-label)' }}
                     >
                       <span className='text-[#f2f4f8]'>

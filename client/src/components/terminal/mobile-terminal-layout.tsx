@@ -37,38 +37,16 @@ export default function MobileTerminalLayout({
       aria-label='Terminal window'
       aria-roledescription='Terminal window'
     >
-      {/* Notch-aware header with traffic lights */}
+      {/* Notch-aware header */}
       <header
-        className='sticky top-0 z-50 bg-[#0a0a0a]/95 backdrop-blur mobile-header mobile-titlebar flex items-center justify-between px-4'
+        className='sticky top-0 z-50 bg-[#0a0a0a]/95 backdrop-blur mobile-header mobile-titlebar flex items-center justify-end px-4'
         aria-hidden='true'
         style={{
           paddingTop: 'max(12px, env(safe-area-inset-top))',
           paddingBottom: '12px',
         }}
       >
-        {/* Traffic lights on LEFT (macOS style) */}
-        <div className='flex gap-2 items-center'>
-          <button
-            className='mobile-traffic-light rounded-full border-none cursor-pointer transition-all duration-150 shadow-[inset_0_1px_2px_rgba(255,255,255,0.2),0_1px_2px_rgba(0,0,0,0.4)] bg-gradient-to-br from-[#ff5f56] to-[#e94b3c] hover:scale-110 hover:shadow-[inset_0_1px_3px_rgba(255,255,255,0.3),0_2px_4px_rgba(0,0,0,0.5)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-bright focus-visible:outline-offset-2'
-            onClick={onClose}
-            aria-label='Close window'
-            title='Close'
-          />
-          <button
-            className='mobile-traffic-light rounded-full border-none cursor-pointer transition-all duration-150 shadow-[inset_0_1px_2px_rgba(255,255,255,0.2),0_1px_2px_rgba(0,0,0,0.4)] bg-gradient-to-br from-[#ffbd2e] to-[#ffa500] hover:scale-110 hover:shadow-[inset_0_1px_3px_rgba(255,255,255,0.3),0_2px_4px_rgba(0,0,0,0.5)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-bright focus-visible:outline-offset-2'
-            onClick={onMinimize}
-            aria-label='Minimize window'
-            title='Minimize'
-          />
-          <button
-            className='mobile-traffic-light rounded-full border-none cursor-pointer transition-all duration-150 shadow-[inset_0_1px_2px_rgba(255,255,255,0.2),0_1px_2px_rgba(0,0,0,0.4)] bg-gradient-to-br from-[#27c93f] to-[#1db954] hover:scale-110 hover:shadow-[inset_0_1px_3px_rgba(255,255,255,0.3),0_2px_4px_rgba(0,0,0,0.5)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-bright focus-visible:outline-offset-2'
-            onClick={onMaximize}
-            aria-label='Maximize window'
-            title='Maximize'
-          />
-        </div>
-
-        {/* Apple logo on the right */}
+        {/* Apple logo */}
         <div className='flex items-center'>
           <svg
             viewBox='0 0 24 24'

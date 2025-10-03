@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react'
 
 import { useFocusManager } from '@/components/accessibility/focus-manager'
 import ResizeHandle from '@/components/ui/resize-handle'
+import { useIsMobile } from '@/hooks/use-media-query'
+
+import MobileTerminalLayout from './mobile-terminal-layout'
 
 interface GhosttyTerminalWindowProps {
   leftPane: ReactNode
@@ -20,6 +23,23 @@ export default function GhosttyTerminalWindow({
   onMaximize,
   className = '',
 }: GhosttyTerminalWindowProps) {
+  const isMobile = useIsMobile()
+
+  // Use mobile layout on mobile devices
+  if (isMobile) {
+    return (
+      <MobileTerminalLayout
+        terminalPane={leftPane}
+        systemPane={rightPane}
+        onClose={onClose}
+        onMinimize={onMinimize}
+        onMaximize={onMaximize}
+        className={className}
+      />
+    )
+  }
+
+  // Desktop layout below
   // Persisted left pane width (percentage)
   const [leftPaneWidth, setLeftPaneWidth] = useState<number>(() => {
     if (typeof window === 'undefined') return 40

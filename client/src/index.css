@@ -81,6 +81,13 @@
   --text-terminal-label: 0.75rem;
   --text-terminal-meta: 0.6875rem;
   --text-terminal-tiny: 0.625rem;
+
+  /* Mobile Breakpoints */
+  --breakpoint-mobile: 320px;
+  --breakpoint-mobile-m: 375px;
+  --breakpoint-mobile-l: 414px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
 }
 
 /* CSS Custom Properties for backwards compatibility */
@@ -1087,5 +1094,232 @@ select {
   /* WebKit-specific compositor nudge without affecting Blink/Gecko */
   .crt-screen::before {
     will-change: transform;
+  }
+}
+
+/* ============================================
+   MOBILE RESPONSIVE STYLES
+   ============================================ */
+
+/* Mobile Typography Scale (smaller for compact screens) */
+@media (max-width: 767px) {
+  :root {
+    --text-terminal-prompt: 0.8125rem; /* 13px */
+    --text-terminal-body: 0.75rem; /* 12px */
+    --text-terminal-header: 0.6875rem; /* 11px */
+    --text-terminal-label: 0.625rem; /* 10px */
+    --text-terminal-meta: 0.5625rem; /* 9px */
+    --text-terminal-tiny: 0.5rem; /* 8px */
+  }
+
+  /* Ensure minimum readable size */
+  .terminal-output,
+  .terminal-body {
+    -webkit-text-size-adjust: 100%;
+    font-size: max(0.75rem, 12px);
+  }
+
+  /* Mobile ASCII Art - 12px font size */
+  .terminal-output pre,
+  .terminal-output [id^='art-'] {
+    font-size: 0.75rem; /* 12px for mobile ASCII */
+  }
+}
+
+/* Safe Area Insets for iPhone Notch/Dynamic Island */
+@supports (padding: env(safe-area-inset-top)) {
+  .mobile-header {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .mobile-safe-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+
+  .mobile-safe-bottom {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+
+  .mobile-footer {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* 120Hz ProMotion Smooth Scrolling */
+@media (max-width: 767px) {
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: y proximity;
+  }
+
+  /* Snap to section boundaries */
+  .mobile-section {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
+
+  /* GPU acceleration for smooth scrolling */
+  .mobile-terminal-container {
+    transform: translateZ(0);
+    will-change: scroll-position;
+    -webkit-transform: translate3d(0, 0, 0);
+  }
+
+  /* Full viewport on mobile */
+  .mobile-terminal-container {
+    min-height: 100vh;
+    min-height: 100dvh; /* Dynamic viewport */
+  }
+}
+
+/* Touch Target Optimization (44x44px minimum) */
+@media (max-width: 767px) {
+  button,
+  a,
+  [role='button'] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Larger tap targets for mobile */
+  .touch-target {
+    padding: 12px;
+  }
+}
+
+/* Touch Device Specific Styles */
+@media (hover: none) and (pointer: coarse) {
+  /* Disable hover effects on touch devices */
+  .hover\:border-\[#be95ff\]:hover {
+    border-color: inherit;
+  }
+
+  /* Remove hover transitions that don't make sense on touch */
+  .hover\:bg-\[#393939\]:hover {
+    background-color: inherit;
+  }
+
+  /* Active state for touch feedback */
+  button:active,
+  [role='button']:active {
+    transform: scale(0.97);
+    opacity: 0.9;
+  }
+}
+
+/* Mobile Performance Optimizations */
+@media (max-width: 767px) {
+  /* Reduce motion intensity on mobile for battery savings */
+  .crt-screen::before {
+    animation-duration: 4s; /* Slower scanline animation */
+  }
+
+  /* Simplified effects on mobile */
+  @media (prefers-reduced-motion: no-preference) {
+    * {
+      animation-duration: 0.2s !important;
+    }
+  }
+}
+
+/* Mobile Layout Adjustments */
+@media (max-width: 767px) {
+  /* Hide desktop-only elements */
+  .desktop-only {
+    display: none !important;
+  }
+
+  /* Stack cards vertically on small screens */
+  .mobile-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Side-by-side on slightly larger mobiles */
+  @media (min-width: 375px) {
+    .mobile-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+  }
+
+  /* Full-width cards on smallest screens */
+  @media (max-width: 374px) {
+    .mobile-card {
+      width: 100%;
+    }
+  }
+}
+
+/* Mobile Terminal Window Adjustments */
+@media (max-width: 767px) {
+  /* Remove fixed sizing, go full-screen */
+  .crt-screen {
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    border-radius: 0 !important;
+  }
+
+  /* Adjust titlebar for mobile */
+  .mobile-titlebar {
+    height: calc(2.25rem + env(safe-area-inset-top, 0px));
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* Traffic lights sizing for mobile */
+  .mobile-traffic-light {
+    width: 9px;
+    height: 9px;
+  }
+
+  /* Remove resize handle on mobile */
+  .resize-handle {
+    display: none;
+  }
+
+  /* Single column layout */
+  .mobile-terminal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 0.5rem;
+  }
+}
+
+/* Mobile Scrollbar (minimal) */
+@media (max-width: 767px) {
+  ::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  * {
+    scrollbar-width: thin;
+  }
+}
+
+/* Landscape Mobile Adjustments */
+@media (max-width: 767px) and (orientation: landscape) {
+  /* Reduce vertical padding in landscape */
+  .mobile-section {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  /* Smaller ASCII in landscape */
+  .terminal-output [id^='art-'] {
+    font-size: 0.6875rem; /* 11px in landscape */
   }
 }

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback, type KeyboardEvent, memo } fr
 
 import { useFocusRegistration } from '@/components/accessibility/focus-manager'
 import { useTerminalAccessibility } from '@/hooks/use-accessibility'
+import { useCompactASCII } from '@/hooks/use-media-query'
 import { useExecuteCommand, useCommands, type ServerCommandResult } from '@/lib/queries'
 
 import { CommandProcessor, type CommandResult } from './command-processor'
@@ -64,6 +65,7 @@ HistoryEntry.displayName = 'HistoryEntry'
 export default function TerminalPane() {
   const navigate = useNavigate()
   const { setTheme } = useTheme()
+  const shouldUseCompactASCII = useCompactASCII()
   const [input, setInput] = useState('')
   const [history, setHistory] = useState<TerminalHistory[]>([])
   const [processor] = useState(() => new CommandProcessor())
@@ -92,12 +94,24 @@ export default function TerminalPane() {
     }
 
     try {
-      const banners = import.meta.glob<string>('@/assets/TulioCUnha Ascii.txt', {
+      // Load compact or large ASCII based on screen size and orientation
+      // Compact: Mobile phones OR iPad landscape
+      // Large: Desktop OR iPad portrait
+      const asciiFile = shouldUseCompactASCII ? 'TulioCunha-Mobile-Ascii.txt' : 'TulioCUnha Ascii.txt'
+      const banners = import.meta.glob<string>('@/assets/TulioCunha*.txt', {
         query: '?raw',
         import: 'default',
         eager: true,
       })
-      const txt = Object.values(banners)[0] ?? ''
+
+      // Find the correct banner file
+      const bannerPath = Object.keys(banners).find(path => path.includes(asciiFile))
+      const txt = bannerPath ? banners[bannerPath] : Object.values(banners)[0]
+
+      if (!txt) {
+        throw new Error('ASCII art file not found')
+      }
+
       const lines = txt.replace(/\r\n/g, '\n').split('\n')
       const nameLines = lines.slice(0, 5)
       const devLines = lines.slice(5)
@@ -113,6 +127,7 @@ export default function TerminalPane() {
           output: art,
           timestamp: new Date(),
           id: `art-${String(Date.now())}-${Math.random().toString(36).slice(2, 9)}`,
+          showPrompt: true, // Show user@portfolio:~$ prompt above ASCII art
         },
         {
           command: '',
@@ -133,7 +148,7 @@ export default function TerminalPane() {
         },
       ]
     }
-  }, [])
+  }, [shouldUseCompactASCII])
 
   useEffect(() => {
     if (inputRef.current) {

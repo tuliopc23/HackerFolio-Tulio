@@ -172,21 +172,16 @@ app.get('/assets/*', async ({ params, set }) => {
   }
 
   try {
-    const staticDir = await getStaticDir()
-    const fileName = params['*']
-    const filePath = `${staticDir}/assets/${fileName}`
-    const file = Bun.file(filePath)
+    const fileKey = params['*']
+    const asset = await resolveAsset(fileKey)
 
-    if (!(await file.exists())) {
+    if (!asset) {
       set.status = 404
       return 'File not found'
     }
 
-    const ext = fileName.split('.').pop()?.toLowerCase()
-    const headers = getAssetHeaders(ext)
-
-    set.headers = headers
-    return file
+    set.headers = asset.headers
+    return asset.file
   } catch (error) {
     console.error('Static file error:', error)
     set.status = 500

@@ -35,6 +35,7 @@ COPY drizzle.config.ts components.json ./
 # Copy sources and bundled database
 COPY client ./client
 COPY server ./server
+COPY shared ./shared
 COPY drizzle ./drizzle
 COPY database ./database
 
@@ -59,6 +60,7 @@ COPY --from=build /app/node_modules ./node_modules
 # Bring built artifacts and runtime code
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/server ./server
+COPY --from=build /app/shared ./shared
 COPY --from=build /app/database ./database
 COPY verify-deployment.ts ./
 

@@ -33,6 +33,7 @@ const iconRegistry: Record<IconKey, IconMeta> = {
   },
   'lucide/keyboard': { source: 'lucide', name: 'Keyboard', defaultLabel: 'Keyboard shortcut' },
   'lucide/tree-palm': { source: 'lucide', name: 'Palmtree', defaultLabel: 'TanStack' },
+  'lucide/palm-tree': { source: 'lucide', name: 'Palmtree', defaultLabel: 'TanStack' },
   'lucide/user-round': { source: 'lucide', name: 'UserRound', defaultLabel: 'About me' },
   'lucide/hammer': { source: 'lucide', name: 'Hammer', defaultLabel: 'Status' },
   'lucide/route': { source: 'lucide', name: 'Route', defaultLabel: 'Route' },
@@ -76,6 +77,8 @@ const iconRegistry: Record<IconKey, IconMeta> = {
   'simple/go': { source: 'simple', name: 'go', defaultLabel: 'Go logo' },
   'simple/github': { source: 'simple', name: 'github', defaultLabel: 'GitHub' },
   'simple/docker': { source: 'simple', name: 'docker', defaultLabel: 'Docker logo' },
+  'simple/appstore': { source: 'simple', name: 'appstore', defaultLabel: 'App Store' },
+  'simple/uikit': { source: 'simple', name: 'uikit', defaultLabel: 'UIKit' },
 }
 
 export function getIconMeta(key: IconKey): IconMeta | undefined {

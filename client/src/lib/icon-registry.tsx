@@ -56,6 +56,8 @@ import {
   siTerraform,
   siGithub,
   siDocker,
+  siAppstore,
+  siUikit,
   type SimpleIcon,
 } from 'simple-icons'
 
@@ -199,9 +201,12 @@ const iconRenderers: Partial<Record<IconKey, (className?: string) => ReactNode>>
   'simple/terraform': createSimpleIconRenderer(siTerraform),
   'simple/github': createSimpleIconRenderer(siGithub),
   'simple/docker': createSimpleIconRenderer(siDocker),
+  'simple/appstore': createSimpleIconRenderer(siAppstore),
+  'simple/uikit': createSimpleIconRenderer(siUikit),
 }
 
 iconRenderers['lucide/github'] = iconRenderers['simple/github']
+iconRenderers['lucide/palm-tree'] = iconRenderers['lucide/tree-palm']
 
 export interface RenderIconOptions {
   className?: string

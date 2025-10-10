@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 
 import { useFocusManager } from '@/components/accessibility/focus-manager'

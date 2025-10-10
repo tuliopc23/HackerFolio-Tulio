@@ -3,20 +3,17 @@ import { useEffect, type ReactNode } from 'react'
 import { useFocusManager } from '@/components/accessibility/focus-manager'
 
 interface MobileTerminalLayoutProps {
-  terminalPane: ReactNode
-  systemPane: ReactNode
   onClose?: (() => void) | undefined
   onMinimize?: (() => void) | undefined
   onMaximize?: (() => void) | undefined
+  terminalPane: ReactNode
+  systemPane: ReactNode
   className?: string | undefined
 }
 
 export default function MobileTerminalLayout({
   terminalPane,
   systemPane,
-  onClose,
-  onMinimize,
-  onMaximize,
   className = '',
 }: MobileTerminalLayoutProps) {
   const { setTrapFocus } = useFocusManager()
@@ -59,7 +56,10 @@ export default function MobileTerminalLayout({
       </header>
 
       {/* Scrollable content area */}
-      <main className='mobile-terminal-content pb-8' style={{ paddingBottom: 'calc(2rem + env(safe-area-inset-bottom))' }}>
+      <main
+        className='mobile-terminal-content pb-8'
+        style={{ paddingBottom: 'calc(2rem + env(safe-area-inset-bottom))' }}
+      >
         {/* Terminal pane - full width */}
         <section className='mobile-section px-4'>
           <div

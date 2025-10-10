@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sqlite3 /Users/tuliopinheirocunha/HackerFolio-Tulio/database/portfolio.db \"SELECT command, response_template FROM terminal_commands WHERE command = ''''grep''''\")",
+      "Bash(git reset --hard workspace)",
+      "Bash(git push --force-with-lease origin main)",
+      "Bash(git log workspace --not main)",
+      "Bash(bun run build)",
+      "Bash(bun run dev)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

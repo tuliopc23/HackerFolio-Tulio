@@ -1,5 +1,13 @@
 {
-  "include": ["client/src/**/*", "client/__tests__/**/*", "shared/**/*", "server/**/*", "reset.d.ts", "vitest.d.ts"],
+  "include": [
+    "client/src/**/*",
+    "client/__tests__/**/*",
+    "shared/**/*",
+    "server/**/*",
+    "cf-worker/src/**/*",
+    "reset.d.ts",
+    "vitest.d.ts"
+  ],
   "exclude": ["node_modules", "build", "dist", "drizzle/**/*", "coverage"],
   "compilerOptions": {
     "incremental": true,
@@ -53,7 +61,15 @@
       "@server/*": ["./server/*"],
       "shared/*": ["./shared/*"]
     },
-    "types": ["node", "vite/client", "bun", "@total-typescript/ts-reset", "@testing-library/jest-dom", "vitest/globals"]
+    "types": [
+      "node",
+      "vite/client",
+      "bun",
+      "@total-typescript/ts-reset",
+      "@testing-library/jest-dom",
+      "vitest/globals",
+      "@cloudflare/workers-types"
+    ]
   },
   "ts-node": {
     "esm": true

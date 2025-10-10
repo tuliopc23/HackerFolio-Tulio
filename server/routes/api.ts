@@ -238,14 +238,11 @@ export const apiRoutes = new Elysia({ prefix: '/api' })
         })
       }
 
-      const data = (await res.json()) as Array<{
+      const data: Array<{
         sha: string
-        commit: {
-          message: string
-          author: { name: string; date: string }
-        }
+        commit: { message: string; author: { name: string; date: string } }
         html_url: string
-      }>
+      }> = await res.json()
 
       const commits = data.map(c => ({
         sha: c.sha,

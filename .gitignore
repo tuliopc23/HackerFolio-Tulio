@@ -67,3 +67,7 @@ server/public
 
 # Stakpak local files
 .stakpak
+
+# Cloudflare Workers (local/dev)
+.wrangler/
+.dev.vars

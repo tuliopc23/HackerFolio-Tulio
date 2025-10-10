@@ -4,11 +4,12 @@
     "noEmit": true,
     "composite": false,
     "skipLibCheck": true,
-    "types": ["node", "vite/client", "bun", "@total-typescript/ts-reset"]
+    "types": ["node", "vite/client", "bun", "@total-typescript/ts-reset", "@cloudflare/workers-types"]
   },
   "include": [
     "client/src/**/*",
     "server/**/*.ts",
+    "cf-worker/src/**/*",
     "components/**/*.tsx",
     "components/**/*.ts",
     "shared/**/*.ts",

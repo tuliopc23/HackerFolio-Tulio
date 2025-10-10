@@ -15,9 +15,12 @@
     "check:all": "bun run check:types && bun run check:lint && bun run check:format && bun run test",
     "fix:lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "fix:format": "prettier --write .",
-    "fix:all": "bun run fix:format && bun run fix:lint"
+    "fix:all": "bun run fix:format && bun run fix:lint",
+    "cf:dev": "wrangler dev",
+    "cf:deploy": "wrangler deploy"
   },
   "dependencies": {
+    "@cloudflare/containers": "0.0.28",
     "@elysiajs/cors": "1.4.0",
     "@tanstack/history": "1.132.21",
     "@tanstack/react-query": "5.90.2",
@@ -38,6 +41,7 @@
     "zod": "4.1.11"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "4.20251008.0",
     "@eslint/js": "9.36.0",
     "@tailwindcss/postcss": "4.1.13",
     "@tailwindcss/typography": "0.5.19",
@@ -72,7 +76,8 @@
     "typescript": "5.9.2",
     "typescript-eslint": "8.44.1",
     "vite": "7.1.7",
-    "vitest": "3.2.4"
+    "vitest": "3.2.4",
+    "wrangler": "4.42.2"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-musl": "4.52.3",

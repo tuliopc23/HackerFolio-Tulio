@@ -1,0 +1,16 @@
+name = "hackerfolio-containers"
+main = "cf-worker/src/index.ts"
+compatibility_date = "2025-10-10"
+
+[[containers]]
+class_name = "HackerFolioContainer"
+image = "./Dockerfile"
+max_instances = 3
+
+[[durable_objects.bindings]]
+class_name = "HackerFolioContainer"
+name = "HACKERFOLIO_CONTAINER"
+
+[[migrations]]
+new_sqlite_classes = [ "HackerFolioContainer" ]
+tag = "v1"

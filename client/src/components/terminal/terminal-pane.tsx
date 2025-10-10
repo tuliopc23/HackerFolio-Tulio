@@ -2,12 +2,11 @@ import { useNavigate } from '@tanstack/react-router'
 import { ArrowUpDown, ClipboardCopy, Keyboard, Monitor } from 'lucide-react'
 import { useState, useEffect, useRef, useCallback, type KeyboardEvent, memo } from 'react'
 
+import asciiArt from '@/assets/ascii desktop.svg'
 import { useFocusRegistration } from '@/components/accessibility/focus-manager'
 import { useTerminalAccessibility } from '@/hooks/use-accessibility'
-import { useIsMobile } from '@/hooks/use-media-query'
 import { useExecuteCommand, useCommands, type ServerCommandResult } from '@/lib/queries'
 
-import asciiArt from '@/assets/ascii desktop.svg'
 import { CommandProcessor, type CommandResult } from './command-processor'
 import { useTheme } from './theme-context'
 import TypedTerminalOutput from './typed-terminal-output'
@@ -58,13 +57,15 @@ const HistoryEntry = memo(
             />
           </div>
         ) : entry.output ? (
-          <div className={
-            entry.id.startsWith('tip-')
-              ? 'text-[1.06em]'
-              : entry.id.startsWith('art-')
-                ? 'text-[9px] md:text-[10px] lg:text-[14px]'
-                : undefined
-          }>
+          <div
+            className={
+              entry.id.startsWith('tip-')
+                ? 'text-[1.06em]'
+                : entry.id.startsWith('art-')
+                  ? 'text-[9px] md:text-[10px] lg:text-[14px]'
+                  : undefined
+            }
+          >
             <TypedTerminalOutput
               output={entry.output}
               isError={entry.error ?? false}
@@ -82,7 +83,6 @@ HistoryEntry.displayName = 'HistoryEntry'
 export default function TerminalPane() {
   const navigate = useNavigate()
   const { setTheme } = useTheme()
-  const isMobile = useIsMobile()
   const [input, setInput] = useState('')
   const [history, setHistory] = useState<TerminalHistory[]>([])
   const [processor] = useState(() => new CommandProcessor())

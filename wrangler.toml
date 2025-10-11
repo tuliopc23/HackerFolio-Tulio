@@ -1,4 +1,4 @@
-name = "hackerfolio-containers"
+name = "hackerfolio-tulio"
 main = "cf-worker/src/index.ts"
 compatibility_date = "2025-10-10"
 
@@ -12,5 +12,6 @@ class_name = "HackerFolioContainer"
 name = "HACKERFOLIO_CONTAINER"
 
 [[migrations]]
-new_sqlite_classes = [ "HackerFolioContainer" ]
+new_sqlite_classes = ["HackerFolioContainer"]
 tag = "v1"
+

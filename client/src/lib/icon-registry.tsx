@@ -57,7 +57,6 @@ import {
   siDocker,
   siAppstore,
   siUikit,
-  siLinkedin,
   type SimpleIcon,
 } from 'simple-icons'
 
@@ -92,6 +91,9 @@ const iconRenderers: Partial<Record<IconKey, (className?: string) => ReactNode>>
   ),
   'lucide/mail': className => (
     <Mail className={clsx(BASE_ICON_CLASS, className)} aria-hidden='true' focusable='false' />
+  ),
+  'lucide/linkedin': className => (
+    <Briefcase className={clsx(BASE_ICON_CLASS, className)} aria-hidden='true' focusable='false' />
   ),
   'lucide/calendar-clock': className => (
     <CalendarClock
@@ -200,14 +202,10 @@ const iconRenderers: Partial<Record<IconKey, (className?: string) => ReactNode>>
   'simple/docker': createSimpleIconRenderer(siDocker),
   'simple/appstore': createSimpleIconRenderer(siAppstore),
   'simple/uikit': createSimpleIconRenderer(siUikit),
-  // The simple-icons package may not provide strict types for all icons; limit unsafe-argument to this call only.
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-  'simple/linkedin': createSimpleIconRenderer(siLinkedin),
 }
 
 iconRenderers['lucide/github'] = iconRenderers['simple/github']
 iconRenderers['lucide/palm-tree'] = iconRenderers['lucide/tree-palm']
-iconRenderers['lucide/linkedin'] = iconRenderers['simple/linkedin']
 
 export interface RenderIconOptions {
   className?: string

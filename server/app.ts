@@ -33,7 +33,23 @@ async function getStaticDir() {
   return resolvedStaticDir
 }
 
-function getAssetHeaders(extension: string | undefined) {
+type CachePolicy = 'immutable' | 'no-cache' | 'short'
+
+function getCacheControl(policy: CachePolicy): string {
+  switch (policy) {
+    // For Vite-hashed assets under /assets (e.g. /assets/app.[hash].js)
+    case 'immutable':
+      return 'public, max-age=31536000, immutable'
+    // For files that must update quickly (e.g. service worker)
+    case 'no-cache':
+      return 'no-cache, max-age=0, must-revalidate'
+    // For small, non-hashed public files (favicons, manifest)
+    case 'short':
+      return 'public, max-age=3600'
+  }
+}
+
+function getAssetHeaders(extension: string | undefined, cache: CachePolicy) {
   const mimeTypes: Record<string, string> = {
     js: 'application/javascript; charset=utf-8',
     css: 'text/css; charset=utf-8',
@@ -54,7 +70,7 @@ function getAssetHeaders(extension: string | undefined) {
   const contentType = mimeTypes[extension ?? ''] ?? 'application/octet-stream'
   return {
     'Content-Type': contentType,
-    'Cache-Control': 'public, max-age=31536000, immutable',
+    'Cache-Control': getCacheControl(cache),
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS',
     'X-Content-Type-Options': 'nosniff',
@@ -72,7 +88,7 @@ async function resolveAsset(fileKey: string) {
   if (!(await file.exists())) return null
 
   const ext = sanitizedName.split('.').pop()?.toLowerCase()
-  const headers = getAssetHeaders(ext)
+  const headers = getAssetHeaders(ext, 'immutable')
 
   return { file, headers }
 }
@@ -89,7 +105,15 @@ async function buildPublicFileResponse(filePathRelative: string, method: string)
       })
     }
     const ext = filePathRelative.split('.').pop()?.toLowerCase()
-    const headers = getAssetHeaders(ext)
+
+    const cachePolicy: CachePolicy =
+      filePathRelative === 'sw.js'
+        ? 'no-cache'
+        : filePathRelative === 'site.webmanifest'
+          ? 'short'
+          : 'short'
+
+    const headers = getAssetHeaders(ext, cachePolicy)
     if (method === 'HEAD') return new Response(null, { status: 200, headers })
     return new Response(file, { headers })
   } catch (e) {

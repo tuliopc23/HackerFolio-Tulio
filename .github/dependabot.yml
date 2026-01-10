@@ -6,47 +6,47 @@
 version: 2
 updates:
   # Enable version updates for npm/bun
-  - package-ecosystem: "npm"
+  - package-ecosystem: 'npm'
     # Look for package.json in the root directory
-    directory: "/"
+    directory: '/'
     # Check for updates once a week (Monday at 09:00 UTC)
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
     # Limit the number of open pull requests for version updates
     open-pull-requests-limit: 5
     # Group updates for minor and patch versions in one PR
     groups:
       minor-and-patch-updates:
         patterns:
-          - "*"
+          - '*'
         update-types:
-          - "minor"
-          - "patch"
+          - 'minor'
+          - 'patch'
     # Don't update major versions automatically
     ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
     # Add labels to pull requests
     labels:
-      - "dependencies"
-      - "javascript"
+      - 'dependencies'
+      - 'javascript'
     # Allow this group to be created even if it contains only a single update
     allow-updates: true
 
   # Enable version updates for Docker
-  - package-ecosystem: "docker"
+  - package-ecosystem: 'docker'
     # Look for Dockerfile in the root directory
-    directory: "/"
+    directory: '/'
     # Check for updates once a week (Tuesday at 09:00 UTC)
     schedule:
-      interval: "weekly"
-      day: "tuesday"
-      time: "09:00"
+      interval: 'weekly'
+      day: 'tuesday'
+      time: '09:00'
     # Limit the number of open pull requests for version updates
     open-pull-requests-limit: 3
     # Add labels to pull requests
     labels:
-      - "dependencies"
-      - "docker"
+      - 'dependencies'
+      - 'docker'

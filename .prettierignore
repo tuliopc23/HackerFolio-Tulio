@@ -40,6 +40,7 @@ Thumbs.db
 .vscode/
 .idea/
 .claude/
+.codex/
 *.swp
 *.swo
 *~
@@ -47,6 +48,7 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+.wrangler/
 
 # Generated files
 *.tsbuildinfo

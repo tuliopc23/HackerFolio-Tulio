@@ -1,5 +1,5 @@
 import type { Context } from 'elysia'
-import { z } from 'zod'
+import { ZodError, type ZodType } from 'zod'
 
 // Standard API error response format
 export interface ApiErrorResponse {
@@ -109,7 +109,7 @@ export function handleApiError(error: unknown): Response {
   }
 
   // Handle Zod validation errors
-  if (error instanceof z.ZodError) {
+  if (error instanceof ZodError) {
     const validationError = new ApiError(
       ApiErrorCode.VALIDATION_ERROR,
       'Validation failed',
@@ -156,33 +156,33 @@ export function asyncHandler<T extends unknown[], R>(
 }
 
 // Enhanced validation helpers that throw standardized errors
-export function validateApiQuery<T>(schema: z.ZodType<T>, context: Context): T {
+export function validateApiQuery<T>(schema: ZodType<T>, context: Context): T {
   try {
     return schema.parse(context.query)
   } catch (error) {
-    if (error instanceof z.ZodError) {
+    if (error instanceof ZodError) {
       throw createValidationError('Query validation failed', error.issues)
     }
     throw error
   }
 }
 
-export function validateApiBody<T>(schema: z.ZodType<T>, context: Context): T {
+export function validateApiBody<T>(schema: ZodType<T>, context: Context): T {
   try {
     return schema.parse(context.body)
   } catch (error) {
-    if (error instanceof z.ZodError) {
+    if (error instanceof ZodError) {
       throw createValidationError('Request body validation failed', error.issues)
     }
     throw error
   }
 }
 
-export function validateApiData<T>(schema: z.ZodType<T>, data: unknown, context?: string): T {
+export function validateApiData<T>(schema: ZodType<T>, data: unknown, context?: string): T {
   try {
     return schema.parse(data)
   } catch (error) {
-    if (error instanceof z.ZodError) {
+    if (error instanceof ZodError) {
       throw createValidationError(
         context ? `${context} validation failed` : 'Data validation failed',
         error.issues

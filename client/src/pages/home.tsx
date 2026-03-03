@@ -49,7 +49,7 @@ export default function Home() {
       <SkipLinks />
       <div className='route-page h-screen min-h-[100dvh] overflow-hidden'>
         {/* Desktop Background */}
-        <DesktopBackground />
+        <DesktopBackground onOpenTerminal={handleRestoreTerminal} />
 
         {/* Floating Dock - Only show when terminal is minimized or closed */}
         {(!terminalVisible || terminalMinimized) && (

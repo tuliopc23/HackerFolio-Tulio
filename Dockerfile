@@ -22,11 +22,11 @@ ENV npm_config_jobs=4
 ENV PYTHON=/usr/bin/python3
 ENV npm_config_python=/usr/bin/python3
 
-# Install dependencies first for better Docker layer caching
+# Install all dependencies (including dev) for building
 COPY package.json bun.lock* ./
 RUN echo ">>> bun install (build stage)" \
     && bun install --verbose \
-    && bun pm trust --all
+    && bun pm trust --all || true
 
 # Copy config files needed for the build
 COPY vite.config.ts tsconfig.json tailwind.config.ts postcss.config.js ./
@@ -44,8 +44,14 @@ ENV NODE_ENV=production
 RUN echo ">>> build:production" \
     && bun run build:production
 
+# Prune to production-only deps AFTER build — delete and reinstall without devDeps
+RUN echo ">>> pruning to production deps" \
+    && rm -rf node_modules \
+    && bun install --production \
+    && bun pm trust --all || true
+
 # ---- Runtime stage ----
-FROM oven/bun:1.2.21 AS runtime
+FROM oven/bun:1.2.21-slim AS runtime
 WORKDIR /app
 
 ENV NODE_ENV=production
@@ -54,7 +60,7 @@ ENV NODE_ENV=production
 COPY --from=build /app/package.json ./
 COPY --from=build /app/bun.lock* ./
 
-# Use node_modules from build stage to avoid runtime installs/node-gyp
+# Use production-pruned node_modules from build stage (native binaries already compiled)
 COPY --from=build /app/node_modules ./node_modules
 
 # Bring built artifacts and runtime code
